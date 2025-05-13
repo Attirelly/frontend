@@ -1,103 +1,132 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState, ChangeEvent } from 'react';
+
+type Seller = {
+  id: number;
+  name: string;
+  email: string;
+};
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [sellers, setSellers] = useState<Seller[]>([]);
+  const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
+  const [search, setSearch] = useState<string>('');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+  useEffect(() => {
+    const dummyData: Seller[] = [
+      { id: 1, name: 'Alice Store', email: 'alice@example.com' },
+      { id: 2, name: 'Bob Mart', email: 'bob@example.com' },
+      { id: 3, name: 'Charlie Bazaar', email: 'charlie@example.com' },
+    ];
+    setSellers(dummyData);
+    setFilteredSellers(dummyData);
+  }, []);
+
+  const handleSearch = (query: string) => {
+    setSearch(query);
+    const filtered = sellers.filter((seller) =>
+      seller.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredSellers(filtered);
+  };
+
+  const handleUploadCSV = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const text = event.target?.result as string;
+      const lines = text.split('\n');
+      const uploaded: Seller[] = lines
+        .slice(1)
+        .map((line) => {
+          const [id, name, email] = line.split(',');
+          return { id: Number(id), name: name?.trim(), email: email?.trim() };
+        })
+        .filter((s) => s.name && s.email);
+
+      setSellers(uploaded);
+      setFilteredSellers(uploaded);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleDownloadCSV = () => {
+    const header = 'id,name,email\n';
+    const rows = filteredSellers
+      .map((s) => `${s.id},${s.name},${s.email}`)
+      .join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'sellers.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto p-6 font-sans">
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">🛍️ Seller Manager</h1>
+
+      <div className="flex flex-wrap gap-4 justify-center items-center mb-8">
+        <input
+          type="text"
+          placeholder="Search sellers..."
+          value={search}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="border border-gray-300 rounded px-4 py-2 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          Upload CSV
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleUploadCSV}
+            className="hidden"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        </label>
+
+        <button
+          onClick={handleDownloadCSV}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          ⬇️ Download CSV
+        </button>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto border border-gray-200 shadow-sm">
+          <thead className="bg-gray-100 text-gray-700 uppercase text-sm font-semibold">
+            <tr>
+              <th className="px-6 py-3 border">ID</th>
+              <th className="px-6 py-3 border">Name</th>
+              <th className="px-6 py-3 border">Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredSellers.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="text-center py-6 text-gray-500">
+                  No sellers found.
+                </td>
+              </tr>
+            ) : (
+              filteredSellers.map((seller) => (
+                <tr key={seller.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-3 border text-center">{seller.id}</td>
+                  <td className="px-6 py-3 border">{seller.name}</td>
+                  <td className="px-6 py-3 border">{seller.email}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
