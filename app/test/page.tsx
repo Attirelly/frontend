@@ -4,12 +4,17 @@ import { api } from "@/lib/axios";
 import { useEffect, useState, ChangeEvent } from "react";
 
 type Seller = {
-  id: number;
-  name: string;
-  email: string;
-  location: string;
-  category: string;
-  status: string;
+  id: string;
+  store_name: string;
+  city: string;
+  area: string;
+  location: { lat: number; lng: number };
+  image: string | null;
+  store_types: string[];
+  genders: string[];
+  average_price_min: number;
+  average_price_max: number;
+  sponsor: number;
 };
 
 export default function Home() {
@@ -21,83 +26,40 @@ export default function Home() {
   const [viewAll, setViewAll] = useState<boolean>(false);
 
   useEffect(() => {
-     
     const fetchSellers = async () => {
-    try {
-       console.log('Sending request to /api/sellers');
-      const response = await api.get('/search/search_store');
-      console.log(response);
-      
-    } catch (error) {
-      console.error('Failed to fetch sellers:', error);
-    }
-  };
+      try {
+        console.log("Sending request to /api/sellers");
+        const response = await api.get("/search/search_store");
+        console.log(response)
+        const fetchedSellers = response.data.hits.map((item: any) => ({
+          id: item.id,
+          store_name: item.store_name,
+          city: item.city,
+          area: item.area,
+          location: item.location,
+          image: item.image,
+          store_types: item.store_types,
+          genders: item.genders,
+          average_price_min: item.average_price_min,
+          average_price_max: item.average_price_max,
+          sponsor: item.sponsor,
+        }));
 
-   fetchSellers();
+        setSellers(fetchedSellers);
+        setFilteredSellers(fetchedSellers);
 
-    const dummyData: Seller[] = [
-      {
-        id: 1,
-        name: "Alice Store",
-        email: "alice@example.com",
-        location: "New York",
-        category: "Electronics",
-        status: "Active",
-      },
-      {
-        id: 2,
-        name: "Bob Mart",
-        email: "bob@example.com",
-        location: "Los Angeles",
-        category: "Clothing",
-        status: "Inactive",
-      },
-      {
-        id: 3,
-        name: "Charlie Bazaar",
-        email: "charlie@example.com",
-        location: "Chicago",
-        category: "Food",
-        status: "Active",
-      },
-      {
-        id: 4,
-        name: "David Shop",
-        email: "david@example.com",
-        location: "New York",
-        category: "Furniture",
-        status: "Active",
-      },
-      {
-        id: 5,
-        name: "Emma Store",
-        email: "emma@example.com",
-        location: "Chicago",
-        category: "Electronics",
-        status: "Inactive",
-      },
-      {
-        id: 6,
-        name: "Frank Mall",
-        email: "frank@example.com",
-        location: "Los Angeles",
-        category: "Clothing",
-        status: "Active",
-      },
-      
-    ];
-    setSellers(dummyData);
-    setFilteredSellers(dummyData);
-
-    // Set facets dynamically
-    const newFacets = {
-      location: [...new Set(dummyData.map((seller) => seller.location))],
-      category: [...new Set(dummyData.map((seller) => seller.category))],
-      status: [...new Set(dummyData.map((seller) => seller.status))],
-      email: [...new Set(dummyData.map((seller) => seller.email))],
-      name: [...new Set(dummyData.map((seller) => seller.name))],
+        // Set facets dynamically
+        const newFacets = {
+          city: [...new Set(fetchedSellers.map((seller) => seller.city))],
+          area: [...new Set(fetchedSellers.map((seller) => seller.area))],
+        };
+        setFacets(newFacets);
+      } catch (error) {
+        console.error("Failed to fetch sellers:", error);
+      }
     };
-    setFacets(newFacets);
+
+    fetchSellers();
   }, []);
 
   const handleSearch = (query: string) => {
@@ -120,7 +82,7 @@ export default function Home() {
 
   const filterSellers = (searchQuery: string, selectedFacets: any) => {
     const filtered = sellers.filter((seller) => {
-      const matchesSearch = seller.name
+      const matchesSearch = seller.store_name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
       const matchesFacets = Object.keys(selectedFacets).every((facet) => {
@@ -145,28 +107,30 @@ export default function Home() {
       const uploaded: Seller[] = lines
         .slice(1)
         .map((line) => {
-          const [id, name, email, location, category, status] = line.split(",");
+          const [id, store_name, city, area] = line.split(",");
           return {
-            id: Number(id),
-            name: name?.trim(),
-            email: email?.trim(),
-            location: location?.trim(),
-            category: category?.trim(),
-            status: status?.trim(),
+            id,
+            store_name,
+            city,
+            area,
+            location: { lat: 0, lng: 0 },
+            image: null,
+            store_types: [],
+            genders: [],
+            average_price_min: 0,
+            average_price_max: 0,
+            sponsor: 1,
           };
         })
-        .filter((s) => s.name && s.email);
+        .filter((s) => s.store_name);
 
       setSellers(uploaded);
       setFilteredSellers(uploaded);
 
       // Update facets
       const newFacets = {
-        location: [...new Set(uploaded.map((seller) => seller.location))],
-        category: [...new Set(uploaded.map((seller) => seller.category))],
-        status: [...new Set(uploaded.map((seller) => seller.status))],
-        email: [...new Set(uploaded.map((seller) => seller.email))],
-        name: [...new Set(uploaded.map((seller) => seller.name))],
+        city: [...new Set(uploaded.map((seller) => seller.city))],
+        area: [...new Set(uploaded.map((seller) => seller.area))],
       };
       setFacets(newFacets);
     };
@@ -174,12 +138,9 @@ export default function Home() {
   };
 
   const handleDownloadCSV = () => {
-    const header = "id,name,email,location,category,status\n";
+    const header = "id,store_name,city,area\n";
     const rows = filteredSellers
-      .map(
-        (s) =>
-          `${s.id},${s.name},${s.email},${s.location},${s.category},${s.status}`
-      )
+      .map((s) => `${s.id},${s.store_name},${s.city},${s.area}`)
       .join("\n");
     const blob = new Blob([header + rows], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -298,37 +259,25 @@ export default function Home() {
 
         <div className="overflow-x-auto shadow-lg rounded-lg">
           <table className="min-w-full table-auto border border-gray-200">
-            <thead className="bg-gray-100 text-gray-700 uppercase text-sm font-semibold">
+            <thead className="bg-gray-100">
               <tr>
-                <th className="px-6 py-3 border">ID</th>
-                <th className="px-6 py-3 border">Name</th>
-                <th className="px-6 py-3 border">Email</th>
-                <th className="px-6 py-3 border">Location</th>
-                <th className="px-6 py-3 border">Category</th>
-                <th className="px-6 py-3 border">Status</th>
+                <th className="p-4 text-left">Store Name</th>
+                <th className="p-4 text-left">City</th>
+                <th className="p-4 text-left">Area</th>
+                <th className="p-4 text-left">Price Range</th>
               </tr>
             </thead>
             <tbody>
-              {filteredSellers.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="text-center py-6 text-gray-500">
-                    No sellers found.
+              {filteredSellers.map((seller) => (
+                <tr key={seller.id}>
+                  <td className="p-4">{seller.store_name}</td>
+                  <td className="p-4">{seller.city}</td>
+                  <td className="p-4">{seller.area}</td>
+                  <td className="p-4">
+                    ₹{seller.average_price_min} - ₹{seller.average_price_max}
                   </td>
                 </tr>
-              ) : (
-                filteredSellers.map((seller) => (
-                  <tr key={seller.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-3 border text-center">
-                      {seller.id}
-                    </td>
-                    <td className="px-6 py-3 border">{seller.name}</td>
-                    <td className="px-6 py-3 border">{seller.email}</td>
-                    <td className="px-6 py-3 border">{seller.location}</td>
-                    <td className="px-6 py-3 border">{seller.category}</td>
-                    <td className="px-6 py-3 border">{seller.status}</td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
