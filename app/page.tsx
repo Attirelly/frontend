@@ -1,103 +1,68 @@
 "use client";
-
-import { api } from "@/lib/axios";
 import { useEffect, useState, ChangeEvent } from "react";
+import { api } from "@/lib/axios";
+import { log } from "console";
 
 type Seller = {
-  id: number;
-  name: string;
+  id?: number;
+  name?: string;
   email: string;
-  location: string;
-  category: string;
-  status: string;
+  location?: string;
+  category?: string;
+  status?: string;
+  store_name?: string;
+  area?: string;
+  city?: string;
+  store_types?: string[];
 };
 
 export default function Home() {
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
-  const [search, setSearch] = useState<string>("");
-  const [facets, setFacets] = useState<any>({});
-  const [selectedFacets, setSelectedFacets] = useState<any>({});
-  const [viewAll, setViewAll] = useState<boolean>(false);
+  const [search, setSearch] = useState("");
+  const [selectedFacets, setSelectedFacets] = useState<{ [key: string]: string[] }>({});
+  const [facets, setFacets] = useState<{ [key: string]: string[] }>({});
+  const [viewAll, setViewAll] = useState(false);
 
   useEffect(() => {
-     
     const fetchSellers = async () => {
-    try {
-       console.log('Sending request to /api/sellers');
-      const response = await api.get('/search/search_store');
-      console.log(response);
-      
-    } catch (error) {
-      console.error('Failed to fetch sellers:', error);
-    }
-  };
+      try {
+    
+        
+        const res = await api.get(`/search/search_store?page=0&hitsPerPage=10&facets=city&facets=area'`);
+        const data = res.data;
+        console.log(data.facets);
+        
+        const sellers: Seller[] = data.hits.map((hit: any, index: number) => ({
+          id: index + 1,
+          name: hit.store_name,
+          email: "", // not provided
+          location: `${hit.area}, ${hit.city}`,
+          category: hit.store_types?.[0] || "",
+          status: "",
+        }));
 
-   fetchSellers();
+        setSellers(sellers);
+        setFilteredSellers(sellers);
 
-    const dummyData: Seller[] = [
-      {
-        id: 1,
-        name: "Alice Store",
-        email: "alice@example.com",
-        location: "New York",
-        category: "Electronics",
-        status: "Active",
-      },
-      {
-        id: 2,
-        name: "Bob Mart",
-        email: "bob@example.com",
-        location: "Los Angeles",
-        category: "Clothing",
-        status: "Inactive",
-      },
-      {
-        id: 3,
-        name: "Charlie Bazaar",
-        email: "charlie@example.com",
-        location: "Chicago",
-        category: "Food",
-        status: "Active",
-      },
-      {
-        id: 4,
-        name: "David Shop",
-        email: "david@example.com",
-        location: "New York",
-        category: "Furniture",
-        status: "Active",
-      },
-      {
-        id: 5,
-        name: "Emma Store",
-        email: "emma@example.com",
-        location: "Chicago",
-        category: "Electronics",
-        status: "Inactive",
-      },
-      {
-        id: 6,
-        name: "Frank Mall",
-        email: "frank@example.com",
-        location: "Los Angeles",
-        category: "Clothing",
-        status: "Active",
-      },
-      
-    ];
-    setSellers(dummyData);
-    setFilteredSellers(dummyData);
-
-    // Set facets dynamically
-    const newFacets = {
-      location: [...new Set(dummyData.map((seller) => seller.location))],
-      category: [...new Set(dummyData.map((seller) => seller.category))],
-      status: [...new Set(dummyData.map((seller) => seller.status))],
-      email: [...new Set(dummyData.map((seller) => seller.email))],
-      name: [...new Set(dummyData.map((seller) => seller.name))],
+        const newFacets = {
+          area: Object.entries(data.facets?.area|| {}),
+          city: Object.entries(data.facets?.city|| {}),
+          store_types: Object.entries(data.facets?.store_types || {}),
+          genders: Object.entries(data.facets?.genders || {}),
+          outfits: Object.entries(data.facets?.outfits || {}),
+          labels: Object.entries(data.facets?.labels || {}),
+        };
+        console.log(newFacets);
+        
+        // Flatten and merge as needed
+        setFacets(newFacets);
+      } catch (error) {
+        console.error("Failed to fetch sellers:", error);
+      }
     };
-    setFacets(newFacets);
+
+    fetchSellers();
   }, []);
 
   const handleSearch = (query: string) => {
@@ -108,9 +73,7 @@ export default function Home() {
   const handleFacetChange = (facet: string, value: string) => {
     const newSelectedFacets = { ...selectedFacets };
     if (newSelectedFacets[facet]?.includes(value)) {
-      newSelectedFacets[facet] = newSelectedFacets[facet].filter(
-        (v: string) => v !== value
-      );
+      newSelectedFacets[facet] = newSelectedFacets[facet].filter((v) => v !== value);
     } else {
       newSelectedFacets[facet] = [...(newSelectedFacets[facet] || []), value];
     }
@@ -120,17 +83,21 @@ export default function Home() {
 
   const filterSellers = (searchQuery: string, selectedFacets: any) => {
     const filtered = sellers.filter((seller) => {
-      const matchesSearch = seller.name
+      const matchesSearch = (seller.name || "")
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
+
       const matchesFacets = Object.keys(selectedFacets).every((facet) => {
+        const sellerValue = (seller[facet] || "").toString();
         return (
           selectedFacets[facet].length === 0 ||
-          selectedFacets[facet].includes(seller[facet])
+          selectedFacets[facet].includes(sellerValue)
         );
       });
+
       return matchesSearch && matchesFacets;
     });
+
     setFilteredSellers(filtered);
   };
 
@@ -160,13 +127,12 @@ export default function Home() {
       setSellers(uploaded);
       setFilteredSellers(uploaded);
 
-      // Update facets
       const newFacets = {
-        location: [...new Set(uploaded.map((seller) => seller.location))],
-        category: [...new Set(uploaded.map((seller) => seller.category))],
-        status: [...new Set(uploaded.map((seller) => seller.status))],
-        email: [...new Set(uploaded.map((seller) => seller.email))],
-        name: [...new Set(uploaded.map((seller) => seller.name))],
+        location: [...new Set(uploaded.map((s) => s.location))],
+        category: [...new Set(uploaded.map((s) => s.category))],
+        status: [...new Set(uploaded.map((s) => s.status))],
+        email: [...new Set(uploaded.map((s) => s.email))],
+        name: [...new Set(uploaded.map((s) => s.name))],
       };
       setFacets(newFacets);
     };
@@ -195,87 +161,24 @@ export default function Home() {
     setViewAll(!viewAll);
   };
 
+  
+
   return (
-    <div className="max-w-5xl mx-auto p-6 font-sans flex flex-col md:flex-row">
-      {/* Left Sidebar for Facets */}
-      <div className="w-full md:w-1/4 p-6 border-r bg-gray-50 shadow-lg rounded-lg mb-8 md:mb-0">
-        <h2 className="text-xl font-semibold mb-4">Filters</h2>
-
-        {Object.keys(facets).map((facet) => (
-          <div key={facet} className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">
-              {facet.charAt(0).toUpperCase() + facet.slice(1)}
-            </h3>
-            <div className="space-y-2">
-              {facets[facet]
-                .slice(0, viewAll ? facets[facet].length : 5)
-                .map((value: string) => (
-                  <label
-                    key={value}
-                    className="flex items-center space-x-2 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedFacets[facet]?.includes(value)}
-                      onChange={() => handleFacetChange(facet, value)}
-                      className="h-5 w-5 rounded border-gray-300"
-                    />
-                    <span className="text-sm text-gray-700">{value}</span>
-                  </label>
-                ))}
-              {facets[facet].length > 5 && !viewAll && (
-                <button
-                  onClick={toggleViewAll}
-                  className="text-blue-600 underline text-sm"
-                >
-                  View All
-                </button>
-              )}
-              {viewAll && facets[facet].length > 5 && (
-                <button
-                  onClick={toggleViewAll}
-                  className="text-blue-600 underline text-sm"
-                >
-                  Show Less
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 p-6">
+    <div className="w-[90%] mx-auto p-6 font-sans flex flex-col">
+      <div>
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          🛍️ Seller Manager
+          Seller Manager
         </h1>
 
         <div className="flex flex-wrap gap-4 justify-center items-center mb-8">
           <div className="relative w-full sm:w-64">
             <input
               type="text"
-              placeholder="Search sellers..."
+              placeholder="Search Sellers"
               value={search}
               onChange={(e) => handleSearch(e.target.value)}
               className="border border-gray-300 rounded px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M11 17l-4 4m0 0l4-4m-4 4h16"
-                />
-              </svg>
-            </div>
           </div>
 
           <label className="cursor-pointer bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
@@ -295,42 +198,107 @@ export default function Home() {
             ⬇️ Download CSV
           </button>
         </div>
+      </div>
+      <div className="flex flex-row gap-2">
+        {/* Left Sidebar for Facets */}
+        <div className="w-full md:w-1/4 p-6 border-2 border-solid border-gray-200 bg-gray-50  rounded-lg mb-8 md:mb-0">
+          <h2 className="text-xl font-semibold mb-4">Filters</h2>
 
-        <div className="overflow-x-auto shadow-lg rounded-lg">
-          <table className="min-w-full table-auto border border-gray-200">
-            <thead className="bg-gray-100 text-gray-700 uppercase text-sm font-semibold">
-              <tr>
-                <th className="px-6 py-3 border">ID</th>
-                <th className="px-6 py-3 border">Name</th>
-                <th className="px-6 py-3 border">Email</th>
-                <th className="px-6 py-3 border">Location</th>
-                <th className="px-6 py-3 border">Category</th>
-                <th className="px-6 py-3 border">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredSellers.length === 0 ? (
+          {Object.keys(facets).map((facet) => (
+            <div key={facet} className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                {facet.charAt(0).toUpperCase() + facet.slice(1)}
+              </h3>
+              <div className="space-y-2">
+                {facets[facet]
+                  .slice(0, viewAll ? facets[facet].length : 5)
+                  .map((value: string) => (
+                    <label
+                      key={value}
+                      className="flex items-center space-x-2 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedFacets[facet]?.includes(value)}
+                        onChange={() => handleFacetChange(facet, value)}
+                        className="h-5 w-5 rounded border-gray-300"
+                      />
+                      <span className="text-sm text-gray-700">{value}</span>
+                    </label>
+                  ))}
+                {facets[facet].length > 5 && !viewAll && (
+                  <button
+                    onClick={toggleViewAll}
+                    className="text-blue-600 underline text-sm"
+                  >
+                    View All
+                  </button>
+                )}
+                {viewAll && facets[facet].length > 5 && (
+                  <button
+                    onClick={toggleViewAll}
+                    className="text-blue-600 underline text-sm"
+                  >
+                    Show Less
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 ">
+          <div className="overflow-x-auto rounded-lg">
+            <table className="min-w-full table-auto border-2 border-solid border-gray-200">
+              <thead className="bg-gray-100 text-gray-700 uppercase text-sm font-semibold">
                 <tr>
-                  <td colSpan={6} className="text-center py-6 text-gray-500">
-                    No sellers found.
-                  </td>
+                  <th className="px-6 py-3 border">ID</th>
+                  <th className="px-6 py-3 border">Name</th>
+                  <th className="px-6 py-3 border">Email</th>
+                  <th className="px-6 py-3 border">Location</th>
+                  <th className="px-6 py-3 border">Category</th>
+                  <th className="px-6 py-3 border">Status</th>
+                  <th className="px-6 py-3 border">Operation</th>
                 </tr>
-              ) : (
-                filteredSellers.map((seller) => (
-                  <tr key={seller.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-3 border text-center">
-                      {seller.id}
+              </thead>
+              <tbody>
+                {filteredSellers.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-6 text-gray-500">
+                      No sellers found.
                     </td>
-                    <td className="px-6 py-3 border">{seller.name}</td>
-                    <td className="px-6 py-3 border">{seller.email}</td>
-                    <td className="px-6 py-3 border">{seller.location}</td>
-                    <td className="px-6 py-3 border">{seller.category}</td>
-                    <td className="px-6 py-3 border">{seller.status}</td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  filteredSellers.map((seller) => (
+                    <tr key={seller.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-3 border text-center">
+                        {seller.id}
+                      </td>
+                      <td className="px-6 py-3 border">{seller.name}</td>
+                      <td className="px-6 py-3 border">{seller.email}</td>
+                      <td className="px-6 py-3 border">{seller.location}</td>
+                      <td className="px-6 py-3 border">{seller.category}</td>
+                      <td className="px-6 py-3 border">{seller.status}</td>
+                      <td className="px-6 py-3 border text-center space-x-2">
+                        <div className="flex gap-2 justify-center">
+                          <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                            View
+                          </button>
+                          <button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                            Edit
+                          </button>
+                          <button className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
