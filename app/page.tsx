@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useState, ChangeEvent } from "react";
 import { api } from "@/lib/axios";
-import { log } from "console";
+import { useEffect, useState, ChangeEvent } from "react";
+
+// import { api } from "@/lib/axios";
 
 type Seller = {
   id?: number;
@@ -27,17 +28,19 @@ export default function Home() {
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-    
-        
-        const res = await api.get(`/search/search_store?page=0&hitsPerPage=10&facets=city&facets=area'`);
-        const data = res.data;
-        console.log(data.facets);
-        
+         
+        console.log("hello")
+        const res = await api.get('/search/search_store?page=0&hitsPerPage=10&facets=city&facets=area');
+        const data = res.data ; 
+        console.log("mydata" , data)
+
+
         const sellers: Seller[] = data.hits.map((hit: any, index: number) => ({
-          id: index + 1,
+          id: hit.id,
           name: hit.store_name,
           email: "", // not provided
-          location: `${hit.area}, ${hit.city}`,
+          area: hit.area,
+          city : hit.city , 
           category: hit.store_types?.[0] || "",
           status: "",
         }));
@@ -53,7 +56,7 @@ export default function Home() {
           outfits: Object.entries(data.facets?.outfits || {}),
           labels: Object.entries(data.facets?.labels || {}),
         };
-        console.log(newFacets);
+        console.log("myfacets" , newFacets);
         
         // Flatten and merge as needed
         setFacets(newFacets);
@@ -71,12 +74,17 @@ export default function Home() {
   };
 
   const handleFacetChange = (facet: string, value: string) => {
+    console.log("change facet" , facet , value);
+    
     const newSelectedFacets = { ...selectedFacets };
     if (newSelectedFacets[facet]?.includes(value)) {
       newSelectedFacets[facet] = newSelectedFacets[facet].filter((v) => v !== value);
     } else {
       newSelectedFacets[facet] = [...(newSelectedFacets[facet] || []), value];
     }
+
+    console.log("new facets" , newSelectedFacets);
+    
     setSelectedFacets(newSelectedFacets);
     filterSellers(search, newSelectedFacets);
   };
@@ -135,6 +143,8 @@ export default function Home() {
         name: [...new Set(uploaded.map((s) => s.name))],
       };
       setFacets(newFacets);
+
+
     };
     reader.readAsText(file);
   };
@@ -160,7 +170,7 @@ export default function Home() {
   const toggleViewAll = () => {
     setViewAll(!viewAll);
   };
-
+   
   
 
   return (
@@ -204,26 +214,29 @@ export default function Home() {
         <div className="w-full md:w-1/4 p-6 border-2 border-solid border-gray-200 bg-gray-50  rounded-lg mb-8 md:mb-0">
           <h2 className="text-xl font-semibold mb-4">Filters</h2>
 
-          {Object.keys(facets).map((facet) => (
+          { Object.keys(facets).map((facet) => (
             <div key={facet} className="mb-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 {facet.charAt(0).toUpperCase() + facet.slice(1)}
               </h3>
               <div className="space-y-2">
+
+                
                 {facets[facet]
                   .slice(0, viewAll ? facets[facet].length : 5)
-                  .map((value: string) => (
+                  .map((value) => (
                     <label
-                      key={value}
+                      key={value[0]}
                       className="flex items-center space-x-2 cursor-pointer"
                     >
                       <input
                         type="checkbox"
-                        checked={selectedFacets[facet]?.includes(value)}
-                        onChange={() => handleFacetChange(facet, value)}
+                        checked={selectedFacets[facet]?.includes(value[0])}
+                        onChange={() => handleFacetChange(facet, value[0])}
                         className="h-5 w-5 rounded border-gray-300"
                       />
-                      <span className="text-sm text-gray-700">{value}</span>
+                      <span className="text-sm text-gray-700 text-right">{value[0]}</span>
+                      <span className="text-sm text-gray-700 text-right">{value[1]}</span>
                     </label>
                   ))}
                 {facets[facet].length > 5 && !viewAll && (
@@ -256,7 +269,8 @@ export default function Home() {
                   <th className="px-6 py-3 border">ID</th>
                   <th className="px-6 py-3 border">Name</th>
                   <th className="px-6 py-3 border">Email</th>
-                  <th className="px-6 py-3 border">Location</th>
+                  <th className="px-6 py-3 border">Area</th>
+                  <th className="px-6 py-3 border">City</th>
                   <th className="px-6 py-3 border">Category</th>
                   <th className="px-6 py-3 border">Status</th>
                   <th className="px-6 py-3 border">Operation</th>
@@ -277,7 +291,8 @@ export default function Home() {
                       </td>
                       <td className="px-6 py-3 border">{seller.name}</td>
                       <td className="px-6 py-3 border">{seller.email}</td>
-                      <td className="px-6 py-3 border">{seller.location}</td>
+                      <td className="px-6 py-3 border">{seller.area}</td>
+                      <td className="px-6 py-3 border">{seller.city}</td>
                       <td className="px-6 py-3 border">{seller.category}</td>
                       <td className="px-6 py-3 border">{seller.status}</td>
                       <td className="px-6 py-3 border text-center space-x-2">
