@@ -15,7 +15,8 @@ export default function Sidebar({ isOpen } : SidebarProps) {
     { label: "Dashboard", path: "/admin/dashboard" },
     { label: "Users", path: "/admin/users" },
     { label: "Settings", path: "/admin/settings" },
-    { label: "Section(Store Ranking)", path: "/admin/store-ranking"}
+    { label: "Curation Module", path: "/admin/curationModule" }
+    // { label: "Section(Store Ranking)", path: "/admin/store-ranking"}
   ];
 
   return (
