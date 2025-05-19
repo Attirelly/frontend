@@ -25,3 +25,32 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+
+/* InstantSearch overrides */
+.ais-RefinementList-list {
+  @apply space-y-2;
+}
+
+.ais-RefinementList-item {
+  @apply flex items-center;
+}
+
+.ais-RefinementList-checkbox {
+  @apply mr-2;
+}
+
+.ais-RefinementList-label {
+  @apply text-sm;
+}
+
+.ais-RefinementList-count {
+  @apply ml-auto text-xs text-gray-500;
+}
+
+.ais-Pagination-item--selected {
+  @apply bg-blue-600 text-white;
+}
+
+.ais-Pagination-item--disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
