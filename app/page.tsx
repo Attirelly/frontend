@@ -1,6 +1,5 @@
 "use client";
 import { api } from "@/lib/axios";
-import { log } from "console";
 import Link from "next/link";
 import { useEffect, useState, ChangeEvent } from "react";
 
@@ -111,7 +110,7 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
     const fetchSellers = async (query: string, filters: string) => {
       try {
         const res = await api.get(
-          `/search/search_store?query=${debouncedSearch}&facets=city&facets=area&facets=store_types&facets=outfits&facets=genders&facets=price_ranges&facets=age_groups&facets=rental`
+          `/search/search_store?query=${query}&facets=city&facets=area&facets=store_types&facets=outfits&facets=genders&facets=price_ranges&facets=age_groups&facets=rental`
         );
         const data = res.data;
         console.log("mydata", data);
@@ -148,7 +147,7 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
       }
     };
 
-    fetchSellers();
+    fetchSellers(debouncedSearch , "");
   }, [debouncedSearch]);
 
   const handleSearch = (query: string) => {
@@ -171,15 +170,12 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
     console.log("new facets", newSelectedFacets);
 
     setSelectedFacets(newSelectedFacets);
-    filterSellers(search, newSelectedFacets);
+    filterSellers( newSelectedFacets);
   };
 
-  const filterSellers = (searchQuery: string, selectedFacets: any) => {
+  const filterSellers = ( selectedFacets: any) => {
     const filtered = sellers.filter((seller) => {
-      const matchesSearch = (seller.name || "")
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-
+      
       const matchesFacets = Object.keys(selectedFacets).every((facet) => {
         const selected = selectedFacets[facet];
         const sellerValue = seller[facet];
@@ -197,7 +193,7 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
         }
       });
 
-      return matchesSearch && matchesFacets;
+      return  matchesFacets;
     });
 
     setFilteredSellers(filtered);
