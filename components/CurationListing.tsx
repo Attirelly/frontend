@@ -1,35 +1,64 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import { api } from '@/lib/axios';
 
 interface Curation {
-  id: number;
-  name: string;
-  type: string;
-  segment: string;
-  viewUrl: string;
+  section_id: string;
+  section_name: string;
+  section_type: string;
+  section_number: number;
+  section_url: string;
 }
 
 export default function CurationPage() {
-  const [curations, setCurations] = useState<Curation[]>([
-    {
-      id: 1,
-      name: 'Top Picks',
-      type: 'Manual',
-      segment: 'Homepage',
-      viewUrl: 'https://example.com/view/1',
-    },
-    {
-      id: 2,
-      name: 'Trending Now',
-      type: 'Automated',
-      segment: 'Sidebar',
-      viewUrl: 'https://example.com/view/2',
-    },
-  ]);
+  const [curations, setCurations] = useState<Curation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    async function fetchCurations() {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await api.get('/homepage/section'); // Replace with your backend API URL
+        // console.log('Curations:', response.data);
+        setCurations(response.data);
+      } catch (err) {
+        setError('Failed to load curations.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchCurations();
+  }, []);
+
+  const handleEdit = (section_id: string, section_name: string, section_url: string, section_type: string, section_number: number) => {
+    const query = `?curation_id=${encodeURIComponent(section_id)}&curation_name=${encodeURIComponent(section_name)}&curation_url=${encodeURIComponent(section_url)}&curation_type=${encodeURIComponent(section_type)}&curation_number=${encodeURIComponent(section_number)}`;
+    router.push(`/admin/curationModule/addStoreProduct${query}`);
+  };
+
+  const handleDelete = async (section_id: string) => {
+    const confirmed = window.confirm('Are you sure you want to delete this curation?');
+    if (!confirmed) return;
+    try {
+      await api.delete(`/homepage/section/${section_id}`);
+      alert('Curation deleted successfully.');
+      setCurations((prev) => prev.filter((curation) => curation.section_id !== section_id));
+    } catch (error) {
+      console.error('Failed to delete curation:', error);
+      alert('Failed to delete curation.');
+    }
+  };
+
+  if (loading) return <div className="p-6">Loading curations...</div>;
+  if (error) return <div className="p-6 text-red-600">{error}</div>;
 
   return (
     <div className="p-6 space-y-6">
@@ -59,13 +88,13 @@ export default function CurationPage() {
           </thead>
           <tbody>
             {curations.map((curation) => (
-              <tr key={curation.id} className="hover:bg-gray-100">
-                <td className="border px-4 py-2">{curation.name}</td>
-                <td className="border px-4 py-2">{curation.type}</td>
-                <td className="border px-4 py-2">{curation.segment}</td>
+              <tr key={curation.section_id} className="hover:bg-gray-100">
+                <td className="border px-4 py-2">{curation.section_name}</td>
+                <td className="border px-4 py-2">{curation.section_type}</td>
+                <td className="border px-4 py-2">{curation.section_number}</td>
                 <td className="border px-4 py-2">
                   <a
-                    href={curation.viewUrl}
+                    href={curation.section_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 underline"
@@ -74,10 +103,15 @@ export default function CurationPage() {
                   </a>
                 </td>
                 <td className="border px-4 py-2">
-                  <button className="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded">Edit</button>
+                  <button className="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded"
+                    onClick={() => handleEdit(curation.section_id, curation.section_name, curation.section_url, curation.section_type, curation.section_number)}>
+                    Edit
+                  </button>
                 </td>
                 <td className="border px-4 py-2">
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Delete</button>
+                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                    onClick={() => handleDelete(curation.section_id)}>
+                    Delete</button>
                 </td>
               </tr>
             ))}

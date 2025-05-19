@@ -1,12 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import { api } from '@/lib/axios';
 
 export default function CreateCurationPage() {
   const router = useRouter();
   const [curationType, setCurationType] = useState('');
   const [curationSegment, setCurationSegment] = useState('');
+  const [availableSegments, setAvailableSegments] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchUsedSegments() {
+      try {
+        const response = await api.get('/homepage/used_section'); // Replace with actual URL
+        const usedSegments: number[] = response.data;
+
+        // Filter available numbers from 1 to 9
+        const allSegments = Array.from({ length: 9 }, (_, i) => i + 1);
+        const filteredSegments = allSegments.filter(num => !usedSegments.includes(num));
+        setAvailableSegments(filteredSegments);
+      } catch (error) {
+        console.error('Failed to fetch used segments:', error);
+        alert('Error loading available segments. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUsedSegments();
+  }, []);
 
   const handleNext = () => {
     if (!curationType || !curationSegment) {
@@ -18,6 +43,8 @@ export default function CreateCurationPage() {
     router.push(`/admin/curationModule/addStoreProduct${query}`);
   };
 
+  if (loading) return <div className="p-6">Loading...</div>;
+
   return (
     <div className="min-h-screen p-6">
       {/* Header */}
@@ -25,7 +52,7 @@ export default function CreateCurationPage() {
 
       {/* Form Section */}
       <div className="max-w-2xl space-y-6">
-        {/* Row 1 */}
+        {/* Curation Type */}
         <div className="flex items-center gap-4">
           <label className="w-40 font-medium">Curation Type:</label>
           <select
@@ -39,7 +66,7 @@ export default function CreateCurationPage() {
           </select>
         </div>
 
-        {/* Row 2 */}
+        {/* Curation Segment */}
         <div className="flex items-center gap-4">
           <label className="w-40 font-medium">Curation Segment:</label>
           <select
@@ -48,11 +75,15 @@ export default function CreateCurationPage() {
             className="flex-1 border px-3 py-2 rounded"
           >
             <option value="">Select Segment</option>
-            {[...Array(9)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1}
-              </option>
-            ))}
+            {availableSegments.length > 0 ? (
+              availableSegments.map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))
+            ) : (
+              <option disabled>No available segments</option>
+            )}
           </select>
         </div>
       </div>
@@ -61,7 +92,12 @@ export default function CreateCurationPage() {
       <div className="flex justify-end mt-12">
         <button
           onClick={handleNext}
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+          disabled={!curationType || !curationSegment}
+          className={`px-6 py-2 rounded text-white ${
+            !curationType || !curationSegment
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700'
+          }`}
         >
           Next
         </button>

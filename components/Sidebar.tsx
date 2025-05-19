@@ -12,9 +12,10 @@ export default function Sidebar({ isOpen } : SidebarProps) {
   const pathname = usePathname();
 
   const links = [
-    { label: "Dashboard", path: "/admin/dashboard" },
-    { label: "Users", path: "/admin/users" },
-    { label: "Settings", path: "/admin/settings" },
+    { label: "Seller CRM", path: "/admin/sellerCRM" },
+    { label: "Customer CRM", path: "/admin/customerCRM" },
+    // { label: "Users", path: "/admin/users" },
+    // { label: "Settings", path: "/admin/settings" },
     { label: "Curation Module", path: "/admin/curationModule" }
     // { label: "Section(Store Ranking)", path: "/admin/store-ranking"}
   ];
