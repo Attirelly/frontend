@@ -23,10 +23,18 @@ export default function CustomerPage() {
   const [viewAll, setViewAll] = useState(false);
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
-  const [startDate, setStartDate] = useState(""); 
-  const [endDate, setEndDate] = useState("");     
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const isSelected = (id: string) => selectedCustomerIds.includes(id);
+  const hasFilters = search ||debouncedSearch || startDate || endDate;
+
+  const clearAllFilters = () => {
+    setSearch("") ; 
+    setDebouncedSearch("");
+    setStartDate("");
+    setEndDate("");
+  };
 
   // Debounce search input
   useEffect(() => {
@@ -70,19 +78,18 @@ export default function CustomerPage() {
       const query = searchQuery.toLowerCase();
 
       const nameMatch = (customer.name || "").toLowerCase().includes(query);
-      const mobileMatch = (customer.contact_number || "").toLowerCase().includes(query); // assuming mobile is a string
-
+      const mobileMatch = (customer.contact_number || "")
+        .toLowerCase()
+        .includes(query); // assuming mobile is a string
 
       const customerDate = new Date(customer.created_at);
       const start = startDate ? new Date(startDate) : null;
       const end = endDate ? new Date(endDate) : null;
 
       const inRange =
-        (!start || customerDate >= start) &&
-        (!end || customerDate <= end);
+        (!start || customerDate >= start) && (!end || customerDate <= end);
 
       return (nameMatch || mobileMatch) && inRange;
-
     });
 
     setFilteredCustomers(filtered);
@@ -180,7 +187,7 @@ export default function CustomerPage() {
               className="border border-gray-300 rounded px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-        
+
           <label className="cursor-pointer bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
             Upload CSV
             <input
@@ -203,7 +210,7 @@ export default function CustomerPage() {
         {/* Left Sidebar for Facets */}
         <div className="w-full md:w-[20%] p-6 border-2 border-solid border-gray-200 bg-gray-50 rounded-lg mb-8 md:mb-0">
           <h2 className="text-xl font-semibold mb-4">Filters</h2>
-           <div>
+          <div>
             <div>Start Date</div>
             <input
               type="date"
@@ -223,6 +230,32 @@ export default function CustomerPage() {
               className="border border-gray-300 rounded px-4 py-2"
               placeholder="End Date"
             />
+          </div>
+          <div>
+        
+            {/* Clear All Filters Button - Only shows when filters are active */}
+            {hasFilters && (
+              <button 
+                onClick={clearAllFilters}
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition flex items-center gap-2 mt-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                Clear All
+              </button>
+            )}
           </div>
         </div>
 
