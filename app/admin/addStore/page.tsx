@@ -5,7 +5,7 @@ import axios from 'axios';
 import SearchableSelect from '@/components/SearchableSelect';
 
 type Store = {
-  id: number;
+  id: string;
   store_name: string;
 };
 
@@ -19,12 +19,24 @@ export default function AddStorePriorityPage() {
   const [storeType, setStoreType] = useState('');
   const [location, setLocation] = useState('');
   const [subLocation, setSubLocation] = useState('');
+  const [section, setSection] = useState('');
 
   const [storeTypeOptions, setStoreTypeOptions] = useState<Option[]>([]);
   const [locationOptions, setLocationOptions] = useState<Option[]>([]);
   const [subLocationOptions, setSubLocationOptions] = useState<Option[]>([]);
-  const [stores, setStores] = useState<Store[]>([]);
+  const [storeOptions, setStoreOptions] = useState<Option[]>([]);
+  const [sectionOptions, setSectionOptions] = useState<Option[]>([]);
 
+  useEffect(() => {
+    axios.get('http://localhost:8000/homepage/section').then((response) =>{
+      console.log(response);
+        const sections = response.data.map((section: any) => ({
+          label: section.description,
+          value: section.section_id,
+        }));
+        setSectionOptions(sections);
+    })
+  }, []);
   useEffect(() => {
     axios.get('http://localhost:8000/stores/store_types').then((res) => {
       console.log(res);
@@ -68,39 +80,59 @@ export default function AddStorePriorityPage() {
 
   useEffect(() => {
     if (subLocation) {
+      console.log('Fetching stores for subLocation:', subLocation);
       axios
         .get(`http://localhost:8000/homepage/stores_by_area/${subLocation}`)
         .then((res) => {
+          console.log(res);
           const storesData = res.data.map((store: any) => ({
-            id: store.id,
-            store_name: store.store_name,
+            label: store.store_name,
+            value: store.store_id,
           }));
-          setStores(storesData);
+          setStoreOptions(storesData);
         });
     } else {
-      setStores([]); // Clear if no sublocation selected
+      setStoreOptions([]); // Clear if no sublocation selected
     }
-  }, []);
-
-  const storeOptions = stores.map((store) => ({
-    label: store.store_name,
-    value: store.id.toString(),
-  }));
+  }, [subLocation]);
 
 
-  const handleAdd = () => {
-    console.log({
-      selectedStore,
-      storeType,
-      location,
-      subLocation,
-    });
-    // You can send this data to your backend API here
+  const handleAdd = async () => {
+    // console.log({
+    //   section,
+    //   selectedStore,
+    //   storeType,
+    //   location,
+    //   subLocation,
+    // });
+
+    if (!section || !selectedStore || !storeType || !location || !subLocation){
+      alert('Please fill all fields')
+      return
+    }
+    try{
+      const response = await axios.post('http://localhost:8000/homepage/section_store', null ,{ 
+        params : {section_id: section, store_id: selectedStore}
+      });
+      alert('Store added successfully!');
+      setSelectedStore(''); // Clear the store selection
+    }
+    catch (err: any) {
+      console.error(err);
+      alert('Failed to add store to section');
+    }
   };
 
   return (
     <div className="p-6 max-w-xl mx-auto space-y-6">
-      <h2 className="text-2xl font-bold text-center">Add Store Priority</h2>
+      <h2 className="text-2xl font-bold text-center">Add Stores</h2>
+
+      <SearchableSelect
+        label="Select Section"
+        options={sectionOptions}
+        value={section}
+        onChange={setSection}
+        />
 
       <SearchableSelect
         label="Store Type"

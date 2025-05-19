@@ -1,34 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-interface Seller {
-  id: number;
-  name: string;
-  category: string;
-  sortOrder: number;
-  date: string;
+interface RowData {
+  store_id: string;
+  store_name: string;
+  section_name: string;
+  section_id: string;
 }
 
-const initialData: Seller[] = Array.from({ length: 30 }, (_, i) => ({
-  id: i + 1,
-  name: `Seller ${i + 1}`,
-  category: `Section ${2 + (i % 3)}`,
-  sortOrder: i + 1,
-  date: new Date().toISOString().split('T').join(' ').split('.')[0],
-}));
+// const initialData: Seller[] = Array.from({ length: 30 }, (_, i) => ({
+//   id: i + 1,
+//   name: `Seller ${i + 1}`,
+//   category: `Section ${2 + (i % 3)}`,
+//   sortOrder: i + 1,
+//   date: new Date().toISOString().split('T').join(' ').split('.')[0],
+// }));
 
 export default function StoreRankingPanel() {
+  const [data, setData] = useState<RowData[]>([]);
   const [search, setSearch] = useState('');
   const [entries, setEntries] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
   // Filter sellers by search
-  const filtered = initialData.filter((seller) =>
-    seller.name.toLowerCase().includes(search.toLowerCase())
-  );
+  
 
+  
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/homepage/section_store_details').then((res) => {
+      console.log(res);
+      setData(res.data);
+    });
+  }, []);
+
+  const filtered = data.filter((store) =>
+    store.store_name.toLowerCase().includes(search.toLowerCase()) ||
+    store.section_name.toLowerCase().includes(search.toLowerCase())
+  );
   const totalPages = Math.ceil(filtered.length / entries);
   const startIndex = (currentPage - 1) * entries;
   const endIndex = startIndex + entries;
@@ -43,10 +55,14 @@ export default function StoreRankingPanel() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
+
+
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">View Store Ranking</h2>
         <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" 
-        onClick={()=>router.push('/admin/addRankedStore')}>Add</button>
+        onClick={()=>router.push('/admin/addSection')}>Add Section</button>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" 
+        onClick={()=>router.push('/admin/addStore')}>Add Store</button>
       </div>
 
       {/* Center Heading */}
@@ -99,24 +115,22 @@ export default function StoreRankingPanel() {
           <thead className="bg-gray-200 text-left">
             <tr>
               <th className="border px-4 py-2">#</th>
-              <th className="border px-4 py-2">Seller Name</th>
-              <th className="border px-4 py-2">Category</th>
-              <th className="border px-4 py-2">Sort Order</th>
-              <th className="border px-4 py-2">Date</th>
+              <th className="border px-4 py-2">Store Name</th>
+              <th className="border px-4 py-2">Section Name</th>
               <th className="border px-4 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {currentData.map((seller, idx) => (
-              <tr key={seller.id} className="hover:bg-gray-100">
+            {currentData.map((store, idx) => (
+              <tr key={idx} className="hover:bg-gray-100">
                 <td className="border px-4 py-2">{startIndex + idx + 1}</td>
-                <td className="border px-4 py-2">{seller.name}</td>
-                <td className="border px-4 py-2">{seller.category}</td>
-                <td className="border px-4 py-2">{seller.sortOrder}</td>
-                <td className="border px-4 py-2">{seller.date}</td>
+                <td className="border px-4 py-2">{store.store_name}</td>
+                <td className="border px-4 py-2">{store.section_name}</td>
+
                 <td className="border px-4 py-2 space-x-2">
                   <button className="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded">Edit</button>
                   <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Delete</button>
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">View</button>
                 </td>
               </tr>
             ))}
