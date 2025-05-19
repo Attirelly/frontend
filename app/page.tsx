@@ -35,7 +35,19 @@ export default function Home() {
   const [facets, setFacets] = useState<{ [key: string]: string[] }>({});
   const [viewAll, setViewAll] = useState(false);
   const [selectedSellerIds, setSelectedSellerIds] = useState<string[]>([]);
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
   const isSelected = (id: string) => selectedSellerIds.includes(id);
+
+
+  useEffect(() => {
+  const handler = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 500);
+
+  return () => {
+    clearTimeout(handler);
+  };
+}, [search]);
 
   const handleCheckboxChange = (id: string) => {
 
@@ -99,7 +111,7 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
     const fetchSellers = async (query: string, filters: string) => {
       try {
         const res = await api.get(
-          "/search/search_store?facets=city&facets=area&facets=store_types&facets=outfits&facets=genders&facets=price_ranges&facets=age_groups&facets=rental"
+          `/search/search_store?query=${debouncedSearch}&facets=city&facets=area&facets=store_types&facets=outfits&facets=genders&facets=price_ranges&facets=age_groups&facets=rental`
         );
         const data = res.data;
         console.log("mydata", data);
@@ -137,11 +149,11 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
     };
 
     fetchSellers();
-  }, []);
+  }, [debouncedSearch]);
 
   const handleSearch = (query: string) => {
     setSearch(query);
-    filterSellers(query, selectedFacets);
+    // filterSellers(query, selectedFacets);
   };
 
   const handleFacetChange = (facet: string, value: string) => {
