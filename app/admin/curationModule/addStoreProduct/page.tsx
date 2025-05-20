@@ -1,4 +1,8 @@
-import AddStoreProduct  from "@/components/AddStoreProducts";
+import AddStoreProduct from "@/components/AddStoreProducts";
+
 export default function AddStoreProductPage() {
-    // return <AddStoreProduct />
+  return (
+
+      <AddStoreProduct />
+  );
 }
