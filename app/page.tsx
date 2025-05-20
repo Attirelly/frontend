@@ -1,9 +1,7 @@
 "use client";
 import { api } from "@/lib/axios";
 import Link from "next/link";
-import { useEffect, useState, ChangeEvent } from "react";
-
-// import { api } from "@/lib/axios";
+import { useEffect, useState, ChangeEvent, useMemo } from "react";
 
 type Seller = {
   id?: string;
@@ -22,11 +20,18 @@ type Seller = {
   store_types?: string[];
   outfits?: string[];
   genders?: string[];
+  created_at?: Date;
+};
+
+type SortConfig = {
+  key: keyof Seller;
+  direction: 'ascending' | 'descending';
 };
 
 export default function Home() {
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
+  const [displayedSellers, setDisplayedSellers] = useState<Seller[]>([]);
   const [search, setSearch] = useState("");
   const [selectedFacets, setSelectedFacets] = useState<{
     [key: string]: string[];
@@ -35,90 +40,82 @@ export default function Home() {
   const [viewAll, setViewAll] = useState(false);
   const [selectedSellerIds, setSelectedSellerIds] = useState<string[]>([]);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+ 
   const isSelected = (id: string) => selectedSellerIds.includes(id);
 
-
+  // Debounce search input
   useEffect(() => {
-  const handler = setTimeout(() => {
-    setDebouncedSearch(search);
-  }, 500);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
 
-  return () => {
-    clearTimeout(handler);
-  };
-}, [search]);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
 
+  // Handle checkbox selection
   const handleCheckboxChange = (id: string) => {
-
-    console.log("testing checkbox")
     setSelectedSellerIds((prev) =>
       prev.includes(id)
         ? prev.filter((sellerId) => sellerId !== id)
-        : [...prev, id] 
+        : [...prev, id]
     );
   };
 
   // Handle bulk status change
-const handleBulkStatusChange = async (newStatus: boolean) => {
-  // 1. Create a true copy of current state
-  const originalFilteredSellers = JSON.parse(JSON.stringify(filteredSellers));
-  const originalSellers = JSON.parse(JSON.stringify(sellers)) ; 
-  
-  // 2. Optimistic update with new array reference
-  const updatedFilteredSellers = filteredSellers.map(seller => 
-    selectedSellerIds.includes(seller.id!)
-      ? { ...seller, status: newStatus } // Create new object
-      : { ...seller } // Also clone unchanged sellers
-  );
-   const updatedSellers = sellers.map(seller => 
-    selectedSellerIds.includes(seller.id!)
-      ? { ...seller, status: newStatus } // Create new object
-      : { ...seller } // Also clone unchanged sellers
-  );
+  const handleBulkStatusChange = async (newStatus: boolean) => {
+    const originalFilteredSellers = JSON.parse(JSON.stringify(filteredSellers));
+    const originalSellers = JSON.parse(JSON.stringify(sellers));
 
-  
-  // 3. Force state update with new array
-  setSellers(updatedSellers);
-  setFilteredSellers(updatedFilteredSellers)
+    const updatedFilteredSellers = filteredSellers.map(
+      (seller) =>
+        selectedSellerIds.includes(seller.id!)
+          ? { ...seller, status: newStatus }
+          : { ...seller }
+    );
+    const updatedSellers = sellers.map(
+      (seller) =>
+        selectedSellerIds.includes(seller.id!)
+          ? { ...seller, status: newStatus }
+          : { ...seller }
+    );
 
-  try {
-    // 4. API call with proper error handling
-    const response = await api.patch("/stores/bulk-active", {
-      ids: selectedSellerIds,
-      active: newStatus
-    });
-        
-    // 5. Clear selection only after success
-    setSelectedSellerIds([]);
-    
-    // 6. Single success notification
-    alert(`Successfully ${newStatus ? "activated" : "deactivated"} stores`);
-    
-  } catch (error) {
-    // 7. Proper rollback
-    console.error("Update failed:", error);
-    setSellers(originalSellers);
-    setFilteredSellers(originalFilteredSellers)
-    alert("Failed to update stores. Changes reverted.");
-  }
-};
+    setSellers(updatedSellers);
+    setFilteredSellers(updatedFilteredSellers);
+
+    try {
+      const response = await api.patch("/stores/bulk-active", {
+        ids: selectedSellerIds,
+        active: newStatus,
+      });
+
+      setSelectedSellerIds([]);
+      alert(`Successfully ${newStatus ? "activated" : "deactivated"} stores`);
+    } catch (error) {
+      console.error("Update failed:", error);
+      setSellers(originalSellers);
+      setFilteredSellers(originalFilteredSellers);
+      alert("Failed to update stores. Changes reverted.");
+    }
+  };
+
+  // Fetch sellers data
   useEffect(() => {
-  console.log("Sellers state changed:", sellers);
-}, [sellers]);
-  useEffect(() => {
-    console.log("hello test")
     const fetchSellers = async (query: string, filters: string) => {
       try {
         const res = await api.get(
           `/search/search_store?query=${query}&facets=city&facets=area&facets=store_types&facets=outfits&facets=genders&facets=price_ranges&facets=age_groups&facets=rental`
         );
         const data = res.data;
-        console.log("mydata", data);
 
         const sellers: Seller[] = data.hits.map((hit: any, index: number) => ({
           id: hit.id,
           name: hit.store_name,
-          email: hit.registered_email, // not provided
+          email: hit.registered_email,
           area: hit.area,
           address: hit.address,
           city: hit.city,
@@ -138,26 +135,24 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
           genders: Object.entries(data.facets?.genders || {}),
           outfits: Object.entries(data.facets?.outfits || {}),
         };
-        console.log("myfacets", newFacets);
 
-        // Flatten and merge as needed
         setFacets(newFacets);
       } catch (error) {
         console.error("Failed to fetch sellers:", error);
       }
     };
 
-    fetchSellers(debouncedSearch , "");
+    fetchSellers(debouncedSearch, "");
   }, [debouncedSearch]);
 
+  // Handle search
   const handleSearch = (query: string) => {
     setSearch(query);
-    // filterSellers(query, selectedFacets);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
+  // Handle facet selection
   const handleFacetChange = (facet: string, value: string) => {
-    console.log("change facet", facet, value);
-
     const newSelectedFacets = { ...selectedFacets };
     if (newSelectedFacets[facet]?.includes(value)) {
       newSelectedFacets[facet] = newSelectedFacets[facet].filter(
@@ -167,38 +162,34 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
       newSelectedFacets[facet] = [...(newSelectedFacets[facet] || []), value];
     }
 
-    console.log("new facets", newSelectedFacets);
-
     setSelectedFacets(newSelectedFacets);
-    filterSellers( newSelectedFacets);
+    filterSellers(newSelectedFacets);
+    setCurrentPage(1); // Reset to first page on new filter
   };
 
-  const filterSellers = ( selectedFacets: any) => {
+  // Filter sellers based on selected facets
+  const filterSellers = (selectedFacets: any) => {
     const filtered = sellers.filter((seller) => {
-      
       const matchesFacets = Object.keys(selectedFacets).every((facet) => {
         const selected = selectedFacets[facet];
-        const sellerValue = seller[facet];
-        console.log("sellervalue", seller);
+        const sellerValue = seller[facet as keyof Seller];
 
         if (selected.length === 0) return true;
 
         if (Array.isArray(sellerValue)) {
-          // Check if at least one selected value is in seller's values
-          console.log("hello");
           return sellerValue.some((val) => selected.includes(val));
         } else {
-          // Single value case
           return selected.includes(sellerValue);
         }
       });
 
-      return  matchesFacets;
+      return matchesFacets;
     });
 
     setFilteredSellers(filtered);
   };
 
+  // Handle CSV upload
   const handleUploadCSV = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -224,6 +215,7 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
 
       setSellers(uploaded);
       setFilteredSellers(uploaded);
+      setCurrentPage(1);
 
       const newFacets = {
         location: [...new Set(uploaded.map((s) => s.location))],
@@ -237,6 +229,7 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
     reader.readAsText(file);
   };
 
+  // Handle CSV download
   const handleDownloadCSV = () => {
     const header = "id,name,email,location,category,status\n";
     const rows = filteredSellers
@@ -255,8 +248,55 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
     URL.revokeObjectURL(url);
   };
 
+  // Toggle view all facets
   const toggleViewAll = () => {
     setViewAll(!viewAll);
+  };
+
+  // Request sort
+  const requestSort = (key: keyof Seller) => {
+    let direction: 'ascending' | 'descending' = 'ascending';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Sort sellers
+  const sortedSellers = useMemo(() => {
+    if (!sortConfig) return filteredSellers;
+
+    return [...filteredSellers].sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+
+      // Handle array values by joining them for comparison
+      const aString = Array.isArray(aValue) ? aValue.join(', ') : String(aValue || '');
+      const bString = Array.isArray(bValue) ? bValue.join(', ') : String(bValue || '');
+
+      if (aString < bString) {
+        return sortConfig.direction === 'ascending' ? -1 : 1;
+      }
+      if (aString > bString) {
+        return sortConfig.direction === 'ascending' ? 1 : -1;
+      }
+      return 0;
+    });
+  }, [filteredSellers, sortConfig]);
+
+  // Pagination logic
+  const totalItems = sortedSellers.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = sortedSellers.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  // Get sort direction indicator
+  const getSortIndicator = (key: keyof Seller) => {
+    if (!sortConfig || sortConfig.key !== key) return null;
+    return sortConfig.direction === 'ascending' ? '↑' : '↓';
   };
 
   return (
@@ -297,12 +337,14 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
           <button
             onClick={() => handleBulkStatusChange(true)}
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+            disabled={selectedSellerIds.length === 0}
           >
             Mark Active ({selectedSellerIds.length})
           </button>
           <button
             onClick={() => handleBulkStatusChange(false)}
             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+            disabled={selectedSellerIds.length === 0}
           >
             Mark Inactive ({selectedSellerIds.length})
           </button>
@@ -310,7 +352,7 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
       </div>
       <div className="flex flex-row gap-2">
         {/* Left Sidebar for Facets */}
-        <div className="w-full md:w-[20%] p-6 border-2 border-solid border-gray-200 bg-gray-50  rounded-lg mb-8 md:mb-0">
+        <div className="w-full md:w-[20%] p-6 border-2 border-solid border-gray-200 bg-gray-50 rounded-lg mb-8 md:mb-0">
           <h2 className="text-xl font-semibold mb-4">Filters</h2>
 
           {Object.keys(facets).map((facet) => (
@@ -333,9 +375,8 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
                         className="h-5 w-5 rounded border-gray-300"
                       />
                       <span className="text-sm text-gray-700 text-right">
-                        {value[0]}
+                        {value[0]} ({value[1]})
                       </span>
-                      {/* <span className="text-sm text-gray-700 text-right">{value[1]}</span> */}
                     </label>
                   ))}
                 {facets[facet].length > 5 && !viewAll && (
@@ -362,6 +403,27 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
         {/* Main Content */}
         <div className="flex-1 overflow-x-auto">
           <div className="min-w-[1000px]">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-600">
+                  Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} of {totalItems} sellers
+                </span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="border border-gray-300 rounded px-2 py-1 text-sm"
+                >
+                  <option value="5">5 per page</option>
+                  <option value="10">10 per page</option>
+                  <option value="20">20 per page</option>
+                  <option value="50">50 per page</option>
+                </select>
+              </div>
+            </div>
+
             <table className="min-w-full table-auto border-2 border-solid border-gray-200">
               <thead className="bg-gray-100 text-gray-700 uppercase text-sm font-semibold">
                 <tr>
@@ -371,41 +433,76 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
                       onChange={(e) =>
                         setSelectedSellerIds(
                           e.target.checked
-                            ? filteredSellers.map((s) => s.id!).filter(Boolean)
+                            ? currentItems.map((s) => s.id!).filter(Boolean)
                             : []
                         )
                       }
                       checked={
-                        selectedSellerIds.length === filteredSellers.length &&
-                        filteredSellers.length > 0
+                        selectedSellerIds.length > 0 &&
+                        currentItems.every((seller) => selectedSellerIds.includes(seller.id!))
                       }
                     />
                   </th>
-                  <th className="px-6 py-3 border">Name</th>
-                  <th className="px-6 py-3 border">Email</th>
-                  <th className="px-6 py-3 border">Area</th>
-                  <th className="px-6 py-3 border">City</th>
+                  <th 
+                    className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
+                    onClick={() => requestSort('name')}
+                  >
+                    <div className="flex items-center">
+                      Name {getSortIndicator('name')}
+                    </div>
+                  </th>
+                  <th 
+                    className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
+                    onClick={() => requestSort('email')}
+                  >
+                    <div className="flex items-center">
+                      Email {getSortIndicator('email')}
+                    </div>
+                  </th>
+                  <th 
+                    className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
+                    onClick={() => requestSort('area')}
+                  >
+                    <div className="flex items-center">
+                      Area {getSortIndicator('area')}
+                    </div>
+                  </th>
+                  <th 
+                    className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
+                    onClick={() => requestSort('city')}
+                  >
+                    <div className="flex items-center">
+                      City {getSortIndicator('city')}
+                    </div>
+                  </th>
                   <th className="px-6 py-3 border">Store Type</th>
                   <th className="px-6 py-3 border">Outfits</th>
                   <th className="px-6 py-3 border">Gender</th>
-                  <th className="px-6 py-3 border">Status</th>
+                  <th 
+                    className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
+                    onClick={() => requestSort('status')}
+                  >
+                    <div className="flex items-center">
+                      Status {getSortIndicator('status')}
+                    </div>
+                  </th>
                   <th className="px-6 py-3 border">Operation</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredSellers.length === 0 ? (
+                {currentItems.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-6 text-gray-500">
+                    <td colSpan={10} className="text-center py-6 text-gray-500">
                       No sellers found.
                     </td>
                   </tr>
                 ) : (
-                  filteredSellers.map((seller) => (
+                  currentItems.map((seller) => (
                     <tr key={seller.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3 border text-center">
                         <input
                           type="checkbox"
-                          checked={isSelected(seller.id)}
+                          checked={isSelected(seller.id!)}
                           onChange={() => handleCheckboxChange(seller.id!)}
                         />
                       </td>
@@ -422,22 +519,22 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
                       <td className="px-6 py-3 border">
                         {seller?.genders?.join(" , ")}
                       </td>
-                        <td className="px-6 py-3 border">
+                      <td className="px-6 py-3 border">
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          seller.status 
+                            ? "bg-green-100 text-green-800" 
+                            : "bg-red-100 text-red-800"
+                        }`}>
                           {seller.status ? "Active" : "Inactive"}
-                        </td>
+                        </span>
+                      </td>
                       <td className="px-6 py-3 border text-center space-x-2">
                         <div className="flex gap-2 justify-center">
                           <Link href={`/store/${seller.id}`}>
-                            <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                            <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
                               View
                             </button>
                           </Link>
-                          {/* <button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
-                            Edit
-                          </button>
-                          <button className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
-                            Delete
-                          </button> */}
                         </div>
                       </td>
                     </tr>
@@ -445,6 +542,70 @@ const handleBulkStatusChange = async (newStatus: boolean) => {
                 )}
               </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            <div className="flex justify-between items-center mt-4">
+              <div>
+                <span className="text-sm text-gray-600">
+                  Page {currentPage} of {totalPages}
+                </span>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => paginate(1)}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-200 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                >
+                  First
+                </button>
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-200 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                >
+                  Previous
+                </button>
+                
+                {/* Page numbers */}
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => paginate(pageNum)}
+                      className={`px-3 py-1 rounded ${currentPage === pageNum ? 'bg-blue-600 text-white' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-200 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                >
+                  Next
+                </button>
+                <button
+                  onClick={() => paginate(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-200 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                >
+                  Last
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

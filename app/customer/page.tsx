@@ -25,6 +25,9 @@ export default function CustomerPage() {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  
+
+
 
   const isSelected = (id: string) => selectedCustomerIds.includes(id);
   const hasFilters = search ||debouncedSearch || startDate || endDate;
