@@ -21,7 +21,7 @@ export default function PhotosPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        // <div className="min-h-screen bg-gray-100">
             <div className="max-w-2xl space-y-6 bg-white p-6 rounded-2xl shadow-sm">
                 <div>
                     <h1 className="text-lg font-semibold">Photos</h1>
@@ -65,6 +65,6 @@ export default function PhotosPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        // </div>
     );
 }
