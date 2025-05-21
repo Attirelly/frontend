@@ -21,9 +21,9 @@ export default function BusinessDetailsComponent() {
     };
 
     return (
-        <div className="space-y-8 p-6 max-w-3xl mx-auto bg-gray-100">
+        <div className="space-y-8 max-w-3xl mx-auto bg-gray-100">
             {/* Container 1 */}
-            <div className="border p-6 rounded-2xl shadow-sm bg-white">
+            <div className="p-6 rounded-2xl shadow-sm bg-white">
                 <h2 className="text-lg font-semibold mb-1">Brand owner details</h2>
                 <p className="text-sm text-gray-500 mb-4">
                     This is for internal data, your customers won't see this.
@@ -68,7 +68,7 @@ export default function BusinessDetailsComponent() {
             </div>
 
             {/* Container 2 */}
-            <div className="border p-6 rounded-lg shadow-sm bg-white">
+            <div className="p-6 rounded-lg shadow-sm bg-white">
                 <h2 className="text-lg font-semibold mb-1">Brand details</h2>
                 <p className="text-sm text-gray-500 mb-4">
                     Customers will see these details on Attirelly
@@ -175,7 +175,7 @@ export default function BusinessDetailsComponent() {
             </div>
 
             {/* Container 3 */}
-            <div className="border p-6 rounded-2xl shadow-sm bg-white">
+            <div className="p-6 rounded-2xl shadow-sm bg-white">
                 <div>
                     <h2 className="text-lg font-semibold">Brand location</h2>
                     <p className="text-sm text-gray-500">

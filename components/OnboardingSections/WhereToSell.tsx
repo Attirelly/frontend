@@ -34,7 +34,7 @@ export default function WhereToSellComponent() {
   const [selected, setSelected] = useState('offline');
 
   return (
-    <div className="border rounded-lg p-6 space-y-6 max-w-2xl shadow-sm bg-white">
+    <div className="rounded-2xl p-6 space-y-6 max-w-2xl shadow-sm bg-white">
       <div>
         <h2 className="text-lg font-semibold">Select where you want to sell</h2>
         <p className="text-sm text-gray-500">

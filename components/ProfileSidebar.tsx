@@ -41,7 +41,7 @@ export default function ProfileSidebar({
   onSelect: (id: string) => void;
 }) {
   return (
-    <div className="border bg-white p-4 rounded-2xl w-full max-w-sm self-start">
+    <div className="bg-white p-4 rounded-2xl w-full max-w-sm self-start">
       <h2 className="text-lg font-semibold mb-4">Complete your profile</h2>
       {sections.map((section) => (
         <div

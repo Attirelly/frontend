@@ -25,9 +25,9 @@ export default function SellerOnboardingPage() {
    return (
     <div className="min-h-screen bg-gray-100">
       <Header />
-      <div className="flex flex-col md:flex-row gap-6 p-6">
+      <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <ProfileSidebar selected={activeSection} onSelect={setActiveSection} />
-        <div >{renderSection()}</div>
+        <div className='flex rounded-md w-full max-w-xl justify-center'>{renderSection()}</div>
       </div>
     </div>
   );

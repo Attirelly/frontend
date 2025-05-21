@@ -62,7 +62,7 @@ export default function PriceFiltersComponent() {
   };
 
   return (
-    <div className="border p-6 rounded-lg shadow-sm space-y-6 max-w-xl bg-white">
+    <div className="p-6 rounded-2xl shadow-sm space-y-6 max-w-xl bg-white">
       <div>
         <h2 className="text-lg font-semibold">Price filters</h2>
         <p className="text-sm text-gray-500">
