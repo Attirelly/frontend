@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
-import { useFormValidation } from '@/components/FormValidationContext';
+// import { useFormValidation } from '@/components/FormValidationContext';
+import { useSellerStore } from '@/store/sellerStore';
 
 type Props = {
   onNext: () => void;
@@ -16,7 +17,7 @@ export default function NextPrevNavigation({ onNext, onBack, isFirst, isLast }: 
     // socialLinksValid,
     // priceFiltersValid,
     // etc.
-  } = useFormValidation();
+  } = useSellerStore();
 
   const handleNextClick = () => {
     if (!businessDetailsValid) {

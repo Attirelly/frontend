@@ -3,6 +3,8 @@ import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { send } from 'process';
+import { useSellerStore } from '@/store/sellerStore'
+import { api } from '@/lib/axios'
 
 export default function SellerSignup() {
     const [phone, setPhone] = useState('');
@@ -10,6 +12,7 @@ export default function SellerSignup() {
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
     const [agreed, setAgreed] = useState(false);
     const [sendOTP, setSendOTP] = useState(false);
+    const { setSellerId } = useSellerStore()
 
     const isPhoneValid = /^\d{10}$/.test(phone);
     // const isOTPValid = /^\d{6}$/.test(otp);
@@ -36,7 +39,7 @@ export default function SellerSignup() {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sendOTP) {
             const fullOtp = otp.join('');
@@ -44,12 +47,36 @@ export default function SellerSignup() {
                 alert('Please enter a valid 6-digit OTP');
                 return;
             }
-            console.log('OTP:', fullOtp);
+            if (fullOtp === '123456') {
+                try {
+                    const payload = {
+                        "contact_number": phone.toString(),
+                        "role": "admin"
+                    }
+                    const response = await api.post('/users/register_user', payload)
+
+                    console.log(response)
+                    const newSellerId = response.data.id
+                    console.log(newSellerId)
+                    setSellerId(newSellerId)
+                    
+                    router.push('/seller_signup/sellerOnboarding');
+                }
+                catch (error) {
+                    console.error('Error fetching stores by section:', error);
+                }
+            }
+            else {
+                alert('wrong otp');
+                return;
+            }
+
+
 
             // send api to verify otp 
 
             // if success
-            router.push('/seller_signup/sellerOnboarding');
+
 
             // if failure
             // alert('Invalid OTP. Please try again.');
