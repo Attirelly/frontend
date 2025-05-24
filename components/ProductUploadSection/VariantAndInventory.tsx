@@ -1,12 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { useFormActions, useFormData } from "@/store/product_upload_store";
 
-export default function VariantAndInventory(){
-    const [sizeOptions, setSizeOptions] = useState('');
-  const [autoSku, setAutoSku] = useState<'yes' | 'no'>('yes');
-  const [colorChoice, setColorChoice] = useState('');
-  const [inventoryQty, setInventoryQty] = useState('');
+export default function VariantAndInventory() {
+  const { variants } = useFormData();
+  const { updateFormData } = useFormActions();
+  const [sizeOptions, setSizeOptions] = useState(variants?.sizeOptions || "");
+  const [autoSku, setAutoSku] = useState<"yes" | "no">(variants?.autoSku || "yes");
+  const [colorChoice, setColorChoice] = useState(variants?.colorChoice || "");
+  const [inventoryQty, setInventoryQty] = useState(variants?.inventoryQty ||"");
+
+  useEffect(() => {
+    updateFormData("variants", {
+      sizeOptions,
+      autoSku,
+      colorChoice,
+      inventoryQty,
+    });
+  }, [sizeOptions, autoSku, colorChoice, inventoryQty, updateFormData]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg self-start">
@@ -17,7 +29,9 @@ export default function VariantAndInventory(){
         {/* Column 1 */}
         <div className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Size options</label>
+            <label className="block text-sm font-medium mb-1">
+              Size options
+            </label>
             <input
               type="text"
               value={sizeOptions}
@@ -28,15 +42,17 @@ export default function VariantAndInventory(){
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Auto-generated SKU combinations</label>
+            <label className="block text-sm font-medium mb-1">
+              Auto-generated SKU combinations
+            </label>
             <div className="flex gap-4 mt-2 align-center">
               <label className="flex items-center gap-1">
                 <input
                   type="radio"
                   name="autoSku"
                   value="yes"
-                  checked={autoSku === 'yes'}
-                  onChange={() => setAutoSku('yes')}
+                  checked={autoSku === "yes"}
+                  onChange={() => setAutoSku("yes")}
                 />
                 Yes
               </label>
@@ -45,8 +61,8 @@ export default function VariantAndInventory(){
                   type="radio"
                   name="autoSku"
                   value="no"
-                  checked={autoSku === 'no'}
-                  onChange={() => setAutoSku('no')}
+                  checked={autoSku === "no"}
+                  onChange={() => setAutoSku("no")}
                 />
                 No
               </label>
@@ -57,7 +73,9 @@ export default function VariantAndInventory(){
         {/* Column 2 */}
         <div className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Color choice</label>
+            <label className="block text-sm font-medium mb-1">
+              Color choice
+            </label>
             <input
               type="text"
               value={colorChoice}
@@ -68,7 +86,9 @@ export default function VariantAndInventory(){
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Inventory quantity per SKU</label>
+            <label className="block text-sm font-medium mb-1">
+              Inventory quantity per SKU
+            </label>
             <input
               type="number"
               value={inventoryQty}
