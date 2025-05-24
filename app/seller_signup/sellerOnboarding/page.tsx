@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
 
+import { useSellerStore } from '@/store/sellerStore'
+
 // Components
 import Header from '@/components/Header';
 import ProfileSidebar from '@/components/ProfileSidebar';
@@ -10,12 +12,20 @@ import PriceFiltersComponent from '@/components/OnboardingSections/PriceFilters'
 import WhereToSellComponent from '@/components/OnboardingSections/WhereToSell';
 import StorePhotosComponent from '@/components/OnboardingSections/StorePhotos';
 import NextPrevNavigation from '@/components/OnboardingSections/NextPrevNavigation';
-import { FormValidationProvider } from '@/components/FormValidationContext';
 
 export default function SellerOnboardingPage() {
-    const sectionOrder = ['brand','price',  'market', 'social','photos'];
+  const sectionOrder = ['brand', 'price', 'market', 'social', 'photos'];
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const activeSection = sectionOrder[currentSectionIndex];
+  const {sellerId, businessDetailsValid, businessDetailsData} = useSellerStore();
+  // if(!sellerId){
+  //   const confirmed = window.confirm('to continue please register first')
+  //   if (confirmed){
+  //     // route to register
+  //   } 
+  //   return;
+  // }
+  console.log(sellerId)
 
   const renderSection = () => {
     switch (activeSection) {
@@ -35,9 +45,19 @@ export default function SellerOnboardingPage() {
   };
 
   const goToNextSection = () => {
-    if (currentSectionIndex < sectionOrder.length - 1) {
-      setCurrentSectionIndex(currentSectionIndex + 1);
+    if (activeSection === 'brand' && businessDetailsValid && businessDetailsData) {
+        console.log(businessDetailsData);
+        const seller_up_payload={
+          "email" : businessDetailsData.ownerEmail,
+          "name" : businessDetailsData.ownerName
+        } 
+        const store_cr_payload={
+          
+        } 
     }
+    // if (currentSectionIndex < sectionOrder.length - 1) {
+    //   setCurrentSectionIndex(currentSectionIndex + 1);
+    // }
   };
 
   const goToPreviousSection = () => {
@@ -52,24 +72,32 @@ export default function SellerOnboardingPage() {
   };
 
   return (
-    <FormValidationProvider>
-    <div className="min-h-screen bg-gray-100">
-      <Header />
-      <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
-        <ProfileSidebar selected={activeSection} onSelect={handleSidebarSelect} />
+    // <FormValidationProvider>
+      <div className="min-h-screen bg-gray-100">
+        <Header
+          title='Attirelly'
+          actions={
+            <div>
+              <a href="tel:+919738383838" className="text-blue-500 text-sm hover:underline">
+                Need help? Call +91 97-38-38-38-38
+              </a>
+            </div>
+          } />
+        <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
+          <ProfileSidebar selected={activeSection} onSelect={handleSidebarSelect} />
 
-        <div className="flex flex-col w-full max-w-2xl gap-6">
-          <div className="rounded-md bg-gray-100">{renderSection()}</div>
+          <div className="flex flex-col w-full max-w-2xl gap-6">
+            <div className="rounded-md bg-gray-100">{renderSection()}</div>
 
-          <NextPrevNavigation
-            onNext={goToNextSection}
-            onBack={goToPreviousSection}
-            isFirst={currentSectionIndex === 0}
-            isLast={currentSectionIndex === sectionOrder.length - 1}
-          />
+            <NextPrevNavigation
+              onNext={goToNextSection}
+              onBack={goToPreviousSection}
+              isFirst={currentSectionIndex === 0}
+              isLast={currentSectionIndex === sectionOrder.length - 1}
+            />
+          </div>
         </div>
       </div>
-    </div>
-    </FormValidationProvider>
+    // </FormValidationProvider>
   );
 }
