@@ -72,8 +72,8 @@ import { useCurrentStep, useFormActions } from "@/store/product_upload_store";
 
 const sectionOrder = [
   "key_details",
-  "attributes",
   "category_and_subcategory",
+  "attributes",
   "pricing_and_availability",
   "variants_and_inventory",
   "media_and_assets",
@@ -99,22 +99,22 @@ export default function ProductUploadSideBar() {
         </li>
         <li>
           <button
-            onClick={() => setCurrentStep(1)}
-            className={`w-full text-left px-3 py-2 rounded-md text-sm ${
-              currentStep === 1 ? 'bg-gray-100 font-medium' : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            Attributes
-          </button>
-        </li>
-        <li>
-          <button
             onClick={() => setCurrentStep(2)}
             className={`w-full text-left px-3 py-2 rounded-md text-sm ${
               currentStep === 2 ? 'bg-gray-100 font-medium' : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
             Category and sub-category
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={() => setCurrentStep(1)}
+            className={`w-full text-left px-3 py-2 rounded-md text-sm ${
+              currentStep === 1 ? 'bg-gray-100 font-medium' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Attributes
           </button>
         </li>
         <li>

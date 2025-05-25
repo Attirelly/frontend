@@ -1,14 +1,38 @@
 // stores/useProductFormStore.ts
+import transformFormToApiPayload from '@/utils/convert';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type FormData = {
-  keyDetails?: Record<string, any>;
-  attributes?: Record<string, any>;
-  category?: Record<string, any>;
-  pricing?: Record<string, any>;
-  variants?: Record<string, any>;
-  media?: Record<string, any>;
+  keyDetails?: {
+    productName?: string;
+    productDescription?: string;
+    skuID?: string;
+    brand?: {
+      id: string;
+      name: string;
+    };
+    store?: {
+      id: string;
+      name: string;
+    };
+  };
+  attributes?: {
+    attributes?: Record<string, string>;
+  };
+  category?: Record<string, string>;
+  pricing?: {
+    storeListPrice?: number;
+  };
+  variants?: {
+    colorChoice?: string;
+    sizeOptions?: string;
+    colorId?: string;
+    sizeId?: string;
+  };
+  media?: {
+    productImage?: string;
+  };
 };
 
 interface ProductFormStore {
@@ -68,13 +92,16 @@ export const useProductFormStore = create<ProductFormStore>()(
           });
         },
         submitForm: async () => {
-          const { formData, draftId } = get();
+          const { formData , draftId } = get();
           // Submit to your API
           // await fetch('/api/products', {
           //   method: 'POST',
           //   body: JSON.stringify(formData)
           // });
-          console.log('Form submitted:', formData);
+          const typedFormData = formData as FormData;
+          console.log(formData) ; 
+          let data = transformFormToApiPayload(formData as FormData) ; 
+          console.log("api_data"  , data)
         }
       }
     }),

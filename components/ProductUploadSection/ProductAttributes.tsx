@@ -2,46 +2,103 @@
 
 import { useEffect, useState } from 'react';
 import { useFormActions, useFormData } from '@/store/product_upload_store';
+import { api } from '@/lib/axios';
+
+interface AttributeValue {
+  id: string;
+  value: string;
+}
+
+interface Attribute {
+  name: string;
+  values: AttributeValue[];
+}
+
+interface FormAttributes {
+  [key: string]: {
+    value: string;
+    id: string;
+  };
+}
+
+interface FormState {
+  productName: string;
+  productDescription: string;
+  attributes: FormAttributes;
+}
 
 const ProductAttributes = () => {
-  // Get form data and actions from Zustand store
-  const { attributes } = useFormData();
+  const { attributes: formAttributes } = useFormData();
   const { updateFormData } = useFormActions();
 
-  // Initialize local state with stored values or defaults
-  const [formState, setFormState] = useState({
-    productName: attributes?.productName || '',
-    productDescription: attributes?.productDescription || '',
-    selectedFit: attributes?.selectedFit || 'straight',
-    selectedFabric: attributes?.selectedFabric || ''
+  const [attributes, setAttributes] = useState<Attribute[]>([]);
+  const [formState, setFormState] = useState<FormState>({
+    productName: formAttributes?.productName || '',
+    productDescription: formAttributes?.productDescription || '',
+    attributes: formAttributes?.attributes || {}
   });
+
+  // Fetch attributes from API
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const response = await api.get('attributes/attributes_category/90b9eef7-d5d4-429e-bb14-77f0f2c3c0c5');
+        const data = await response.data;
+        console.log("API Response:", data);
+        
+        setAttributes(data);
+        
+        // Initialize form state with both value and valueId
+        const initialAttributes = data.reduce((acc: FormAttributes, attr: Attribute) => {
+          acc[attr.name] = {
+            value: formAttributes?.attributes?.[attr.name]?.value || '',
+            id: formAttributes?.attributes?.[attr.name]?.id || ''
+          };
+          return acc;
+        }, {});
+        
+        setFormState(prev => ({
+          ...prev,
+          attributes: initialAttributes
+        }));
+      } catch (error) {
+        console.error('Error fetching attributes:', error);
+      }
+    };
+    
+    fetchAttributes();
+  }, []);
 
   // Save to Zustand store when form changes
   useEffect(() => {
     updateFormData('attributes', formState);
   }, [formState, updateFormData]);
 
-  const fitOptions = [
-    { value: 'narrow', label: 'Narrow' },
-    { value: 'loose', label: 'Loose fit' },
-    { value: 'straight', label: 'Straight' },
-    { value: 'exhibition', label: 'Exhibition' },
-  ];
-
-  const fabricOptions = [
-    { value: '', label: 'Choose the fabric type', disabled: true },
-    { value: 'cotton', label: 'Cotton' },
-    { value: 'polyester', label: 'Polyester' },
-    { value: 'wool', label: 'Wool' },
-    { value: 'silk', label: 'Silk' },
-  ];
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormState(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    if (name === 'productName' || name === 'productDescription') {
+      setFormState(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    } else {
+      // For select elements, get the selected option's data-id
+      const selectElement = e.target as HTMLSelectElement;
+      const selectedOption = selectElement.selectedOptions[0];
+      const id = selectedOption.getAttribute('data-id') || '';
+      
+      setFormState(prev => ({
+        ...prev,
+        attributes: {
+          ...prev.attributes,
+          [name]: {
+            value,
+            id
+          }
+        }
+      }));
+    }
   };
 
   return (
@@ -53,22 +110,31 @@ const ProductAttributes = () => {
         <div className="border-b border-gray-200 mb-4"></div>
       </div>
       
-      {/* Fit Dropdown */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Fit</label>
-        <select
-          name="selectedFit"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          value={formState.selectedFit}
-          onChange={handleChange}
-        >
-          {fitOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Dynamic Attribute Dropdowns */}
+      {attributes.map((attribute) => (
+        <div key={attribute.name} className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+            {attribute.name}
+          </label>
+          <select
+            name={attribute.name}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            value={formState.attributes[attribute.name]?.value || ''}
+            onChange={handleChange}
+          >
+            <option value="">Select {attribute.name}</option>
+            {attribute.values.map((val) => (
+              <option 
+                key={val.id} 
+                value={val.value}
+                data-id={val.id}
+              >
+                {val.value}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
       
       {/* Product Name Input */}
       <div className="mb-6">
@@ -94,27 +160,6 @@ const ProductAttributes = () => {
           value={formState.productDescription}
           onChange={handleChange}
         />
-      </div>
-      
-      {/* Fabric Dropdown */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Fabric</label>
-        <select
-          name="selectedFabric"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          value={formState.selectedFabric}
-          onChange={handleChange}
-        >
-          {fabricOptions.map((option) => (
-            <option
-              key={option.value}
-              value={option.value}
-              disabled={option.disabled}
-            >
-              {option.label}
-            </option>
-          ))}
-        </select>
       </div>
     </div>
   );
