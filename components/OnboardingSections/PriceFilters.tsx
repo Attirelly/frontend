@@ -1,65 +1,85 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSellerStore } from '@/store/sellerStore'
 
-const PRICE_TIERS = [
-  { label: 'Affordable', range: 'Rs 2,000 – 25,000' },
-  { label: 'Premium', range: 'Rs 25,000 – 75,000' },
-  { label: 'Luxury', range: 'Rs 75,000 & above' },
-];
+import { api } from '@/lib/axios';
 
-const DesignerPriceRange = ({
-  selectedRanges,
-  setSelectedRanges,
-  sectionIndex,
-}: {
-  selectedRanges: string[];
-  setSelectedRanges: (index: number, values: string[]) => void;
-  sectionIndex: number;
-}) => {
-  const toggleCheckbox = (label: string) => {
-    const updated = selectedRanges.includes(label)
-      ? selectedRanges.filter((item) => item !== label)
-      : [...selectedRanges, label];
+interface StoreType {
+  id: string;
+  store_type: string;
+}
 
-    setSelectedRanges(sectionIndex, updated);
-  };
+interface PriceRange {
+  id: string;
+  label: string;
+}
 
-  return (
-    <div className="space-y-3">
-      <p className="text-sm font-medium">Designer label</p>
-      {PRICE_TIERS.map((tier) => (
-        <label
-          key={tier.label}
-          className={`flex items-center gap-2 p-3 rounded-md border ${
-            selectedRanges.includes(tier.label)
-              ? 'bg-black text-white border-black'
-              : 'bg-white text-gray-700 border-gray-300'
-          } cursor-pointer`}
-        >
-          <input
-            type="checkbox"
-            checked={selectedRanges.includes(tier.label)}
-            onChange={() => toggleCheckbox(tier.label)}
-            className="hidden"
-          />
-          <span className="font-medium">{tier.label}:</span>
-          <span>{tier.range}</span>
-        </label>
-      ))}
-    </div>
-  );
+const PRICE_RANGE_TEXT: Record<string, string> = {
+  Affordable: "Rs 2,000 - 25,000",
+  Premium: "Rs 25,000 - 75,000",
+  Luxury: "Rs 75,000 & above",
 };
 
 export default function PriceFiltersComponent() {
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [sections, setSections] = useState<string[][]>([['Luxury']]);
+  const { storeId, setPriceFiltersData, setPriceFiltersValid , priceFiltersData} = useSellerStore();
 
-  const setSelectedRanges = (index: number, values: string[]) => {
-    const updated = [...sections];
-    updated[index] = values;
-    setSections(updated);
+  const [minPrice, setMinPrice] = useState(priceFiltersData?.avgPriceMin.toString() || '');
+  const [maxPrice, setMaxPrice] = useState(priceFiltersData?.avgPriceMax.toString() || '');
+  const [storeTypes, setStoreTypes] = useState<StoreType[]>([]);
+  const [priceRanges, setPriceRanges] = useState<PriceRange[]>([]);
+  const [selectedPrices, setSelectedPrices] = useState<Record<string, string>>(priceFiltersData?.priceRanges || {});
+  console.log(storeId, storeTypes, priceRanges)
+  useEffect(() => {
+    if (!storeId) return;
+
+    const fetchData = async () => {
+      try {
+        const [storeRes, priceRangeRes] = await Promise.all([
+          api.get(`/stores/${storeId}`),
+          api.get(`/stores/price_ranges`)
+        ]);
+        const storeData = storeRes.data;
+        if (storeData?.store_types) {
+          setStoreTypes(storeData.store_types);
+        }
+        setPriceRanges(priceRangeRes.data);
+      } catch (error) {
+        console.error("Error fetching store types or price ranges", error);
+      }
+    };
+
+    fetchData();
+  }, [storeId]);
+
+
+
+
+  const handleSelect = (storeTypeId: string, priceRangeId: string) => {
+    setSelectedPrices((prev) => ({ ...prev, [storeTypeId]: priceRangeId }));
   };
+  console.log(selectedPrices)
+
+  useEffect(() => {
+    const allStoreTypesSelected = storeTypes.every((storeType) =>
+      selectedPrices[storeType.id]
+    );
+
+    const isValid =
+      minPrice.trim() !== "" &&
+      maxPrice.trim() !== "" &&
+      allStoreTypesSelected;
+
+    setPriceFiltersValid(isValid);
+
+    if (isValid) {
+      setPriceFiltersData({
+        avgPriceMin: Number(minPrice),
+        avgPriceMax: Number(maxPrice),
+        priceRanges: selectedPrices
+      });
+    }
+  }, [minPrice, maxPrice, selectedPrices, storeTypes]);
+
 
   return (
     <div className="p-6 rounded-2xl shadow-sm space-y-6 max-w-xl bg-white">
@@ -75,7 +95,7 @@ export default function PriceFiltersComponent() {
           <label className="block text-sm font-medium mb-1">Average price for brand</label>
           <div className="flex gap-2">
             <input
-              type="text"
+              type="number"
               placeholder="2000"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
@@ -83,7 +103,7 @@ export default function PriceFiltersComponent() {
             />
             <span className="self-center">-</span>
             <input
-              type="text"
+              type="number"
               placeholder="25000"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
@@ -93,16 +113,39 @@ export default function PriceFiltersComponent() {
         </div>
       </div>
 
-      <div className="space-y-4">
-        {sections.map((selected, idx) => (
-          <DesignerPriceRange
-            key={idx}
-            selectedRanges={selected}
-            setSelectedRanges={setSelectedRanges}
-            sectionIndex={idx}
-          />
+      <div className="space-y-6">
+        {storeTypes.map((storeType) => (
+          <div key={storeType.id}>
+            <h3 className="text-lg font-semibold mb-2">{storeType.store_type}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {priceRanges.map((price) => {
+                const isSelected = selectedPrices[storeType.id] === price.id;
+                return (
+                  <label
+                    key={price.id}
+                    className={`border rounded-lg p-4 cursor-pointer transition ${isSelected ? "border-blue-600 bg-blue-100" : "border-gray-300"
+                      }`}
+                  >
+                    <input
+                      type="radio"
+                      name={`price-${storeType.id}`}  // group by store type
+                      value={price.id}
+                      checked={isSelected}
+                      onChange={() => handleSelect(storeType.id, price.id)}
+                      className="hidden"
+                    />
+                    <div className="font-medium">{price.label}</div>
+                    <div className="text-sm text-gray-600">
+                      {PRICE_RANGE_TEXT[price.label] || "N/A"}
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
         ))}
       </div>
+
     </div>
   );
 }

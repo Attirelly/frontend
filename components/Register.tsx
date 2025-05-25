@@ -12,7 +12,7 @@ export default function SellerSignup() {
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
     const [agreed, setAgreed] = useState(false);
     const [sendOTP, setSendOTP] = useState(false);
-    const { setSellerId } = useSellerStore()
+    const { setSellerId, setSellerNumber } = useSellerStore()
 
     const isPhoneValid = /^\d{10}$/.test(phone);
     // const isOTPValid = /^\d{6}$/.test(otp);
@@ -93,6 +93,7 @@ export default function SellerSignup() {
             }
             const confirmed = window.confirm('Please confirm you phone number');
             if (!confirmed) return;
+            setSellerNumber(phone);
             setSendOTP(true);
             // Handle sending OTP
             alert(`OTP sent to ${phone}`);

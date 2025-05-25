@@ -15,15 +15,36 @@ export default function NextPrevNavigation({ onNext, onBack, isFirst, isLast }: 
     businessDetailsValid,
     // Add other validations here as needed, like:
     // socialLinksValid,
-    // priceFiltersValid,
+    priceFiltersValid,
+    priceFiltersData,
+    activeSection,
+    socialLinksValid
     // etc.
   } = useSellerStore();
 
   const handleNextClick = () => {
-    if (!businessDetailsValid) {
+
+    if (activeSection === 'brand' && !businessDetailsValid) {
       alert('Please fill all mandatory fields in Business Details.');
       return;
     }
+    if (activeSection === 'price') {
+      if (!priceFiltersValid) {
+        alert('Please fill all mandatory fields in Price Filters');
+        return;
+      }
+      if (priceFiltersData) {
+        if (priceFiltersData.avgPriceMax < priceFiltersData.avgPriceMin) {
+          alert('Minimum Price can not be more than Maximum Price')
+          return;
+        }
+      }
+    }
+    if (activeSection === 'social' && !socialLinksValid) {
+      alert('Please fill all mandatory fields in Social Links');
+      return;
+    }
+
     onNext();
   };
 
@@ -40,14 +61,14 @@ export default function NextPrevNavigation({ onNext, onBack, isFirst, isLast }: 
         <div />
       )}
 
-      {!isLast && (
-        <button
-          onClick={handleNextClick}
-          className="px-4 py-2 rounded bg-black text-white hover:bg-gray-800"
-        >
-          Next
-        </button>
-      )}
+
+      <button
+        onClick={handleNextClick}
+        className="px-4 py-2 rounded bg-black text-white hover:bg-gray-800"
+      >
+        Next
+      </button>
+
     </div>
   );
 }
