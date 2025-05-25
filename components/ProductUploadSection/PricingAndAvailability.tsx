@@ -1,12 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useFormActions, useFormData } from '@/store/product_upload_store';
 
-export default function PricingAndAvailability(){
-    const [MRP, setMRP] = useState(0);
-  const [rent , setRent] = useState<'yes' | 'no'>('yes');
-  const [storeListPrice, setStoreListPrice] = useState(0);
-  const [status, setStatus] = useState('');
+export default function PricingAndAvailability() {
+  // Get form data from Zustand store
+  const { pricing } = useFormData();
+  const { updateFormData } = useFormActions();
+
+  // Initialize state with stored values or defaults
+  const [MRP, setMRP] = useState(pricing?.MRP || 0);
+  const [rent, setRent] = useState<'yes' | 'no'>(pricing?.rent || 'yes');
+  const [storeListPrice, setStoreListPrice] = useState(pricing?.storeListPrice || 0);
+  const [status, setStatus] = useState(pricing?.status || '');
+
+  // Save to Zustand store when values change
+  useEffect(() => {
+    updateFormData('pricing', {
+      MRP,
+      rent,
+      storeListPrice,
+      status
+    });
+  }, [MRP, rent, storeListPrice, status, updateFormData]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg self-start">
