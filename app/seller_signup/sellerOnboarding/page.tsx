@@ -9,6 +9,7 @@ import PriceFiltersComponent from '@/components/OnboardingSections/PriceFilters'
 import WhereToSellComponent from '@/components/OnboardingSections/WhereToSell';
 import StorePhotosComponent from '@/components/OnboardingSections/StorePhotos';
 import NextPrevNavigation from '@/components/OnboardingSections/NextPrevNavigation';
+import { useEffect } from 'react';
 
 const sectionOrder = ['brand', 'price', 'market', 'social', 'photos'];
 
@@ -17,6 +18,7 @@ export default function SellerOnboardingPage() {
     sellerId,
     businessDetailsValid,
     businessDetailsData,
+    setBusinessDetailsData,
     setStoreId,
     storeId,
     priceFiltersData,
@@ -29,6 +31,8 @@ export default function SellerOnboardingPage() {
     setFurthestStep,
     storePhotosData
   } = useSellerStore();
+
+  
 
   const currentSectionIndex = sectionOrder.indexOf(activeSection ?? 'brand');
 
@@ -58,6 +62,8 @@ export default function SellerOnboardingPage() {
       const store_payload = {
         store_owner_id: sellerId,
         store_name: businessDetailsData.brandName,
+        pincode: businessDetailsData.pinCode,
+        whatsapp_number: businessDetailsData.businessWpNum,
         store_address: businessDetailsData.brandAddress,
         rental: businessDetailsData.rentOutfits === 'Yes',
         store_types: businessDetailsData.brandTypes,
@@ -86,6 +92,7 @@ export default function SellerOnboardingPage() {
       const price_payload = {
         average_price_min: priceFiltersData.avgPriceMin,
         average_price_max: priceFiltersData.avgPriceMax,
+        store_type_price_range_links: priceFiltersData.priceRanges
       };
       try {
         await api.put(`/stores/${storeId}`, price_payload);
@@ -111,7 +118,8 @@ export default function SellerOnboardingPage() {
     if (activeSection === 'social' && socialLinksValid && socialLinksData) {
       const social_payload = {
         "instagram_link": socialLinksData.instagramUrl,
-        "facebook_link": socialLinksData.facebookUrl
+        "facebook_link": socialLinksData.facebookUrl,
+        "shopify_url" : socialLinksData.websiteUrl
       }
       try {
         await api.put(`/stores/${storeId}`, social_payload);

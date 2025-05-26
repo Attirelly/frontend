@@ -37,7 +37,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   const [selectedGenderTypes, setSelectedGenderTypes] = useState<GenderType[]>(businessDetailsData?.genders || []);
 
   const [rentOutfits, setRentOutfits] = useState<string | null>(businessDetailsData?.rentOutfits || null);
-  console.log(sellerId);
+  console.log(businessDetailsData);
 
   const [cities, setCities] = useState<City[]>([]);
   const [cityOptions, setCityOptions] = useState<SelectOption[]>([]);
@@ -56,6 +56,11 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   const [pinCode, setPinCode] = useState(businessDetailsData?.pinCode || '');
   const [brandAddress, setBrandAddress] = useState(businessDetailsData?.brandAddress || '');
 
+  useEffect(() => {
+  if (sameAsOwner) {
+    setBusinessWpNum(sellerNumber || '');
+  }
+}, [sameAsOwner, sellerNumber]);
 
 
   useEffect(() => {
@@ -179,7 +184,7 @@ useEffect(() => {
         city: selectedCity,
         area: selectedArea,
         pinCode,
-        brandAddress
+        brandAddress,
       });
     }
   }, [
@@ -227,12 +232,14 @@ useEffect(() => {
           <input
             type="text"
             disabled={sameAsOwner}
-            defaultValue={sellerNumber || ''}
+            value={businessWpNum}
+            onChange={(e) => setBusinessWpNum(e.target.value)}
+            // defaultValue={sellerNumber || ''}
             className="w-full border rounded px-3 py-2"
             placeholder="+91-8949389493"
           />
           <label className="text-sm flex items-center gap-2">
-            <input type="checkbox" checked={sameAsOwner} onChange={() => setSameAsOwner(!sameAsOwner)} />
+            <input type="checkbox" checked={sameAsOwner} onChange={(e) => setSameAsOwner(e.target.checked)} />
             Same as owner number
           </label>
         </div>

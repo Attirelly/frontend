@@ -3,12 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useSellerStore } from '@/store/sellerStore';
 
 export default function SocialLinksComponent() {
-    const {setSocialLinksData, setSocialLinksValid, socialLinksData} = useSellerStore();
-  const [instagramUsname, setInstagramUsname] = useState(socialLinksData?.instagramUsname || '');  
+  const { setSocialLinksData, setSocialLinksValid, socialLinksData } = useSellerStore();
+  const [instagramUsname, setInstagramUsname] = useState(socialLinksData?.instagramUsname || '');
   const [instagramUrl, setInstagramUrl] = useState('');
   const [websiteUrl, setWebsiteUrl] = useState(socialLinksData?.websiteUrl || '');
   const [facebookUrl, setFacebookUrl] = useState(socialLinksData?.facebookUrl || '');
-  
+
   console.log(socialLinksData);
   const handleInstagramChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const username = e.target.value.trim().replace(/^@/, '');
@@ -20,12 +20,16 @@ export default function SocialLinksComponent() {
     const isValid = instagramUrl !== '' && websiteUrl !== '' && facebookUrl !== '';
     setSocialLinksValid(isValid);
     console.log('setting data');
-    setSocialLinksData({
-      instagramUsname,
-      instagramUrl,
-      facebookUrl,
-      websiteUrl
-    });
+    console.log(instagramUrl)
+    if (isValid) {
+      setSocialLinksData({
+        instagramUsname,
+        instagramUrl,
+        facebookUrl,
+        websiteUrl
+      });
+    }
+
   }, [instagramUrl, websiteUrl, facebookUrl, setSocialLinksData, setSocialLinksValid])
 
   return (
@@ -56,7 +60,7 @@ export default function SocialLinksComponent() {
 
         {/* Website URL */}
         <div>
-          <label className="block text-sm font-medium mb-1">Website URL<span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium mb-1">Shopify URL<span className="text-red-500">*</span></label>
           <input
             type="url"
             className="w-full border rounded-md px-3 py-2"

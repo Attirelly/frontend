@@ -14,6 +14,11 @@ interface PriceRange {
   label: string;
 }
 
+type StoreTypePriceRange = {
+  store_type: string;
+  price_range: string;
+}
+
 const PRICE_RANGE_TEXT: Record<string, string> = {
   Affordable: "Rs 2,000 - 25,000",
   Premium: "Rs 25,000 - 75,000",
@@ -21,13 +26,14 @@ const PRICE_RANGE_TEXT: Record<string, string> = {
 };
 
 export default function PriceFiltersComponent() {
-  const { storeId, setPriceFiltersData, setPriceFiltersValid , priceFiltersData} = useSellerStore();
+  const { storeId, setPriceFiltersData, setPriceFiltersValid, priceFiltersData } = useSellerStore();
+  console.log(priceFiltersData)
 
   const [minPrice, setMinPrice] = useState(priceFiltersData?.avgPriceMin.toString() || '');
   const [maxPrice, setMaxPrice] = useState(priceFiltersData?.avgPriceMax.toString() || '');
   const [storeTypes, setStoreTypes] = useState<StoreType[]>([]);
   const [priceRanges, setPriceRanges] = useState<PriceRange[]>([]);
-  const [selectedPrices, setSelectedPrices] = useState<Record<string, string>>(priceFiltersData?.priceRanges || {});
+  const [selectedPrices, setSelectedPrices] = useState<StoreTypePriceRange[]>(priceFiltersData?.priceRanges || []);
   console.log(storeId, storeTypes, priceRanges)
   useEffect(() => {
     if (!storeId) return;
@@ -52,33 +58,36 @@ export default function PriceFiltersComponent() {
   }, [storeId]);
 
 
-
+  
 
   const handleSelect = (storeTypeId: string, priceRangeId: string) => {
-    setSelectedPrices((prev) => ({ ...prev, [storeTypeId]: priceRangeId }));
+    setSelectedPrices((prev) => {
+      const updated = prev.filter((item) => item.store_type !== storeTypeId);
+      return [...updated, { store_type: storeTypeId, price_range: priceRangeId }];
+    });
   };
   console.log(selectedPrices)
 
   useEffect(() => {
-    const allStoreTypesSelected = storeTypes.every((storeType) =>
-      selectedPrices[storeType.id]
-    );
+  const allStoreTypesSelected = storeTypes.every((storeType) =>
+    selectedPrices.some((entry) => entry.store_type === storeType.id)
+  );
 
-    const isValid =
-      minPrice.trim() !== "" &&
-      maxPrice.trim() !== "" &&
-      allStoreTypesSelected;
+  const isValid =
+    minPrice.trim() !== "" &&
+    maxPrice.trim() !== "" &&
+    allStoreTypesSelected;
 
-    setPriceFiltersValid(isValid);
+  setPriceFiltersValid(isValid);
 
-    if (isValid) {
-      setPriceFiltersData({
-        avgPriceMin: Number(minPrice),
-        avgPriceMax: Number(maxPrice),
-        priceRanges: selectedPrices
-      });
-    }
-  }, [minPrice, maxPrice, selectedPrices, storeTypes]);
+  if (isValid) {
+    setPriceFiltersData({
+      avgPriceMin: Number(minPrice),
+      avgPriceMax: Number(maxPrice),
+      priceRanges: selectedPrices,
+    });
+  }
+}, [minPrice, maxPrice, selectedPrices, storeTypes]);
 
 
   return (
@@ -119,7 +128,9 @@ export default function PriceFiltersComponent() {
             <h3 className="text-lg font-semibold mb-2">{storeType.store_type}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {priceRanges.map((price) => {
-                const isSelected = selectedPrices[storeType.id] === price.id;
+                const isSelected = selectedPrices.some(
+                  (entry) => entry.store_type === storeType.id && entry.price_range === price.id
+                );
                 return (
                   <label
                     key={price.id}

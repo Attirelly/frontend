@@ -17,6 +17,7 @@ type Area = { id: string, name: string, city_id: string }
 export default function SellerDashboardPage() {
   const {
     setStoreId,
+    storeId,
     sellerNumber,
     sellerId,
     sellerName,
@@ -33,6 +34,9 @@ export default function SellerDashboardPage() {
     const fetchInitialData = async () => {
       try {
         const response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } })
+        
+
+        
 
         const storeData = response.data;
 
@@ -43,39 +47,48 @@ export default function SellerDashboardPage() {
 
         setStoreId(storeData.store_id)
 
+        const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id : storeData.store_id}});
+        console.log(priceRangeRes);
+
         setBusinessDetailsData({
-          ownerName: sellerName,
-          ownerEmail: sellerEmail,
-          brandName: storeData.store_name,
-          businessWpNum: storeData.whatsapp_number,
-          brandTypes: storeData.store_types,
-          genders: storeData.genders,
+          ownerName: sellerName || '',
+          ownerEmail: sellerEmail || '',
+          brandName: storeData.store_name || '',
+          businessWpNum: storeData.whatsapp_number || '',
+          brandTypes: storeData.store_types || [],
+          genders: storeData.genders || [],
           rentOutfits: storeData.rental === true ? 'Yes' : 'No',
-          city: cityData,
-          area: areaData,
-          pinCode: '123456',
-          brandAddress: storeData.store_address
+          city: cityData || [],
+          area: areaData || [],
+          pinCode: storeData.pincode || '',
+          brandAddress: storeData.store_address || ''
         });
 
         setPriceFiltersData({
           avgPriceMin: storeData.average_price_min,
           avgPriceMax: storeData.average_price_max,
-          priceRanges: {}
+          priceRanges: priceRangeRes.data 
         });
-        
-        setWhereToSellData({ 
-          isOnline : storeData.is_online === true ? true : true, 
-          isBoth : false
+
+        setWhereToSellData({
+          isOnline: storeData.is_online === true ? true : true,
+          isBoth: false
         });
 
         setSocialLinksData({
-      instagramUsname : storeData.instagram_link,
-      instagramUrl : storeData.instagram_link,
-      facebookUrl : storeData.facebook_link,
-      websiteUrl : 'jbads'
-    });
+          instagramUsname: storeData.instagram_link ? new URL(storeData.instagram_link).pathname.split('/').filter(Boolean)[0] : null,
+          instagramUrl: storeData.instagram_link || '',
+          facebookUrl: storeData.facebook_link || '',
+          websiteUrl: storeData.shopify_url || ''
+        });
+
+        setStorePhotosData({
+          profileUrl: storeData.profile_image || '',
+          bannerUrl: storeData.listing_page_image || ''
+        });
 
       } catch (error) {
+        console.error('Error fetching initial data:', error);
         alert('error fetching data, signin again');
       }
     };

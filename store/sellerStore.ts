@@ -26,6 +26,11 @@ type Area = {
   city_id : string | null
 }
 
+type StoreTypePriceRange = {
+  store_type: string;
+  price_range: string;
+};
+
 type BusinessDetailsData = {
   ownerName: string | null;
   ownerEmail: string | null;
@@ -36,14 +41,14 @@ type BusinessDetailsData = {
   rentOutfits: string | null;
   city: City[];
   area: Area[];
-  pinCode: string;
+  pinCode: string | null;
   brandAddress: string | null;
 };
 
 type PriceFiltersData = {
   avgPriceMin : number,
   avgPriceMax : number,
-  priceRanges : Record<string, string>
+  priceRanges : StoreTypePriceRange[]
 }
 
 type WhereToSellData = {
@@ -109,6 +114,8 @@ type SellerState = {
 
   storePhotosData : StorePhotosData | null;
   setStorePhotosData: (data: StorePhotosData) => void;
+
+  resetSellerStore: () => void;
 }
 
 export const useSellerStore = create<SellerState>((set) => ({
@@ -159,6 +166,25 @@ export const useSellerStore = create<SellerState>((set) => ({
   setSocialLinksValid: (valid) => set({ socialLinksValid: valid }),
 
   storePhotosData: null,
-  setStorePhotosData: (data) => set({ storePhotosData: data })
+  setStorePhotosData: (data) => set({ storePhotosData: data }),
+
+  resetSellerStore: () =>
+    set({
+      furthestStep: 0,
+      sellerNumber: null,
+      sellerId: null,
+      sellerName: null,
+      sellerEmail: null,
+      storeId: null,
+      activeSection: 'brand',
+      businessDetailsValid: false,
+      businessDetailsData: null,
+      priceFiltersValid: false,
+      priceFiltersData: null,
+      whereToSellData: null,
+      socialLinksData: null,
+      socialLinksValid: false,
+      storePhotosData: null,
+    }),
 
 }))

@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { send } from 'process';
@@ -13,6 +13,11 @@ export default function SellerSignup() {
     const [agreed, setAgreed] = useState(false);
     const [sendOTP, setSendOTP] = useState(false);
     const { setSellerId, setSellerNumber } = useSellerStore()
+    const resetSellerStore = useSellerStore((state) => state.resetSellerStore);
+  useEffect(() => {
+    // Reset everything when component mounts (optional)
+    resetSellerStore();
+  }, []);
 
     const isPhoneValid = /^\d{10}$/.test(phone);
     // const isOTPValid = /^\d{6}$/.test(otp);

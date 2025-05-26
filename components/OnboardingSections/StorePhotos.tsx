@@ -13,8 +13,8 @@ interface UploadResponse {
 export default function PhotosPage() {
   const { storePhotosData, setStorePhotosData } = useSellerStore();
 
-  const [bannerUrl, setBannerUrl] = useState('');
-  const [profileUrl, setProfileUrl] = useState('');
+  const [bannerUrl, setBannerUrl] = useState(storePhotosData?.bannerUrl || '');
+  const [profileUrl, setProfileUrl] = useState(storePhotosData?.profileUrl || '');
   const [bannerUploading, setBannerUploading] = useState(false);
   const [profileUploading, setProfileUploading] = useState(false);
   const [bannerProgress, setBannerProgress] = useState(0);
