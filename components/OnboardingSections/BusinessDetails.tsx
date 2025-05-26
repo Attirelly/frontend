@@ -26,7 +26,8 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     setBusinessDetailsValid,
     setBusinessDetailsData,
     businessDetailsData,
-    sellerNumber } = useSellerStore();
+    sellerNumber,
+  sellerId } = useSellerStore();
   const [sameAsOwner, setSameAsOwner] = useState(true);
 
   const [brandTypes, setBrandTypes] = useState<BrandType[]>([]);
@@ -36,7 +37,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   const [selectedGenderTypes, setSelectedGenderTypes] = useState<GenderType[]>(businessDetailsData?.genders || []);
 
   const [rentOutfits, setRentOutfits] = useState<string | null>(businessDetailsData?.rentOutfits || null);
-  console.log(businessDetailsData);
+  console.log(sellerId);
 
   const [cities, setCities] = useState<City[]>([]);
   const [cityOptions, setCityOptions] = useState<SelectOption[]>([]);
@@ -93,8 +94,9 @@ useEffect(() => {
     cities.length === 0 ||
     cityOptions.length === 0
   ) return;
-
+  
   const cityFromStore = businessDetailsData.city[0];
+  console.log(businessDetailsData);
   const fullCity = cities.find(city => city.id === cityFromStore.id);
   const cityOption = cityOptions.find(opt => opt.value === cityFromStore.id);
 
@@ -152,10 +154,6 @@ useEffect(() => {
   areaInitializedRef.current = true;
 }, [businessDetailsData, areas, areaOptions]);
 
-
-  
-
-
   useEffect(() => {
     const valid =
       ownerName.trim() &&
@@ -199,8 +197,6 @@ useEffect(() => {
     const exists = current.some(t => t.id === item.id);
     setCurrent(exists ? current.filter(t => t.id !== item.id) : [...current, item]);
   };
-
-  console.log(selectedBrandTypes, selectedGenderTypes, selectedArea, selectedCity)
 
   return (
     <div className="space-y-8 max-w-3xl mx-auto bg-gray-100">

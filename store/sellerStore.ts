@@ -17,18 +17,18 @@ type GenderType = {
 type City = {
   id : string,
   name : string,
-  state_id : string
+  state_id : string | null
 }
 
 type Area = {
   id : string,
   name : string,
-  city_id : string
+  city_id : string | null
 }
 
 type BusinessDetailsData = {
-  ownerName: string;
-  ownerEmail: string;
+  ownerName: string | null;
+  ownerEmail: string | null;
   brandName: string;
   businessWpNum: string | null
   brandTypes: BrandType[];
@@ -58,6 +58,11 @@ type SocialLinksData = {
   websiteUrl : string | null
 }
 
+type StorePhotosData = {
+  profileUrl : string,
+  bannerUrl : string
+}
+
 
 type SellerState = {
   furthestStep: number;
@@ -68,6 +73,12 @@ type SellerState = {
 
   sellerId: string | null
   setSellerId: (id: string) => void
+
+  sellerName : string | null
+  setSellerName : (name : string) => void
+
+  sellerEmail : string | null
+  setSellerEmail : (email: string) => void
 
   storeId : string | null
   setStoreId: (id: string) => void
@@ -95,6 +106,9 @@ type SellerState = {
 
   socialLinksValid : boolean;
   setSocialLinksValid : (valid: boolean) => void;
+
+  storePhotosData : StorePhotosData | null;
+  setStorePhotosData: (data: StorePhotosData) => void;
 }
 
 export const useSellerStore = create<SellerState>((set) => ({
@@ -110,6 +124,12 @@ export const useSellerStore = create<SellerState>((set) => ({
 
   sellerId: null,
   setSellerId: (id) => set({ sellerId: id }),
+
+  sellerName: null,
+  setSellerName: (name) => set({ sellerName: name }),
+
+  sellerEmail: null,
+  setSellerEmail: (email) => set({ sellerEmail: email }),
 
   storeId: null,
   setStoreId: (id) => set({ storeId: id }),
@@ -136,6 +156,9 @@ export const useSellerStore = create<SellerState>((set) => ({
   setSocialLinksData: (data) => set({ socialLinksData: data }),
 
   socialLinksValid: false,
-  setSocialLinksValid: (valid) => set({ socialLinksValid: valid })
+  setSocialLinksValid: (valid) => set({ socialLinksValid: valid }),
+
+  storePhotosData: null,
+  setStorePhotosData: (data) => set({ storePhotosData: data })
 
 }))

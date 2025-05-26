@@ -26,7 +26,8 @@ export default function SellerOnboardingPage() {
     whereToSellData,
     socialLinksValid,
     socialLinksData,
-    setFurthestStep
+    setFurthestStep,
+    storePhotosData
   } = useSellerStore();
 
   const currentSectionIndex = sectionOrder.indexOf(activeSection ?? 'brand');
@@ -67,14 +68,14 @@ export default function SellerOnboardingPage() {
 
       try {
         await api.put(`/users/update_user/${sellerId}`, seller_up_payload);
-        if(!storeId){
-        const response = await api.post('/stores/create', store_payload);
-        setStoreId(response.data.store_id);
+        if (!storeId) {
+          const response = await api.post('/stores/create', store_payload);
+          setStoreId(response.data.store_id);
         }
-        else{
+        else {
           await api.put(`/stores/${storeId}`, store_payload);
         }
-        
+
       } catch (error) {
         alert('Seller not updated');
         return;
@@ -112,19 +113,32 @@ export default function SellerOnboardingPage() {
         "instagram_link": socialLinksData.instagramUrl,
         "facebook_link": socialLinksData.facebookUrl
       }
-      try{
+      try {
         await api.put(`/stores/${storeId}`, social_payload);
         console.log('store updated')
-      }catch(error){
+      } catch (error) {
+        alert('Cannot update store');
+        return;
+      }
+    }
+    if (activeSection === 'photos' && storePhotosData) {
+      const photos_payload = {
+        "listing_page_image": storePhotosData.bannerUrl,
+        "profile_image": storePhotosData.profileUrl
+      }
+      try {
+        await api.put(`/stores/${storeId}`, photos_payload);
+        console.log('store updated')
+      } catch (error) {
         alert('Cannot update store');
         return;
       }
     }
     if (currentSectionIndex < sectionOrder.length - 1) {
-  const nextStep = currentSectionIndex + 1;
-  setActiveSection(sectionOrder[nextStep]);
-  setFurthestStep((prev) => Math.max(prev, nextStep)); // 👈 prevents regress
-}
+      const nextStep = currentSectionIndex + 1;
+      setActiveSection(sectionOrder[nextStep]);
+      setFurthestStep((prev) => Math.max(prev, nextStep)); // 👈 prevents regress
+    }
   };
 
   const goToPreviousSection = () => {
