@@ -88,13 +88,16 @@ export default function SellerSignup() {
             // alert('Invalid OTP. Please try again.');
         }
         else {
+            
 
             if (!isPhoneValid) {
                 alert('Please enter a valid 10-digit number.');
                 return;
             }
             try {
+                
                 const response = await api.get('/users/user', { params: { phone_number: phone } });
+console.log(response);
                 setSellerId(response.data.id);
                 setSellerName(response.data.name);
                 setSellerEmail(response.data.email);

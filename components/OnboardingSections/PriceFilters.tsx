@@ -45,9 +45,16 @@ export default function PriceFiltersComponent() {
           api.get(`/stores/price_ranges`)
         ]);
         const storeData = storeRes.data;
-        if (storeData?.store_types) {
-          setStoreTypes(storeData.store_types);
-        }
+         if (storeData?.store_types) {
+        const fetchedStoreTypes: StoreType[] = storeData.store_types;
+        setStoreTypes(fetchedStoreTypes);
+
+        // Clean up old selectedPrices that refer to deleted storeTypes
+        const validStoreTypeIds = new Set(fetchedStoreTypes.map((st) => st.id));
+        setSelectedPrices((prev) =>
+          prev.filter((item) => validStoreTypeIds.has(item.store_type))
+        );
+      }
         setPriceRanges(priceRangeRes.data);
       } catch (error) {
         console.error("Error fetching store types or price ranges", error);

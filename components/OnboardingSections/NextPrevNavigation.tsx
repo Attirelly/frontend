@@ -18,7 +18,8 @@ export default function NextPrevNavigation({ onNext, onBack, isFirst, isLast }: 
     priceFiltersValid,
     priceFiltersData,
     activeSection,
-    socialLinksValid
+    socialLinksValid,
+    storePhotosValid
     // etc.
   } = useSellerStore();
 
@@ -40,8 +41,9 @@ export default function NextPrevNavigation({ onNext, onBack, isFirst, isLast }: 
         }
       }
     }
-    if (activeSection === 'social' && !socialLinksValid) {
-      alert('Please fill all mandatory fields in Social Links');
+
+    if (activeSection === 'photos' && !storePhotosValid) {
+      alert('Please fill all mandatory fields in Store Photos');
       return;
     }
 

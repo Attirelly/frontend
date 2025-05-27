@@ -115,6 +115,9 @@ type SellerState = {
   storePhotosData : StorePhotosData | null;
   setStorePhotosData: (data: StorePhotosData) => void;
 
+  storePhotosValid : boolean;
+  setStorePhotosValid : (valid : boolean) => void;
+
   resetSellerStore: () => void;
 }
 
@@ -168,6 +171,9 @@ export const useSellerStore = create<SellerState>((set) => ({
   storePhotosData: null,
   setStorePhotosData: (data) => set({ storePhotosData: data }),
 
+  storePhotosValid: false,
+  setStorePhotosValid: (valid) => set({ storePhotosValid: valid }),
+
   resetSellerStore: () =>
     set({
       furthestStep: 0,
@@ -185,6 +191,7 @@ export const useSellerStore = create<SellerState>((set) => ({
       socialLinksData: null,
       socialLinksValid: false,
       storePhotosData: null,
+      storePhotosValid: false,
     }),
 
 }))

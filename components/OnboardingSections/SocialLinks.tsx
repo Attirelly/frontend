@@ -17,20 +17,20 @@ export default function SocialLinksComponent() {
     console.log(username);
   };
   useEffect(() => {
-    const isValid = instagramUrl !== '' && websiteUrl !== '' && facebookUrl !== '';
-    setSocialLinksValid(isValid);
+    // const isValid = instagramUrl !== '' && websiteUrl !== '' && facebookUrl !== '';
+    // setSocialLinksValid(isValid);
     console.log('setting data');
     console.log(instagramUrl)
-    if (isValid) {
+    
       setSocialLinksData({
         instagramUsname,
-        instagramUrl,
+        instagramUrl : `https://instagram.com/${socialLinksData?.instagramUsname}`,
         facebookUrl,
         websiteUrl
       });
-    }
+    
 
-  }, [instagramUrl, websiteUrl, facebookUrl, setSocialLinksData, setSocialLinksValid])
+  }, [instagramUrl, websiteUrl, facebookUrl, setSocialLinksData])
 
   return (
     <div className="space-y-8 rounded-md overflow-hidden w-full max-w-xl">
@@ -43,7 +43,8 @@ export default function SocialLinksComponent() {
 
         {/* Instagram Username Input */}
         <div>
-          <label className="block text-sm font-medium mb-1">Instagram username<span className="text-red-500">*</span></label>
+          {/* <span className="text-red-500">*</span> */}
+          <label className="block text-sm font-medium mb-1">Instagram username</label>
           <div className="flex border rounded-md overflow-hidden">
             <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r">
               instagram.com/
@@ -60,7 +61,7 @@ export default function SocialLinksComponent() {
 
         {/* Website URL */}
         <div>
-          <label className="block text-sm font-medium mb-1">Shopify URL<span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium mb-1">Shopify URL</label>
           <input
             type="url"
             className="w-full border rounded-md px-3 py-2"
@@ -72,7 +73,7 @@ export default function SocialLinksComponent() {
 
         {/* Facebook URL */}
         <div>
-          <label className="block text-sm font-medium mb-1">Facebook URL<span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium mb-1">Facebook URL</label>
           <input
             type="url"
             className="w-full border rounded-md px-3 py-2"
