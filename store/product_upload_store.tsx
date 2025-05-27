@@ -165,7 +165,7 @@ export const useProductFormStore = create<ProductFormStore>()(
 
           console.log(formData);
           const apiPayload = transformPayload(formData, "5f719d19-74ff-4152-8360-335a27321912", "Suneel Sarees");
-
+          console.log("apiPayload" , apiPayload) ; 
           try {
             const response = await api.post("/products/", apiPayload);
             return response.data;

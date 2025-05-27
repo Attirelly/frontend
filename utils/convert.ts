@@ -28,15 +28,15 @@ type InputPayload = {
     price: string;
   };
   variants: {
-    [key: string]: {
+    variants: [{
       product_id?: string;
       sku: string;
       size: { id: string; name: string };
-      color: { color_id: string; name: string };
+      color: { color_id: string; name: string   ; hex_code : string};
       images: string[];
       active: boolean;
       quantity: number;
-    };
+    }];
   };
 };
 
@@ -109,22 +109,10 @@ export function transformPayload(
   }));
 
   const price = parseFloat(formData.pricing.price);
-
-  const rawVariants = Object.values(formData.variants).filter(
-    (
-      v
-    ): v is {
-      product_id?: string;
-      sku: string;
-      size: { id: string; name: string };
-      color: { color_id: string; name: string };
-      images: string[];
-      active: boolean;
-      quantity: number;
-    } => typeof v === "object" && "sku" in v
-  );
-
-  const variants = rawVariants.map((v) => ({
+  
+  console.log("form"  , formData)
+  
+  const variants = formData.variants?.variants.map((v) => ({
     sku: v.sku,
     price: price,
     color: {
@@ -139,7 +127,8 @@ export function transformPayload(
     active: v.active ?? true,
     quantity: v.quantity ?? 0,
   }));
-
+  
+  console.log("my convert variants" , variants) ; 
   return {
     product_name,
     brand_id: brand.brand_id,
