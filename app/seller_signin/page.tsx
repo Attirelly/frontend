@@ -1,26 +1,28 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { send } from 'process';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
+import Header from '@/components/Header';
+import axios, { AxiosError } from 'axios';
+
+
 
 export default function SellerSignup() {
     const [phone, setPhone] = useState('');
     const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
-    const [agreed, setAgreed] = useState(false);
     const [sendOTP, setSendOTP] = useState(false);
-    const { setSellerId, setSellerNumber } = useSellerStore()
-    const resetSellerStore = useSellerStore((state) => state.resetSellerStore);
-  useEffect(() => {
-    // Reset everything when component mounts (optional)
-    resetSellerStore();
-  }, []);
+    const { 
+        setSellerId, 
+        setSellerNumber, 
+        sellerId,
+        setSellerName,
+        setSellerEmail } = useSellerStore()
 
     const isPhoneValid = /^\d{10}$/.test(phone);
-    // const isOTPValid = /^\d{6}$/.test(otp);
     const router = useRouter();
 
     const handleChange = (index: number, value: string) => {
@@ -54,18 +56,17 @@ export default function SellerSignup() {
             }
             if (fullOtp === '123456') {
                 try {
-                    const payload = {
-                        "contact_number": phone.toString(),
-                        "role": "admin"
-                    }
-                    const response = await api.post('/users/register_user', payload)
+                    // const payload = {
+                    //     "contact_number": phone.toString(),
+                    //     "role": "admin"
+                    // }
+                    // const response = await api.post('/users/register_user', payload)
 
-                    console.log(response)
-                    const newSellerId = response.data.id
-                    console.log(newSellerId)
-                    setSellerId(newSellerId)
-                    
-                    router.push('/seller_signup/sellerOnboarding');
+                    // console.log(response)
+                    // const newSellerId = response.data.id
+                    // console.log(newSellerId)
+                    // setSellerId(newSellerId)
+                    router.push('/seller_dashboard');
                 }
                 catch (error) {
                     console.error('Error fetching stores by section:', error);
@@ -92,13 +93,25 @@ export default function SellerSignup() {
                 alert('Please enter a valid 10-digit number.');
                 return;
             }
-            if (!agreed) {
-                alert('You must accept the SMS authorization terms.');
-                return;
+            try {
+                const response = await api.get('/users/user', { params: { phone_number: phone } });
+                setSellerId(response.data.id);
+                setSellerName(response.data.name);
+                setSellerEmail(response.data.email);
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    console.log('Status Code:', error.response.status);
+                    console.log('Response Data:', error.response.data);
+                    alert(`Error : ${error.response.data?.message || 'Something went wrong'}, Please Sign In`);
+                    return;
+                } else {
+                    console.log('Unexpected error:', error);
+                    alert('An unexpected error occurred. Please try again.');
+                }
             }
-            const confirmed = window.confirm('Please confirm you phone number');
-            if (!confirmed) return;
+
             setSellerNumber(phone);
+
             setSendOTP(true);
             // Handle sending OTP
             alert(`OTP sent to ${phone}`);
@@ -111,14 +124,16 @@ export default function SellerSignup() {
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
             {/* Header */}
-            <header className="flex justify-between items-center px-6 py-4 border-b bg-white">
-                <h1 className="text-xl font-bold text-black-700">Attirelly</h1>
-                <Link href="/signin">
-                    <button className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100">
-                        Sign In
+            <Header
+                title="Attirelly"
+                actions={
+                    <button
+                        className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100"
+                        onClick={() => router.push(`/seller_signup`)}>
+                        Sign Up
                     </button>
-                </Link>
-            </header>
+                }
+            />
 
             {/* Body */}
             <main className="flex-grow flex items-center justify-center px-4">
@@ -126,7 +141,7 @@ export default function SellerSignup() {
                     onSubmit={handleSubmit}
                     className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
                 >
-                    <h2 className="text-xl font-semibold mb-4">Register as a seller</h2>
+                    <h2 className="text-xl font-semibold mb-4">Sign in as a seller</h2>
                     <p className="text-sm text-gray-500 mb-4">
                         Verifying the store's phone number is a great way to make sure your profile reflects your identity and keeps your account safe.
                     </p>
@@ -149,7 +164,7 @@ export default function SellerSignup() {
                             required
                         />
                         {/* Checkbox */}
-                        <div className="flex items-center mb-4">
+                        {/* <div className="flex items-center mb-4">
                             <input
                                 id="agree"
                                 type="checkbox"
@@ -160,7 +175,7 @@ export default function SellerSignup() {
                             <label htmlFor="agree" className="text-sm text-gray-600">
                                 By accepting, you agree to receive SMS for account authorization
                             </label>
-                        </div>
+                        </div> */}
                         {/* Submit button */}
                         <button
                             type="submit"
@@ -210,9 +225,9 @@ export default function SellerSignup() {
 
                     {/* Sign In link */}
                     <p className="text-center text-xs text-gray-500 mt-4">
-                        Already have an account?{' '}
-                        <Link href="/signin" className="text-blue-600 hover:underline">
-                            Sign In
+                        New to Attirelly?{' '}
+                        <Link href="/seller_signup" className="text-blue-600 hover:underline">
+                            Sign Up
                         </Link>
                     </p>
                 </form>

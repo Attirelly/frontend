@@ -58,7 +58,16 @@ export default function DashboardSidebar({
           </div>
 
           {openGroups[group.heading] && (
-            <div className="mt-3">
+            <div className="mt-3 space-y-3">
+              {/* Conditionally show update button for 'Store Profile' */}
+              {group.heading === 'Store Profile' && (
+                <div className="flex justify-center">
+                  <button className="bg-black text-white text-sm py-2 px-6 rounded-xl hover:bg-gray-800 transition">
+                    Update
+                  </button>
+                </div>
+              )}
+              {/* Render section items */}
               {group.ids.map((id) => {
                 const section = sections.find((s) => s.id === id);
                 if (!section) return null;

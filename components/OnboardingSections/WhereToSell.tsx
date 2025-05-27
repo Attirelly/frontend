@@ -1,6 +1,7 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Smartphone, Store } from 'lucide-react';
+import { useSellerStore } from '@/store/sellerStore';
 
 type Option = {
   id: string;
@@ -31,7 +32,20 @@ const OPTIONS: Option[] = [
 ];
 
 export default function WhereToSellComponent() {
-  const [selected, setSelected] = useState('offline');
+  
+  const { setWhereToSellData , whereToSellData} = useSellerStore();
+  const [selected, setSelected] = useState(whereToSellData?.isBoth === true ? 'both' : whereToSellData?.isOnline === true ? 'online' : 'offline');
+  console.log(whereToSellData)
+  // ⬇️ Set isOnline based on selection
+  useEffect(() => {
+    if(selected == 'both'){
+      setWhereToSellData({ isOnline : true, isBoth : true});
+    }
+    else{
+      if(selected === 'online') setWhereToSellData({ isOnline:true, isBoth:false});
+      else setWhereToSellData({ isOnline:false, isBoth:false});
+    }
+  }, [selected, setWhereToSellData]);
 
   return (
     <div className="rounded-2xl p-6 space-y-6 max-w-2xl shadow-sm bg-white">
