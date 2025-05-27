@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { send } from 'process';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
+import Header from '@/components/Header';
 
 export default function SellerSignup() {
     const [phone, setPhone] = useState('');
@@ -14,10 +15,10 @@ export default function SellerSignup() {
     const [sendOTP, setSendOTP] = useState(false);
     const { setSellerId, setSellerNumber } = useSellerStore()
     const resetSellerStore = useSellerStore((state) => state.resetSellerStore);
-  useEffect(() => {
-    // Reset everything when component mounts (optional)
-    resetSellerStore();
-  }, []);
+    useEffect(() => {
+        // Reset everything when component mounts (optional)
+        resetSellerStore();
+    }, []);
 
     const isPhoneValid = /^\d{10}$/.test(phone);
     // const isOTPValid = /^\d{6}$/.test(otp);
@@ -64,7 +65,7 @@ export default function SellerSignup() {
                     const newSellerId = response.data.id
                     console.log(newSellerId)
                     setSellerId(newSellerId)
-                    
+
                     router.push('/seller_signup/sellerOnboarding');
                 }
                 catch (error) {
@@ -111,14 +112,16 @@ export default function SellerSignup() {
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
             {/* Header */}
-            <header className="flex justify-between items-center px-6 py-4 border-b bg-white">
-                <h1 className="text-xl font-bold text-black-700">Attirelly</h1>
-                <Link href="/signin">
-                    <button className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100">
-                        Sign In
-                    </button>
-                </Link>
-            </header>
+            <Header
+                            title="Attirelly"
+                            actions={
+                                <button
+                                    className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100"
+                                    onClick={() => router.push(`/seller_signin`)}>
+                                    Sign In
+                                </button>
+                            }
+                        />
 
             {/* Body */}
             <main className="flex-grow flex items-center justify-center px-4">
@@ -211,7 +214,7 @@ export default function SellerSignup() {
                     {/* Sign In link */}
                     <p className="text-center text-xs text-gray-500 mt-4">
                         Already have an account?{' '}
-                        <Link href="/signin" className="text-blue-600 hover:underline">
+                        <Link href="/seller_signin" className="text-blue-600 hover:underline">
                             Sign In
                         </Link>
                     </p>

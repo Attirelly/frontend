@@ -23,7 +23,9 @@ export default function SellerDashboardPage() {
     sellerName,
     sellerEmail,
     setBusinessDetailsData,
+    setBusinessDetailsValid,
     setPriceFiltersData,
+    setPriceFiltersValid,
     setWhereToSellData,
     setSocialLinksData,
     setStorePhotosData
@@ -63,6 +65,8 @@ export default function SellerDashboardPage() {
           pinCode: storeData.pincode || '',
           brandAddress: storeData.store_address || ''
         });
+
+        // setBusinessDetailsValid(true);
 
         setPriceFiltersData({
           avgPriceMin: storeData.average_price_min,

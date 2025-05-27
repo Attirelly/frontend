@@ -115,13 +115,14 @@ export default function SellerOnboardingPage() {
         return;
       }
     }
-    if (activeSection === 'social' && socialLinksValid && socialLinksData) {
+    if (activeSection === 'social' && socialLinksData) {
       const social_payload = {
-        "instagram_link": socialLinksData.instagramUrl,
-        "facebook_link": socialLinksData.facebookUrl,
-        "shopify_url" : socialLinksData.websiteUrl
+        "instagram_link": socialLinksData.instagramUrl || '',
+        "facebook_link": socialLinksData.facebookUrl || '',
+        "shopify_url" : socialLinksData.websiteUrl || ''
       }
       try {
+        console.log('inside store');
         await api.put(`/stores/${storeId}`, social_payload);
         console.log('store updated')
       } catch (error) {
