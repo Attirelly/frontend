@@ -4,162 +4,187 @@ import { useEffect, useState } from 'react';
 import { useFormActions, useFormData } from '@/store/product_upload_store';
 import { api } from '@/lib/axios';
 
-interface AttributeValue {
+interface AttributeIDValue {
   id: string;
   value: string;
 }
 
-interface Attribute {
+interface AttributeResponse {
   name: string;
-  values: AttributeValue[];
+  values: AttributeIDValue[];
 }
 
-interface FormAttributes {
-  [key: string]: {
-    value: string;
-    id: string;
-  };
+export interface AttributeValue {
+  id?: string;
+  name?: string;
+  value?: string;
 }
 
-interface FormState {
-  productName: string;
-  productDescription: string;
-  attributes: FormAttributes;
+export interface FormState {
+  attributes?: AttributeValue[];
 }
 
 const ProductAttributes = () => {
-  const { attributes: formAttributes } = useFormData();
+  const { attributes: globalAttributes } = useFormData();
   const { updateFormData } = useFormActions();
 
-  const [attributes, setAttributes] = useState<Attribute[]>([]);
+  const [attributes, setAttributes] = useState<AttributeResponse[]>([]);
+  const [filteredAttributes, setFilteredAttributes] = useState<AttributeResponse[]>([]);
   const [formState, setFormState] = useState<FormState>({
-    productName: formAttributes?.productName || '',
-    productDescription: formAttributes?.productDescription || '',
-    attributes: formAttributes?.attributes || {}
+    attributes: globalAttributes?.attributes || []
   });
+
+  // Dropdown visibility state
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch attributes from API
   useEffect(() => {
     const fetchAttributes = async () => {
       try {
         const response = await api.get('attributes/attributes_category/90b9eef7-d5d4-429e-bb14-77f0f2c3c0c5');
-        const data = await response.data;
-        console.log("API Response:", data);
-        
-        setAttributes(data);
-        
-        // Initialize form state with both value and valueId
-        const initialAttributes = data.reduce((acc: FormAttributes, attr: Attribute) => {
-          acc[attr.name] = {
-            value: formAttributes?.attributes?.[attr.name]?.value || '',
-            id: formAttributes?.attributes?.[attr.name]?.id || ''
-          };
-          return acc;
-        }, {});
-        
-        setFormState(prev => ({
-          ...prev,
-          attributes: initialAttributes
-        }));
+        setAttributes(response.data);
+        setFilteredAttributes(response.data);
       } catch (error) {
         console.error('Error fetching attributes:', error);
       }
     };
-    
     fetchAttributes();
   }, []);
+
+  // Filter attributes based on search term
+  useEffect(() => {
+    if (searchTerm && activeDropdown) {
+      const filtered = attributes.map(attr => {
+        if (attr.name === activeDropdown) {
+          return {
+            ...attr,
+            values: attr.values.filter(val => 
+              val.value.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+          };
+        }
+        return attr;
+      });
+      setFilteredAttributes(filtered);
+    } else {
+      setFilteredAttributes(attributes);
+    }
+  }, [searchTerm, activeDropdown, attributes]);
 
   // Save to Zustand store when form changes
   useEffect(() => {
     updateFormData('attributes', formState);
   }, [formState, updateFormData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === 'productName' || name === 'productDescription') {
-      setFormState(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    } else {
-      // For select elements, get the selected option's data-id
-      const selectElement = e.target as HTMLSelectElement;
-      const selectedOption = selectElement.selectedOptions[0];
-      const id = selectedOption.getAttribute('data-id') || '';
+  const toggleDropdown = (attributeName: string) => {
+    setActiveDropdown(activeDropdown === attributeName ? null : attributeName);
+    setSearchTerm('');
+  };
+
+  const handleAttributeSelect = (attributeName: string, value: string, id: string) => {
+    setFormState(prev => {
+      // Check if attribute already exists
+      const existingIndex = prev.attributes?.findIndex(attr => attr.name === attributeName) ?? -1;
       
-      setFormState(prev => ({
+      let newAttributes = [...(prev.attributes || [])];
+      
+      if (existingIndex >= 0) {
+        // Update existing attribute
+        newAttributes[existingIndex] = { 
+          ...newAttributes[existingIndex],
+          id,
+          value,
+          name: attributeName
+        };
+      } else {
+        // Add new attribute
+        newAttributes.push({
+          id,
+          value,
+          name: attributeName
+        });
+      }
+      
+      return {
         ...prev,
-        attributes: {
-          ...prev.attributes,
-          [name]: {
-            value,
-            id
-          }
-        }
-      }));
+        attributes: newAttributes
+      };
+    });
+    setActiveDropdown(null);
+  };
+
+  const getCurrentValue = (attributeName: string) => {
+    const attribute = formState.attributes?.find(attr => attr.name === attributeName);
+    return attribute?.value || '';
+  };
+
+  const handleClickOutside = (e: MouseEvent) => {
+    if (!(e.target as HTMLElement).closest('.attribute-dropdown-container')) {
+      setActiveDropdown(null);
     }
   };
 
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-sm">
-      <div className="mb-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-1">Attributes</h3>
-        <p className="text-sm text-gray-500 mb-4">This is for internal data, your customers won't see this.</p>
-        <p className="text-base text-gray-700 mb-2">Product Attributes</p>
-        <div className="border-b border-gray-200 mb-4"></div>
-      </div>
-      
-      {/* Dynamic Attribute Dropdowns */}
-      {attributes.map((attribute) => (
-        <div key={attribute.name} className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-            {attribute.name}
-          </label>
-          <select
-            name={attribute.name}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            value={formState.attributes[attribute.name]?.value || ''}
-            onChange={handleChange}
-          >
-            <option value="">Select {attribute.name}</option>
-            {attribute.values.map((val) => (
-              <option 
-                key={val.id} 
-                value={val.value}
-                data-id={val.id}
-              >
-                {val.value}
-              </option>
-            ))}
-          </select>
-        </div>
-      ))}
-      
-      {/* Product Name Input */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Product name</label>
-        <input
-          type="text"
-          name="productName"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Please enter your product name"
-          value={formState.productName}
-          onChange={handleChange}
-        />
-      </div>
-      
-      {/* Product Description Textarea */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Product description</label>
-        <textarea
-          name="productDescription"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Please enter product description"
-          rows={4}
-          value={formState.productDescription}
-          onChange={handleChange}
-        />
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg self-start">
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Attributes</h1>
+      <p className="text-sm text-gray-500 mb-4 border-b border-gray-200">
+        This is for internal data, your customers won't see this.
+      </p>
+      <p className="text-base text-gray-600 mb-6">Product Attributes</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {filteredAttributes.map((attribute) => (
+          <div key={attribute.name} className="attribute-dropdown-container">
+            <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+              {attribute.name}
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={
+                  activeDropdown === attribute.name
+                    ? searchTerm
+                    : getCurrentValue(attribute.name)
+                }
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  if (activeDropdown !== attribute.name) {
+                    setActiveDropdown(attribute.name);
+                  }
+                }}
+                onFocus={() => {
+                  setSearchTerm(getCurrentValue(attribute.name));
+                  setActiveDropdown(attribute.name);
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder={`Search ${attribute.name}`}
+              />
+              {activeDropdown === attribute.name && (
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                  {attribute.values.length > 0 ? (
+                    attribute.values.map((val) => (
+                      <div
+                        key={val.id}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleAttributeSelect(attribute.name, val.value, val.id)}
+                      >
+                        <div className="font-medium">{val.value}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-gray-500">No options found</div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

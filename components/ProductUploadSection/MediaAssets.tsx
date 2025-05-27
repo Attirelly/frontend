@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { useFormActions, useFormData } from '@/store/product_upload_store';
-import { FiUpload, FiX, FiImage } from 'react-icons/fi';
+import { FiUpload, FiX, FiImage, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { api } from '@/lib/axios';
@@ -13,119 +13,218 @@ interface UploadResponse {
 }
 
 export default function MediaAssets() {
-  const { media } = useFormData();
+  const { media, variants } = useFormData();
   const { updateFormData } = useFormActions();
-  const profileInputRef = useRef<HTMLInputElement>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const mainImageInputRef = useRef<HTMLInputElement>(null);
+  const variantImageInputRefs = useRef<{[key: string]: HTMLInputElement | null}>({});
+  const [mainPreview, setMainPreview] = useState<string | null>(null);
+  const [variantPreviews, setVariantPreviews] = useState<{[key: string]: string[]}>({});
+  const [isUploading, setIsUploading] = useState({
+    main: false,
+    variants: {} as {[key: string]: boolean}
+  });
 
   // Initialize with existing media data
   useEffect(() => {
-    if (media?.productImage) {
-      setPreviewImage(media.productImage);
+    if (media?.mainImage) {
+      setMainPreview(media.mainImage);
+    }
+    if (media?.variantImages) {
+      const previews: {[key: string]: string[]} = {};
+      media.variantImages.forEach((vi) => {
+        previews[vi.sku] = vi.images;
+      });
+      setVariantPreviews(previews);
     }
   }, [media]);
 
-  const handleProfileClick = () => {
-    profileInputRef.current?.click();
+  // Get the variants list from the store structure
+  const variantsList = variants?.variants || [];
+  console.log(variantsList)
+
+  const handleMainImageClick = () => {
+    mainImageInputRef.current?.click();
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
+  const handleVariantImageClick = (sku: string) => {
+    variantImageInputRefs.current[sku]?.click();
+  };
 
+  const uploadFile = async (file: File): Promise<string> => {
+    const validTypes = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      throw new Error('Invalid file type. Please upload an SVG, PNG, JPG, or WEBP image.');
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error('File too large. Maximum size is 5MB.');
+    }
+
+    const response = await api.post<UploadResponse>('/products/upload', {
+      file_name: file.name,
+    });
+
+    const { upload_url, file_url } = response.data;
+
+    await axios.put(upload_url, file, {
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
+
+    return file_url;
+  };
+
+  const handleMainImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
     
-    // Validate file type
-    const validTypes = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/jpg'];
-    if (!validTypes.includes(file.type)) {
-      toast.error('Invalid file type. Please upload an SVG, PNG, or JPG image.');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File too large. Maximum size is 5MB.');
-      return;
-    }
-
-    // Create temporary preview
     const tempPreview = URL.createObjectURL(file);
-    setPreviewImage(tempPreview);
-    setIsUploading(true);
+    setMainPreview(tempPreview);
+    setIsUploading(prev => ({...prev, main: true}));
 
     try {
-      // 1. Get presigned URL from backend
-      const response = await api.post<UploadResponse>('/products/upload', {
-        file_name: file.name,
+      const file_url = await uploadFile(file);
+      
+      updateFormData('media', { 
+        ...media,
+        mainImage: file_url 
       });
-
-      const { upload_url, file_url } = response.data;
-
-      // 2. Upload directly to S3
-      await axios.put(upload_url, file, {
-        headers: {
-          'Content-Type': file.type,
-        },
-      });
-
-      // 3. Update form data with permanent URL
-      updateFormData('media', { productImage: file_url });
-      setPreviewImage(file_url);
-      toast.success('Image uploaded successfully');
-    } catch (error) {
+      setMainPreview(file_url);
+      toast.success('Main image uploaded successfully');
+    } catch (error: any) {
       console.error('Upload failed:', error);
-      setPreviewImage(null);
-      if (profileInputRef.current) profileInputRef.current.value = '';
-      toast.error('Upload failed. Please try again.');
+      setMainPreview(null);
+      if (mainImageInputRef.current) mainImageInputRef.current.value = '';
+      toast.error(error.message || 'Upload failed. Please try again.');
     } finally {
-      setIsUploading(false);
-      // Clean up temporary preview
+      setIsUploading(prev => ({...prev, main: false}));
       if (tempPreview) URL.revokeObjectURL(tempPreview);
     }
   };
 
-  const handleRemoveImage = () => {
-    setPreviewImage(null);
-    updateFormData('media', { productImage: null });
-    if (profileInputRef.current) {
-      profileInputRef.current.value = '';
+  const handleVariantImageChange = async (e: React.ChangeEvent<HTMLInputElement>, sku: string) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const files = Array.from(e.target.files);
+    
+    const tempPreviews = files.map(file => URL.createObjectURL(file));
+    setVariantPreviews(prev => ({
+      ...prev,
+      [sku]: [...(prev[sku] || []), ...tempPreviews]
+    }));
+    setIsUploading(prev => ({
+      ...prev,
+      variants: {...prev.variants, [sku]: true}
+    }));
+
+    try {
+      const uploadPromises = files.map(file => uploadFile(file));
+      const uploadedUrls = await Promise.all(uploadPromises);
+      
+      const existingVariantImages = media?.variantImages || [];
+      const existingVariant = existingVariantImages.find(vi => vi.sku === sku);
+      
+      const updatedVariantImages = existingVariant
+        ? existingVariantImages.map(vi => 
+            vi.sku === sku 
+              ? {...vi, images: [...vi.images, ...uploadedUrls]}
+              : vi
+          )
+        : [...existingVariantImages, { sku, images: uploadedUrls }];
+      
+      updateFormData('media', { 
+        ...media,
+        variantImages: updatedVariantImages
+      });
+      
+      setVariantPreviews(prev => ({
+        ...prev,
+        [sku]: [...(prev[sku] || []), ...uploadedUrls]
+      }));
+      
+      toast.success(`${files.length} image(s) uploaded for variant`);
+    } catch (error: any) {
+      console.error('Upload failed:', error);
+      setVariantPreviews(prev => ({
+        ...prev,
+        [sku]: prev[sku]?.filter(url => !tempPreviews.includes(url)) || []
+      }));
+      toast.error(error.message || 'Upload failed. Please try again.');
+    } finally {
+      setIsUploading(prev => ({
+        ...prev,
+        variants: {...prev.variants, [sku]: false}
+      }));
+      tempPreviews.forEach(url => URL.revokeObjectURL(url));
     }
-    toast.info('Image removed');
+  };
+
+  const removeMainImage = () => {
+    setMainPreview(null);
+    updateFormData('media', { 
+      ...media,
+      mainImage: null 
+    });
+    if (mainImageInputRef.current) {
+      mainImageInputRef.current.value = '';
+    }
+    toast.info('Main image removed');
+  };
+
+  const removeVariantImage = (sku: string, imageUrl: string) => {
+    setVariantPreviews(prev => ({
+      ...prev,
+      [sku]: prev[sku]?.filter(url => url !== imageUrl) || []
+    }));
+    
+    const existingVariantImages = media?.variantImages || [];
+    const updatedVariantImages = existingVariantImages.map(vi => 
+      vi.sku === sku
+        ? {...vi, images: vi.images.filter(url => url !== imageUrl)}
+        : vi
+    ).filter(vi => vi.images.length > 0);
+    
+    updateFormData('media', { 
+      ...media,
+      variantImages: updatedVariantImages
+    });
+    
+    toast.info('Variant image removed');
   };
 
   return (
-    <div className="max-w-2xl space-y-6 bg-white p-6 rounded-2xl shadow-sm">
+    <div className="max-w-4xl space-y-6 bg-white p-6 rounded-2xl shadow-sm">
       <div>
         <h1 className="text-lg font-semibold">Media Assets</h1>
-        <p className="text-gray-500 text-sm">Showcase your product visually</p>
+        <p className="text-gray-500 text-sm">Upload images for your product and variants</p>
       </div>
 
-      <div className="grid gap-6">
-        {/* Product Image Upload Card */}
+      <div className="grid gap-8">
+        {/* Main Product Image Upload */}
         <div
-          onClick={handleProfileClick}
-          className={`cursor-pointer border ${previewImage ? 'border-solid' : 'border-dashed'} border-gray-300 p-6 rounded-xl hover:bg-gray-50 transition`}
+          onClick={handleMainImageClick}
+          className={`cursor-pointer border ${mainPreview ? 'border-solid' : 'border-dashed'} border-gray-300 p-6 rounded-xl hover:bg-gray-50 transition`}
         >
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <FiImage className="text-gray-400" />
-            Product Image
-            {isUploading && (
+            Main Product Image
+            {isUploading.main && (
               <span className="text-xs text-blue-500 ml-2">Uploading...</span>
             )}
           </h2>
           
-          {previewImage ? (
+          {mainPreview ? (
             <div className="relative">
               <img 
-                src={previewImage} 
-                alt="Product preview" 
+                src={mainPreview} 
+                alt="Main product preview" 
                 className="w-full h-60 object-contain rounded-lg border border-gray-200"
               />
-              {!isUploading && (
+              {!isUploading.main && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleRemoveImage();
+                    removeMainImage();
                   }}
                   className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow-md hover:bg-gray-100 transition"
                   aria-label="Remove image"
@@ -137,20 +236,77 @@ export default function MediaAssets() {
           ) : (
             <div className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 text-gray-400 text-sm">
               <FiUpload className="text-2xl" />
-              <span>Click to upload image</span>
-              <span className="text-xs">SVG, PNG, JPG (max 5MB)</span>
+              <span>Click to upload main product image</span>
+              <span className="text-xs">SVG, PNG, JPG, WEBP (max 5MB)</span>
             </div>
           )}
 
           <input
-            ref={profileInputRef}
+            ref={mainImageInputRef}
             type="file"
-            accept=".svg,.png,.jpg,.jpeg"
+            accept=".svg,.png,.jpg,.jpeg,.webp"
             className="hidden"
-            onChange={handleFileChange}
-            disabled={isUploading}
+            onChange={handleMainImageChange}
+            disabled={isUploading.main}
           />
         </div>
+
+        {/* Variant Images Upload */}
+        {variantsList.map((variant) => {
+          const sku = variant.sku;
+          const variantImages = variantPreviews[sku] || [];
+          const isUploadingVariant = isUploading.variants[sku];
+
+          return (
+            <div key={sku} className="border border-gray-200 rounded-xl p-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <FiImage className="text-gray-400" />
+                Variant: {sku}
+                {isUploadingVariant && (
+                  <span className="text-xs text-blue-500 ml-2">Uploading...</span>
+                )}
+              </h2>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {variantImages.map((imageUrl, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={imageUrl}
+                      alt={`Variant ${sku} image ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                    />
+                    <button
+                      onClick={() => removeVariantImage(sku, imageUrl)}
+                      className="absolute top-1 right-1 bg-white p-1 rounded-full shadow-md hover:bg-gray-100 transition opacity-0 group-hover:opacity-100"
+                      aria-label="Remove image"
+                    >
+                      <FiTrash2 className="text-red-500 text-sm" />
+                    </button>
+                  </div>
+                ))}
+
+                <div
+                  onClick={() => handleVariantImageClick(sku)}
+                  className="cursor-pointer w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-1 text-gray-400 text-sm hover:bg-gray-50"
+                >
+                  <FiPlus className="text-xl" />
+                  <span>Add Images</span>
+                  <span className="text-xs">Max 5MB each</span>
+                </div>
+
+                <input
+                  ref={el => variantImageInputRefs.current[sku] = el}
+                  type="file"
+                  accept=".svg,.png,.jpg,.jpeg,.webp"
+                  className="hidden"
+                  onChange={(e) => handleVariantImageChange(e, sku)}
+                  disabled={isUploadingVariant}
+                  multiple
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
