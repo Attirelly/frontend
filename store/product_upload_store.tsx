@@ -1,39 +1,107 @@
 // stores/useProductFormStore.ts
-import transformFormToApiPayload from '@/utils/convert';
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { api } from "@/lib/axios";
+import { transformPayload } from "@/utils/convert";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-type FormData = {
-  keyDetails?: {
-    productName?: string;
-    productDescription?: string;
-    skuID?: string;
-    brand?: {
-      id: string;
-      name: string;
-    };
-    store?: {
-      id: string;
-      name: string;
-    };
-  };
-  attributes?: {
-    attributes?: Record<string, string>;
-  };
-  category?: Record<string, string>;
-  pricing?: {
-    storeListPrice?: number;
-  };
-  variants?: {
-    colorChoice?: string;
-    sizeOptions?: string;
-    colorId?: string;
-    sizeId?: string;
-  };
-  media?: {
-    productImage?: string;
-  };
-};
+// types/productForm.ts
+export interface Option {
+  id: string;
+  name: string;
+}
+
+export interface VariantValue {
+  sku: string;
+  size: SizeOption;
+  color: ColorOption;
+  quantity: number;
+}
+
+export interface Variants {
+  variants: VariantValue[];
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  logo_url?: string;
+}
+
+export interface Store {
+  id: string;
+  name: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+}
+
+export interface CategoryLevels {
+  level1?: Category;
+  level2?: Category;
+  level3?: Category;
+  level4?: Category;
+  level5?: Category;
+}
+
+export interface Pricing {
+  mrp?: number;
+  rent?: boolean;
+  price?: number;
+}
+
+export interface VariantImage {
+  sku: string;
+  images: string[]; // image url array
+}
+export interface Media {
+  mainImage?: string;
+  variantImages?: VariantImage[];
+}
+
+export interface KeyDetails {
+  productName?: string;
+  productDescription?: string;
+  brand?: Brand;
+  store?: Store;
+  title?: string;
+}
+export interface AttributeValue {
+  id?: string;
+  name?: string;
+  value?: string;
+}
+export interface Attributes {
+  attributes?: AttributeValue[];
+}
+
+export interface ColorOption {
+  color_id: string;
+  name: string;
+  hex_code: string;
+}
+export interface Colors {
+  colors: ColorOption[];
+}
+export interface SizeOption {
+  size_id: string;
+  name: string;
+}
+export interface Sizes {
+  sizes: SizeOption[];
+}
+
+export interface FormData {
+  keyDetails?: KeyDetails;
+  variants?: Variants;
+  attributes?: Attributes;
+  category?: CategoryLevels;
+  pricing?: Pricing;
+  media?: Media;
+  sizes?: Sizes;
+  colors?: Colors;
+}
 
 interface ProductFormStore {
   currentStep: number;
@@ -57,23 +125,23 @@ export const useProductFormStore = create<ProductFormStore>()(
       draftId: null,
       actions: {
         setCurrentStep: (step) => set({ currentStep: step }),
-        updateFormData: (section, data) => 
+        updateFormData: (section, data) =>
           set((state) => ({
             formData: {
               ...state.formData,
-              [section]: { ...state.formData[section], ...data }
-            }
+              [section]: { ...state.formData[section], ...data },
+            },
           })),
         saveDraft: async () => {
           const draftId = get().draftId || `draft_${Date.now()}`;
           set({ draftId });
-          
+
           // In production: await API call to save draft
           // await fetch('/api/drafts', {
           //   method: 'POST',
           //   body: JSON.stringify(get())
           // });
-          
+
           return draftId;
         },
         loadDraft: (draftId) => {
@@ -81,42 +149,46 @@ export const useProductFormStore = create<ProductFormStore>()(
           // const response = await fetch(`/api/drafts/${draftId}`);
           // const data = await response.json();
           // set(data);
-          
+
           set({ draftId });
         },
         clearDraft: () => {
           set({
             currentStep: 0,
             formData: {},
-            draftId: null
+            draftId: null,
           });
         },
         submitForm: async () => {
-          const { formData , draftId } = get();
-          // Submit to your API
-          // await fetch('/api/products', {
-          //   method: 'POST',
-          //   body: JSON.stringify(formData)
-          // });
-          const typedFormData = formData as FormData;
-          console.log(formData) ; 
-          let data = transformFormToApiPayload(formData as FormData) ; 
-          console.log("api_data"  , data)
-        }
-      }
+          console.log("hello");
+          const { formData } = get();
+
+          console.log(formData);
+          const apiPayload = transformPayload(formData, "5f719d19-74ff-4152-8360-335a27321912", "Suneel Sarees");
+
+          try {
+            const response = await api.post("/products/", apiPayload);
+            return response.data;
+          } catch (error) {
+            console.error("Submission error:", error);
+            throw error;
+          }
+        },
+      },
     }),
     {
-      name: 'product-form-store',
-      partialize: (state) => ({ 
+      name: "product-form-store",
+      partialize: (state) => ({
         ...state,
-        // Don't persist actions
-        actions: undefined 
+        actions: undefined,
       }),
     }
   )
 );
 
 // Selector hooks for better usage
-export const useCurrentStep = () => useProductFormStore((state) => state.currentStep);
+export const useCurrentStep = () =>
+  useProductFormStore((state) => state.currentStep);
 export const useFormData = () => useProductFormStore((state) => state.formData);
-export const useFormActions = () => useProductFormStore((state) => state.actions);
+export const useFormActions = () =>
+  useProductFormStore((state) => state.actions);

@@ -1,140 +1,160 @@
-interface FormData {
+// Define input payload type
+type InputPayload = {
   keyDetails: {
     productName: string;
-    productDescription: string;
-    skuID: string;
-    brand?: {
+    brand: {
       brand_id: string;
       name: string;
     };
-    store?: {
-      store_id: string;
-      store_name: string;
-    };
+    productDescription: string;
+    productTitle: string;
+    targetAudience: string;
+    rating?: number;
+    like?: number;
+    views?: number;
+    share?: number;
+  };
+  category: {
+    [key: string]: { id: string; name: string } | undefined;
   };
   attributes: {
-    attributes: Record<string, {
-      value: string;
+    attributes: {
       id: string;
-    }>;
+      name: string;
+      value: string;
+    }[];
   };
-  category: Record<string, string>;
   pricing: {
-    storeListPrice: number;
+    price: string;
   };
   variants: {
-    colorChoice: string;
-    sizeOptions: string;
-    colorId?: string;
-    sizeId?: string;
+    [key: string]: {
+      product_id?: string;
+      sku: string;
+      size: { id: string; name: string };
+      color: { color_id: string; name: string };
+      images: string[];
+      active: boolean;
+      quantity: number;
+    };
   };
-  media?: {
-    productImage?: string;
-  };
-}
+};
 
-interface Category {
-  id: string;
-  name: string;
-}
-
-interface Attribute {
-  name: string;
-  value: string;
-  id: string; // Added valueId field
-}
-
-interface Variant {
-  sku: string;
-  price: number;
-  color: {
-    color_id: string;
-    color_name: string;
-  };
-  size: {
-    size_id: string;
-    size_name: string;
-  };
-  images?: string[];
-}
-
-interface ApiPayload {
+// Define output structure
+type OutputPayload = {
   product_name: string;
-  title: string;
-  description: string;
   brand_id: string;
-  brand_name: string;
   store_id: string;
-  store_name: string;
-  target_audience?: string;
-  rating?: number;
-  like?: number;
-  views?: number;
-  share?: number;
-  categories: Category[];
-  attributes: Attribute[];
-  variants: Variant[];
-  main_image?: string;
-}
-
-export default function transformFormToApiPayload(formData: FormData): ApiPayload {
-  // Safely destructure with defaults
-  const keyDetails = formData.keyDetails || {};
-  const attributes = formData.attributes || { attributes: {} };
-  const category = formData.category || {};
-  const pricing = formData.pricing || {};
-  const variants = formData.variants || {};
-  const media = formData.media || {};
-
-  // Process categories
-  const categories: Category[] = Object.entries(category)
-    .filter(([_, value]) => Boolean(value))
-    .map(([level, id]) => ({
-      id: id || '',
-      name: level,
-    }));
-
-  // Process attributes - now includes both value and valueId
-  const attributeArray: Attribute[] = Object.entries(attributes.attributes)
-    .filter(([_, valueObj]) => Boolean(valueObj?.value))
-    .map(([name, valueObj]) => ({
-      name,
-      value: String(valueObj.value),
-      id: valueObj.id || '' // Include the valueId
-    }));
-
-  // Process variants
-  const variant: Variant = {
-    sku: keyDetails.skuID || '',
-    price: pricing.storeListPrice || 0,
+  description: string;
+  title: string;
+  target_audience: string;
+  rating: number;
+  like: number;
+  views: number;
+  share: number;
+  categories: { id: string; name: string }[];
+  attributes: { id: string; name: string; value: string }[];
+  variants: {
+    product_id?: string;
+    sku: string;
+    price: number;
     color: {
-      color_id: variants.colorId || '',
-      color_name: variants.colorChoice || '',
+      color_id: string;
+      color_name: string;
+    };
+    size: {
+      size_id: string;
+      size_name: string;
+    };
+    images: string[];
+    active: boolean;
+    quantity: number;
+  }[];
+  brand_name: string;
+  store_name: string;
+};
+
+// Transformer function
+export function transformPayload(
+  input: InputPayload,
+  storeId: string,
+  storeName: string
+): OutputPayload {
+  const formData = input;
+
+  const {
+    productName,
+    productDescription,
+    productTitle,
+    targetAudience,
+    rating = 0,
+    like = 0,
+    views = 0,
+    share = 0,
+    brand,
+  } = formData.keyDetails;
+
+  const product_name = productName.trim();
+  const title = productTitle?.trim() || product_name;
+
+  const categories = Object.values(formData.category).filter(Boolean) as {
+    id: string;
+    name: string;
+  }[];
+
+  const attributes = formData.attributes.attributes.map((attr) => ({
+    id: attr.id,
+    name: attr.name,
+    value: attr.value,
+  }));
+
+  const price = parseFloat(formData.pricing.price);
+
+  const rawVariants = Object.values(formData.variants).filter(
+    (
+      v
+    ): v is {
+      product_id?: string;
+      sku: string;
+      size: { id: string; name: string };
+      color: { color_id: string; name: string };
+      images: string[];
+      active: boolean;
+      quantity: number;
+    } => typeof v === "object" && "sku" in v
+  );
+
+  const variants = rawVariants.map((v) => ({
+    sku: v.sku,
+    price: price,
+    color: {
+      color_id: v.color.color_id,
+      color_name: v.color.name,
     },
     size: {
-      size_id: variants.sizeId || '',
-      size_name: variants.sizeOptions || '',
+      size_id: v.size.id,
+      size_name: v.size.name,
     },
-    images: media.productImage ? [media.productImage] : undefined,
-  };
+    images: v.images || [],
+    active: v.active ?? true,
+    quantity: v.quantity ?? 0,
+  }));
 
-  // Build the final payload
-  const payload: ApiPayload = {
-    product_name: keyDetails.productName?.trim() || '',
-    title: keyDetails.productName?.trim() || '',
-    description: keyDetails.productDescription?.trim() || '',
-    brand_id: keyDetails.brand?.brand_id || '',
-    brand_name: keyDetails.brand?.name || '',
-    store_id: keyDetails.store?.store_id || '',
-    store_name: keyDetails.store?.store_name || '',
+  return {
+    product_name,
+    brand_id: brand.brand_id,
+    store_id: storeId,
+    description: productDescription,
+    title,
+    target_audience: targetAudience,
+    rating,
+    like,
+    views,
+    share,
     categories,
-    attributes: attributeArray,
-    variants: [variant],
+    attributes,
+    variants,
+    brand_name: brand.name,
+    store_name: storeName,
   };
-
-  if (media.productImage) {
-    payload.main_image = media.productImage;
-  }
-
-  return payload;
 }

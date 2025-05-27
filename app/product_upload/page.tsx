@@ -145,8 +145,8 @@ import DraftControls from '@/components/ProductUploadSection/DraftControls';
 
 const sectionComponents = [
   BrandAndSeller,
-  ProductAttributes,
   CategorySelector,
+  ProductAttributes,
   PricingAndAvailability,
   VariantAndInventory,
   MediaAssets
@@ -160,7 +160,7 @@ export default function ProductUploadPage() {
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="w-72 bg-white border-r border-gray-200 p-4 sticky top-0 h-screen overflow-y-auto">
+      <div className="w-[25%] bg-white border-r border-gray-200 p-4 sticky top-0 h-screen overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">Product Upload</h2>
         <DraftControls />
         <ProductUploadSideBar />
