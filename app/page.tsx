@@ -31,7 +31,7 @@ type SortConfig = {
 export default function Home() {
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
-  const [displayedSellers, setDisplayedSellers] = useState<Seller[]>([]);
+  // const [displayedSellers, setDisplayedSellers] = useState<Seller[]>([]);
   const [search, setSearch] = useState("");
   const [selectedFacets, setSelectedFacets] = useState<{
     [key: string]: string[];
@@ -88,7 +88,7 @@ export default function Home() {
     setFilteredSellers(updatedFilteredSellers);
 
     try {
-      const response = await api.patch("/stores/bulk-active", {
+      await api.patch("/stores/bulk-active", {
         ids: selectedSellerIds,
         active: newStatus,
       });
@@ -105,14 +105,14 @@ export default function Home() {
 
   // Fetch sellers data
   useEffect(() => {
-    const fetchSellers = async (query: string, filters: string) => {
+    const fetchSellers = async (query: string) => {
       try {
         const res = await api.get(
           `/search/search_store?query=${query}&facets=city&facets=area&facets=store_types&facets=outfits&facets=genders&facets=price_ranges&facets=age_groups&facets=rental`
         );
         const data = res.data;
 
-        const sellers: Seller[] = data.hits.map((hit: any, index: number) => ({
+        const sellers: Seller[] = data.hits.map((hit) => ({
           id: hit.id,
           name: hit.store_name,
           email: hit.registered_email,
@@ -142,7 +142,7 @@ export default function Home() {
       }
     };
 
-    fetchSellers(debouncedSearch, "");
+    fetchSellers(debouncedSearch);
   }, [debouncedSearch]);
 
   // Handle search
@@ -168,7 +168,7 @@ export default function Home() {
   };
 
   // Filter sellers based on selected facets
-  const filterSellers = (selectedFacets: any) => {
+  const filterSellers = (selectedFacets) => {
     const filtered = sellers.filter((seller) => {
       const matchesFacets = Object.keys(selectedFacets).every((facet) => {
         const selected = selectedFacets[facet];

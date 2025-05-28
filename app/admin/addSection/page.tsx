@@ -18,12 +18,12 @@ export default function AddSectionPage() {
         store_id: null, // explicitly setting it as null
       };
 
-      const response = await axios.post('http://localhost:8000/homepage/section', payload);
+      await axios.post('http://localhost:8000/homepage/section', payload);
 
       setMessage('Section created successfully!');
       setDescription('');
-    } catch (err: any) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       setMessage('Failed to create section.');
     } finally {
       setLoading(false);

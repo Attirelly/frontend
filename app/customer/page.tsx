@@ -169,9 +169,9 @@ export default function CustomerPage() {
     URL.revokeObjectURL(url);
   };
 
-  const toggleViewAll = () => {
-    setViewAll(!viewAll);
-  };
+  // const toggleViewAll = () => {
+  //   setViewAll(!viewAll);
+  // };
 
   return (
     <div className="w-[90%] mx-auto p-6 font-sans flex flex-col">

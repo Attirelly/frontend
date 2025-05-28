@@ -3,7 +3,7 @@ import { InstantSearch, SearchBox, Hits, RefinementList, Pagination, SortBy, Con
 import {liteClient as algoliasearch } from 'algoliasearch/lite';
 import { api } from "@/lib/axios";
 import Link from "next/link";
-import { useEffect, useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 
 const searchClient = algoliasearch(
   process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || 'latency',
@@ -142,7 +142,7 @@ export default function Home() {
         <InstantSearch
           searchClient={searchClient}
           indexName="instant_search"
-          onStateChange={({ uiState }) => {
+          onStateChange={() => {
             if (isInitialLoad) {
               setIsInitialLoad(false);
               return;

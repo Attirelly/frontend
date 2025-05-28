@@ -5,13 +5,33 @@ import axios from 'axios';
 import SearchableSelect from '@/components/SearchableSelect';
 
 type Store = {
-  id: string;
+  store_id: string;
   store_name: string;
+};
+
+type StoreType = {
+  id: string;
+  store_type: string;
+};
+
+type Section = {
+  description: string;
+  section_id: string;
 };
 
 type Option = {
   label: string;
   value: string;
+};
+
+type City = {
+  name: string;
+  id: string;
+};
+
+type Area = {
+  name: string;
+  id: string;
 };
 
 export default function AddStorePriorityPage() {
@@ -30,7 +50,7 @@ export default function AddStorePriorityPage() {
   useEffect(() => {
     axios.get('http://localhost:8000/homepage/section').then((response) =>{
       console.log(response);
-        const sections = response.data.map((section: any) => ({
+        const sections = response.data.map((section: Section) => ({
           label: section.description,
           value: section.section_id,
         }));
@@ -40,7 +60,7 @@ export default function AddStorePriorityPage() {
   useEffect(() => {
     axios.get('http://localhost:8000/stores/store_types').then((res) => {
       console.log(res);
-      const types = res.data.map((t: any) => ({
+      const types = res.data.map((t: StoreType) => ({
         label: t.store_type,
         value: t.id,
       }));
@@ -53,7 +73,7 @@ export default function AddStorePriorityPage() {
       axios
         .get(`http://localhost:8000/homepage/cities_by_store_type/${storeType}`)
         .then((res) => {
-          const locations = res.data.map((city: any) => ({
+          const locations = res.data.map((city: City) => ({
             label: city.name,
             value: city.id,
           }));
@@ -67,7 +87,7 @@ export default function AddStorePriorityPage() {
     axios
       .get(`http://localhost:8000/homepage/areas_by_city/${location}`)
       .then((res) => {
-        const subs = res.data.map((area: any) => ({
+        const subs = res.data.map((area: Area) => ({
           label: area.name,
           value: area.id,
         }));
@@ -85,7 +105,7 @@ export default function AddStorePriorityPage() {
         .get(`http://localhost:8000/homepage/stores_by_area/${subLocation}`)
         .then((res) => {
           console.log(res);
-          const storesData = res.data.map((store: any) => ({
+          const storesData = res.data.map((store: Store) => ({
             label: store.store_name,
             value: store.store_id,
           }));
@@ -111,14 +131,14 @@ export default function AddStorePriorityPage() {
       return
     }
     try{
-      const response = await axios.post('http://localhost:8000/homepage/section_store', null ,{ 
+      await axios.post('http://localhost:8000/homepage/section_store', null ,{ 
         params : {section_id: section, store_id: selectedStore}
       });
       alert('Store added successfully!');
       setSelectedStore(''); // Clear the store selection
     }
-    catch (err: any) {
-      console.error(err);
+    catch (error) {
+      console.error(error);
       alert('Failed to add store to section');
     }
   };
