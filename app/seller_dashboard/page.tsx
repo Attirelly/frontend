@@ -6,6 +6,7 @@ import BusinessDetailsComponent from '@/components/OnboardingSections/BusinessDe
 import PriceFiltersComponent from '@/components/OnboardingSections/PriceFilters';
 import WhereToSellComponent from '@/components/OnboardingSections/WhereToSell';
 import StorePhotosComponent from '@/components/OnboardingSections/StorePhotos';
+import QrCodeGeneration from '@/components/OnboardingSections/QrGeneration';
 import Header from '@/components/Header';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
@@ -28,7 +29,8 @@ export default function SellerDashboardPage() {
     setPriceFiltersValid,
     setWhereToSellData,
     setSocialLinksData,
-    setStorePhotosData
+    setStorePhotosData,
+    setQrId
   } = useSellerStore();
   const [activeSection, setActiveSection] = useState('');
 
@@ -36,18 +38,14 @@ export default function SellerDashboardPage() {
     const fetchInitialData = async () => {
       try {
         const response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } })
-        
-
-        
-
         const storeData = response.data;
-
         console.log(storeData);
 
         const cityData: City[] = storeData.city ? [storeData.city] : [];
         const areaData: Area[] = storeData.area ? [storeData.area] : [];
 
-        setStoreId(storeData.store_id)
+        setStoreId(storeData.store_id);
+        setQrId(storeData.qr_id);
 
         const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id : storeData.store_id}});
         console.log(priceRangeRes);
@@ -111,6 +109,8 @@ export default function SellerDashboardPage() {
         return <WhereToSellComponent />;
       case 'photos':
         return <StorePhotosComponent />;
+      case 'qr_code':
+        return <QrCodeGeneration/>;
       default:
         return null;
     }

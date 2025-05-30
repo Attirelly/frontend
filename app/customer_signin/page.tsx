@@ -1,27 +1,30 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { send } from 'process';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
 import Header from '@/components/Header';
+import Image from 'next/image';
+import axios, { AxiosError } from 'axios';
+import SocialLoginButtons from '@/components/SocialLoginButtons';
+
+
 
 export default function SellerSignup() {
     const [phone, setPhone] = useState('');
     const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
-    const [agreed, setAgreed] = useState(false);
     const [sendOTP, setSendOTP] = useState(false);
-    const { setSellerId, setSellerNumber } = useSellerStore()
-    const resetSellerStore = useSellerStore((state) => state.resetSellerStore);
-    useEffect(() => {
-        // Reset everything when component mounts (optional)
-        resetSellerStore();
-    }, []);
+    const {
+        setSellerId,
+        setSellerNumber,
+        sellerId,
+        setSellerName,
+        setSellerEmail } = useSellerStore()
 
     const isPhoneValid = /^\d{10}$/.test(phone);
-    // const isOTPValid = /^\d{6}$/.test(otp);
     const router = useRouter();
 
     const handleChange = (index: number, value: string) => {
@@ -53,20 +56,12 @@ export default function SellerSignup() {
                 alert('Please enter a valid 6-digit OTP');
                 return;
             }
+            // send api to verify otp 
+
+            // if success
             if (fullOtp === '123456') {
                 try {
-                    const payload = {
-                        "contact_number": phone.toString(),
-                        "role": "admin"
-                    }
-                    const response = await api.post('/users/register_user', payload)
-
-                    console.log(response)
-                    const newSellerId = response.data.id
-                    console.log(newSellerId)
-                    setSellerId(newSellerId)
-
-                    router.push('/seller_signup/sellerOnboarding');
+                    router.push('/customer_dashboard');
                 }
                 catch (error) {
                     console.error('Error fetching stores by section:', error);
@@ -83,19 +78,30 @@ export default function SellerSignup() {
                 alert('Please enter a valid 10-digit number.');
                 return;
             }
-            if (!agreed) {
-                alert('You must accept the SMS authorization terms.');
-                return;
+            try {
+
+                const response = await api.get('/users/user', { params: { phone_number: phone } });
+                console.log(response);
+                setSellerId(response.data.id);
+                setSellerName(response.data.name);
+                setSellerEmail(response.data.email);
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    console.log('Status Code:', error.response.status);
+                    console.log('Response Data:', error.response.data);
+                    alert(`Error : ${error.response.data?.message || 'Something went wrong'}, Please Sign In`);
+                    return;
+                } else {
+                    console.log('Unexpected error:', error);
+                    alert('An unexpected error occurred. Please try again.');
+                }
             }
-            const confirmed = window.confirm('Please confirm you phone number');
-            if (!confirmed) return;
+
             setSellerNumber(phone);
+
             setSendOTP(true);
             // Handle sending OTP
             alert(`OTP sent to ${phone}`);
-
-            // Redirect to OTP verification page
-            // router.push(`/OTPVerify?phone=${phone}`);
         }
     };
 
@@ -103,15 +109,15 @@ export default function SellerSignup() {
         <div className="min-h-screen bg-gray-100 flex flex-col">
             {/* Header */}
             <Header
-                            title="Attirelly"
-                            actions={
-                                <button
-                                    className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100"
-                                    onClick={() => router.push(`/seller_signin`)}>
-                                    Sign In
-                                </button>
-                            }
-                        />
+                title="Attirelly"
+                actions={
+                    <button
+                        className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100"
+                        onClick={() => router.push(`/customer_signup`)}>
+                        Sign Up
+                    </button>
+                }
+            />
 
             {/* Body */}
             <main className="flex-grow flex items-center justify-center px-4">
@@ -119,7 +125,7 @@ export default function SellerSignup() {
                     onSubmit={handleSubmit}
                     className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
                 >
-                    <h2 className="text-xl font-semibold mb-4">Register as a seller</h2>
+                    <h2 className="text-xl font-semibold mb-4">Sign in as a customer</h2>
                     <p className="text-sm text-gray-500 mb-4">
                         Verifying the store's phone number is a great way to make sure your profile reflects your identity and keeps your account safe.
                     </p>
@@ -128,7 +134,7 @@ export default function SellerSignup() {
                     <div className={sendOTP ? "hidden" : ''}>
                         {/* Brand owner number */}
                         <label htmlFor="phone" className="block font-medium text-sm mb-1">
-                            Brand owner number<span className="text-red-500">*</span>
+                            Phone number<span className="text-red-500">*</span>
                         </label>
                         <input
                             id="phone"
@@ -141,19 +147,6 @@ export default function SellerSignup() {
                             placeholder="Enter your mobile number"
                             required
                         />
-                        {/* Checkbox */}
-                        <div className="flex items-center mb-4">
-                            <input
-                                id="agree"
-                                type="checkbox"
-                                checked={agreed}
-                                onChange={(e) => setAgreed(e.target.checked)}
-                                className="mr-2"
-                            />
-                            <label htmlFor="agree" className="text-sm text-gray-600">
-                                By accepting, you agree to receive SMS for account authorization
-                            </label>
-                        </div>
                         {/* Submit button */}
                         <button
                             type="submit"
@@ -195,19 +188,14 @@ export default function SellerSignup() {
                             Verify OTP
                         </button>
                     </div>
-
-
-
-
-
-
                     {/* Sign In link */}
                     <p className="text-center text-xs text-gray-500 mt-4">
-                        Already have an account?{' '}
-                        <Link href="/seller_signin" className="text-blue-600 hover:underline">
-                            Sign In
+                        New to Attirelly?{' '}
+                        <Link href="/customer_signup" className="text-blue-600 hover:underline">
+                            Sign Up
                         </Link>
                     </p>
+                    <SocialLoginButtons/>
                 </form>
             </main>
         </div>

@@ -54,18 +54,11 @@ export default function SellerSignup() {
                 alert('Please enter a valid 6-digit OTP');
                 return;
             }
+            // send api to verify otp 
+
+            // if success
             if (fullOtp === '123456') {
                 try {
-                    // const payload = {
-                    //     "contact_number": phone.toString(),
-                    //     "role": "admin"
-                    // }
-                    // const response = await api.post('/users/register_user', payload)
-
-                    // console.log(response)
-                    // const newSellerId = response.data.id
-                    // console.log(newSellerId)
-                    // setSellerId(newSellerId)
                     router.push('/seller_dashboard');
                 }
                 catch (error) {
@@ -76,20 +69,9 @@ export default function SellerSignup() {
                 alert('wrong otp');
                 return;
             }
-
-
-
-            // send api to verify otp 
-
-            // if success
-
-
-            // if failure
-            // alert('Invalid OTP. Please try again.');
         }
         else {
             
-
             if (!isPhoneValid) {
                 alert('Please enter a valid 10-digit number.');
                 return;
@@ -118,9 +100,6 @@ console.log(response);
             setSendOTP(true);
             // Handle sending OTP
             alert(`OTP sent to ${phone}`);
-
-            // Redirect to OTP verification page
-            // router.push(`/OTPVerify?phone=${phone}`);
         }
     };
 
@@ -166,19 +145,6 @@ console.log(response);
                             placeholder="Enter your mobile number"
                             required
                         />
-                        {/* Checkbox */}
-                        {/* <div className="flex items-center mb-4">
-                            <input
-                                id="agree"
-                                type="checkbox"
-                                checked={agreed}
-                                onChange={(e) => setAgreed(e.target.checked)}
-                                className="mr-2"
-                            />
-                            <label htmlFor="agree" className="text-sm text-gray-600">
-                                By accepting, you agree to receive SMS for account authorization
-                            </label>
-                        </div> */}
                         {/* Submit button */}
                         <button
                             type="submit"
@@ -220,12 +186,6 @@ console.log(response);
                             Verify OTP
                         </button>
                     </div>
-
-
-
-
-
-
                     {/* Sign In link */}
                     <p className="text-center text-xs text-gray-500 mt-4">
                         New to Attirelly?{' '}

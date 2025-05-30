@@ -33,20 +33,22 @@ export default function SocialLinksComponent() {
   }, [instagramUrl, websiteUrl, facebookUrl, setSocialLinksData])
 
   return (
-    <div className="space-y-8 rounded-md overflow-hidden w-full max-w-xl">
+    <div className="space-y-8 rounded-md overflow-hidden w-3xl">
       {/* Container 1 */}
-      <div className="rounded-2xl p-6 space-y-6 max-w-2xl shadow-sm bg-white">
+      <div className="rounded-2xl p-6 space-y-4 max-w-2xl shadow-sm bg-white">
         <div>
           <h2 className="text-lg font-semibold">Social Links</h2>
           <p className="text-sm text-gray-500">Customers will see these details on Attirelly</p>
         </div>
+        {/* Divider */}
+        <div className="-mx-6 border-t border-gray-300"></div>
 
         {/* Instagram Username Input */}
         <div>
           {/* <span className="text-red-500">*</span> */}
           <label className="block text-sm font-medium mb-1">Instagram username</label>
-          <div className="flex border rounded-md overflow-hidden">
-            <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r">
+          <div className="flex border border-gray-300 rounded-md overflow-hidden">
+            <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">
               instagram.com/
             </span>
             <input
@@ -64,7 +66,7 @@ export default function SocialLinksComponent() {
           <label className="block text-sm font-medium mb-1">Shopify URL</label>
           <input
             type="url"
-            className="w-full border rounded-md px-3 py-2"
+            className="w-full border border-gray-300 rounded-md px-3 py-2"
             placeholder="https://yourwebsite.com"
             value={websiteUrl}
             onChange={(e) => setWebsiteUrl(e.target.value)}
@@ -76,7 +78,7 @@ export default function SocialLinksComponent() {
           <label className="block text-sm font-medium mb-1">Facebook URL</label>
           <input
             type="url"
-            className="w-full border rounded-md px-3 py-2"
+            className="w-full border border-gray-300 rounded-md px-3 py-2"
             placeholder="https://facebook.com/yourpage"
             value={facebookUrl}
             onChange={(e) => setFacebookUrl(e.target.value)}
@@ -96,9 +98,9 @@ export default function SocialLinksComponent() {
         </div>
         <div className="mt-4 md:mt-0 md:w-1/3 flex justify-center">
           <img
-            src={'/OnboardingSections/business_details.png'}
+            src={'/OnboardingSections/instagram.png'}
             alt={'bros'}
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-15 h-15 rounded-2xl object-cover"
           />
         </div>
       </div>
@@ -112,9 +114,9 @@ export default function SocialLinksComponent() {
         </div>
         <div className="mt-4 md:mt-0 md:w-1/3 flex justify-center">
           <img
-            src={'/OnboardingSections/business_details.png'}
+            src={'/OnboardingSections/shopify.png'}
             alt={'bros'}
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-15 h-15 rounded-2xl object-cover"
           />
         </div>
       </div>

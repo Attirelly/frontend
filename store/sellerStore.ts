@@ -76,20 +76,20 @@ type SellerState = {
   sellerNumber : string | null;
   setSellerNumber : (num : string) => void;
 
-  sellerId: string | null
-  setSellerId: (id: string) => void
+  sellerId: string | null;
+  setSellerId: (id: string) => void;
 
-  sellerName : string | null
-  setSellerName : (name : string) => void
+  sellerName : string | null;
+  setSellerName : (name : string) => void;
 
-  sellerEmail : string | null
-  setSellerEmail : (email: string) => void
+  sellerEmail : string | null;
+  setSellerEmail : (email: string) => void;
 
-  storeId : string | null
-  setStoreId: (id: string) => void
+  storeId : string | null;
+  setStoreId: (id: string) => void;
 
-  activeSection : string
-  setActiveSection : (id : string) => void
+  activeSection : string;
+  setActiveSection : (id : string) => void;
 
   businessDetailsValid: boolean;
   setBusinessDetailsValid: (valid: boolean) => void;
@@ -117,6 +117,9 @@ type SellerState = {
 
   storePhotosValid : boolean;
   setStorePhotosValid : (valid : boolean) => void;
+
+  qrId : string | null;
+  setQrId: (id: string) => void;
 
   resetSellerStore: () => void;
 }
@@ -174,6 +177,9 @@ export const useSellerStore = create<SellerState>((set) => ({
   storePhotosValid: false,
   setStorePhotosValid: (valid) => set({ storePhotosValid: valid }),
 
+  qrId: null,
+  setQrId: (id) => set({ qrId: id }),
+
   resetSellerStore: () =>
     set({
       furthestStep: 0,
@@ -192,6 +198,7 @@ export const useSellerStore = create<SellerState>((set) => ({
       socialLinksValid: false,
       storePhotosData: null,
       storePhotosValid: false,
+      qrId: null,
     }),
 
 }))

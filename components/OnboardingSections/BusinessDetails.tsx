@@ -21,13 +21,13 @@ const RequiredLabel: FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 export default function BusinessDetailsComponent({ onValidationChange }: { onValidationChange?: (isValid: boolean) => void }) {
-  
+
   const {
     setBusinessDetailsValid,
     setBusinessDetailsData,
     businessDetailsData,
     sellerNumber,
-  sellerId } = useSellerStore();
+    sellerId } = useSellerStore();
   const [sameAsOwner, setSameAsOwner] = useState(true);
 
   const [brandTypes, setBrandTypes] = useState<BrandType[]>([]);
@@ -57,10 +57,10 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   const [brandAddress, setBrandAddress] = useState(businessDetailsData?.brandAddress || '');
 
   useEffect(() => {
-  if (sameAsOwner) {
-    setBusinessWpNum(sellerNumber || '');
-  }
-}, [sameAsOwner, sellerNumber]);
+    if (sameAsOwner) {
+      setBusinessWpNum(sellerNumber || '');
+    }
+  }, [sameAsOwner, sellerNumber]);
 
 
   useEffect(() => {
@@ -88,38 +88,38 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     fetchInitialData();
   }, []);
 
-const cityInitializedRef = useRef(false);
-const areaInitializedRef = useRef(false);
+  const cityInitializedRef = useRef(false);
+  const areaInitializedRef = useRef(false);
 
-useEffect(() => {
-  if (
-    cityInitializedRef.current ||
-    !businessDetailsData ||
-    businessDetailsData.city?.length === 0 ||
-    cities.length === 0 ||
-    cityOptions.length === 0
-  ) return;
-  
-  const cityFromStore = businessDetailsData.city[0];
-  console.log(businessDetailsData);
-  const fullCity = cities.find(city => city.id === cityFromStore.id);
-  const cityOption = cityOptions.find(opt => opt.value === cityFromStore.id);
+  useEffect(() => {
+    if (
+      cityInitializedRef.current ||
+      !businessDetailsData ||
+      businessDetailsData.city?.length === 0 ||
+      cities.length === 0 ||
+      cityOptions.length === 0
+    ) return;
 
-  if (fullCity) setSelectedCity([fullCity]);
+    const cityFromStore = businessDetailsData.city[0];
+    console.log(businessDetailsData);
+    const fullCity = cities.find(city => city.id === cityFromStore.id);
+    const cityOption = cityOptions.find(opt => opt.value === cityFromStore.id);
 
-  if (cityOption) {
-    setSelectedCityOption(cityOption);
-  } else {
-    setSelectedCityOption({
-      value: cityFromStore.id,
-      label: cityFromStore.name,
-    });
-  }
+    if (fullCity) setSelectedCity([fullCity]);
 
-  cityInitializedRef.current = true;
-}, [businessDetailsData, cities, cityOptions]);
+    if (cityOption) {
+      setSelectedCityOption(cityOption);
+    } else {
+      setSelectedCityOption({
+        value: cityFromStore.id,
+        label: cityFromStore.name,
+      });
+    }
 
-useEffect(() => {
+    cityInitializedRef.current = true;
+  }, [businessDetailsData, cities, cityOptions]);
+
+  useEffect(() => {
     if (selectedCityOption?.value) {
       const filteredAreas = areas
         .filter(area => area.city_id === selectedCityOption.value)
@@ -132,32 +132,32 @@ useEffect(() => {
     }
   }, [selectedCityOption, areas]);
 
-useEffect(() => {
-  if (
-    areaInitializedRef.current ||
-    !businessDetailsData ||
-    businessDetailsData.area?.length === 0 ||
-    areas.length === 0 ||
-    areaOptions.length === 0
-  ) return;
+  useEffect(() => {
+    if (
+      areaInitializedRef.current ||
+      !businessDetailsData ||
+      businessDetailsData.area?.length === 0 ||
+      areas.length === 0 ||
+      areaOptions.length === 0
+    ) return;
 
-  const areaFromStore = businessDetailsData.area[0];
-  const fullArea = areas.find(area => area.id === areaFromStore.id);
-  const areaOption = areaOptions.find(opt => opt.value === areaFromStore.id);
-  console.log(areaOption)
-  if (fullArea) setSelectedArea([fullArea]);
+    const areaFromStore = businessDetailsData.area[0];
+    const fullArea = areas.find(area => area.id === areaFromStore.id);
+    const areaOption = areaOptions.find(opt => opt.value === areaFromStore.id);
+    console.log(areaOption)
+    if (fullArea) setSelectedArea([fullArea]);
 
-  if (areaOption) {
-    setSelectedAreaOption(areaOption);
-  } else {
-    setSelectedAreaOption({
-      value: areaFromStore.id,
-      label: areaFromStore.name,
-    });
-  }
+    if (areaOption) {
+      setSelectedAreaOption(areaOption);
+    } else {
+      setSelectedAreaOption({
+        value: areaFromStore.id,
+        label: areaFromStore.name,
+      });
+    }
 
-  areaInitializedRef.current = true;
-}, [businessDetailsData, areas, areaOptions]);
+    areaInitializedRef.current = true;
+  }, [businessDetailsData, areas, areaOptions]);
 
   useEffect(() => {
     const valid =
@@ -204,7 +204,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="space-y-8 max-w-3xl mx-auto bg-gray-100">
+    <div className="space-y-8 w-3xl mx-auto bg-gray-100">
       {/* Brand Owner Section */}
       <Section title="Brand owner details" subtitle="This is for internal data, your customers won't see this.">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -213,7 +213,7 @@ useEffect(() => {
             <input
               type="text"
               defaultValue={sellerNumber || ''}
-              className='w-full border rounded px-3 py-2 text-gray'
+              className='w-full border border-gray-300 rounded px-3 py-2 text-gray'
               disabled={!!sellerNumber}
             />
           </div>
@@ -281,9 +281,11 @@ useEffect(() => {
 // Utility Components
 
 const Section: FC<{ title: string; subtitle: string; children: React.ReactNode }> = ({ title, subtitle, children }) => (
-  <div className="p-6 rounded-2xl shadow-sm bg-white">
+  <div className="p-6 space-y-4 rounded-2xl shadow-sm bg-white">
     <h2 className="text-lg font-semibold mb-1">{title}</h2>
     <p className="text-sm text-gray-500 mb-4">{subtitle}</p>
+    {/* Divider */}
+    <div className="-mx-6 border-t border-gray-300"></div>
     {children}
   </div>
 );
@@ -299,7 +301,7 @@ const InputField: FC<{
     {required ? <RequiredLabel>{label}</RequiredLabel> : <label className="block text-sm font-medium mb-1">{label}</label>}
     <input
       type="text"
-      className="w-full border rounded px-3 py-2"
+      className="w-full border border-gray-300 rounded px-3 py-2"
       placeholder={placeholder}
       value={value}
       onChange={e => onChange?.(e.target.value)}
@@ -322,10 +324,16 @@ const ToggleChips: FC<{
         return (
           <label
             key={item.id}
-            onClick={() => toggle(item)}
-            className={`px-3 py-2 border rounded cursor-pointer ${isSelected ? 'bg-black text-white' : 'bg-white'}`}
+            // onClick={() => toggle(item)}
+            className={`px-3 py-2 border border-gray-500 rounded cursor-pointer ${isSelected ? 'bg-gray-100' : 'bg-white'}`}
           >
-            {text}
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={() => toggle(item)}
+              className="accent-black"
+            />
+            <span className={`text-md font-medium ${isSelected ? 'text-black' : 'text-gray-500'}`}>  {text}</span>
           </label>
         );
       })}
@@ -366,16 +374,16 @@ const RadioGroup: FC<{
     <label className="block text-sm font-medium mb-2">{label}</label>
     <div className="flex gap-4">
       {options.map(opt => (
-        <label key={opt} className={`px-4 py-2 border rounded cursor-pointer ${selected === opt ? 'bg-black text-white' : 'bg-white'}`}>
+        <label key={opt} className={`px-4 py-2 border border-gray-500 rounded text-gray-500 cursor-pointer ${selected === opt ? 'bg-gray-100' : 'bg-white'}`}>
           <input
             type="radio"
-            className="hidden"
+            className="accent-black"
             name={label}
             value={opt}
             checked={selected === opt}
             onChange={() => onChange(opt)}
           />
-          {opt}
+          <span className={`text-sm font-medium ${selected === opt ? 'text-black' : 'text-gray-500'}`}>  {opt}</span>
         </label>
       ))}
     </div>

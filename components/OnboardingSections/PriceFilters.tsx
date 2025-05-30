@@ -45,16 +45,16 @@ export default function PriceFiltersComponent() {
           api.get(`/stores/price_ranges`)
         ]);
         const storeData = storeRes.data;
-         if (storeData?.store_types) {
-        const fetchedStoreTypes: StoreType[] = storeData.store_types;
-        setStoreTypes(fetchedStoreTypes);
+        if (storeData?.store_types) {
+          const fetchedStoreTypes: StoreType[] = storeData.store_types;
+          setStoreTypes(fetchedStoreTypes);
 
-        // Clean up old selectedPrices that refer to deleted storeTypes
-        const validStoreTypeIds = new Set(fetchedStoreTypes.map((st) => st.id));
-        setSelectedPrices((prev) =>
-          prev.filter((item) => validStoreTypeIds.has(item.store_type))
-        );
-      }
+          // Clean up old selectedPrices that refer to deleted storeTypes
+          const validStoreTypeIds = new Set(fetchedStoreTypes.map((st) => st.id));
+          setSelectedPrices((prev) =>
+            prev.filter((item) => validStoreTypeIds.has(item.store_type))
+          );
+        }
         setPriceRanges(priceRangeRes.data);
       } catch (error) {
         console.error("Error fetching store types or price ranges", error);
@@ -65,7 +65,7 @@ export default function PriceFiltersComponent() {
   }, [storeId]);
 
 
-  
+
 
   const handleSelect = (storeTypeId: string, priceRangeId: string) => {
     setSelectedPrices((prev) => {
@@ -76,35 +76,38 @@ export default function PriceFiltersComponent() {
   console.log(selectedPrices)
 
   useEffect(() => {
-  const allStoreTypesSelected = storeTypes.every((storeType) =>
-    selectedPrices.some((entry) => entry.store_type === storeType.id)
-  );
+    const allStoreTypesSelected = storeTypes.every((storeType) =>
+      selectedPrices.some((entry) => entry.store_type === storeType.id)
+    );
 
-  const isValid =
-    minPrice.trim() !== "" &&
-    maxPrice.trim() !== "" &&
-    allStoreTypesSelected;
+    const isValid =
+      minPrice.trim() !== "" &&
+      maxPrice.trim() !== "" &&
+      allStoreTypesSelected;
 
-  setPriceFiltersValid(isValid);
+    setPriceFiltersValid(isValid);
 
-  if (isValid) {
-    setPriceFiltersData({
-      avgPriceMin: Number(minPrice),
-      avgPriceMax: Number(maxPrice),
-      priceRanges: selectedPrices,
-    });
-  }
-}, [minPrice, maxPrice, selectedPrices, storeTypes]);
+    if (isValid) {
+      setPriceFiltersData({
+        avgPriceMin: Number(minPrice),
+        avgPriceMax: Number(maxPrice),
+        priceRanges: selectedPrices,
+      });
+    }
+  }, [minPrice, maxPrice, selectedPrices, storeTypes]);
 
 
   return (
-    <div className="p-6 rounded-2xl shadow-sm space-y-6 max-w-xl bg-white">
+    <div className="p-6 rounded-2xl shadow-sm space-y-4 w-3xl bg-white">
       <div>
         <h2 className="text-lg font-semibold">Price filters</h2>
         <p className="text-sm text-gray-500">
           Define product tiers in affordable, premium and luxury for easy filtering.
         </p>
       </div>
+
+      {/* Divider */}
+        <div className="-mx-6 border-t border-gray-300"></div>
 
       <div className="flex items-center gap-4">
         <div className="flex-1">
@@ -115,7 +118,7 @@ export default function PriceFiltersComponent() {
               placeholder="2000"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-300 rounded px-3 py-2"
             />
             <span className="self-center">-</span>
             <input
@@ -123,11 +126,13 @@ export default function PriceFiltersComponent() {
               placeholder="25000"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border border-gray-300 rounded px-3 py-2"
             />
           </div>
         </div>
       </div>
+
+      <div className="felx-grow border-t border-dotted border-gray-300"></div>
 
       <div className="space-y-6">
         {storeTypes.map((storeType) => (
@@ -141,7 +146,7 @@ export default function PriceFiltersComponent() {
                 return (
                   <label
                     key={price.id}
-                    className={`border rounded-lg p-4 cursor-pointer transition ${isSelected ? "border-blue-600 bg-blue-100" : "border-gray-300"
+                    className={`border rounded-lg p-4 cursor-pointer transition ${isSelected ? "bg-gray-200" : "border-gray-300"
                       }`}
                   >
                     <input
@@ -150,12 +155,15 @@ export default function PriceFiltersComponent() {
                       value={price.id}
                       checked={isSelected}
                       onChange={() => handleSelect(storeType.id, price.id)}
-                      className="hidden"
+                      className="accent-black"
                     />
-                    <div className="font-medium">{price.label}</div>
-                    <div className="text-sm text-gray-600">
-                      {PRICE_RANGE_TEXT[price.label] || "N/A"}
+                    <div>
+                      <div className="font-medium">{price.label}</div>
+                      <div className="text-sm text-gray-600">
+                        {PRICE_RANGE_TEXT[price.label] || "N/A"}
+                      </div>
                     </div>
+
                   </label>
                 );
               })}

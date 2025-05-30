@@ -18,7 +18,7 @@ interface UploadResponse {
 }
 
 export default function PhotosPage() {
-  const { storePhotosData, setStorePhotosData , setStorePhotosValid} = useSellerStore();
+  const { storePhotosData, setStorePhotosData, setStorePhotosValid } = useSellerStore();
 
   const [bannerUrl, setBannerUrl] = useState(storePhotosData?.bannerUrl || "");
   const [profileUrl, setProfileUrl] = useState(
@@ -116,7 +116,7 @@ export default function PhotosPage() {
   console.log(storePhotosData);
 
   return (
-    <div className="max-w-2xl space-y-6 bg-white p-6 rounded-2xl shadow-sm">
+    <div className="w-3xl space-y-6 bg-white p-6 rounded-2xl shadow-sm">
       <Modal
         isOpen={!!croppingImage}
         ariaHideApp={false}
@@ -189,6 +189,8 @@ export default function PhotosPage() {
           Upload a profile & banner photo to showcase your brand's identity.
         </p>
       </div>
+      {/* Divider */}
+      <div className="-mx-6 border-t border-gray-300"></div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Banner Upload */}
