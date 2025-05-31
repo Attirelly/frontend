@@ -1,4 +1,5 @@
 import { googleLogout } from '@react-oauth/google';
+import { api } from '@/lib/axios';
 
 const logoutFacebook = () => {
   if (typeof window !== 'undefined' && window.FB) {
@@ -8,12 +9,18 @@ const logoutFacebook = () => {
   }
 };
 
-export const logout = (redirectPath: string = '/login') => {
-  googleLogout();
-  logoutFacebook();
+export const logout = async (redirectPath: string = '/login') => {
+  
 
-  localStorage.removeItem('credentials');
-  localStorage.removeItem('user_role');
+  try{
+    await api.post('users/logout');
+    googleLogout();
+    logoutFacebook();
+    window.location.href = redirectPath;
+  }
+  catch(error){
+    console.error('Logout failed:', error);
+  }
 
-  window.location.href = redirectPath;
+  
 };

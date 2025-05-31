@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { api } from '@/lib/axios';
 
 type Props = {
-  role?: 'seller' | 'customer'; // optional prop to check role
+  role?: 'admin' | 'user'; // optional prop to check role
   children: React.ReactNode;   // components inside this wrapper
 };
 
@@ -14,21 +15,24 @@ export default function ProtectedRoute({ role, children }: Props) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const credentialsStr = localStorage.getItem('credentials');
-    const credentials = credentialsStr ? JSON.parse(credentialsStr) : null;  // get auth token from localStorage
-    const userRole = localStorage.getItem('user_role');         // get saved role: 'seller' or 'customer'
-    const access_token = credentials?.access_token;
-    // If token is missing, redirect to login
-    if (!access_token) {
-      router.replace(role === 'seller' ? '/seller_signin' : '/customer_signin');
-    } 
-    // If user has a token but their role doesn't match
-    else if (role && userRole !== role) {
-      router.replace('/unauthorized');  // redirect to optional unauthorized page
-    }
-    else{
-        setIsReady(true);
-    }
+    const verifyUser = async () => {
+      try {
+        const res = await api.get('users/me'); 
+        const user = res.data;
+        console.log(user);
+
+        if (role && user.role !== role) {
+          router.replace('/unauthorized');
+        } else {
+          setIsReady(true);
+        }
+      } catch (err) {
+        // Not authenticated or token invalid
+        router.replace(role === 'admin' ? '/seller_signin' : '/customer_signin');
+      }
+    };
+
+    verifyUser();
   }, [router, role]);
 
   if(!isReady){

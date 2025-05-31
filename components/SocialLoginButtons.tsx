@@ -27,11 +27,6 @@ export default function SocialLoginButtons() {
                 const res = await api.post('/users/google', {
                     access_token: tokenResponse.access_token,
                 });
-
-                // const { access_token, refresh_token } = res.data;
-                localStorage.setItem('credentials', JSON.stringify(res.data));
-                localStorage.setItem('user_role', 'customer');
-                // localStorage.setItem('refresh_token', refresh_token);
                 alert('Google login successful!');
                 router.push('customer_dashboard');
             } catch (err) {
@@ -65,10 +60,6 @@ export default function SocialLoginButtons() {
                             userID: response.authResponse?.userID,
                         });
 
-                        // const { access_token, refresh_token } = res.data;
-                        localStorage.setItem('credentials', JSON.stringify(res.data));
-                        localStorage.setItem('user_role', 'customer');
-                        // localStorage.setItem('refresh_token', refresh_token);
                         alert('Facebook login successful!');
                         router.push('customer_dashboard');
                     } catch (err) {
