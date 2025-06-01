@@ -10,6 +10,8 @@ import QrCodeGeneration from '@/components/OnboardingSections/QrGeneration';
 import Header from '@/components/Header';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { logout } from '@/utils/logout';
 
 type City = { id: string; name: string; state_id: string };
 
@@ -35,8 +37,10 @@ export default function SellerDashboardPage() {
   const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
+    if (!sellerId) return;
     const fetchInitialData = async () => {
       try {
+        console.log(sellerId)
         const response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } })
         const storeData = response.data;
         console.log(storeData);
@@ -95,7 +99,7 @@ export default function SellerDashboardPage() {
       }
     };
     fetchInitialData();
-  }, [sellerNumber]);
+  }, [sellerId]);
 
   const renderSection = () => {
     switch (activeSection) {
@@ -117,12 +121,13 @@ export default function SellerDashboardPage() {
   };
 
   return (
-
+    <ProtectedRoute role="admin">
     <div className='min-h-screen bg-gray-100'>
       <Header
         title='Attirelly'
         actions={
-          <button className='bg-white text-black rounded-2xl shadow-md p-2 cursor-pointer border transition hover:bg-gray-200'>Log Out</button>
+          <button className='bg-white text-black rounded-2xl shadow-md p-2 cursor-pointer border transition hover:bg-gray-200'
+          onClick={() => logout("/seller_signin")}>Log Out</button>
         } />
       <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <DashboardSidebar selected={activeSection} onSelect={setActiveSection} />
@@ -130,6 +135,7 @@ export default function SellerDashboardPage() {
       </div>
 
     </div>
+    </ProtectedRoute>
 
 
   )

@@ -17,7 +17,7 @@ export default function QrCodeGeneration() {
             try {
                 const response = await api.get(`qrcode/qr_by_id/${qrId}`);
                 const data = response.data;
-                setQrImageUrl(`${BASE_URL}${data.qr_path}`);  // e.g., /uploads/abc.png
+                setQrImageUrl(data.qr_path);  // e.g., /uploads/abc.png
                 console.log(data);
             } catch (err) {
                 console.error("Failed to fetch QR image:", err);
@@ -33,10 +33,28 @@ export default function QrCodeGeneration() {
             const response = await api.post(`/qrcode/qr_gen_user/${storeId}`);
             const qrData = response.data;
             setQrId(qrData.qr_id);
-            setQrImageUrl(`${BASE_URL}${qrData.qr_path}`);
+            setQrImageUrl(qrData.qr_path);
             console.log(qrData);
         } catch (err) {
             console.error("QR generation failed", err);
+        }
+    };
+
+    const handleDownload = async () => {
+        try {
+            const response = await fetch(qrImageUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `attirelly-qr-${storeId}.png`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url); // clean up
+        } catch (error) {
+            console.error("Download failed:", error);
         }
     };
 
@@ -52,13 +70,12 @@ export default function QrCodeGeneration() {
             {qrImageUrl ? (
                 <div className="flex flex-col justify-center items-center">
                     <img src={qrImageUrl} alt="QR Code" className="w-64 h-64 object-contain" />
-                    <a
-                        href={qrImageUrl}
-                        download={`attirelly-qr-${storeId}.png`}
+                    <button
+                        onClick={handleDownload}
                         className="py-2 px-4 rounded-2xl bg-black text-white transition duration-200 hover:bg-gray-200 hover:text-black"
                     >
                         Download QR Code
-                    </a>
+                    </button>
                 </div>
             ) : (
                 <button

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
 
 type Props = {
@@ -11,6 +12,13 @@ type Props = {
 };
 
 export default function ProtectedRoute({ role, children }: Props) {
+  const{
+    setSellerId,
+    setSellerNumber,
+    setSellerName,
+    setSellerEmail,
+    setUser
+  } = useSellerStore();
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
 
@@ -19,6 +27,13 @@ export default function ProtectedRoute({ role, children }: Props) {
       try {
         const res = await api.get('users/me'); 
         const user = res.data;
+        if(user.role == "admin"){
+          setSellerNumber(user.contact_number);
+          setSellerName(user.name);
+          setSellerId(user.id);
+          setSellerEmail(user.email);
+        }
+        setUser(user);
         console.log(user);
 
         if (role && user.role !== role) {

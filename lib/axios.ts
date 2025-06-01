@@ -59,20 +59,26 @@ api.interceptors.response.use(
   (response) => response,  // ✅ If response is OK (2xx), return as-is
   async (error) => {
     const originalRequest = error.config;
+    const requestedUrl = originalRequest.url;
+    if(requestedUrl?.includes("/users/refresh")){
+      return Promise.reject(error);
+    }
     if (error.response) {
       const { status } = error.response;
 
       if (status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        // console.warn('Unauthorized. Redirecting to login...');
-        //  Trigger logout, clear tokens, or redirect to login
         try {
           await refreshAccessToken();
           return api(originalRequest);
         }
         catch (refreshError) {
           console.error('❌ Refresh failed, redirecting to login...');
-          // logout();
+          if(requestedUrl?.includes("/seller_dashboard")){
+            logout("/seller_signin");
+          } else if (requestedUrl?.includes("/customer_dashboard")){
+            logout("/customer_sigin");
+          }
           return Promise.reject(refreshError);
         }
       }
