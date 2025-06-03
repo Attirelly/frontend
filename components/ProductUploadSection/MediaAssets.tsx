@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { useFormActions, useFormData } from '@/store/product_upload_store';
+import { useCurrentStep, useFormActions, useFormData } from '@/store/product_upload_store';
 import { FiUpload, FiX, FiImage, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -14,7 +14,8 @@ interface UploadResponse {
 
 export default function MediaAssets() {
   const { media, variants } = useFormData();
-  const { updateFormData } = useFormActions();
+  const { updateFormData, setStepValidation } = useFormActions();
+  const currentStep = useCurrentStep();
   const mainImageInputRef = useRef<HTMLInputElement>(null);
   const variantImageInputRefs = useRef<{[key: string]: HTMLInputElement | null}>({});
   const [mainPreview, setMainPreview] = useState<string | null>(null);
@@ -37,6 +38,14 @@ export default function MediaAssets() {
       setVariantPreviews(previews);
     }
   }, [media]);
+
+
+   useEffect(() => {
+    const isValid =
+      !!media?.mainImage
+
+    setStepValidation(currentStep, isValid);
+  }, [media, currentStep]);
 
   // Get the variants list from the store structure
   const variantsList = variants?.variants || [];
@@ -193,7 +202,7 @@ export default function MediaAssets() {
   };
 
   return (
-    <div className="max-w-4xl space-y-6 bg-white p-6 rounded-2xl shadow-sm">
+    <div className="max-w-4xl space-y-6 bg-white ">
       <div>
         <h1 className="text-lg font-semibold">Media Assets</h1>
         <p className="text-gray-500 text-sm">Upload images for your product and variants</p>
@@ -287,7 +296,7 @@ export default function MediaAssets() {
 
                 <div
                   onClick={() => handleVariantImageClick(sku)}
-                  className="cursor-pointer w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-1 text-gray-400 text-sm hover:bg-gray-50"
+                  className="cursor-pointer w-[100px] h-30 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-1 text-gray-400 text-sm hover:bg-gray-50 "
                 >
                   <FiPlus className="text-xl" />
                   <span>Add Images</span>

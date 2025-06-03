@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFormActions, useFormData } from "@/store/product_upload_store";
+import { useCurrentStep, useFormActions, useFormData } from "@/store/product_upload_store";
 import { api } from "@/lib/axios";
 
 interface Category {
@@ -13,7 +13,8 @@ interface Category {
 
 export default function CategorySelector() {
   const { category } = useFormData();
-  const { updateFormData } = useFormActions();
+  const { updateFormData, setStepValidation } = useFormActions();
+  const currentStep = useCurrentStep();
 
   // State for categories and selections
   const [categories, setCategories] = useState<Category[]>([]);
@@ -46,6 +47,17 @@ export default function CategorySelector() {
       level5: false,
     });
   };
+
+  useEffect(() => {
+    const isValid =
+      !!category?.level1 &&
+      !!category?.level2 &&
+      !!category?.level3 &&
+      !!category?.level4;
+
+    setStepValidation(currentStep, isValid);
+  }, [category, currentStep]);
+
   // Load categories from API
   useEffect(() => {
     const fetchCategories = async () => {
@@ -141,8 +153,8 @@ export default function CategorySelector() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg self-start">
-      <h1 className="text-2xl font-bold mb-2">Category and sub-category</h1>
+    <div className="max-w-4xl mx-auto bg-white rounded-lg self-start">
+      <h1 className="text-lg font-bold mb-2">Category and sub-category</h1>
       <p className="text-gray-600 mb-6 border-b border-gray-200">
         Select the appropriate categories for your product
       </p>
@@ -219,9 +231,9 @@ export default function CategorySelector() {
                   setCategorySearch("");
                   setFilteredCategories(getSubcategories(3));
                   setShowCategoryDropdown((prev) => ({
-                  ...prev,
-                  [`level3`]: true,
-                }));
+                    ...prev,
+                    [`level3`]: true,
+                  }));
                 }}
               />
               {showCategoryDropdown.level3 && (
@@ -259,9 +271,9 @@ export default function CategorySelector() {
                   setCategorySearch("");
                   setFilteredCategories(getSubcategories(2));
                   setShowCategoryDropdown((prev) => ({
-                  ...prev,
-                  [`level2`]: true,
-                }));
+                    ...prev,
+                    [`level2`]: true,
+                  }));
                 }}
               />
               {showCategoryDropdown.level2 && (
@@ -296,12 +308,12 @@ export default function CategorySelector() {
                   setCategorySearch("");
                   setFilteredCategories(getSubcategories(4));
                   setShowCategoryDropdown((prev) => ({
-                  ...prev,
-                  [`level4`]: true,
-                }));
+                    ...prev,
+                    [`level4`]: true,
+                  }));
                 }}
               />
-              {showCategoryDropdown.level3 && (
+              {showCategoryDropdown.level4 && (
                 <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
                   {getSubcategories(4).map((category) => (
                     <div

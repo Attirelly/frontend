@@ -1,11 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useFormActions, useFormData } from "@/store/product_upload_store";
+import {
+  useCurrentStep,
+  useFormActions,
+  useFormData,
+} from "@/store/product_upload_store";
 import { api } from "@/lib/axios";
 
 interface SizeOption {
-  size_id: string;
+  id: string;
   name: string;
 }
 
@@ -31,8 +35,10 @@ export default function VariantAndInventory() {
     variants: globalVariants,
     sizes: globalSelectedSizes,
     colors: globalSelectedColors,
+    category,
   } = useFormData();
-  const { updateFormData } = useFormActions();
+  const { updateFormData, setStepValidation } = useFormActions();
+  const currentStep = useCurrentStep();
   // Initialize states
   const [selectedSizes, setSelectedSizes] = useState<SizeOption[]>(
     globalSelectedSizes?.sizes || []
@@ -40,9 +46,9 @@ export default function VariantAndInventory() {
   const [selectedColors, setSelectedColors] = useState<ColorOption[]>(
     globalSelectedColors?.colors || []
   );
-  const [variantsList, setVariantsList] = useState<VaraintFormState>({
-    variants: globalVariants?.variants || [],
-  });
+  const [variantsList, setVariantsList] = useState<Variant[]>(
+    globalVariants?.variants || []
+  );
 
   // Available options from API
   const [availableSizes, setAvailableSizes] = useState<SizeOption[]>([]);
@@ -63,12 +69,32 @@ export default function VariantAndInventory() {
     error: "",
   });
 
+  const variants = globalVariants?.variants || [];
+
+  useEffect(() => {
+    const isValid =
+      variants.length > 0 &&
+      variants.every(
+        (v) =>
+          v.sku &&
+          v.size &&
+          v.size.id &&
+          v.color &&
+          v.color.color_id &&
+          v.quantity > 0
+      );
+
+    setStepValidation(currentStep, isValid);
+  }, [variants, currentStep, setStepValidation]);
+
   // Fetch sizes and colors
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading((prev) => ({ ...prev, sizes: true }));
-        const sizesResponse = await api.get("/sizes");
+        const sizesResponse = await api.get(
+          `/sizes/category/${category?.level4?.id}`
+        );
         setAvailableSizes(sizesResponse.data);
 
         setLoading((prev) => ({ ...prev, colors: true }));
@@ -91,9 +117,7 @@ export default function VariantAndInventory() {
     )
     .filter(
       (size) =>
-        !selectedSizes.some(
-          (selectedSize) => selectedSize.size_id === size.size_id
-        )
+        !selectedSizes.some((selectedSize) => selectedSize.id === size.id)
     );
 
   // Filter colors based on search term and exclude already selected colors
@@ -117,10 +141,8 @@ export default function VariantAndInventory() {
       selectedSizes.forEach((size) => {
         selectedColors.forEach((color) => {
           // Check if this size-color combination already exists
-          const existingVariant = variantsList?.variants?.find(
-            (v) =>
-              v.size.size_id === size.size_id &&
-              v.color.color_id === color.color_id
+          const existingVariant = variantsList?.find(
+            (v) => v.size.id === size.id && v.color.color_id === color.color_id
           );
 
           if (existingVariant) {
@@ -138,25 +160,28 @@ export default function VariantAndInventory() {
         });
       });
 
-      setVariantsList({ variants: newVariants });
+      setVariantsList(newVariants);
     } else {
-      setVariantsList({ variants: [] });
+      setVariantsList([]);
     }
   }, [selectedSizes, selectedColors]);
 
   // Handle SKU change for a variant
   const handleSkuChange = (index: number, value: string) => {
-    const newVariants = variantsList.variants || [];
-    newVariants[index].sku = value;
-    setVariantsList({ variants: newVariants });
+    setVariantsList((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], sku: value };
+      return updated;
+    });
   };
 
-  // Handle quantity change for a variant
   const handleQuantityChange = (index: number, value: string) => {
-    const newVariants = variantsList.variants || [] ; 
-    newVariants[index].quantity = parseInt(value) || 0;
-    setVariantsList({ variants: newVariants });
-  
+    const quantity = parseInt(value, 10) || 0;
+    setVariantsList((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], quantity };
+      return updated;
+    });
   };
 
   // Handle size selection
@@ -174,8 +199,8 @@ export default function VariantAndInventory() {
   };
 
   // Remove size
-  const removeSize = (size_id: string) => {
-    setSelectedSizes((prev) => prev.filter((size) => size.size_id !== size_id));
+  const removeSize = (id: string) => {
+    setSelectedSizes((prev) => prev.filter((size) => size.id !== id));
   };
 
   // Remove color
@@ -204,15 +229,15 @@ export default function VariantAndInventory() {
 
   // Update form data when options change
   useEffect(() => {
-    updateFormData("sizes", selectedSizes);
-    updateFormData("colors", selectedColors);
-    updateFormData("variants", variantsList);
+    updateFormData("sizes", {"sizes" : selectedSizes});
+    updateFormData("colors", {"colors" : selectedColors});
+    updateFormData("variants", { "variants": variantsList });
     console.log("my variant list", variantsList);
   }, [selectedSizes, selectedColors, variantsList, updateFormData]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg self-start">
-      <h1 className="text-2xl font-bold mb-2">Variants and inventory</h1>
+    <div className="max-w-4xl mx-auto bg-white rounded-lg self-start">
+      <h1 className="text-lg font-bold mb-2">Variants and inventory</h1>
       <p className="text-gray-600 mb-6">Define every version and its stock</p>
 
       {loading.error && (
@@ -252,7 +277,7 @@ export default function VariantAndInventory() {
                   ) : filteredSizes.length > 0 ? (
                     filteredSizes.map((size) => (
                       <div
-                        key={size.size_id}
+                        key={size.id}
                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                         onClick={() => handleSizeSelect(size)}
                       >
@@ -272,13 +297,13 @@ export default function VariantAndInventory() {
             <div className="flex flex-wrap gap-2 mt-2">
               {selectedSizes.map((size) => (
                 <div
-                  key={size.size_id}
+                  key={size.id}
                   className="bg-gray-100 px-3 py-1 rounded-full flex items-center gap-1"
                 >
                   <span>{size.name}</span>
                   <button
                     type="button"
-                    onClick={() => removeSize(size.size_id)}
+                    onClick={() => removeSize(size.id)}
                     className="text-gray-500 hover:text-gray-700"
                   >
                     ×
@@ -366,7 +391,7 @@ export default function VariantAndInventory() {
       </div>
 
       {/* Variants Table */}
-      {(variantsList?.variants ?? []).length > 0 && (
+      {(variantsList ?? []).length > 0 && (
         <div className="mt-6">
           <h2 className="text-lg font-medium mb-3">Product Variants</h2>
           <p className="text-sm text-gray-500 mb-4">
@@ -391,8 +416,8 @@ export default function VariantAndInventory() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {variantsList.variants?.map((variant, index) => (
-                  <tr key={`${variant.size.size_id}-${variant.color.color_id}`}>
+                {variantsList?.map((variant, index) => (
+                  <tr key={`${variant.size.id}-${variant.color.color_id}`}>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <input
                         type="text"
