@@ -1,30 +1,40 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFormActions, useFormData } from "@/store/product_upload_store";
+import { useCurrentStep, useFormActions, useFormData } from "@/store/product_upload_store";
 
 export default function PricingAndAvailability() {
   // Get form data from Zustand store
   const { pricing } = useFormData();
-  const { updateFormData } = useFormActions();
+  const { updateFormData, setStepValidation } = useFormActions();
+    const currentStep = useCurrentStep();
 
   // Initialize state with stored values or defaults
   const [mrp, setMRP] = useState(pricing?.mrp );
   const [rent, setRent] = useState<boolean>(pricing?.rent || false);
   const [price, setStoreListPrice] = useState(pricing?.price);
 
+
+   useEffect(() => {
+    const isValid =
+      !!pricing?.mrp &&
+      !!pricing?.price ;
+
+    setStepValidation(currentStep, isValid);
+  }, [ pricing, currentStep]);
+
   // Save to Zustand store when values change
   useEffect(() => {
     updateFormData("pricing", {
       mrp,
       rent,
-      price,
+      price
     });
   }, [mrp, rent, price, updateFormData]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white  rounded-lg self-start">
-      <h1 className="text-2xl font-bold mb-2">Pricing and availability</h1>
+    <div className="max-w-4xl mx-auto bg-white  rounded-lg self-start">
+      <h1 className="text-lg font-bold mb-2">Pricing and availability</h1>
       <p className="text-gray-600 mb-6">
         Set how much it costs and when it's sold
       </p>

@@ -1,24 +1,27 @@
 "use client";
 import { api } from "@/lib/axios";
-import { useFormActions, useFormData } from "@/store/product_upload_store";
+import { useCurrentStep, useFormActions, useFormData } from "@/store/product_upload_store";
 import { useEffect, useState } from "react";
 
 interface Brand {
-  brand_id: string;
+  id: string;
   name: string;
   logo_url?: string;
 }
 
+
 export default function BrandAndSeller() {
   // Get form data and actions from Zustand store
   const { keyDetails } = useFormData();
-  const { updateFormData } = useFormActions();
+  const { updateFormData , setStepValidation } = useFormActions();
+  const currentStep = useCurrentStep();
+
 
   // State for form and brands
   const [formState, setFormState] = useState({
     productName: keyDetails?.productName || "",
     productDescription: keyDetails?.productDescription || "",
-    brand: keyDetails?.brand || { brand_id: "", name: "" ,logo_url:"" },
+    brand: keyDetails?.brand || { id: "", name: "" ,logo_url:"" },
   });
 
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -26,6 +29,17 @@ export default function BrandAndSeller() {
   const [brandSearch, setBrandSearch] = useState(keyDetails?.brand?.name || "");
   const [showBrandDropdown, setShowBrandDropdown] = useState(false);
   const [isLoadingBrands, setIsLoadingBrands] = useState(false);
+
+
+   useEffect(() => {
+    const isValid =
+      !!keyDetails?.productName &&
+      !!keyDetails?.brand &&
+      !!keyDetails?.productDescription;
+
+    setStepValidation(currentStep, isValid);
+    console.log("first keydetails" ,keyDetails) 
+  }, [keyDetails, currentStep]);
 
   // Fetch brands from API
   useEffect(() => {
@@ -79,7 +93,7 @@ export default function BrandAndSeller() {
     setFormState((prev) => ({
       ...prev,
       brand: {
-        brand_id: brand.brand_id,
+        id: brand.id,
         name: brand.name,
         logo_url:brand.logo_url ?? ""
       },
@@ -102,8 +116,8 @@ export default function BrandAndSeller() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white  rounded-lg self-start ">
-      <h1 className="text-2xl font-bold mb-2 ">Brand and seller info</h1>
+    <div className="max-w-4xl mx-auto bg-white rounded-lg">
+      <h1 className="text-lg font-bold mb-2 ">Brand and seller info</h1>
       <p className="text-gray-600 mb-6 border-b border-gray-200">
         Provide who's selling and where it ships from
       </p>
@@ -122,6 +136,7 @@ export default function BrandAndSeller() {
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-md p-2"
               placeholder="Enter product name"
+              required
             />
           </div>
         </div>
@@ -176,7 +191,11 @@ export default function BrandAndSeller() {
             )}
           </div>
 
-          <div>
+          
+        </div>
+
+        {/* Product Description */}
+        <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-1">
               Product description
             </label>
@@ -184,11 +203,11 @@ export default function BrandAndSeller() {
               name="productDescription"
               value={formState.productDescription}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 min-h-[100px]"
+              className="w-full border border-gray-300 rounded-md p-2"
               placeholder="Enter detailed product description"
             />
           </div>
-        </div>
+
       </div>
     </div>
   );

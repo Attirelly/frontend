@@ -85,7 +85,7 @@ export interface Colors {
   colors: ColorOption[];
 }
 export interface SizeOption {
-  size_id: string;
+  id: string;
   name: string;
 }
 export interface Sizes {
@@ -107,6 +107,7 @@ interface ProductFormStore {
   currentStep: number;
   formData: FormData;
   draftId: string | null;
+  stepValidations: Record<number, boolean>;
   actions: {
     setCurrentStep: (step: number) => void;
     updateFormData: (section: keyof FormData, data: any) => void;
@@ -114,6 +115,7 @@ interface ProductFormStore {
     loadDraft: (draftId: string) => void;
     clearDraft: () => void;
     submitForm: () => Promise<void>;
+    setStepValidation: (step: number, isValid: boolean) => void;
   };
 }
 
@@ -123,7 +125,15 @@ export const useProductFormStore = create<ProductFormStore>()(
       currentStep: 0,
       formData: {},
       draftId: null,
+      stepValidations: {},
       actions: {
+        setStepValidation: (step: number, isValid: boolean) =>
+          set((state) => ({
+            stepValidations: {
+              ...state.stepValidations,
+              [step]: isValid,
+            },
+          })),
         setCurrentStep: (step) => set({ currentStep: step }),
         updateFormData: (section, data) =>
           set((state) => ({
@@ -164,8 +174,12 @@ export const useProductFormStore = create<ProductFormStore>()(
           const { formData } = get();
 
           console.log(formData);
-          const apiPayload = transformPayload(formData, "5f719d19-74ff-4152-8360-335a27321912", "Suneel Sarees");
-          console.log("apiPayload" , apiPayload) ; 
+          const apiPayload = transformPayload(
+            formData,
+            "5f719d19-74ff-4152-8360-335a27321912",
+            "Suneel Sarees"
+          );
+          console.log("apiPayload", apiPayload);
           try {
             const response = await api.post("/products/", apiPayload);
             return response.data;
@@ -190,5 +204,7 @@ export const useProductFormStore = create<ProductFormStore>()(
 export const useCurrentStep = () =>
   useProductFormStore((state) => state.currentStep);
 export const useFormData = () => useProductFormStore((state) => state.formData);
+export const useStepValidations = () =>
+  useProductFormStore((state) => state.stepValidations);
 export const useFormActions = () =>
   useProductFormStore((state) => state.actions);
