@@ -2,7 +2,7 @@
 
 import { useState, ReactNode } from "react";
 import Sidebar from "@/components/Sidebar";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 
 interface AdminLayoutProps {
   children: ReactNode;

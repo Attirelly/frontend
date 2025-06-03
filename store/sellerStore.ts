@@ -8,6 +8,19 @@ type BrandType = {
 
 type SectionKey = 'brand' | 'price' | 'market' | 'social' | 'photos';
 
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  birthday: string;
+  contact_number: string | null;
+  gender: string;
+  location: string | null;
+  profile_pic: string;
+  provider: string;
+  role: 'user' | 'seller' | 'admin'; // adjust based on your app
+  created_at: string;
+};
 
 type GenderType = {
   id: string,
@@ -76,20 +89,20 @@ type SellerState = {
   sellerNumber : string | null;
   setSellerNumber : (num : string) => void;
 
-  sellerId: string | null
-  setSellerId: (id: string) => void
+  sellerId: string | null;
+  setSellerId: (id: string) => void;
 
-  sellerName : string | null
-  setSellerName : (name : string) => void
+  sellerName : string | null;
+  setSellerName : (name : string) => void;
 
-  sellerEmail : string | null
-  setSellerEmail : (email: string) => void
+  sellerEmail : string | null;
+  setSellerEmail : (email: string) => void;
 
-  storeId : string | null
-  setStoreId: (id: string) => void
+  storeId : string | null;
+  setStoreId: (id: string) => void;
 
-  activeSection : string
-  setActiveSection : (id : string) => void
+  activeSection : string;
+  setActiveSection : (id : string) => void;
 
   businessDetailsValid: boolean;
   setBusinessDetailsValid: (valid: boolean) => void;
@@ -117,6 +130,13 @@ type SellerState = {
 
   storePhotosValid : boolean;
   setStorePhotosValid : (valid : boolean) => void;
+
+  qrId : string | null;
+  setQrId: (id: string) => void;
+
+  user: User | null;
+  setUser: (user: User) => void;
+  resetUser: () => void;
 
   resetSellerStore: () => void;
 }
@@ -174,6 +194,13 @@ export const useSellerStore = create<SellerState>((set) => ({
   storePhotosValid: false,
   setStorePhotosValid: (valid) => set({ storePhotosValid: valid }),
 
+  qrId: null,
+  setQrId: (id) => set({ qrId: id }),
+
+  user: null,
+  setUser: (user) => set({ user }),
+  resetUser: () => set({ user: null }),
+
   resetSellerStore: () =>
     set({
       furthestStep: 0,
@@ -192,6 +219,8 @@ export const useSellerStore = create<SellerState>((set) => ({
       socialLinksValid: false,
       storePhotosData: null,
       storePhotosValid: false,
+      qrId: null,
+      user: null
     }),
 
 }))

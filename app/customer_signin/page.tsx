@@ -6,7 +6,9 @@ import { send } from 'process';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
 import Header from '@/components/Header';
+import Image from 'next/image';
 import axios, { AxiosError } from 'axios';
+import SocialLoginButtons from '@/components/SocialLoginButtons';
 
 
 
@@ -15,9 +17,9 @@ export default function SellerSignup() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
     const [sendOTP, setSendOTP] = useState(false);
-    const { 
-        setSellerId, 
-        setSellerNumber, 
+    const {
+        setSellerId,
+        setSellerNumber,
         sellerId,
         setSellerName,
         setSellerEmail } = useSellerStore()
@@ -59,12 +61,7 @@ export default function SellerSignup() {
             // if success
             if (fullOtp === '123456') {
                 try {
-                    // here we will create jwt tokens
-                    const data = {
-                        "contact_number" : phone
-                    }
-                    await api.post("/users/login", { contact_number : phone});
-                    router.push('/seller_dashboard');
+                    router.push('/customer_dashboard');
                 }
                 catch (error) {
                     console.error('Error fetching stores by section:', error);
@@ -76,15 +73,15 @@ export default function SellerSignup() {
             }
         }
         else {
-            
+
             if (!isPhoneValid) {
                 alert('Please enter a valid 10-digit number.');
                 return;
             }
             try {
-                
+
                 const response = await api.get('/users/user', { params: { phone_number: phone } });
-console.log(response);
+                console.log(response);
                 setSellerId(response.data.id);
                 setSellerName(response.data.name);
                 setSellerEmail(response.data.email);
@@ -116,7 +113,7 @@ console.log(response);
                 actions={
                     <button
                         className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100"
-                        onClick={() => router.push(`/seller_signup`)}>
+                        onClick={() => router.push(`/customer_signup`)}>
                         Sign Up
                     </button>
                 }
@@ -128,7 +125,7 @@ console.log(response);
                     onSubmit={handleSubmit}
                     className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
                 >
-                    <h2 className="text-xl font-semibold mb-4">Sign in as a seller</h2>
+                    <h2 className="text-xl font-semibold mb-4">Sign in as a customer</h2>
                     <p className="text-sm text-gray-500 mb-4">
                         Verifying the store's phone number is a great way to make sure your profile reflects your identity and keeps your account safe.
                     </p>
@@ -137,7 +134,7 @@ console.log(response);
                     <div className={sendOTP ? "hidden" : ''}>
                         {/* Brand owner number */}
                         <label htmlFor="phone" className="block font-medium text-sm mb-1">
-                            Brand owner number<span className="text-red-500">*</span>
+                            Phone number<span className="text-red-500">*</span>
                         </label>
                         <input
                             id="phone"
@@ -194,10 +191,11 @@ console.log(response);
                     {/* Sign In link */}
                     <p className="text-center text-xs text-gray-500 mt-4">
                         New to Attirelly?{' '}
-                        <Link href="/seller_signup" className="text-blue-600 hover:underline">
+                        <Link href="/customer_signup" className="text-blue-600 hover:underline">
                             Sign Up
                         </Link>
                     </p>
+                    <SocialLoginButtons/>
                 </form>
             </main>
         </div>

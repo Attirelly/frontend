@@ -76,16 +76,6 @@ export default function SellerSignup() {
                 alert('wrong otp');
                 return;
             }
-
-
-
-            // send api to verify otp 
-
-            // if success
-
-
-            // if failure
-            // alert('Invalid OTP. Please try again.');
         }
         else {
 
