@@ -102,7 +102,7 @@ export default function CategorySelector() {
     setSelectedCategories((prev) => {
       const newState = {
         ...prev,
-        [`level${level}`]: { id: category.category_id, name: category.name },
+        [`level${level}`]: { category_id: category.category_id, name: category.name },
       };
 
       // Reset all lower levels when a higher level changes
@@ -136,7 +136,7 @@ export default function CategorySelector() {
 
     const parentId =
       selectedCategories[`level${level - 1}` as keyof typeof selectedCategories]
-        ?.id;
+        ?.category_id;
     if (!parentId) return [];
     return categories.filter((cat) => cat.parent_id === parentId);
   };
@@ -145,7 +145,7 @@ export default function CategorySelector() {
   const getSelectedCategoryName = (level: number): string => {
     const categoryId =
       selectedCategories[`level${level}` as keyof typeof selectedCategories]
-        ?.id;
+        ?.category_id;
     if (!categoryId) return "";
 
     const category = categories.find((cat) => cat.category_id === categoryId);

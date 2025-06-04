@@ -93,7 +93,7 @@ export default function VariantAndInventory() {
       try {
         setLoading((prev) => ({ ...prev, sizes: true }));
         const sizesResponse = await api.get(
-          `/sizes/category/${category?.level4?.id}`
+          `/sizes/category/${category?.level4?.category_id}`
         );
         setAvailableSizes(sizesResponse.data);
 

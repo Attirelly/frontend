@@ -272,7 +272,10 @@ export default function MediaAssets() {
   };
   async function deleteImageFromS3(imageUrl: string) {
     try {
-      await api.delete(`/products/delete_image`, { data: { imageUrl } });
+      const payload = {
+        file_url: imageUrl,
+      }
+      await api.delete(`/products/delete_image`, {data:{ "file_url" : imageUrl }});
     } catch (error) {
       console.error("Error deleting image from S3:", error);
     }
@@ -458,7 +461,7 @@ export default function MediaAssets() {
                 </div>
 
                 <input
-                  ref={(el) => (variantImageInputRefs.current[sku] = el)}
+                  ref={(el) => { variantImageInputRefs.current[sku] = el; }}
                   type="file"
                   accept=".svg,.png,.jpg,.jpeg,.webp"
                   className="hidden"
