@@ -1,13 +1,17 @@
-// components/ProductFilters.tsx
-
 "use client";
 
 import React from "react";
 import { Select, Input } from "antd";
-import type { ProductFiltersType } from "@/types/ProductTypes";
+import type { ProductFiltersType, FilterOptions } from "@/types/ProductTypes";
 
 const { Option } = Select;
 const { Search } = Input;
+
+// interface Props {
+//   filters: ProductFiltersType;
+//   setFilters: React.Dispatch<React.SetStateAction<ProductFiltersType>>;
+//   filterOptions: FilterOptions;
+// }
 
 const cityToSubLocation: Record<string, string[]> = {
   Mumbai: ["Andheri", "Bandra"],
@@ -18,11 +22,13 @@ const cityToSubLocation: Record<string, string[]> = {
 type ProductFiltersProps = {
   filters: ProductFiltersType;
   setFilters: React.Dispatch<React.SetStateAction<ProductFiltersType>>;
+  filterOptions: FilterOptions;
 };
 
 const ProductFilters: React.FC<ProductFiltersProps> = ({
   filters,
   setFilters,
+  filterOptions,
 }) => {
   return (
     <div style={{ width: "280px", marginRight: 20 }}>
@@ -31,9 +37,10 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <Select
           mode="multiple"
           placeholder="Category"
+          value={filters.category}
           onChange={(v) => setFilters({ ...filters, category: v })}
         >
-          {["Clothing", "Footwear", "Accessories"].map((cat) => (
+          {filterOptions.categories.map((cat) => (
             <Option key={cat}>{cat}</Option>
           ))}
         </Select>
@@ -41,9 +48,10 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <Select
           mode="multiple"
           placeholder="Size"
+          value={filters.size}
           onChange={(v) => setFilters({ ...filters, size: v })}
         >
-          {["S", "M", "L", "XL"].map((s) => (
+          {filterOptions.sizes.map((s) => (
             <Option key={s}>{s}</Option>
           ))}
         </Select>
@@ -51,14 +59,15 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <Select
           mode="multiple"
           placeholder="Color"
+          value={filters.color}
           onChange={(v) => setFilters({ ...filters, color: v })}
         >
-          {["Red", "Blue", "Green", "Black"].map((c) => (
+          {filterOptions.colors.map((c) => (
             <Option key={c}>{c}</Option>
           ))}
         </Select>
 
-        <Select
+        {/* <Select
           mode="multiple"
           placeholder="Fabric"
           onChange={(v) => setFilters({ ...filters, fabric: v })}
@@ -66,7 +75,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           {["Cotton", "Linen", "Silk"].map((f) => (
             <Option key={f}>{f}</Option>
           ))}
-        </Select>
+        </Select> */}
 
         <Select
           placeholder="Available for Rent"
@@ -92,7 +101,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           <Option value="Inactive">Inactive</Option>
         </Select>
 
-        <Select
+        {/* <Select
           placeholder="City"
           allowClear // <== add this to allow clearing
           onChange={(v) =>
@@ -105,9 +114,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
               {city}
             </Option>
           ))}
-        </Select>
+        </Select> */}
 
-        <Select
+        {/* <Select
           mode="multiple"
           placeholder="Sub-location"
           value={filters.subLocation}
@@ -118,19 +127,43 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
             cityToSubLocation[filters.city].map((subloc) => (
               <Option key={subloc}>{subloc}</Option>
             ))}
+        </Select> */}
+
+        <Select
+          mode="multiple"
+          placeholder="Product Name"
+          value={filters.productName}
+          onChange={(v) => setFilters({ ...filters, productName: v })}
+        >
+          {filterOptions.productNames.map((c) => (
+            <Option key={c}>{c}</Option>
+          ))}
         </Select>
 
-        <Search
+        <Select
+          mode="multiple"
+          placeholder="SKU"
+          value={filters.sku}
+          onChange={(v) => setFilters({ ...filters, sku: v })}
+        >
+          {filterOptions.skus.map((c) => (
+            <Option key={c}>{c}</Option>
+          ))}
+        </Select>
+
+        {/* <Search
           placeholder="Product Name"
           onSearch={(v) => setFilters({ ...filters, productName: v })}
           allowClear
-        />
+        >
+        </Search> */}
 
-        <Search
+        {/* <Search
           placeholder="SKU ID"
           onSearch={(v) => setFilters({ ...filters, sku: v })}
           allowClear
-        />
+        >
+        </Search> */}
 
         <Select
           placeholder="Image Upload Status"
