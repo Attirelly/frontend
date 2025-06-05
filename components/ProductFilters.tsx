@@ -7,18 +7,6 @@ import type { ProductFiltersType, FilterOptions } from "@/types/ProductTypes";
 const { Option } = Select;
 const { Search } = Input;
 
-// interface Props {
-//   filters: ProductFiltersType;
-//   setFilters: React.Dispatch<React.SetStateAction<ProductFiltersType>>;
-//   filterOptions: FilterOptions;
-// }
-
-const cityToSubLocation: Record<string, string[]> = {
-  Mumbai: ["Andheri", "Bandra"],
-  Delhi: ["Saket", "Rohini"],
-  Bangalore: ["Indiranagar", "Whitefield"],
-};
-
 type ProductFiltersProps = {
   filters: ProductFiltersType;
   setFilters: React.Dispatch<React.SetStateAction<ProductFiltersType>>;
@@ -36,12 +24,53 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <Select
           mode="multiple"
-          placeholder="Category"
-          value={filters.category}
-          onChange={(v) => setFilters({ ...filters, category: v })}
+          placeholder="Primary Category"
+          value={filters.pmCat}
+          onChange={(v) => setFilters({ ...filters, pmCat: v })}
         >
-          {filterOptions.categories.map((cat) => (
-            <Option key={cat}>{cat}</Option>
+          {filterOptions.categories
+          .filter((cat) => cat.level === 1)
+          .map((cat) => (
+            <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
+          ))}
+        </Select>
+
+         <Select
+          mode="multiple"
+          placeholder="Sub Category 1"
+          value={filters.subCat1}
+          onChange={(v) => setFilters({ ...filters, subCat1: v })}
+        >
+          {filterOptions.categories
+          .filter((cat) => cat.level === 2)
+          .map((cat) => (
+            <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
+          ))}
+        </Select>
+
+        <Select
+          mode="multiple"
+          placeholder="Sub Category 2"
+          value={filters.subCat2}
+          onChange={(v) => setFilters({ ...filters, subCat2: v })}
+        >
+          {filterOptions.categories
+          .filter((cat) => cat.level === 3)
+          .map((cat) => (
+            <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
+          ))}
+        </Select>
+
+        <Select
+          mode="multiple"
+          placeholder="Sub Category 3"
+          value={filters.subCat3}
+          onChange={(v) => setFilters({ ...filters, subCat3: v })}
+        >
+          {filterOptions.categories
+          .filter((cat) => cat.level === 4)
+          .map((cat) => (
+            <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
           ))}
         </Select>
 

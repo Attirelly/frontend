@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Tag, Switch, Button, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import ProductFilters from "@/components/ProductFilters";
-import {api} from "@/lib/axios"
+import { api } from "@/lib/axios"
 import type { ProductFiltersType, Product, FilterOptions } from "@/types/ProductTypes";
 
 
@@ -12,8 +12,16 @@ export default function ProductsPage() {
   const [data, setData] = useState<Product[]>([]);
   const [filteredData, setFilteredData] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
   const [filters, setFilters] = useState<ProductFiltersType>({
     category: [],
+    pmCat: [],
+    subCat1: [],
+    subCat2: [],
+    subCat3: [],
     size: [],
     color: [],
     // fabric: [],
@@ -29,7 +37,7 @@ export default function ProductsPage() {
     categories: [],
     sizes: [],
     colors: [],
-    statuses : [],
+    statuses: [],
     productNames: [],
     skus: [],
     image_upload_statuses: [],
@@ -40,7 +48,8 @@ export default function ProductsPage() {
 
     const fetchInitialData = async () => {
       try {
-        const res = await api.get("/products/products_by_store/97840be9-44fc-4c6f-b3bf-c04140edfb58"); // Adjust this to your actual endpoint
+        setLoading(true);
+        const res = await api.get("/products/products_by_store/5f719d19-74ff-4152-8360-335a27321912"); // Adjust this to your actual endpoint
         const json = res.data;
         setData(json.table_data);
         setFilteredData(json.table_data);
@@ -48,10 +57,10 @@ export default function ProductsPage() {
           categories: json.categories,
           sizes: json.sizes,
           colors: json.colors,
-          statuses : [],
+          statuses: [],
           productNames: json.product_names,
           skus: json.skus,
-          image_upload_statuses : []
+          image_upload_statuses: []
         });
         setLoading(false);
       } catch (err) {
@@ -89,8 +98,32 @@ export default function ProductsPage() {
       dataIndex: "sku",
     },
     {
-      title: "Category",
-      dataIndex: "categories",
+      title: "Primary Category",
+      render: (_: any, record: Product) => {
+        const level1Category = record.category?.find((cat: any) => cat.level === 1);
+        return level1Category?.name || "-";
+      }
+    },
+    {
+      title: "Sub Category 1",
+      render: (_: any, record: Product) => {
+        const level1Category = record.category?.find((cat: any) => cat.level === 2);
+        return level1Category?.name || "-";
+      }
+    },
+    {
+      title: "Sub Category 2",
+      render: (_: any, record: Product) => {
+        const level1Category = record.category?.find((cat: any) => cat.level === 3);
+        return level1Category?.name || "-";
+      }
+    },
+    {
+      title: "Sub Category 3",
+      render: (_: any, record: Product) => {
+        const level1Category = record.category?.find((cat: any) => cat.level === 4);
+        return level1Category?.name || "-";
+      }
     },
     {
       title: "Size",
@@ -137,8 +170,16 @@ export default function ProductsPage() {
   ];
 
   const result = data.filter((item) => {
+    const primaryCat = item.category?.find((cat) => cat.level === 1)?.name || "";
+    const sub_Cat1 = item.category?.find((cat) => cat.level === 2)?.name || "";
+    const sub_Cat2 = item.category?.find((cat) => cat.level === 3)?.name || "";
+    const sub_Cat3 = item.category?.find((cat) => cat.level === 4)?.name || "";
+
     return (
-      (!filters.category.length || filters.category.includes(item.category)) &&
+      (!filters.pmCat.length || filters.pmCat.includes(primaryCat)) &&
+      (!filters.subCat1.length || filters.subCat1.includes(sub_Cat1)) &&
+      (!filters.subCat2.length || filters.subCat2.includes(sub_Cat2)) &&
+      (!filters.subCat3.length || filters.subCat3.includes(sub_Cat3)) &&
       (!filters.size.length || filters.size.includes(item.size)) &&
       (!filters.color.length || filters.color.includes(item.color)) &&
       // (!filters.fabric.length || filters.fabric.includes(item.fabric)) &&
@@ -154,6 +195,8 @@ export default function ProductsPage() {
     );
   });
 
+
+
   return (
     <div style={{ display: "flex", padding: 20 }}>
       <ProductFilters filters={filters} setFilters={setFilters} filterOptions={filterOptions} />
@@ -162,7 +205,21 @@ export default function ProductsPage() {
         <Table
           columns={columns}
           dataSource={result}
-          pagination={{ pageSize: 10 }}
+          rowKey={"variant_id"}
+          pagination={{
+            current: pagination.current,
+            pageSize: pagination.pageSize,  // Default page size
+            showSizeChanger: true, // Enables page size selector
+            pageSizeOptions: ['10', '20', '50', '100'],
+            onChange: (page, pageSize) => {
+              // Optional: Track pagination state if needed
+              setPagination({
+                current: page,
+                pageSize: pageSize,
+              });
+              console.log("Page:", page, "Page Size:", pageSize);
+            },
+          }}
           scroll={{ x: "max-content" }}
         />
       </div>
