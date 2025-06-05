@@ -132,8 +132,9 @@ export default function MediaAssets() {
     const tempPreview = URL.createObjectURL(file);
 
     // Add temporary preview
-    if(sku === "main"){
-      setMainPreview(tempPreview)
+    if(sku == "main"){
+      setMainPreview(tempPreview);
+      setIsUploading((prev) => ({ ...prev, main: true }));
     }
     setVariantPreviews((prev) => ({
       ...prev,
@@ -171,6 +172,20 @@ export default function MediaAssets() {
           file_url,
         ],
       }));
+
+      setIsUploading((prev) => ({
+        ...prev,
+        variants: { ...prev.variants, [sku]: false },
+      }));
+
+      if (sku === "main") {
+        setMainPreview(file_url);
+        updateFormData("media", {
+          ...media,
+          mainImage: file_url,
+        });
+        setIsUploading((prev) => ({ ...prev, main: false }));
+      }
     } catch (error: any) {
       console.error("Upload failed:", error);
       // Remove failed upload
@@ -246,7 +261,8 @@ export default function MediaAssets() {
     }
   };
 
-  const removeMainImage = () => {
+  const removeMainImage = async(imageUrl: string) => {
+    await deleteImageFromS3(imageUrl); 
     setMainPreview(null);
     updateFormData("media", {
       ...media,
@@ -257,8 +273,18 @@ export default function MediaAssets() {
     }
     toast.info("Main image removed");
   };
-
-  const removeVariantImage = (sku: string, imageUrl: string) => {
+  async function deleteImageFromS3(imageUrl: string) {
+    try {
+      const payload = {
+        file_url: imageUrl,
+      }
+      await api.delete(`/products/delete_image`, {data:{ "file_url" : imageUrl }});
+    } catch (error) {
+      console.error("Error deleting image from S3:", error);
+    }
+  }
+  const removeVariantImage = async(sku: string, imageUrl: string) => {
+    await deleteImageFromS3(imageUrl); 
     setVariantPreviews((prev) => ({
       ...prev,
       [sku]: prev[sku]?.filter((url) => url !== imageUrl) || [],
@@ -365,12 +391,12 @@ export default function MediaAssets() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    removeMainImage();
+                    removeMainImage(mainPreview);
                   }}
                   className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow-md hover:bg-gray-100 transition"
                   aria-label="Remove image"
                 >
-                  <FiX className="text-red-500" />
+                  <FiTrash2 className="text-red-500" />
                 </button>
               )}
             </div>
@@ -438,7 +464,7 @@ export default function MediaAssets() {
                 </div>
 
                 <input
-                  ref={(el) => (variantImageInputRefs.current[sku] = el)}
+                  ref={(el) => { variantImageInputRefs.current[sku] = el; }}
                   type="file"
                   accept=".svg,.png,.jpg,.jpeg,.webp"
                   className="hidden"

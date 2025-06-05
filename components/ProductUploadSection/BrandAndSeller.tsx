@@ -4,7 +4,7 @@ import { useCurrentStep, useFormActions, useFormData } from "@/store/product_upl
 import { useEffect, useState } from "react";
 
 interface Brand {
-  id: string;
+  brand_id: string;
   name: string;
   logo_url?: string;
 }
@@ -21,7 +21,7 @@ export default function BrandAndSeller() {
   const [formState, setFormState] = useState({
     productName: keyDetails?.productName || "",
     productDescription: keyDetails?.productDescription || "",
-    brand: keyDetails?.brand || { id: "", name: "" ,logo_url:"" },
+    brand: keyDetails?.brand || { brand_id: "", name: "" ,logo_url:"" },
   });
 
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -48,6 +48,7 @@ export default function BrandAndSeller() {
       try {
         const response = await api.get("/brands/");
         const data = await response.data;
+        console.log("Fetched brands:", data);
         setBrands(data);
         setFilteredBrands(data);
       } catch (error) {
@@ -93,7 +94,7 @@ export default function BrandAndSeller() {
     setFormState((prev) => ({
       ...prev,
       brand: {
-        id: brand.id,
+        brand_id: brand.brand_id,
         name: brand.name,
         logo_url:brand.logo_url ?? ""
       },

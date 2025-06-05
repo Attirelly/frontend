@@ -22,7 +22,7 @@ export interface Variants {
 }
 
 export interface Brand {
-  id: string;
+  brand_id: string;
   name: string;
   logo_url?: string;
 }
@@ -33,7 +33,7 @@ export interface Store {
 }
 
 export interface Category {
-  id: string;
+  category_id: string;
   name: string;
 }
 
@@ -68,7 +68,7 @@ export interface KeyDetails {
   title?: string;
 }
 export interface AttributeValue {
-  id?: string;
+  attribute_id?: string;
   name?: string;
   value?: string;
 }

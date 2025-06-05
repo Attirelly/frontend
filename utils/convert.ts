@@ -1,3 +1,5 @@
+import { parse } from "path";
+
 // Define input payload type
 type InputPayload = {
   keyDetails: {
@@ -15,17 +17,19 @@ type InputPayload = {
     share?: number;
   };
   category: {
-    [key: string]: { id: string; name: string } | undefined;
+    [key: string]: { category_id: string; name: string } | undefined;
   };
   attributes: {
     attributes: {
-      id: string;
+      attribute_id: string;
       name: string;
       value: string;
     }[];
   };
   pricing: {
-    price: string;
+    price: number ; 
+    mrp: number;
+    rent : boolean;
   };
   variants: {
     variants: [{
@@ -52,8 +56,9 @@ type OutputPayload = {
   like: number;
   views: number;
   share: number;
-  categories: { id: string; name: string }[];
-  attributes: { id: string; name: string; value: string }[];
+  rent: boolean;
+  categories: { category_id: string; name: string }[];
+  attributes: { attribute_id: string; name: string; value: string }[];
   variants: {
     product_id?: string;
     sku: string;
@@ -81,6 +86,8 @@ export function transformPayload(
   storeName: string
 ): OutputPayload {
   const formData = input;
+  
+  
 
   const {
     productName,
@@ -91,30 +98,32 @@ export function transformPayload(
     like = 0,
     views = 0,
     share = 0,
-    brand,
+    brand
   } = formData.keyDetails;
 
   const product_name = productName.trim();
   const title = productTitle?.trim() || product_name;
 
   const categories = Object.values(formData.category).filter(Boolean) as {
-    id: string;
+    category_id: string;
     name: string;
   }[];
 
   const attributes = formData.attributes.attributes.map((attr) => ({
-    id: attr.id,
+    attribute_id: attr.attribute_id,
     name: attr.name,
     value: attr.value,
   }));
 
-  const price = parseFloat(formData.pricing.price);
-  
+  const price = formData.pricing.price || 0
+  const mrp =   formData.pricing.mrp || 0;
+  const rent = formData.pricing.rent || false;
   console.log("form"  , formData)
   
   const variants = formData.variants?.variants.map((v) => ({
     sku: v.sku,
     price: price,
+    mrp: mrp,
     color: {
       color_id: v.color.color_id,
       color_name: v.color.name,
@@ -137,6 +146,7 @@ export function transformPayload(
     title,
     target_audience: targetAudience,
     rating,
+    rent,
     like,
     views,
     share,
