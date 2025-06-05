@@ -93,6 +93,7 @@ export interface Sizes {
 }
 
 export interface FormData {
+  productId?: string; // <-- Add this line to store product id for update
   keyDetails?: KeyDetails;
   variants?: Variants;
   attributes?: Attributes;
@@ -139,7 +140,11 @@ export const useProductFormStore = create<ProductFormStore>()(
           set((state) => ({
             formData: {
               ...state.formData,
-              [section]: { ...state.formData[section], ...data },
+              [section]:
+                typeof state.formData[section] === "object" &&
+                state.formData[section] !== null
+                  ? { ...state.formData[section], ...data }
+                  : data,
             },
           })),
         saveDraft: async () => {
