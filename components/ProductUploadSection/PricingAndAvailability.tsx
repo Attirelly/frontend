@@ -47,7 +47,7 @@ export default function PricingAndAvailability() {
             <input
               type="number"
               value={mrp}
-              onChange={(e) => setMRP((e.target.value))}
+              onChange={(e) => setMRP(e.target.value === "" ? undefined : Number(e.target.value))}
               className="w-full border border-gray-300 rounded-md p-2"
               placeholder="e.g., 1000 , 2000 "
             />
@@ -91,7 +91,7 @@ export default function PricingAndAvailability() {
             <input
               type="number"
               value={price}
-              onChange={(e) => setStoreListPrice(e.target.value)}
+              onChange={(e) => setStoreListPrice(e.target.value === "" ? undefined : Number(e.target.value))}
               className="w-full border border-gray-300 rounded-md p-2"
               placeholder="e.g.,1000"
             />

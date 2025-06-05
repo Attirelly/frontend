@@ -5,7 +5,7 @@ import { useCurrentStep, useFormActions, useFormData } from '@/store/product_upl
 import { api } from '@/lib/axios';
 
 interface AttributeIDValue {
-  id: string;
+  attribute_id: string;
   value: string;
 }
 
@@ -15,7 +15,7 @@ interface AttributeResponse {
 }
 
 export interface AttributeValue {
-  id?: string;
+  attribute_id?: string;
   name?: string;
   value?: string;
 }
@@ -50,7 +50,7 @@ const ProductAttributes = () => {
   useEffect(() => {
     const fetchAttributes = async () => {
       try {
-        const response = await api.get(`attributes/attributes_category/${category?.level4?.id}`);
+        const response = await api.get(`attributes/attributes_category/${category?.level4?.category_id}`);
         setAttributes(response.data);
         setFilteredAttributes(response.data);
       } catch (error) {
@@ -90,7 +90,7 @@ const ProductAttributes = () => {
     setSearchTerm('');
   };
 
-  const handleAttributeSelect = (attributeName: string, value: string, id: string) => {
+  const handleAttributeSelect = (attributeName: string, value: string, attribute_id: string) => {
     setFormState(prev => {
       // Check if attribute already exists
       const existingIndex = prev.attributes?.findIndex(attr => attr.name === attributeName) ?? -1;
@@ -101,14 +101,14 @@ const ProductAttributes = () => {
         // Update existing attribute
         newAttributes[existingIndex] = { 
           ...newAttributes[existingIndex],
-          id,
+          attribute_id,
           value,
           name: attributeName
         };
       } else {
         // Add new attribute
         newAttributes.push({
-          id,
+          attribute_id,
           value,
           name: attributeName
         });
@@ -178,9 +178,9 @@ const ProductAttributes = () => {
                   {attribute.values.length > 0 ? (
                     attribute.values.map((val) => (
                       <div
-                        key={val.id}
+                        key={val.attribute_id}
                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                        onClick={() => handleAttributeSelect(attribute.name, val.value, val.id)}
+                        onClick={() => handleAttributeSelect(attribute.name, val.value, val.attribute_id)}
                       >
                         <div className="font-medium">{val.value}</div>
                       </div>
