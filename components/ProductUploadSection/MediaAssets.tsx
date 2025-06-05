@@ -162,6 +162,9 @@ export default function MediaAssets() {
       });
 
       // Replace temp URL with permanent URL
+      if(sku === "main"){
+        setMainPreview(file_url)
+      }
       setVariantPreviews((prev) => ({
         ...prev,
         [sku]: [

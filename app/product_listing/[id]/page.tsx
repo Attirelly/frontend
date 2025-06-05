@@ -4,103 +4,74 @@ import React, { useEffect, useState } from "react";
 import { Table, Tag, Switch, Button, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import ProductFilters from "@/components/ProductFilters";
+import {api} from "@/lib/axios"
+import type { ProductFiltersType, Product, FilterOptions } from "@/types/ProductTypes";
 
-interface Product {
-  key: number;
-  image: string;
-  name: string;
-  sku: string;
-  category: string;
-  size: string;
-  color: string;
-  fabric: string;
-  mrp: number;
-  price: number;
-  rent: boolean;
-  inventory: number;
-  status: "Active" | "Inactive";
-  city: string;
-  subLocation: string;
-  imageUploadStatus: "Pending" | "Completed";
-}
-
-interface ProductFiltersType {
-  category: string[];
-  size: string[];
-  color: string[];
-  fabric: string[];
-  rentAvailable: boolean | null;
-  status: string[];
-  city: string | null;
-  subLocation: string[];
-  productName: string;
-  sku: string;
-  imageUploadStatus: "Pending" | "Completed" | null;
-}
-
-const generateDummyData = (count = 30): Product[] => {
-  const sizes = ["S", "M", "L", "XL"];
-  const colors = ["Red", "Blue", "Green", "Black"];
-  const fabrics = ["Cotton", "Linen", "Silk"];
-  const categories = ["Clothing", "Footwear", "Accessories"];
-  const cities = ["Mumbai", "Delhi", "Bangalore"];
-  const subLocations: Record<string, string[]> = {
-    Mumbai: ["Andheri", "Bandra"],
-    Delhi: ["Saket", "Rohini"],
-    Bangalore: ["Indiranagar", "Whitefield"],
-  };
-
-  return Array.from({ length: count }).map((_, i) => {
-    const city = cities[i % cities.length];
-    return {
-      key: i,
-      image: `https://via.placeholder.com/60?text=Prod+${i + 1}`,
-      name: `Product${i + 1}`,
-      sku: `SKU-${1000 + i}`,
-      category: categories[i % categories.length],
-      size: sizes[i % sizes.length],
-      color: colors[i % colors.length],
-      fabric: fabrics[i % fabrics.length],
-      mrp: 1000 + i * 10,
-      price: 800 + i * 8,
-      rent: i % 2 === 0,
-      inventory: Math.floor(Math.random() * 100),
-      status: i % 3 === 0 ? "Inactive" : "Active",
-      city,
-      subLocation: subLocations[city][i % 2],
-      imageUploadStatus: i % 2 === 0 ? "Completed" : "Pending",
-    };
-  });
-};
 
 export default function ProductsPage() {
   const [data, setData] = useState<Product[]>([]);
+  const [filteredData, setFilteredData] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<ProductFiltersType>({
     category: [],
     size: [],
     color: [],
-    fabric: [],
+    // fabric: [],
     rentAvailable: null,
     status: [],
-    city: null,
-    subLocation: [],
-    productName: "",
-    sku: "",
+    // city: null,
+    // subLocation: [],
+    productName: [],
+    sku: [],
     imageUploadStatus: null,
+  });
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    categories: [],
+    sizes: [],
+    colors: [],
+    statuses : [],
+    productNames: [],
+    skus: [],
+    image_upload_statuses: [],
   });
 
   useEffect(() => {
-    const dummyData = generateDummyData();
-    const sortedData = dummyData.sort((a, b) => {
-      if (a.status === "Active" && b.status !== "Active") return -1;
-      if (a.status !== "Active" && b.status === "Active") return 1;
+    // const dummyData = generateDummyData();
+
+    const fetchInitialData = async () => {
+      try {
+        const res = await api.get("/products/products_by_store/97840be9-44fc-4c6f-b3bf-c04140edfb58"); // Adjust this to your actual endpoint
+        const json = res.data;
+        setData(json.table_data);
+        setFilteredData(json.table_data);
+        setFilterOptions({
+          categories: json.categories,
+          sizes: json.sizes,
+          colors: json.colors,
+          statuses : [],
+          productNames: json.product_names,
+          skus: json.skus,
+          image_upload_statuses : []
+        });
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching data", err);
+        setLoading(false);
+      }
+    };
+
+    const sortedData = data.sort((a, b) => {
+      if (a.status === true && b.status !== true) return -1;
+      if (a.status !== true && b.status === true) return 1;
       return 0;
     });
     setData(sortedData);
+
+    fetchInitialData();
   }, []);
 
   const handleImageUpload = (record: Product) => {
-    message.success(`Image uploaded for ${record.name}`);
+    message.success(`Image uploaded for ${record.product_name}`);
   };
 
   const columns = [
@@ -111,7 +82,7 @@ export default function ProductsPage() {
     },
     {
       title: "Product Name",
-      dataIndex: "name",
+      dataIndex: "product_name",
     },
     {
       title: "System SKU ID",
@@ -119,7 +90,7 @@ export default function ProductsPage() {
     },
     {
       title: "Category",
-      dataIndex: "category",
+      dataIndex: "categories",
     },
     {
       title: "Size",
@@ -131,7 +102,7 @@ export default function ProductsPage() {
     },
     {
       title: "MRP",
-      dataIndex: "mrp",
+      dataIndex: "price",
     },
     {
       title: "Store Price",
@@ -148,9 +119,9 @@ export default function ProductsPage() {
     },
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: "active",
       render: (status: Product["status"]) => (
-        <Tag color={status === "Active" ? "green" : "volcano"}>{status}</Tag>
+        <Tag color={status === true ? "green" : "volcano"}>{status === true ? "Active" : "Inactive"}</Tag>
       ),
     },
     {
@@ -165,30 +136,32 @@ export default function ProductsPage() {
     },
   ];
 
-  const filteredData = data.filter((item) => {
+  const result = data.filter((item) => {
     return (
       (!filters.category.length || filters.category.includes(item.category)) &&
       (!filters.size.length || filters.size.includes(item.size)) &&
       (!filters.color.length || filters.color.includes(item.color)) &&
-      (!filters.fabric.length || filters.fabric.includes(item.fabric)) &&
+      // (!filters.fabric.length || filters.fabric.includes(item.fabric)) &&
       (filters.rentAvailable === null || filters.rentAvailable === item.rent) &&
       (!filters.status.length || filters.status.includes(item.status)) &&
-      (!filters.city || item.city === filters.city) &&
-      (!filters.subLocation.length || filters.subLocation.includes(item.subLocation)) &&
-      (!filters.productName || item.name.toLowerCase().includes(filters.productName.toLowerCase())) &&
-      (!filters.sku || item.sku.toLowerCase().includes(filters.sku.toLowerCase())) &&
+      // (!filters.city || item.city === filters.city) &&
+      // (!filters.subLocation.length || filters.subLocation.includes(item.subLocation)) &&
+      // (!filters.productName || item.name.toLowerCase().includes(filters.productName.toLowerCase())) &&
+      (!filters.productName.length || filters.productName.includes(item.product_name)) &&
+      // (!filters.sku || item.sku.toLowerCase().includes(filters.sku.toLowerCase())) &&
+      (!filters.sku.length || filters.sku.includes(item.sku)) &&
       (!filters.imageUploadStatus || filters.imageUploadStatus === item.imageUploadStatus)
     );
   });
 
   return (
     <div style={{ display: "flex", padding: 20 }}>
-      <ProductFilters filters={filters} setFilters={setFilters} />
+      <ProductFilters filters={filters} setFilters={setFilters} filterOptions={filterOptions} />
       <div style={{ flexGrow: 1, paddingLeft: 20 }}>
         <h3>Products</h3>
         <Table
           columns={columns}
-          dataSource={filteredData}
+          dataSource={result}
           pagination={{ pageSize: 10 }}
           scroll={{ x: "max-content" }}
         />
