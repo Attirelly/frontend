@@ -1,5 +1,4 @@
 "use client";
-
 import BrandAndSeller from "@/components/ProductUploadSection/BrandAndSeller";
 import ProductAttributes from "@/components/ProductUploadSection/ProductAttributes";
 import CategorySelector from "@/components/ProductUploadSection/CategorySelector";
