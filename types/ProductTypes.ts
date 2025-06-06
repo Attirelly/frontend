@@ -1,5 +1,20 @@
+export interface CategoryType {
+  name: string;
+  category_id: string;
+  level: number | null;
+  parent_id?: string | null;
+  description?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  active?: boolean;
+}
+
 export interface ProductFiltersType {
   category: string[];
+  pmCat : string[];
+  subCat1: string[];
+  subCat2: string[];
+  subCat3: string[];
   size: string[];
   color: string[];
   // fabric: string[];
@@ -12,8 +27,9 @@ export interface ProductFiltersType {
   imageUploadStatus: "Pending" | "Completed" | null;
 }
 
+
 export interface FilterOptions{
-  categories: string[];
+  categories: CategoryType[];
   sizes: string[];
   colors: string[];
   statuses: boolean[]; // e.g., ["Active", "Inactive"]
@@ -27,7 +43,7 @@ export interface Product {
   image: string;
   product_name: string;
   sku: string;
-  category: string;
+  category: CategoryType[];
   size: string;
   color: string;
   // fabric: string;
