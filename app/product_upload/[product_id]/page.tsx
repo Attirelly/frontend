@@ -12,7 +12,10 @@ import {
   useStepValidations,
 } from "@/store/product_upload_store";
 import DraftControls from "@/components/ProductUploadSection/DraftControls";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import { api } from "@/lib/axios";
+import { convertToFormData } from "@/utils/convert";
 
 const sectionComponents = [
   BrandAndSeller,
@@ -24,12 +27,36 @@ const sectionComponents = [
 ];
 
 export default function ProductUploadPage() {
+  const params = useParams();
+  const product_id = params.product_id;
   const { updateFormData } = useFormActions();
   const currentStep = useCurrentStep();
   const { setCurrentStep } = useFormActions();
   const CurrentComponent = sectionComponents[currentStep];
-
-
+  
+  useEffect(() => {
+    console.log("Product ID from URL:", product_id);
+    async function fetchAndPrefill() {
+      if (product_id) {
+        try {
+          const res = await api.get(`/products/${product_id}`);
+          const product = res.data;
+          const formData = convertToFormData(product);
+          console.log("Fetched product data:", formData);
+          updateFormData("productId", formData.productId);
+          updateFormData("keyDetails", formData.keyDetails);
+          updateFormData("category", formData.category);
+          updateFormData("attributes", formData.attributes);
+          updateFormData("pricing", formData.pricing);
+          updateFormData("variants", formData.variants);
+          updateFormData("media", formData.media);
+        } catch (error) {
+          console.error("Failed to fetch product for editing", error);
+        }
+      } 
+    }
+    fetchAndPrefill();
+  }, [product_id, updateFormData]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4">
@@ -86,7 +113,7 @@ function FormNavigation() {
         <button
           disabled={!isCurrentStepValid}
           onClick={submitForm}
-          className={`ml-auto px-4 py-2  text-white rounded-md ${ isCurrentStepValid ? "bg-green-600 hover:bg-green-700" 
+          className= {`ml-auto px-4 py-2  text-white rounded-md ${ isCurrentStepValid ? "bg-green-600 hover:bg-green-700" 
             : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
         >
           Submit Product

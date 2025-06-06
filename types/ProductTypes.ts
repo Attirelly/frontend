@@ -23,7 +23,7 @@ export interface FilterOptions{
 }
 
 export interface Product {
-  key: number;
+  product_id: string;
   image: string;
   product_name: string;
   sku: string;

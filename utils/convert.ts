@@ -157,3 +157,55 @@ export function transformPayload(
     store_name: storeName,
   };
 }
+
+
+export function convertToFormData(response: any) {
+  return {
+    productId: response.product_id,
+    keyDetails: {
+      productName: response.product_name || "",
+      productDescription: response.description || "",
+      title: response.title || "",
+      brand: response.brands || undefined,
+      store: response.store_id ? { id: response.store_id, name: "" } : undefined,
+    },
+    category: response.categories
+      ? response.categories.reduce((acc: any, c: any) => {
+          if (c.level) {
+            acc[`level${c.level}`] = { category_id: c.category_id, name: c.name };
+          }
+          return acc;
+        }, {})
+      : {},
+    attributes: {
+      attributes: response.attributes || [],
+    },
+    pricing: {
+      price: response.variants && response.variants[0] ? response.variants[0].price : undefined,
+      mrp: response.variants && response.variants[0] ? response.variants[0].mrp : undefined,
+      rent: response.rent || false,
+    },
+    variants: {
+      variants: (response.variants || []).map((v: any) => ({
+        product_id: v.product_id,
+        sku: v.sku,
+        quantity: v.quantity ?? 0,
+        size: v.size
+          ? { id: v.size.size_id ?? "", name: v.size.size_name ?? "" }
+          : { id: "", name: "" },
+        color: v.color
+          ? { color_id: v.color.color_id ?? "", name: v.color.color_name ?? "", hex_code: "" }
+          : { color_id: "", name: "", hex_code: "" },
+        images: v.images || [],
+        active: v.active ?? true,
+      })),
+    },
+    media: {
+      mainImage: undefined, // You can set this if you have a main image field
+      variantImages: (response.variants || []).map((v: any) => ({
+        sku: v.sku,
+        images: (v.images || []).map((img: any) => img.image_url || img),
+      })),
+    },
+  };
+}

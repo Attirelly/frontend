@@ -1,6 +1,10 @@
 "use client";
 import { api } from "@/lib/axios";
-import { useCurrentStep, useFormActions, useFormData } from "@/store/product_upload_store";
+import {
+  useCurrentStep,
+  useFormActions,
+  useFormData,
+} from "@/store/product_upload_store";
 import { useEffect, useState } from "react";
 
 interface Brand {
@@ -9,19 +13,17 @@ interface Brand {
   logo_url?: string;
 }
 
-
 export default function BrandAndSeller() {
   // Get form data and actions from Zustand store
   const { keyDetails } = useFormData();
-  const { updateFormData , setStepValidation } = useFormActions();
+  const { updateFormData, setStepValidation } = useFormActions();
   const currentStep = useCurrentStep();
-
 
   // State for form and brands
   const [formState, setFormState] = useState({
     productName: keyDetails?.productName || "",
     productDescription: keyDetails?.productDescription || "",
-    brand: keyDetails?.brand || { brand_id: "", name: "" ,logo_url:"" },
+    brand: keyDetails?.brand || { brand_id: "", name: "", logo_url: "" },
   });
 
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -30,25 +32,15 @@ export default function BrandAndSeller() {
   const [showBrandDropdown, setShowBrandDropdown] = useState(false);
   const [isLoadingBrands, setIsLoadingBrands] = useState(false);
 
+  const [hasInitialized, setHasInitialized] = useState(false);
 
-   useEffect(() => {
-    const isValid =
-      !!keyDetails?.productName &&
-      !!keyDetails?.brand &&
-      !!keyDetails?.productDescription;
-
-    setStepValidation(currentStep, isValid);
-    console.log("first keydetails" ,keyDetails) 
-  }, [keyDetails, currentStep]);
-
-  // Fetch brands from API
+// Initialize form state from keyDetails ONCE
   useEffect(() => {
     const fetchBrands = async () => {
       setIsLoadingBrands(true);
       try {
         const response = await api.get("/brands/");
         const data = await response.data;
-        console.log("Fetched brands:", data);
         setBrands(data);
         setFilteredBrands(data);
       } catch (error) {
@@ -59,6 +51,35 @@ export default function BrandAndSeller() {
     };
     fetchBrands();
   }, []);
+useEffect(() => {
+  console.log("Initializing form state with keyDetails" , keyDetails);
+  if (
+    keyDetails &&
+    !hasInitialized &&
+    (keyDetails.productName || keyDetails.productDescription || keyDetails.brand)
+  ) {
+    setFormState({
+      productName: keyDetails.productName || "",
+      productDescription: keyDetails.productDescription || "",
+      brand: keyDetails.brand || { brand_id: "", name: "", logo_url: "" },
+    });
+    setBrandSearch(keyDetails.brand?.name || "");
+    setHasInitialized(true);
+  }
+}, [keyDetails, hasInitialized]);
+ 
+
+  useEffect(() => {
+    const isValid =
+      !!keyDetails?.productName &&
+      !!keyDetails?.brand &&
+      !!keyDetails?.productDescription;
+
+    setStepValidation(currentStep, isValid);
+  }, [keyDetails, currentStep]);
+
+  // Fetch brands from API
+
 
   // Filter brands based on search input
   useEffect(() => {
@@ -73,11 +94,9 @@ export default function BrandAndSeller() {
     }
   }, [brandSearch, brands]);
 
-  // Save to Zustand store when component unmounts
+
   useEffect(() => {
-    return () => {
       updateFormData("keyDetails", formState);
-    };
   }, [formState, updateFormData]);
 
   const handleChange = (
@@ -96,7 +115,7 @@ export default function BrandAndSeller() {
       brand: {
         brand_id: brand.brand_id,
         name: brand.name,
-        logo_url:brand.logo_url ?? ""
+        logo_url: brand.logo_url ?? "",
       },
     }));
     setBrandSearch(brand.name);
@@ -191,24 +210,21 @@ export default function BrandAndSeller() {
               </div>
             )}
           </div>
-
-          
         </div>
 
         {/* Product Description */}
         <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-1">
-              Product description
-            </label>
-            <textarea
-              name="productDescription"
-              value={formState.productDescription}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2"
-              placeholder="Enter detailed product description"
-            />
-          </div>
-
+          <label className="block text-sm font-medium mb-1">
+            Product description
+          </label>
+          <textarea
+            name="productDescription"
+            value={formState.productDescription}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md p-2"
+            placeholder="Enter detailed product description"
+          />
+        </div>
       </div>
     </div>
   );
