@@ -46,8 +46,8 @@ export default function MediaAssets() {
 
   // Initialize with existing media data
   useEffect(() => {
-    if (media?.mainImage) {
-      setMainPreview(media.mainImage);
+    if (media?.mainImage && media.mainImage.length > 0) {
+      setMainPreview(media.mainImage[0]);
     }
     if (media?.variantImages) {
       const previews: { [key: string]: string[] } = {};
@@ -182,7 +182,7 @@ export default function MediaAssets() {
         setMainPreview(file_url);
         updateFormData("media", {
           ...media,
-          mainImage: file_url,
+          mainImage: [file_url],
         });
         setIsUploading((prev) => ({ ...prev, main: false }));
       }
