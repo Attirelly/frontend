@@ -8,6 +8,7 @@ import WhereToSellComponent from '@/components/OnboardingSections/WhereToSell';
 import StorePhotosComponent from '@/components/OnboardingSections/StorePhotos';
 import QrCodeGeneration from '@/components/OnboardingSections/QrGeneration';
 import ViewAllProducts from '@/components/OnboardingSections/ViewAllProducts'
+import BulkUploadPage from '@/components/OnboardingSections/BulkuploadProducts';
 import Header from '@/components/Header';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
@@ -118,6 +119,8 @@ export default function SellerDashboardPage() {
         return <QrCodeGeneration/>;
       case 'all_products':
         return <ViewAllProducts/>;
+      case 'bulk_products':
+        return <BulkUploadPage/>;
       default:
         return null;
     }

@@ -37,19 +37,32 @@ export default function VariantAndInventory() {
     colors: globalSelectedColors,
     category,
   } = useFormData();
-  console.log("Global Variants:", globalVariants);
+  const colorArray: ColorOption[] = Array.from(
+  new Map(globalVariants?.variants.map((v) => [v.color.color_id, v.color])).values()
+);
+const sizeArray: SizeOption[] = Array.from(
+  new Map(globalVariants?.variants.map((v) => [v.size.size_id, v.size])).values()
+);
+  console.log("Global Variants:", globalVariants?.variants);
   const { updateFormData, setStepValidation } = useFormActions();
   const currentStep = useCurrentStep();
   // Initialize states
+  // const [selectedSizes, setSelectedSizes] = useState<SizeOption[]>(
+  //   globalSelectedSizes?.sizes || []
+  // );
   const [selectedSizes, setSelectedSizes] = useState<SizeOption[]>(
-    globalSelectedSizes?.sizes || []
+    sizeArray || []
   );
+  // const [selectedColors, setSelectedColors] = useState<ColorOption[]>(
+  //   globalSelectedColors?.colors || []
+  // );
   const [selectedColors, setSelectedColors] = useState<ColorOption[]>(
-    globalSelectedColors?.colors || []
+    colorArray || []
   );
   const [variantsList, setVariantsList] = useState<Variant[]>(
     globalVariants?.variants || []
   );
+  console.log("suyustem yadav", selectedColors, globalSelectedSizes);
 
   // Available options from API
   const [availableSizes, setAvailableSizes] = useState<SizeOption[]>([]);
@@ -71,6 +84,8 @@ export default function VariantAndInventory() {
   });
 
   const variants = globalVariants?.variants || [];
+
+  console.log("my variants", variants);
 
   useEffect(() => {
     const isValid =
@@ -135,6 +150,8 @@ export default function VariantAndInventory() {
 
   // Generate variants when size or color options change
   useEffect(() => {
+    console.log(selectedSizes, selectedColors)
+  console.log("Before update:", variantsList);
     if (selectedSizes.length > 0 && selectedColors.length > 0) {
       // Create new variants array while preserving existing SKUs if possible
       const newVariants: Variant[] = [];
@@ -160,9 +177,11 @@ export default function VariantAndInventory() {
           }
         });
       });
+      console.log("New Variants:", newVariants);
 
       setVariantsList(newVariants);
     } else {
+      console.log("setting null");
       setVariantsList([]);
     }
   }, [selectedSizes, selectedColors]);

@@ -30,6 +30,7 @@ const sectionComponents = [
 
 export default function ProductUploadPage() {
   const params = useParams();
+  const {variants, sizes, colors} = useFormData();
   const product_id = params.product_id;
   const { updateFormData } = useFormActions();
   const currentStep = useCurrentStep();
@@ -52,6 +53,7 @@ export default function ProductUploadPage() {
           updateFormData("pricing", formData.pricing);
           updateFormData("variants", formData.variants);
           updateFormData("media", formData.media);
+          
         } catch (error) {
           console.error("Failed to fetch product for editing", error);
         }
@@ -59,6 +61,8 @@ export default function ProductUploadPage() {
     }
     fetchAndPrefill();
   }, [product_id, updateFormData]);
+
+  console.log(variants, sizes, colors);
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4">
