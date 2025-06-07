@@ -1,7 +1,12 @@
 "use client";
 import { api } from "@/lib/axios";
-import { useCurrentStep, useFormActions, useFormData } from "@/store/product_upload_store";
-import { useEffect, useState } from "react";
+import {
+  useCurrentStep,
+  useFormActions,
+  useFormData,
+} from "@/store/product_upload_store";
+import { useEffect, useState, useRef } from "react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface Brand {
   brand_id: string;
@@ -9,46 +14,39 @@ interface Brand {
   logo_url?: string;
 }
 
-
 export default function BrandAndSeller() {
   // Get form data and actions from Zustand store
   const { keyDetails } = useFormData();
-  const { updateFormData , setStepValidation } = useFormActions();
+  const { updateFormData, setStepValidation } = useFormActions();
   const currentStep = useCurrentStep();
 
-
   // State for form and brands
-  const [formState, setFormState] = useState({
-    productName: keyDetails?.productName || "",
-    productDescription: keyDetails?.productDescription || "",
-    brand: keyDetails?.brand || { brand_id: "", name: "" ,logo_url:"" },
-  });
-
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filteredBrands, setFilteredBrands] = useState<Brand[]>([]);
-  const [brandSearch, setBrandSearch] = useState(keyDetails?.brand?.name || "");
+  const [brandSearch, setBrandSearch] = useState("");
   const [showBrandDropdown, setShowBrandDropdown] = useState(false);
   const [isLoadingBrands, setIsLoadingBrands] = useState(false);
+  const initialLoad = useRef(true);
 
+  // Initialize form state from keyDetails only once
+  const [formState, setFormState] = useState(() => ({
+    productName: keyDetails?.productName || "",
+    productDescription: keyDetails?.productDescription || "",
+    brand: keyDetails?.brand || { brand_id: "", name: "", logo_url: "" },
+  }));
 
-   useEffect(() => {
-    const isValid =
-      !!keyDetails?.productName &&
-      !!keyDetails?.brand &&
-      !!keyDetails?.productDescription;
+  // Initialize brand search from keyDetails
+  useEffect(() => {
+    setBrandSearch(keyDetails?.brand?.name || "");
+  }, [keyDetails?.brand?.name]);
 
-    setStepValidation(currentStep, isValid);
-    console.log("first keydetails" ,keyDetails) 
-  }, [keyDetails, currentStep]);
-
-  // Fetch brands from API
+  // Fetch brands on mount
   useEffect(() => {
     const fetchBrands = async () => {
       setIsLoadingBrands(true);
       try {
         const response = await api.get("/brands/");
         const data = await response.data;
-        console.log("Fetched brands:", data);
         setBrands(data);
         setFilteredBrands(data);
       } catch (error) {
@@ -59,6 +57,15 @@ export default function BrandAndSeller() {
     };
     fetchBrands();
   }, []);
+
+  // Update validation status
+  useEffect(() => {
+    const isValid =
+      !!formState.productName &&
+      !!formState.brand?.brand_id &&
+      !!formState.productDescription;
+    setStepValidation(currentStep, isValid);
+  }, [formState, currentStep, setStepValidation]);
 
   // Filter brands based on search input
   useEffect(() => {
@@ -73,11 +80,13 @@ export default function BrandAndSeller() {
     }
   }, [brandSearch, brands]);
 
-  // Save to Zustand store when component unmounts
+  // Update Zustand store only when formState changes due to user input
   useEffect(() => {
-    return () => {
-      updateFormData("keyDetails", formState);
-    };
+    if (initialLoad.current) {
+      initialLoad.current = false;
+      return;
+    }
+    updateFormData("keyDetails", formState);
   }, [formState, updateFormData]);
 
   const handleChange = (
@@ -96,7 +105,7 @@ export default function BrandAndSeller() {
       brand: {
         brand_id: brand.brand_id,
         name: brand.name,
-        logo_url:brand.logo_url ?? ""
+        logo_url: brand.logo_url ?? "",
       },
     }));
     setBrandSearch(brand.name);
@@ -115,6 +124,10 @@ export default function BrandAndSeller() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  if (isLoadingBrands) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg">
@@ -191,24 +204,21 @@ export default function BrandAndSeller() {
               </div>
             )}
           </div>
-
-          
         </div>
 
         {/* Product Description */}
         <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-1">
-              Product description
-            </label>
-            <textarea
-              name="productDescription"
-              value={formState.productDescription}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2"
-              placeholder="Enter detailed product description"
-            />
-          </div>
-
+          <label className="block text-sm font-medium mb-1">
+            Product description
+          </label>
+          <textarea
+            name="productDescription"
+            value={formState.productDescription}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md p-2"
+            placeholder="Enter detailed product description"
+          />
+        </div>
       </div>
     </div>
   );

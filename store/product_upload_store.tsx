@@ -1,6 +1,7 @@
 // stores/useProductFormStore.ts
 import { api } from "@/lib/axios";
 import { transformPayload } from "@/utils/convert";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -78,15 +79,15 @@ export interface Attributes {
 
 export interface ColorOption {
   color_id: string;
-  name: string;
+  color_name: string;
   hex_code: string;
 }
 export interface Colors {
   colors: ColorOption[];
 }
 export interface SizeOption {
-  id: string;
-  name: string;
+  size_id: string;
+  size_name: string;
 }
 export interface Sizes {
   sizes: SizeOption[];
@@ -175,10 +176,7 @@ export const useProductFormStore = create<ProductFormStore>()(
           });
         },
         submitForm: async () => {
-          console.log("hello");
           const { formData } = get();
-
-          console.log(formData);
           const apiPayload = transformPayload(
             formData,
             "5f719d19-74ff-4152-8360-335a27321912",
@@ -187,7 +185,15 @@ export const useProductFormStore = create<ProductFormStore>()(
           console.log("apiPayload", apiPayload);
           try {
             const response = await api.post("/products/", apiPayload);
-            return response.data;
+            console.log("Submission successful:", response.data);
+            // Clear the form after successful submission
+            set({
+              currentStep: 0,
+              formData: {},
+              draftId: null,
+            });
+            // Toast or notification can be added here
+            toast.success("Product submitted successfully!"); 
           } catch (error) {
             console.error("Submission error:", error);
             throw error;

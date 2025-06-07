@@ -39,7 +39,7 @@ export interface FilterOptions{
 }
 
 export interface Product {
-  product_id: number;
+  product_id: string;
   image: string;
   product_name: string;
   sku: string;

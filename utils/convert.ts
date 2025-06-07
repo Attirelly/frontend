@@ -1,3 +1,4 @@
+import { log } from "console";
 import { parse } from "path";
 
 // Define input payload type
@@ -35,8 +36,8 @@ type InputPayload = {
     variants: [{
       product_id?: string;
       sku: string;
-      size: { id: string; name: string };
-      color: { color_id: string; name: string   ; hex_code : string};
+      size: { size_id: string; size_name: string };
+      color: { color_id: string; color_name: string   ; hex_code : string};
       images: string[];
       active: boolean;
       quantity: number;
@@ -118,7 +119,6 @@ export function transformPayload(
   const price = formData.pricing.price || 0
   const mrp =   formData.pricing.mrp || 0;
   const rent = formData.pricing.rent || false;
-  console.log("form"  , formData)
   
   const variants = formData.variants?.variants.map((v) => ({
     sku: v.sku,
@@ -126,11 +126,11 @@ export function transformPayload(
     mrp: mrp,
     color: {
       color_id: v.color.color_id,
-      color_name: v.color.name,
+      color_name: v.color.color_name,
     },
     size: {
-      size_id: v.size.id,
-      size_name: v.size.name,
+      size_id: v.size.size_id,
+      size_name: v.size.size_name,
     },
     images: v.images || [],
     active: v.active ?? true,
@@ -138,7 +138,7 @@ export function transformPayload(
   }));
   
   console.log("my convert variants" , variants) ; 
-  return {
+  const result =  {
     product_name,
     brand_id: brand.brand_id,
     store_id: storeId,
@@ -155,5 +155,61 @@ export function transformPayload(
     variants,
     brand_name: brand.name,
     store_name: storeName,
+  };
+  console.log("my convert result" , result) ;
+  return result;
+  
+}
+
+
+export function convertToFormData(response: any) {
+
+  return {
+    productId: response.product_id,
+    keyDetails: {
+      productName: response.product_name || "",
+      productDescription: response.description || "",
+      title: response.title || "",
+      brand: response.brands || undefined,
+      store: response.store_id ? { id: response.store_id, name: "" } : undefined,
+    },
+    category: response.categories
+      ? response.categories.reduce((acc: any, c: any) => {
+          if (c.level) {
+            acc[`level${c.level}`] = { category_id: c.category_id, name: c.name };
+          }
+          return acc;
+        }, {})
+      : {},
+    attributes: {
+      attributes: response.attributes || [],
+    },
+    pricing: {
+      price: response.variants && response.variants[0] ? response.variants[0].price : undefined,
+      mrp: response.variants && response.variants[0] ? response.variants[0].mrp : undefined,
+      rent: response.rent || false,
+    },
+    variants: {
+      variants: (response.variants || []).map((v: any) => ( {
+        product_id: v.product_id,
+        sku: v.sku,
+        quantity: v.quantity ?? 0,
+        size: v.size
+          ? { size_id: v.size.size_id ?? "", size_name: v.size.size_name ?? "" }
+          : { size_id: "", size_name: "" },
+        color: v.color
+          ? { color_id: v.color.color_id ?? "", color_name: v.color.color_name ?? "", hex_code: "" }
+          : { color_id: "", color_name: "", hex_code: "" },
+        images: v.images || [],
+        active: v.active ?? true,
+      })),
+    },
+    media: {
+      mainImage: undefined, // You can set this if you have a main image field
+      variantImages: (response.variants || []).map((v: any) => ({
+        sku: v.sku,
+        images: (v.images || []).map((img: any) => img.image_url || img),
+      })),
+    },
   };
 }
