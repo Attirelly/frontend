@@ -77,15 +77,12 @@ export default function ProductsPage() {
                     skus: json.skus,
                     image_upload_statuses: []
                 });
-                
+                setIsReady(true);
             } catch (err) {
+                setIsReady(true);
                 console.error("Error fetching data", err);
             }
         };
-
-        const fetchFilteredData = () => {
-
-        }
 
         const sortedData = products.sort((a, b) => {
             if (a.status === true && b.status !== true) return -1;
@@ -95,7 +92,6 @@ export default function ProductsPage() {
         setProducts(sortedData);
 
         fetchInitialData();
-        fetchFilteredData();
     }, [hasFetchedProducts, setHasFetchedProducts, setProducts, setFilterOptions]);
 
     console.log(products)

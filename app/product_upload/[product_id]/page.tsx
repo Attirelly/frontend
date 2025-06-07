@@ -28,7 +28,7 @@ const sectionComponents = [
   MediaAssets,
 ];
 
-export default function ProductUploadPage() {
+export default function ProductUpdatePage() {
   const params = useParams();
   const {variants, sizes, colors} = useFormData();
   const product_id = params.product_id;
