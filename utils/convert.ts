@@ -1,3 +1,4 @@
+import { log } from "console";
 import { parse } from "path";
 
 // Define input payload type
@@ -35,8 +36,8 @@ type InputPayload = {
     variants: [{
       product_id?: string;
       sku: string;
-      size: { id: string; name: string };
-      color: { color_id: string; name: string   ; hex_code : string};
+      size: { size_id: string; size_name: string };
+      color: { color_id: string; color_name: string   ; hex_code : string};
       images: string[];
       active: boolean;
       quantity: number;
@@ -118,7 +119,6 @@ export function transformPayload(
   const price = formData.pricing.price || 0
   const mrp =   formData.pricing.mrp || 0;
   const rent = formData.pricing.rent || false;
-  console.log("form"  , formData)
   
   const variants = formData.variants?.variants.map((v) => ({
     sku: v.sku,
@@ -126,11 +126,11 @@ export function transformPayload(
     mrp: mrp,
     color: {
       color_id: v.color.color_id,
-      color_name: v.color.name,
+      color_name: v.color.color_name,
     },
     size: {
-      size_id: v.size.id,
-      size_name: v.size.name,
+      size_id: v.size.size_id,
+      size_name: v.size.size_name,
     },
     images: v.images || [],
     active: v.active ?? true,
@@ -138,7 +138,7 @@ export function transformPayload(
   }));
   
   console.log("my convert variants" , variants) ; 
-  return {
+  const result =  {
     product_name,
     brand_id: brand.brand_id,
     store_id: storeId,
@@ -156,10 +156,14 @@ export function transformPayload(
     brand_name: brand.name,
     store_name: storeName,
   };
+  console.log("my convert result" , result) ;
+  return result;
+  
 }
 
 
 export function convertToFormData(response: any) {
+
   return {
     productId: response.product_id,
     keyDetails: {
@@ -186,16 +190,16 @@ export function convertToFormData(response: any) {
       rent: response.rent || false,
     },
     variants: {
-      variants: (response.variants || []).map((v: any) => ({
+      variants: (response.variants || []).map((v: any) => ( {
         product_id: v.product_id,
         sku: v.sku,
         quantity: v.quantity ?? 0,
         size: v.size
-          ? { id: v.size.size_id ?? "", name: v.size.size_name ?? "" }
-          : { id: "", name: "" },
+          ? { size_id: v.size.size_id ?? "", size_name: v.size.size_name ?? "" }
+          : { size_id: "", size_name: "" },
         color: v.color
-          ? { color_id: v.color.color_id ?? "", name: v.color.color_name ?? "", hex_code: "" }
-          : { color_id: "", name: "", hex_code: "" },
+          ? { color_id: v.color.color_id ?? "", color_name: v.color.color_name ?? "", hex_code: "" }
+          : { color_id: "", color_name: "", hex_code: "" },
         images: v.images || [],
         active: v.active ?? true,
       })),

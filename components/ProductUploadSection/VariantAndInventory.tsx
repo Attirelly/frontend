@@ -9,13 +9,13 @@ import {
 import { api } from "@/lib/axios";
 
 interface SizeOption {
-  id: string;
-  name: string;
+  size_id: string;
+  size_name: string;
 }
 
 interface ColorOption {
   color_id: string;
-  name: string;
+  color_name: string;
   hex_code: string;
 }
 
@@ -37,6 +37,7 @@ export default function VariantAndInventory() {
     colors: globalSelectedColors,
     category,
   } = useFormData();
+  console.log("Global Variants:", globalVariants);
   const { updateFormData, setStepValidation } = useFormActions();
   const currentStep = useCurrentStep();
   // Initialize states
@@ -78,7 +79,7 @@ export default function VariantAndInventory() {
         (v) =>
           v.sku &&
           v.size &&
-          v.size.id &&
+          v.size.size_id &&
           v.color &&
           v.color.color_id &&
           v.quantity > 0
@@ -113,17 +114,17 @@ export default function VariantAndInventory() {
   // Filter sizes based on search term and exclude already selected sizes
   const filteredSizes = availableSizes
     .filter((size) =>
-      size.name.toLowerCase().includes(sizeSearch.toLowerCase())
+      size.size_name.toLowerCase().includes(sizeSearch.toLowerCase())
     )
     .filter(
       (size) =>
-        !selectedSizes.some((selectedSize) => selectedSize.id === size.id)
+        !selectedSizes.some((selectedSize) => selectedSize.size_id === size.size_id)
     );
 
   // Filter colors based on search term and exclude already selected colors
   const filteredColors = availableColors
     .filter((color) =>
-      color.name.toLowerCase().includes(colorSearch.toLowerCase())
+      color.color_name.toLowerCase().includes(colorSearch.toLowerCase())
     )
     .filter(
       (color) =>
@@ -142,7 +143,7 @@ export default function VariantAndInventory() {
         selectedColors.forEach((color) => {
           // Check if this size-color combination already exists
           const existingVariant = variantsList?.find(
-            (v) => v.size.id === size.id && v.color.color_id === color.color_id
+            (v) => v.size.size_id === size.size_id && v.color.color_id === color.color_id
           );
 
           if (existingVariant) {
@@ -199,8 +200,8 @@ export default function VariantAndInventory() {
   };
 
   // Remove size
-  const removeSize = (id: string) => {
-    setSelectedSizes((prev) => prev.filter((size) => size.id !== id));
+  const removeSize = (size_id: string) => {
+    setSelectedSizes((prev) => prev.filter((size) => size.size_id !== size_id));
   };
 
   // Remove color
@@ -229,10 +230,11 @@ export default function VariantAndInventory() {
 
   // Update form data when options change
   useEffect(() => {
+    console.log("Updating form data variants:", variantsList);
     updateFormData("sizes", {"sizes" : selectedSizes});
     updateFormData("colors", {"colors" : selectedColors});
     updateFormData("variants", { "variants": variantsList });
-    console.log("my variant list", variantsList);
+    
   }, [selectedSizes, selectedColors, variantsList, updateFormData]);
 
   return (
@@ -277,11 +279,11 @@ export default function VariantAndInventory() {
                   ) : filteredSizes.length > 0 ? (
                     filteredSizes.map((size) => (
                       <div
-                        key={size.id}
+                        key={size.size_id}
                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                         onClick={() => handleSizeSelect(size)}
                       >
-                        {size.name}
+                        {size.size_name}
                       </div>
                     ))
                   ) : (
@@ -297,13 +299,13 @@ export default function VariantAndInventory() {
             <div className="flex flex-wrap gap-2 mt-2">
               {selectedSizes.map((size) => (
                 <div
-                  key={size.id}
+                  key={size.size_id}
                   className="bg-gray-100 px-3 py-1 rounded-full flex items-center gap-1"
                 >
-                  <span>{size.name}</span>
+                  <span>{size.size_name}</span>
                   <button
                     type="button"
-                    onClick={() => removeSize(size.id)}
+                    onClick={() => removeSize(size.size_id)}
                     className="text-gray-500 hover:text-gray-700"
                   >
                     ×
@@ -352,7 +354,7 @@ export default function VariantAndInventory() {
                           className="w-4 h-4 rounded-full border border-gray-300"
                           style={{ backgroundColor: color.hex_code }}
                         />
-                        {color.name}
+                        {color.color_name}
                       </div>
                     ))
                   ) : (
@@ -375,7 +377,7 @@ export default function VariantAndInventory() {
                     className="w-3 h-3 rounded-full border border-gray-300"
                     style={{ backgroundColor: color.hex_code }}
                   />
-                  <span>{color.name}</span>
+                  <span>{color.color_name}</span>
                   <button
                     type="button"
                     onClick={() => removeColor(color.color_id)}
@@ -417,11 +419,12 @@ export default function VariantAndInventory() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {variantsList?.map((variant, index) => (
-                  <tr key={`${variant.size.id}-${variant.color.color_id}`}>
+
+                  <tr key={`${variant.size.size_id}-${variant.color.color_id}`}>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <input
                         type="text"
-                        value={variant.sku}
+                        value={variant?.sku}
                         onChange={(e) => handleSkuChange(index, e.target.value)}
                         className="w-full border border-gray-300 rounded-md p-1"
                         placeholder="Enter SKU"
@@ -429,14 +432,14 @@ export default function VariantAndInventory() {
                       />
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
-                      {variant.size.name}
+                      {variant.size.size_name}
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap flex items-center gap-2">
                       <div
                         className="w-3 h-3 rounded-full border border-gray-300"
                         style={{ backgroundColor: variant.color.hex_code }}
                       />
-                      {variant.color.name}
+                      {variant.color.color_name}
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <input

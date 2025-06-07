@@ -11,10 +11,10 @@ import {
   useFormActions,
   useStepValidations,
 } from "@/store/product_upload_store";
-import DraftControls from "@/components/ProductUploadSection/DraftControls";
-import { useEffect } from "react";
+import Blank from "@/components/ProductUploadSection/Blank";
 
 const sectionComponents = [
+  Blank,
   BrandAndSeller,
   CategorySelector,
   ProductAttributes,
@@ -24,9 +24,7 @@ const sectionComponents = [
 ];
 
 export default function ProductUploadPage() {
-  const { updateFormData } = useFormActions();
   const currentStep = useCurrentStep();
-  const { setCurrentStep } = useFormActions();
   const CurrentComponent = sectionComponents[currentStep];
 
 
@@ -60,6 +58,9 @@ function FormNavigation() {
   const stepValidations = useStepValidations();
   const isCurrentStepValid = stepValidations[currentStep] === true;
 
+  if (currentStep == 0 ) {
+    setCurrentStep(1);
+  }
   return (
     <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
       {currentStep > 0 && (

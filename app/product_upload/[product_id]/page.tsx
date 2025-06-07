@@ -6,18 +6,20 @@ import PricingAndAvailability from "@/components/ProductUploadSection/PricingAnd
 import VariantAndInventory from "@/components/ProductUploadSection/VariantAndInventory";
 import MediaAssets from "@/components/ProductUploadSection/MediaAssets";
 import ProductUploadSideBar from "@/components/ProductUploadSection/ProductUploadSideBar";
+import Blank from "@/components/ProductUploadSection/Blank";
 import {
   useCurrentStep,
   useFormActions,
+  useFormData,
   useStepValidations,
 } from "@/store/product_upload_store";
-import DraftControls from "@/components/ProductUploadSection/DraftControls";
 import { use, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { api } from "@/lib/axios";
 import { convertToFormData } from "@/utils/convert";
 
 const sectionComponents = [
+  Blank,
   BrandAndSeller,
   CategorySelector,
   ProductAttributes,
@@ -35,14 +37,14 @@ export default function ProductUploadPage() {
   const CurrentComponent = sectionComponents[currentStep];
   
   useEffect(() => {
-    console.log("Product ID from URL:", product_id);
     async function fetchAndPrefill() {
       if (product_id) {
         try {
           const res = await api.get(`/products/${product_id}`);
           const product = res.data;
+          console.log("Fetched product data:", product);
           const formData = convertToFormData(product);
-          console.log("Fetched product data:", formData);
+          console.log("Fetched product data after conversion :", formData);
           updateFormData("productId", formData.productId);
           updateFormData("keyDetails", formData.keyDetails);
           updateFormData("category", formData.category);

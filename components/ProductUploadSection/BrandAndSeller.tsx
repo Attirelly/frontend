@@ -5,7 +5,8 @@ import {
   useFormActions,
   useFormData,
 } from "@/store/product_upload_store";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface Brand {
   brand_id: string;
@@ -20,21 +21,26 @@ export default function BrandAndSeller() {
   const currentStep = useCurrentStep();
 
   // State for form and brands
-  const [formState, setFormState] = useState({
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [filteredBrands, setFilteredBrands] = useState<Brand[]>([]);
+  const [brandSearch, setBrandSearch] = useState("");
+  const [showBrandDropdown, setShowBrandDropdown] = useState(false);
+  const [isLoadingBrands, setIsLoadingBrands] = useState(false);
+  const initialLoad = useRef(true);
+
+  // Initialize form state from keyDetails only once
+  const [formState, setFormState] = useState(() => ({
     productName: keyDetails?.productName || "",
     productDescription: keyDetails?.productDescription || "",
     brand: keyDetails?.brand || { brand_id: "", name: "", logo_url: "" },
-  });
+  }));
 
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [filteredBrands, setFilteredBrands] = useState<Brand[]>([]);
-  const [brandSearch, setBrandSearch] = useState(keyDetails?.brand?.name || "");
-  const [showBrandDropdown, setShowBrandDropdown] = useState(false);
-  const [isLoadingBrands, setIsLoadingBrands] = useState(false);
+  // Initialize brand search from keyDetails
+  useEffect(() => {
+    setBrandSearch(keyDetails?.brand?.name || "");
+  }, [keyDetails?.brand?.name]);
 
-  const [hasInitialized, setHasInitialized] = useState(false);
-
-// Initialize form state from keyDetails ONCE
+  // Fetch brands on mount
   useEffect(() => {
     const fetchBrands = async () => {
       setIsLoadingBrands(true);
@@ -51,35 +57,15 @@ export default function BrandAndSeller() {
     };
     fetchBrands();
   }, []);
-useEffect(() => {
-  console.log("Initializing form state with keyDetails" , keyDetails);
-  if (
-    keyDetails &&
-    !hasInitialized &&
-    (keyDetails.productName || keyDetails.productDescription || keyDetails.brand)
-  ) {
-    setFormState({
-      productName: keyDetails.productName || "",
-      productDescription: keyDetails.productDescription || "",
-      brand: keyDetails.brand || { brand_id: "", name: "", logo_url: "" },
-    });
-    setBrandSearch(keyDetails.brand?.name || "");
-    setHasInitialized(true);
-  }
-}, [keyDetails, hasInitialized]);
- 
 
+  // Update validation status
   useEffect(() => {
     const isValid =
-      !!keyDetails?.productName &&
-      !!keyDetails?.brand &&
-      !!keyDetails?.productDescription;
-
+      !!formState.productName &&
+      !!formState.brand?.brand_id &&
+      !!formState.productDescription;
     setStepValidation(currentStep, isValid);
-  }, [keyDetails, currentStep]);
-
-  // Fetch brands from API
-
+  }, [formState, currentStep, setStepValidation]);
 
   // Filter brands based on search input
   useEffect(() => {
@@ -94,9 +80,13 @@ useEffect(() => {
     }
   }, [brandSearch, brands]);
 
-
+  // Update Zustand store only when formState changes due to user input
   useEffect(() => {
-      updateFormData("keyDetails", formState);
+    if (initialLoad.current) {
+      initialLoad.current = false;
+      return;
+    }
+    updateFormData("keyDetails", formState);
   }, [formState, updateFormData]);
 
   const handleChange = (
@@ -134,6 +124,10 @@ useEffect(() => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  if (isLoadingBrands) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg">
