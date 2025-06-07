@@ -4,6 +4,7 @@ import { transformPayload } from "@/utils/convert";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useSellerStore } from "@/store/sellerStore";
 
 // types/productForm.ts
 export interface Option {
@@ -123,8 +124,10 @@ interface ProductFormStore {
 }
 
 export const useProductFormStore = create<ProductFormStore>()(
+  
   persist(
     (set, get) => ({
+      
       currentStep: 0,
       formData: {},
       draftId: null,
@@ -132,10 +135,11 @@ export const useProductFormStore = create<ProductFormStore>()(
       actions: {
         updateForm: async () => {
           const { formData } = get();
+          const {storeId, businessDetailsData} = useSellerStore();
           const apiPayload = transformPayload(
             formData,
-            "5f719d19-74ff-4152-8360-335a27321912",
-            "Suneel Sarees"
+            storeId,
+            businessDetailsData?.brandName,
           );
           try {
             await api.put(`/products/${formData.product_id}`, apiPayload);
@@ -197,10 +201,11 @@ export const useProductFormStore = create<ProductFormStore>()(
         },
         submitForm: async () => {
           const { formData } = get();
+          const {storeId, businessDetailsData} = useSellerStore();
           const apiPayload = transformPayload(
             formData,
-            "5f719d19-74ff-4152-8360-335a27321912",
-            "Suneel Sarees"
+            storeId,
+            businessDetailsData?.brandName,
           );
           console.log("apiPayload", apiPayload);
           try {
