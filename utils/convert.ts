@@ -3,6 +3,7 @@ import { parse } from "path";
 
 // Define input payload type
 type InputPayload = {
+
   keyDetails: {
     productName: string;
     brand: {
@@ -28,25 +29,33 @@ type InputPayload = {
     }[];
   };
   pricing: {
-    price: number ; 
+    price: number;
     mrp: number;
-    rent : boolean;
+    rent: boolean;
   };
   variants: {
     variants: [{
-      product_id?: string;
+
       sku: string;
       size: { size_id: string; size_name: string };
       color: { color_id: string; color_name: string   ; hex_code : string};
       images: string[];
       active: boolean;
-      quantity: number;
+      // quantity: number;
     }];
+  };
+  media: {
+    mainImage?: string[];
+    variantImages?: {
+      sku: string;
+      images: string[];
+    }[];
   };
 };
 
 // Define output structure
 type OutputPayload = {
+
   product_name: string;
   brand_id: string;
   store_id: string;
@@ -60,6 +69,7 @@ type OutputPayload = {
   rent: boolean;
   categories: { category_id: string; name: string }[];
   attributes: { attribute_id: string; name: string; value: string }[];
+  images?: string[];
   variants: {
     product_id?: string;
     sku: string;
@@ -74,7 +84,7 @@ type OutputPayload = {
     };
     images: string[];
     active: boolean;
-    quantity: number;
+    // quantity: number;
   }[];
   brand_name: string;
   store_name: string;
@@ -104,6 +114,7 @@ export function transformPayload(
 
   const product_name = productName.trim();
   const title = productTitle?.trim() || product_name;
+  const images = formData.media.mainImage || [];
 
   const categories = Object.values(formData.category).filter(Boolean) as {
     category_id: string;
@@ -132,12 +143,13 @@ export function transformPayload(
       size_id: v.size.size_id,
       size_name: v.size.size_name,
     },
-    images: v.images || [],
+    images: formData.media.variantImages?.find(
+      (img) => img.sku === v.sku
+    )?.images || [],
     active: v.active ?? true,
-    quantity: v.quantity ?? 0,
+    // quantity: v.quantity ?? 0,
   }));
   
-  console.log("my convert variants" , variants) ; 
   const result =  {
     product_name,
     brand_id: brand.brand_id,
@@ -153,6 +165,7 @@ export function transformPayload(
     categories,
     attributes,
     variants,
+    images, // mainImage is now a list of strings
     brand_name: brand.name,
     store_name: storeName,
   };
@@ -165,7 +178,6 @@ export function transformPayload(
 export function convertToFormData(response: any) {
 
   return {
-    productId: response.product_id,
     keyDetails: {
       productName: response.product_name || "",
       productDescription: response.description || "",
@@ -190,22 +202,19 @@ export function convertToFormData(response: any) {
       rent: response.rent || false,
     },
     variants: {
-      variants: (response.variants || []).map((v: any) => ( {
-        product_id: v.product_id,
+      variants: (response.variants || []).map((v: any) => ({
         sku: v.sku,
-        quantity: v.quantity ?? 0,
+        // quantity: v.quantity ?? 0,
         size: v.size
           ? { size_id: v.size.size_id ?? "", size_name: v.size.size_name ?? "" }
           : { size_id: "", size_name: "" },
         color: v.color
           ? { color_id: v.color.color_id ?? "", color_name: v.color.color_name ?? "", hex_code: "" }
-          : { color_id: "", color_name: "", hex_code: "" },
-        images: v.images || [],
-        active: v.active ?? true,
+          : { color_id: "", color_name: "", hex_code: "" }
       })),
     },
     media: {
-      mainImage: undefined, // You can set this if you have a main image field
+      mainImage: (response?.images || []).map((image:any)=>image.image_url), // You can set this if you have a main image field
       variantImages: (response.variants || []).map((v: any) => ({
         sku: v.sku,
         images: (v.images || []).map((img: any) => img.image_url || img),

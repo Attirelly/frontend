@@ -34,7 +34,6 @@ export default function ProductUploadPage() {
   const product_id = params.product_id;
   const { updateFormData } = useFormActions();
   const currentStep = useCurrentStep();
-  const { setCurrentStep } = useFormActions();
   const CurrentComponent = sectionComponents[currentStep];
   
   useEffect(() => {
@@ -46,7 +45,7 @@ export default function ProductUploadPage() {
           console.log("Fetched product data:", product);
           const formData = convertToFormData(product);
           console.log("Fetched product data after conversion :", formData);
-          updateFormData("productId", formData.productId);
+          updateFormData("product_id", product_id);
           updateFormData("keyDetails", formData.keyDetails);
           updateFormData("category", formData.category);
           updateFormData("attributes", formData.attributes);
@@ -88,7 +87,7 @@ export default function ProductUploadPage() {
 
 function FormNavigation() {
   const currentStep = useCurrentStep();
-  const { setCurrentStep, submitForm } = useFormActions();
+  const { setCurrentStep, submitForm , updateForm } = useFormActions();
   const totalSteps = sectionComponents.length;
   const stepValidations = useStepValidations();
   const isCurrentStepValid = stepValidations[currentStep] === true;
@@ -118,11 +117,11 @@ function FormNavigation() {
       ) : (
         <button
           disabled={!isCurrentStepValid}
-          onClick={submitForm}
+          onClick={updateForm}
           className= {`ml-auto px-4 py-2  text-white rounded-md ${ isCurrentStepValid ? "bg-green-600 hover:bg-green-700" 
             : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
         >
-          Submit Product
+          Update Product
         </button>
       )}
     </div>

@@ -23,7 +23,7 @@ interface Variant {
   sku: string;
   size: SizeOption;
   color: ColorOption;
-  quantity: number;
+  // quantity: number;
 }
 
 export interface VaraintFormState {
@@ -96,8 +96,8 @@ const sizeArray: SizeOption[] = Array.from(
           v.size &&
           v.size.size_id &&
           v.color &&
-          v.color.color_id &&
-          v.quantity > 0
+          v.color.color_id 
+          // v.quantity > 0
       );
 
     setStepValidation(currentStep, isValid);
@@ -171,8 +171,8 @@ const sizeArray: SizeOption[] = Array.from(
             newVariants.push({
               sku: "",
               size,
-              color,
-              quantity: 0,
+              color
+              // quantity: 0,
             });
           }
         });
@@ -195,14 +195,14 @@ const sizeArray: SizeOption[] = Array.from(
     });
   };
 
-  const handleQuantityChange = (index: number, value: string) => {
-    const quantity = parseInt(value, 10) || 0;
-    setVariantsList((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], quantity };
-      return updated;
-    });
-  };
+  // const handleQuantityChange = (index: number, value: string) => {
+  //   const quantity = parseInt(value, 10) || 0;
+  //   setVariantsList((prev) => {
+  //     const updated = [...prev];
+  //     updated[index] = { ...updated[index], quantity };
+  //     return updated;
+  //   });
+  // };
 
   // Handle size selection
   const handleSizeSelect = (size: SizeOption) => {
@@ -431,9 +431,9 @@ const sizeArray: SizeOption[] = Array.from(
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Color
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {/* <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Quantity
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -460,7 +460,7 @@ const sizeArray: SizeOption[] = Array.from(
                       />
                       {variant.color.color_name}
                     </td>
-                    <td className="px-4 py-2 whitespace-nowrap">
+                    {/* <td className="px-4 py-2 whitespace-nowrap">
                       <input
                         type="number"
                         min="0"
@@ -471,7 +471,7 @@ const sizeArray: SizeOption[] = Array.from(
                         className="w-20 border border-gray-300 rounded-md p-1"
                         required
                       />
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>

@@ -15,7 +15,7 @@ export interface VariantValue {
   sku: string;
   size: SizeOption;
   color: ColorOption;
-  quantity: number;
+  // quantity: number;
 }
 
 export interface Variants {
@@ -57,7 +57,7 @@ export interface VariantImage {
   images: string[]; // image url array
 }
 export interface Media {
-  mainImage?: string;
+  mainImage?: string[];
   variantImages?: VariantImage[];
 }
 
@@ -94,7 +94,7 @@ export interface Sizes {
 }
 
 export interface FormData {
-  productId?: string; // <-- Add this line to store product id for update
+  product_id?: string;
   keyDetails?: KeyDetails;
   variants?: Variants;
   attributes?: Attributes;
@@ -106,8 +106,8 @@ export interface FormData {
 }
 
 interface ProductFormStore {
-  currentStep: number;
-  formData: FormData;
+  currentStep: number ; 
+  formData: FormData ; 
   draftId: string | null;
   stepValidations: Record<number, boolean>;
   actions: {
@@ -117,6 +117,7 @@ interface ProductFormStore {
     loadDraft: (draftId: string) => void;
     clearDraft: () => void;
     submitForm: () => Promise<void>;
+    updateForm: () => Promise<void>; 
     setStepValidation: (step: number, isValid: boolean) => void;
   };
 }
@@ -129,6 +130,25 @@ export const useProductFormStore = create<ProductFormStore>()(
       draftId: null,
       stepValidations: {},
       actions: {
+        updateForm: async () => {
+          const { formData } = get();
+          const apiPayload = transformPayload(
+            formData,
+            "5f719d19-74ff-4152-8360-335a27321912",
+            "Suneel Sarees"
+          );
+          try {
+            await api.put(`/products/${formData.product_id}`, apiPayload);
+            // Ensure toast is called after the async operation
+            setTimeout(() => {
+              toast.success("Product updated successfully!");
+            }, 0);
+          } catch (error) {
+            setTimeout(() => {
+              toast.error("Failed to update product.");
+            }, 0);
+          }
+        },
         setStepValidation: (step: number, isValid: boolean) =>
           set((state) => ({
             stepValidations: {
@@ -191,6 +211,8 @@ export const useProductFormStore = create<ProductFormStore>()(
               currentStep: 0,
               formData: {},
               draftId: null,
+              // Reset step validations
+              stepValidations: {},
             });
             // Toast or notification can be added here
             toast.success("Product submitted successfully!"); 
