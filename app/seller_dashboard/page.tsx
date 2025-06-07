@@ -7,6 +7,7 @@ import PriceFiltersComponent from '@/components/OnboardingSections/PriceFilters'
 import WhereToSellComponent from '@/components/OnboardingSections/WhereToSell';
 import StorePhotosComponent from '@/components/OnboardingSections/StorePhotos';
 import QrCodeGeneration from '@/components/OnboardingSections/QrGeneration';
+import ViewAllProducts from '@/components/OnboardingSections/ViewAllProducts'
 import Header from '@/components/Header';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
@@ -115,6 +116,8 @@ export default function SellerDashboardPage() {
         return <StorePhotosComponent />;
       case 'qr_code':
         return <QrCodeGeneration/>;
+      case 'all_products':
+        return <ViewAllProducts/>;
       default:
         return null;
     }
@@ -131,7 +134,7 @@ export default function SellerDashboardPage() {
         } />
       <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <DashboardSidebar selected={activeSection} onSelect={setActiveSection} />
-        <div className="rounded-md bg-gray-100">{renderSection()}</div>
+        <div className="overflow-auto rounded-md bg-gray-100">{renderSection()}</div>
       </div>
 
     </div>

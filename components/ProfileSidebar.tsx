@@ -19,25 +19,25 @@ export default function ProfileSidebar({
       id: 'price',
       title: 'Price filters',
       desc: 'Define product tiers...',
-      iconUrl: '/OnboardingSections/business_details.png',
+      iconUrl: '/OnboardingSections/price_filters.png',
     },
     {
       id: 'market',
       title: 'Select where you want to sell',
       desc: 'Choose the place',
-      iconUrl: '/OnboardingSections/business_details.png',
+      iconUrl: '/OnboardingSections/where_to_sell.png',
     },
     {
       id: 'social',
       title: 'Social links',
       desc: 'Connect your Instagram and WhatsApp accounts.',
-      iconUrl: '/OnboardingSections/business_details.png',
+      iconUrl: '/OnboardingSections/social_links.png',
     },
     {
       id: 'photos',
       title: 'Photos',
       desc: 'Upload a banner and profile photo.',
-      iconUrl: '/OnboardingSections/business_details.png',
+      iconUrl: '/OnboardingSections/store_photos.png',
     },
   ];
 

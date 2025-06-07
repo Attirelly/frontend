@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSellerStore } from '@/store/sellerStore';
 import { api } from '@/lib/axios';
+import { jsPDF } from 'jspdf';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function QrCodeGeneration() {
@@ -42,17 +43,31 @@ export default function QrCodeGeneration() {
 
     const handleDownload = async () => {
         try {
-            const response = await fetch(qrImageUrl);
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
+            const response = await api.get(qrImageUrl, { responseType: 'blob', });
+            // const blob = await response.blob();
+            // const url = window.URL.createObjectURL(blob);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64data = reader.result as string;
 
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `attirelly-qr-${storeId}.png`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url); // clean up
+                const pdf = new jsPDF();
+                const width = pdf.internal.pageSize.getWidth();
+                const height = pdf.internal.pageSize.getHeight();
+
+                // Adjust width/height as needed
+                pdf.addImage(base64data, 'PNG', 10, 10, width - 20, 0); // 0 = auto height
+                pdf.save(`attirelly-qr-${storeId}.pdf`);
+
+            };
+            reader.readAsDataURL(response.data);
+
+            // const a = document.createElement("a");
+            // a.href = url;
+            // a.download = `attirelly-qr-${storeId}.png`;
+            // document.body.appendChild(a);
+            // a.click();
+            // a.remove();
+            // window.URL.revokeObjectURL(url); // clean up
         } catch (error) {
             console.error("Download failed:", error);
         }

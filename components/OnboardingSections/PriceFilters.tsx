@@ -107,27 +107,42 @@ export default function PriceFiltersComponent() {
       </div>
 
       {/* Divider */}
-        <div className="-mx-6 border-t border-gray-300"></div>
+      <div className="-mx-6 border-t border-gray-300"></div>
 
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <label className="block text-sm font-medium mb-1">Average price for brand</label>
           <div className="flex gap-2">
-            <input
-              type="number"
-              placeholder="2000"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2"
-            />
+            <div className="flex w-full border border-gray-300 rounded-md overflow-hidden">
+              <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">
+                Rs
+              </span>
+              <input
+                type="number"
+                placeholder="2000"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+              // className="w-full border border-gray-300 rounded px-3 py-2"
+              className=" w-full px-3"
+              />
+            </div>
+
             <span className="self-center">-</span>
+            
+            <div className="flex w-full border border-gray-300 rounded-md overflow-hidden">
+
+            
+            <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">
+                Rs
+              </span>
             <input
               type="number"
               placeholder="25000"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="w-full px-3"
             />
+            </div>
           </div>
         </div>
       </div>

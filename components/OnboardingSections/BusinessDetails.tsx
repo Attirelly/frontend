@@ -213,7 +213,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
             <input
               type="text"
               defaultValue={sellerNumber || ''}
-              className='w-full border border-gray-300 rounded px-3 py-2 text-gray'
+              className='w-full border border-gray-300 rounded px-3 py-2 text-gray bg-gray-100'
               disabled={!!sellerNumber}
             />
           </div>

@@ -48,6 +48,7 @@ export interface Product {
   color: string;
   // fabric: string;
   mrp: number;
+  shopify_id : string;
   price: number;
   rent: boolean;
   inventory: number;

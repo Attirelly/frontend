@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { send } from 'process';
+import Image from "next/image";
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
 import Header from '@/components/Header';
@@ -15,9 +16,9 @@ export default function SellerSignup() {
     const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
     const [sendOTP, setSendOTP] = useState(false);
-    const { 
-        setSellerId, 
-        setSellerNumber, 
+    const {
+        setSellerId,
+        setSellerNumber,
         sellerId,
         setSellerName,
         setSellerEmail } = useSellerStore()
@@ -61,9 +62,9 @@ export default function SellerSignup() {
                 try {
                     // here we will create jwt tokens
                     const data = {
-                        "contact_number" : phone
+                        "contact_number": phone
                     }
-                    await api.post("/users/login", { contact_number : phone});
+                    await api.post("/users/login", { contact_number: phone });
                     router.push('/seller_dashboard');
                 }
                 catch (error) {
@@ -76,15 +77,15 @@ export default function SellerSignup() {
             }
         }
         else {
-            
+
             if (!isPhoneValid) {
                 alert('Please enter a valid 10-digit number.');
                 return;
             }
             try {
-                
+
                 const response = await api.get('/users/user', { params: { phone_number: phone } });
-console.log(response);
+                console.log(response);
                 setSellerId(response.data.id);
                 setSellerName(response.data.name);
                 setSellerEmail(response.data.email);
@@ -132,6 +133,18 @@ console.log(response);
                     <p className="text-sm text-gray-500 mb-4">
                         Verifying the store's phone number is a great way to make sure your profile reflects your identity and keeps your account safe.
                     </p>
+
+                    {/* 📱 Phone Image Section */}
+                    <div className="flex justify-center mb-6">
+                        <div className="bg-gray-100 rounded-lg w-full flex items-center justify-center">
+                            <Image
+                                src="/OnboardingSections/otp_image.png" // replace with actual image path (can be `/images/phone.png` in `public` folder)
+                                alt="Phone Illustration"
+                                width={150}
+                                height={0}
+                            />
+                        </div>
+                    </div>
 
                     {/*Phone number details section*/}
                     <div className={sendOTP ? "hidden" : ''}>

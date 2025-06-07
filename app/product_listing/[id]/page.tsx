@@ -1,17 +1,28 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { use,useEffect, useState } from "react";
 import { Table, Tag, Switch, Button, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import ProductFilters from "@/components/ProductFilters";
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { api } from "@/lib/axios"
+import { useParams } from 'next/navigation';
 import type { ProductFiltersType, Product, FilterOptions } from "@/types/ProductTypes";
+
+// type Props = {
+//   params: { id: string };
+// };
 
 
 export default function ProductsPage() {
+  // const searchParams = useSearchParams();
+  const params = useParams();
+  const id = params?.id as string;
+  console.log(id)
   const [data, setData] = useState<Product[]>([]);
   const [filteredData, setFilteredData] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -48,8 +59,7 @@ export default function ProductsPage() {
 
     const fetchInitialData = async () => {
       try {
-        setLoading(true);
-        const res = await api.get("/products/products_by_store/5f719d19-74ff-4152-8360-335a27321912"); // Adjust this to your actual endpoint
+        const res = await api.get(`/products/products_by_store/${id}`); // Adjust this to your actual endpoint
         const json = res.data;
         setData(json.table_data);
         setFilteredData(json.table_data);
@@ -62,10 +72,9 @@ export default function ProductsPage() {
           skus: json.skus,
           image_upload_statuses: []
         });
-        setLoading(false);
+        setIsReady(true);
       } catch (err) {
         console.error("Error fetching data", err);
-        setLoading(false);
       }
     };
 
@@ -147,8 +156,10 @@ export default function ProductsPage() {
       render: (val: boolean) => <Switch checked={val} disabled />,
     },
     {
-      title: "Inventory",
-      dataIndex: "inventory",
+      title: "Source",
+      dataIndex: "shopify_id",
+      render: (shopify_id: string) => shopify_id === null ? "Self" : "Shopify"
+
     },
     {
       title: "Status",
@@ -196,7 +207,9 @@ export default function ProductsPage() {
   });
 
 
-
+  if (!isReady) {
+    return <LoadingSpinner />;
+  }
   return (
     <div style={{ display: "flex", padding: 20 }}>
       <ProductFilters filters={filters} setFilters={setFilters} filterOptions={filterOptions} />

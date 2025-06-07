@@ -6,10 +6,10 @@ import { api } from '@/lib/axios';
 
 const sections = [
   { id: 'brand', title: 'Business details', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'price', title: 'Price filters', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'market', title: 'Select where you want to sell', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'social', title: 'Social links', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'photos', title: 'Photos', iconUrl: '/OnboardingSections/business_details.png' },
+  { id: 'price', title: 'Price filters', iconUrl: '/OnboardingSections/price_filters.png' },
+  { id: 'market', title: 'Select where you want to sell', iconUrl: '/OnboardingSections/where_to_sell.png' },
+  { id: 'social', title: 'Social links', iconUrl: '/OnboardingSections/social_links.png' },
+  { id: 'photos', title: 'Photos', iconUrl: '/OnboardingSections/store_photos.png' },
   { id: 'one_product', title: 'Add single product', iconUrl: '/OnboardingSections/business_details.png' },
   { id: 'bulk_products', title: 'Add bulk products', iconUrl: '/OnboardingSections/business_details.png' },
   { id: 'all_products', title: 'View all products', iconUrl: '/OnboardingSections/business_details.png' },
@@ -149,7 +149,7 @@ export default function DashboardSidebar({
                     <img
                       src={section.iconUrl}
                       alt={section.title}
-                      className="w-7 h-7 rounded-full object-cover"
+                      className="w-7 h-7 rounded-full object-cover bg-white"
                     />
                     <div className="flex flex-col">
                       <p className="font-medium text-md">{section.title}</p>

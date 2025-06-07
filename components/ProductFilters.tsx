@@ -19,9 +19,15 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   filterOptions,
 }) => {
   return (
-    <div style={{ width: "280px", marginRight: 20 }}>
+    <div style={{ width: "100%", marginRight: 20 }}>
       <h3>Filters</h3>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          gap: "16px",
+        }}
+      >
         <Select
           mode="multiple"
           placeholder="Primary Category"
@@ -29,23 +35,23 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           onChange={(v) => setFilters({ ...filters, pmCat: v })}
         >
           {filterOptions.categories
-          .filter((cat) => cat.level === 1)
-          .map((cat) => (
-            <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
-          ))}
+            .filter((cat) => cat.level === 1)
+            .map((cat) => (
+              <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
+            ))}
         </Select>
 
-         <Select
+        <Select
           mode="multiple"
           placeholder="Sub Category 1"
           value={filters.subCat1}
           onChange={(v) => setFilters({ ...filters, subCat1: v })}
         >
           {filterOptions.categories
-          .filter((cat) => cat.level === 2)
-          .map((cat) => (
-            <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
-          ))}
+            .filter((cat) => cat.level === 2)
+            .map((cat) => (
+              <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
+            ))}
         </Select>
 
         <Select
@@ -55,10 +61,10 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           onChange={(v) => setFilters({ ...filters, subCat2: v })}
         >
           {filterOptions.categories
-          .filter((cat) => cat.level === 3)
-          .map((cat) => (
-            <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
-          ))}
+            .filter((cat) => cat.level === 3)
+            .map((cat) => (
+              <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
+            ))}
         </Select>
 
         <Select
@@ -68,10 +74,10 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           onChange={(v) => setFilters({ ...filters, subCat3: v })}
         >
           {filterOptions.categories
-          .filter((cat) => cat.level === 4)
-          .map((cat) => (
-            <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
-          ))}
+            .filter((cat) => cat.level === 4)
+            .map((cat) => (
+              <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
+            ))}
         </Select>
 
         <Select

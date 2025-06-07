@@ -1,5 +1,6 @@
 'use client'
 import { create } from 'zustand'
+import {Product, FilterOptions} from '@/types/ProductTypes'
 
 type BrandType = {
   id: string,
@@ -138,6 +139,16 @@ type SellerState = {
   setUser: (user: User) => void;
   resetUser: () => void;
 
+  products: Product[];
+  setProducts: (products: Product[]) => void;
+  
+  filterOptions: FilterOptions | null;
+  setFilterOptions: (filteroptions: FilterOptions) => void;
+
+  hasFetchedProducts: boolean;
+  setHasFetchedProducts: (fetched: boolean) => void;
+
+
   resetSellerStore: () => void;
 }
 
@@ -201,6 +212,15 @@ export const useSellerStore = create<SellerState>((set) => ({
   setUser: (user) => set({ user }),
   resetUser: () => set({ user: null }),
 
+  products: [],
+  setProducts: (products) => set({ products }),
+
+  filterOptions: null,
+  setFilterOptions: (filteroptions) => set({ filterOptions: filteroptions }),
+
+  hasFetchedProducts: false,
+  setHasFetchedProducts: (fetched) => set({ hasFetchedProducts: fetched }),
+
   resetSellerStore: () =>
     set({
       furthestStep: 0,
@@ -219,6 +239,8 @@ export const useSellerStore = create<SellerState>((set) => ({
       socialLinksValid: false,
       storePhotosData: null,
       storePhotosValid: false,
+      products: [],
+      filterOptions: null,
       qrId: null,
       user: null
     }),
