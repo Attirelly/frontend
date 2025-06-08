@@ -61,9 +61,6 @@ export default function SellerSignup() {
             if (fullOtp === '123456') {
                 try {
                     // here we will create jwt tokens
-                    const data = {
-                        "contact_number": phone
-                    }
                     await api.post("/users/login", { contact_number: phone });
                     router.push('/seller_dashboard');
                 }

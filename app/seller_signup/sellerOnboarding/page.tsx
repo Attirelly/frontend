@@ -10,6 +10,7 @@ import WhereToSellComponent from '@/components/OnboardingSections/WhereToSell';
 import StorePhotosComponent from '@/components/OnboardingSections/StorePhotos';
 import NextPrevNavigation from '@/components/OnboardingSections/NextPrevNavigation';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const sectionOrder = ['brand', 'price', 'market', 'social', 'photos'];
 
@@ -18,6 +19,9 @@ export default function SellerOnboardingPage() {
     sellerId,
     businessDetailsValid,
     businessDetailsData,
+    sellerNumber,
+    setSellerEmail,
+    setSellerName,
     setBusinessDetailsData,
     setStoreId,
     storeId,
@@ -32,7 +36,8 @@ export default function SellerOnboardingPage() {
     storePhotosData
   } = useSellerStore();
 
-  
+  const router = useRouter();
+
 
   const currentSectionIndex = sectionOrder.indexOf(activeSection ?? 'brand');
 
@@ -74,6 +79,8 @@ export default function SellerOnboardingPage() {
 
       try {
         await api.put(`/users/update_user/${sellerId}`, seller_up_payload);
+        setSellerEmail(businessDetailsData?.ownerEmail || "");
+        setSellerName(businessDetailsData?.ownerName || "");
         if (!storeId) {
           const response = await api.post('/stores/create', store_payload);
           setStoreId(response.data.store_id);
@@ -119,7 +126,7 @@ export default function SellerOnboardingPage() {
       const social_payload = {
         "instagram_link": socialLinksData.instagramUrl || '',
         "facebook_link": socialLinksData.facebookUrl || '',
-        "shopify_url" : socialLinksData.websiteUrl || ''
+        "shopify_url": socialLinksData.websiteUrl || ''
       }
       try {
         console.log('inside store');
@@ -138,6 +145,14 @@ export default function SellerOnboardingPage() {
       try {
         await api.put(`/stores/${storeId}`, photos_payload);
         console.log('store updated')
+        try {
+          // here we will create jwt tokens
+          await api.post("/users/login", { contact_number: sellerNumber });
+          router.push('/seller_dashboard');
+        }
+        catch (error) {
+          console.error('Error fetching stores by section:', error);
+        }
       } catch (error) {
         alert('Cannot update store');
         return;
