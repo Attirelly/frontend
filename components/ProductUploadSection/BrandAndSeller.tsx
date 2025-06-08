@@ -4,9 +4,10 @@ import {
   useCurrentStep,
   useFormActions,
   useFormData,
+  useIsLoading,
 } from "@/store/product_upload_store";
 import { useEffect, useState, useRef } from "react";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 interface Brand {
   brand_id: string;
@@ -17,7 +18,8 @@ interface Brand {
 export default function BrandAndSeller() {
   // Get form data and actions from Zustand store
   const { keyDetails } = useFormData();
-  const { updateFormData, setStepValidation } = useFormActions();
+  const isLoading = useIsLoading();
+  const { updateFormData, setStepValidation, setLoading } = useFormActions();
   const currentStep = useCurrentStep();
 
   // State for form and brands
@@ -25,7 +27,7 @@ export default function BrandAndSeller() {
   const [filteredBrands, setFilteredBrands] = useState<Brand[]>([]);
   const [brandSearch, setBrandSearch] = useState("");
   const [showBrandDropdown, setShowBrandDropdown] = useState(false);
-  const [isLoadingBrands, setIsLoadingBrands] = useState(false);
+
   const initialLoad = useRef(true);
 
   // Initialize form state from keyDetails only once
@@ -43,16 +45,18 @@ export default function BrandAndSeller() {
   // Fetch brands on mount
   useEffect(() => {
     const fetchBrands = async () => {
-      setIsLoadingBrands(true);
       try {
+        // setLoading(true) ;
         const response = await api.get("/brands/");
         const data = await response.data;
         setBrands(data);
         setFilteredBrands(data);
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.error("Error fetching brands:", error);
       } finally {
-        setIsLoadingBrands(false);
+        setLoading(false);
       }
     };
     fetchBrands();
@@ -125,101 +129,102 @@ export default function BrandAndSeller() {
     };
   }, []);
 
-  if (isLoadingBrands) {
-    return <LoadingSpinner />;
-  }
-
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg">
-      <h1 className="text-lg font-bold mb-2 ">Brand and seller info</h1>
-      <p className="text-gray-600 mb-6 border-b border-gray-200">
-        Provide who's selling and where it ships from
-      </p>
+    isLoading ? (
+      <LoadingSpinner/>
+    ) : (
+      <div className="max-w-4xl mx-auto bg-white rounded-lg">
+        <h1 className="text-lg font-bold mb-2 ">Brand and seller info</h1>
+        <p className="text-gray-600 mb-6 border-b border-gray-200">
+          Provide who's selling and where it ships from
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Column 1 */}
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Product name
+              </label>
+              <input
+                type="text"
+                name="productName"
+                value={formState.productName}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-md p-2"
+                placeholder="Enter product name"
+                required
+              />
+            </div>
+          </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Column 1 */}
-        <div className="flex flex-col gap-4">
-          <div>
+          {/* Column 2 */}
+          <div className="flex flex-col gap-4">
+            <div className="brand-dropdown-container relative">
+              <label className="block text-sm font-medium mb-1">Brand</label>
+              <input
+                type="text"
+                value={brandSearch}
+                onChange={(e) => {
+                  setBrandSearch(e.target.value);
+                  setShowBrandDropdown(true);
+                }}
+                onFocus={() => setShowBrandDropdown(true)}
+                className="w-full border border-gray-300 rounded-md p-2"
+                placeholder="Search and select brand"
+              />
+              {showBrandDropdown && (
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-2">
+                  <div className="text-center text-gray-500">
+                    Loading brands...
+                  </div>
+                </div>
+              )}
+              {showBrandDropdown && (
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                  {filteredBrands.length > 0 ? (
+                    filteredBrands.map((brand) => (
+                      <div
+                        key={brand.brand_id}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+                        onClick={() => handleBrandSelect(brand)}
+                      >
+                        {brand.logo_url && (
+                          <img
+                            src={brand.logo_url}
+                            alt={brand.name}
+                            className="w-6 h-6 object-contain"
+                          />
+                        )}
+                        <div>
+                          <div className="font-medium">{brand.name}</div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-gray-500">
+                      No brands found
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Product Description */}
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-1">
-              Product name
+              Product description
             </label>
-            <input
-              type="text"
-              name="productName"
-              value={formState.productName}
+            <textarea
+              name="productDescription"
+              value={formState.productDescription}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-md p-2"
-              placeholder="Enter product name"
-              required
+              placeholder="Enter detailed product description"
             />
           </div>
-        </div>
-
-        {/* Column 2 */}
-        <div className="flex flex-col gap-4">
-          <div className="brand-dropdown-container relative">
-            <label className="block text-sm font-medium mb-1">Brand</label>
-            <input
-              type="text"
-              value={brandSearch}
-              onChange={(e) => {
-                setBrandSearch(e.target.value);
-                setShowBrandDropdown(true);
-              }}
-              onFocus={() => setShowBrandDropdown(true)}
-              className="w-full border border-gray-300 rounded-md p-2"
-              placeholder="Search and select brand"
-            />
-            {isLoadingBrands && showBrandDropdown && (
-              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-2">
-                <div className="text-center text-gray-500">
-                  Loading brands...
-                </div>
-              </div>
-            )}
-            {showBrandDropdown && !isLoadingBrands && (
-              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-                {filteredBrands.length > 0 ? (
-                  filteredBrands.map((brand) => (
-                    <div
-                      key={brand.brand_id}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
-                      onClick={() => handleBrandSelect(brand)}
-                    >
-                      {brand.logo_url && (
-                        <img
-                          src={brand.logo_url}
-                          alt={brand.name}
-                          className="w-6 h-6 object-contain"
-                        />
-                      )}
-                      <div>
-                        <div className="font-medium">{brand.name}</div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="px-4 py-2 text-gray-500">No brands found</div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Product Description */}
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">
-            Product description
-          </label>
-          <textarea
-            name="productDescription"
-            value={formState.productDescription}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md p-2"
-            placeholder="Enter detailed product description"
-          />
         </div>
       </div>
-    </div>
+    )
   );
 }

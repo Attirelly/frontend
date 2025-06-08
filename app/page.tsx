@@ -112,7 +112,7 @@ export default function Home() {
         );
         const data = res.data;
 
-        const sellers: Seller[] = data.hits.map((hit) => ({
+        const sellers: Seller[] = data.hits.map((hit:any) => ({
           id: hit.id,
           name: hit.store_name,
           email: hit.registered_email,

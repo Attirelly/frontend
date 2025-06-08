@@ -5,8 +5,10 @@ import {
   useCurrentStep,
   useFormActions,
   useFormData,
+  useIsLoading,
 } from "@/store/product_upload_store";
 import { api } from "@/lib/axios";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 interface SizeOption {
   size_id: string;
@@ -38,13 +40,17 @@ export default function VariantAndInventory() {
     category,
   } = useFormData();
   const colorArray: ColorOption[] = Array.from(
-  new Map(globalVariants?.variants.map((v) => [v.color.color_id, v.color])).values()
-);
-const sizeArray: SizeOption[] = Array.from(
-  new Map(globalVariants?.variants.map((v) => [v.size.size_id, v.size])).values()
-);
+    new Map(
+      globalVariants?.variants.map((v) => [v.color.color_id, v.color])
+    ).values()
+  );
+  const sizeArray: SizeOption[] = Array.from(
+    new Map(
+      globalVariants?.variants.map((v) => [v.size.size_id, v.size])
+    ).values()
+  );
   console.log("Global Variants:", globalVariants?.variants);
-  const { updateFormData, setStepValidation } = useFormActions();
+  const { updateFormData, setStepValidation, setLoading } = useFormActions();
   const currentStep = useCurrentStep();
   // Initialize states
   // const [selectedSizes, setSelectedSizes] = useState<SizeOption[]>(
@@ -62,7 +68,8 @@ const sizeArray: SizeOption[] = Array.from(
   const [variantsList, setVariantsList] = useState<Variant[]>(
     globalVariants?.variants || []
   );
-  console.log("suyustem yadav", selectedColors, globalSelectedSizes);
+
+  const isLoading = useIsLoading();
 
   // Available options from API
   const [availableSizes, setAvailableSizes] = useState<SizeOption[]>([]);
@@ -77,11 +84,6 @@ const sizeArray: SizeOption[] = Array.from(
   const [colorSearch, setColorSearch] = useState("");
 
   // Loading states
-  const [loading, setLoading] = useState({
-    sizes: false,
-    colors: false,
-    error: "",
-  });
 
   const variants = globalVariants?.variants || [];
 
@@ -91,13 +93,8 @@ const sizeArray: SizeOption[] = Array.from(
     const isValid =
       variants.length > 0 &&
       variants.every(
-        (v) =>
-          v.sku &&
-          v.size &&
-          v.size.size_id &&
-          v.color &&
-          v.color.color_id 
-          // v.quantity > 0
+        (v) => v.sku && v.size && v.size.size_id && v.color && v.color.color_id
+        // v.quantity > 0
       );
 
     setStepValidation(currentStep, isValid);
@@ -107,19 +104,18 @@ const sizeArray: SizeOption[] = Array.from(
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading((prev) => ({ ...prev, sizes: true }));
+        // setLoading(true);
         const sizesResponse = await api.get(
           `/sizes/category/${category?.level4?.category_id}`
         );
         setAvailableSizes(sizesResponse.data);
-
-        setLoading((prev) => ({ ...prev, colors: true }));
         const colorsResponse = await api.get("/colors");
         setAvailableColors(colorsResponse.data);
+        setLoading(false);
       } catch (error) {
-        setLoading((prev) => ({ ...prev, error: "Failed to fetch options" }));
+        setLoading(false);
       } finally {
-        setLoading((prev) => ({ ...prev, sizes: false, colors: false }));
+        setLoading(false);
       }
     };
 
@@ -133,7 +129,9 @@ const sizeArray: SizeOption[] = Array.from(
     )
     .filter(
       (size) =>
-        !selectedSizes.some((selectedSize) => selectedSize.size_id === size.size_id)
+        !selectedSizes.some(
+          (selectedSize) => selectedSize.size_id === size.size_id
+        )
     );
 
   // Filter colors based on search term and exclude already selected colors
@@ -150,8 +148,8 @@ const sizeArray: SizeOption[] = Array.from(
 
   // Generate variants when size or color options change
   useEffect(() => {
-    console.log(selectedSizes, selectedColors)
-  console.log("Before update:", variantsList);
+    console.log(selectedSizes, selectedColors);
+    console.log("Before update:", variantsList);
     if (selectedSizes.length > 0 && selectedColors.length > 0) {
       // Create new variants array while preserving existing SKUs if possible
       const newVariants: Variant[] = [];
@@ -160,7 +158,9 @@ const sizeArray: SizeOption[] = Array.from(
         selectedColors.forEach((color) => {
           // Check if this size-color combination already exists
           const existingVariant = variantsList?.find(
-            (v) => v.size.size_id === size.size_id && v.color.color_id === color.color_id
+            (v) =>
+              v.size.size_id === size.size_id &&
+              v.color.color_id === color.color_id
           );
 
           if (existingVariant) {
@@ -171,7 +171,7 @@ const sizeArray: SizeOption[] = Array.from(
             newVariants.push({
               sku: "",
               size,
-              color
+              color,
               // quantity: 0,
             });
           }
@@ -250,10 +250,9 @@ const sizeArray: SizeOption[] = Array.from(
   // Update form data when options change
   useEffect(() => {
     console.log("Updating form data variants:", variantsList);
-    updateFormData("sizes", {"sizes" : selectedSizes});
-    updateFormData("colors", {"colors" : selectedColors});
-    updateFormData("variants", { "variants": variantsList });
-    
+    updateFormData("sizes", { sizes: selectedSizes });
+    updateFormData("colors", { colors: selectedColors });
+    updateFormData("variants", { variants: variantsList });
   }, [selectedSizes, selectedColors, variantsList, updateFormData]);
 
   return (
@@ -261,12 +260,10 @@ const sizeArray: SizeOption[] = Array.from(
       <h1 className="text-lg font-bold mb-2">Variants and inventory</h1>
       <p className="text-gray-600 mb-6">Define every version and its stock</p>
 
-      {loading.error && (
-        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
-          {loading.error}
-        </div>
-      )}
-
+       {isLoading ? (
+              <LoadingSpinner />
+            ) : (
+      <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Column 1 - Size Selection */}
         <div className="flex flex-col gap-4">
@@ -291,11 +288,7 @@ const sizeArray: SizeOption[] = Array.from(
               />
               {showSizeDropdown && (
                 <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-                  {loading.sizes ? (
-                    <div className="px-4 py-2 text-gray-500">
-                      Loading sizes...
-                    </div>
-                  ) : filteredSizes.length > 0 ? (
+                  {filteredSizes.length > 0 ? (
                     filteredSizes.map((size) => (
                       <div
                         key={size.size_id}
@@ -358,11 +351,7 @@ const sizeArray: SizeOption[] = Array.from(
               />
               {showColorDropdown && (
                 <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-                  {loading.colors ? (
-                    <div className="px-4 py-2 text-gray-500">
-                      Loading colors...
-                    </div>
-                  ) : filteredColors.length > 0 ? (
+                  {filteredColors.length > 0 ? (
                     filteredColors.map((color) => (
                       <div
                         key={color.color_id}
@@ -438,7 +427,6 @@ const sizeArray: SizeOption[] = Array.from(
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {variantsList?.map((variant, index) => (
-
                   <tr key={`${variant.size.size_id}-${variant.color.color_id}`}>
                     <td className="px-4 py-2 whitespace-nowrap">
                       <input
@@ -479,6 +467,10 @@ const sizeArray: SizeOption[] = Array.from(
           </div>
         </div>
       )}
+
+      </>
+
+    )}
     </div>
   );
 }

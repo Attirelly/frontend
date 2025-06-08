@@ -9,12 +9,12 @@ import ProductUploadSideBar from "@/components/ProductUploadSection/ProductUploa
 import {
   useCurrentStep,
   useFormActions,
+  useIsLoading,
   useStepValidations,
 } from "@/store/product_upload_store";
-import Blank from "@/components/ProductUploadSection/Blank";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const sectionComponents = [
-  Blank,
   BrandAndSeller,
   CategorySelector,
   ProductAttributes,
@@ -25,9 +25,9 @@ const sectionComponents = [
 
 export default function ProductUploadPage() {
   const currentStep = useCurrentStep();
+  const { updateFormData, setLoading } = useFormActions();
+  const isLoading = useIsLoading();
   const CurrentComponent = sectionComponents[currentStep];
-
-
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4">
@@ -42,8 +42,14 @@ export default function ProductUploadPage() {
         {/* Main content */}
         <div className="flex-1 p-6 overflow-auto">
           <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-8">
-            <CurrentComponent />
-            <FormNavigation />
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <>
+                <CurrentComponent />
+                <FormNavigation />
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -58,9 +64,6 @@ function FormNavigation() {
   const stepValidations = useStepValidations();
   const isCurrentStepValid = stepValidations[currentStep] === true;
 
-  if (currentStep == 0 ) {
-    setCurrentStep(1);
-  }
   return (
     <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
       {currentStep > 0 && (
@@ -87,8 +90,11 @@ function FormNavigation() {
         <button
           disabled={!isCurrentStepValid}
           onClick={submitForm}
-          className={`ml-auto px-4 py-2  text-white rounded-md ${ isCurrentStepValid ? "bg-green-600 hover:bg-green-700" 
-            : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+          className={`ml-auto px-4 py-2  text-white rounded-md ${
+            isCurrentStepValid
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
         >
           Submit Product
         </button>

@@ -106,6 +106,7 @@ export interface FormData {
 }
 
 interface ProductFormStore {
+  isLoading?: boolean;
   currentStep: number ; 
   formData: FormData ; 
   draftId: string | null;
@@ -119,17 +120,22 @@ interface ProductFormStore {
     submitForm: () => Promise<void>;
     updateForm: () => Promise<void>; 
     setStepValidation: (step: number, isValid: boolean) => void;
+    setLoading: (loading: boolean) => void;
   };
 }
 
 export const useProductFormStore = create<ProductFormStore>()(
   persist(
     (set, get) => ({
+      isLoading: false,
       currentStep: 0,
       formData: {},
       draftId: null,
       stepValidations: {},
       actions: {
+        setLoading :(loading:boolean)=>{
+          set({ isLoading: loading });
+        },
         updateForm: async () => {
           const { formData } = get();
           const apiPayload = transformPayload(
@@ -241,3 +247,5 @@ export const useStepValidations = () =>
   useProductFormStore((state) => state.stepValidations);
 export const useFormActions = () =>
   useProductFormStore((state) => state.actions);
+export const useIsLoading = () =>
+  useProductFormStore((state) => state.isLoading);

@@ -11,15 +11,16 @@ import {
   useCurrentStep,
   useFormActions,
   useFormData,
+  useIsLoading,
   useStepValidations,
 } from "@/store/product_upload_store";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { api } from "@/lib/axios";
 import { convertToFormData } from "@/utils/convert";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const sectionComponents = [
-  Blank,
   BrandAndSeller,
   CategorySelector,
   ProductAttributes,
@@ -30,16 +31,18 @@ const sectionComponents = [
 
 export default function ProductUploadPage() {
   const params = useParams();
-  const {variants, sizes, colors} = useFormData();
+  const { variants, sizes, colors } = useFormData();
+  const isLoading = useIsLoading();
   const product_id = params.product_id;
-  const { updateFormData } = useFormActions();
+  const { updateFormData, setLoading } = useFormActions();
   const currentStep = useCurrentStep();
   const CurrentComponent = sectionComponents[currentStep];
-  
+
   useEffect(() => {
     async function fetchAndPrefill() {
       if (product_id) {
         try {
+          setLoading(true);
           const res = await api.get(`/products/${product_id}`);
           const product = res.data;
           console.log("Fetched product data:", product);
@@ -52,21 +55,21 @@ export default function ProductUploadPage() {
           updateFormData("pricing", formData.pricing);
           updateFormData("variants", formData.variants);
           updateFormData("media", formData.media);
-          
+          setLoading(false);
         } catch (error) {
           console.error("Failed to fetch product for editing", error);
+          setLoading(false);
         }
-      } 
+      }
     }
     fetchAndPrefill();
-  }, [product_id, updateFormData]);
+  }, [product_id, setLoading, updateFormData]);
 
   console.log(variants, sizes, colors);
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4">
       <div className="flex w-full max-w-4xl gap-4">
-        {/* Sidebar */}
         <div className="min-w-[240px] max-w-sm border-gray-200 p-6 overflow-y-auto">
           {/* <h2 className="text-xl font-bold mb-4">Product Upload</h2> */}
           {/* <DraftControls /> */}
@@ -76,8 +79,14 @@ export default function ProductUploadPage() {
         {/* Main content */}
         <div className="flex-1 p-6 overflow-auto">
           <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-8">
-            <CurrentComponent />
-            <FormNavigation />
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <>
+                <CurrentComponent />
+                <FormNavigation />
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -87,7 +96,7 @@ export default function ProductUploadPage() {
 
 function FormNavigation() {
   const currentStep = useCurrentStep();
-  const { setCurrentStep, submitForm , updateForm } = useFormActions();
+  const { setCurrentStep, updateForm } = useFormActions();
   const totalSteps = sectionComponents.length;
   const stepValidations = useStepValidations();
   const isCurrentStepValid = stepValidations[currentStep] === true;
@@ -118,8 +127,11 @@ function FormNavigation() {
         <button
           disabled={!isCurrentStepValid}
           onClick={updateForm}
-          className= {`ml-auto px-4 py-2  text-white rounded-md ${ isCurrentStepValid ? "bg-green-600 hover:bg-green-700" 
-            : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+          className={`ml-auto px-4 py-2  text-white rounded-md ${
+            isCurrentStepValid
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
         >
           Update Product
         </button>
