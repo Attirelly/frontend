@@ -46,7 +46,7 @@ export interface Product {
   category: CategoryType[];
   size: string;
   color: string;
-  // fabric: string;
+  images:string[]
   mrp: number;
   shopify_id : string;
   price: number;
