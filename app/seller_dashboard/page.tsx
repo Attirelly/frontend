@@ -9,11 +9,14 @@ import StorePhotosComponent from '@/components/OnboardingSections/StorePhotos';
 import QrCodeGeneration from '@/components/OnboardingSections/QrGeneration';
 import ViewAllProducts from '@/components/OnboardingSections/ViewAllProducts'
 import BulkUploadPage from '@/components/OnboardingSections/BulkuploadProducts';
+import UpdateButton from '@/components/OnboardingSections/UpdateButton';
 import Header from '@/components/Header';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { logout } from '@/utils/logout';
+import { useUpdateStore } from '@/utils/handleUpdate';
+
 import ProductUploadPage from '../product_upload/page';
 
 type City = { id: string; name: string; state_id: string };
@@ -54,7 +57,7 @@ export default function SellerDashboardPage() {
         setStoreId(storeData.store_id);
         setQrId(storeData.qr_id);
 
-        const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id : storeData.store_id}});
+        const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id: storeData.store_id } });
         console.log(priceRangeRes);
 
         setBusinessDetailsData({
@@ -76,7 +79,7 @@ export default function SellerDashboardPage() {
         setPriceFiltersData({
           avgPriceMin: storeData.average_price_min,
           avgPriceMax: storeData.average_price_max,
-          priceRanges: priceRangeRes.data 
+          priceRanges: priceRangeRes.data
         });
 
         setWhereToSellData({
@@ -117,13 +120,13 @@ export default function SellerDashboardPage() {
       case 'photos':
         return <StorePhotosComponent />;
       case 'qr_code':
-        return <QrCodeGeneration/>;
+        return <QrCodeGeneration />;
       case 'all_products':
-        return <ViewAllProducts/>;
+        return <ViewAllProducts />;
       case 'bulk_products':
-        return <BulkUploadPage/>;
+        return <BulkUploadPage />;
       case 'one_product':
-        return <ProductUploadPage/>;
+        return <ProductUploadPage />;
       default:
         return null;
     }
@@ -131,19 +134,31 @@ export default function SellerDashboardPage() {
 
   return (
     <ProtectedRoute role="admin">
-    <div className='min-h-screen bg-gray-100'>
-      <Header
-        title='Attirelly'
-        actions={
-          <button className='bg-white text-black rounded-2xl shadow-md p-2 cursor-pointer border transition hover:bg-gray-200'
-          onClick={() => logout("/seller_signin")}>Log Out</button>
-        } />
-      <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
-        <DashboardSidebar selected={activeSection} onSelect={setActiveSection} />
-        <div className="overflow-auto mt-[60px] rounded-md bg-gray-100">{renderSection()}</div>
-      </div>
+      <div className='min-h-screen bg-gray-100'>
+        <Header
+          title='Attirelly'
+          actions={
+            <button className='bg-white text-black rounded-2xl shadow-md p-2 cursor-pointer border transition hover:bg-gray-200'
+              onClick={() => logout("/seller_signin")}>Log Out</button>
+          } />
+        <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
+          <DashboardSidebar selected={activeSection} onSelect={setActiveSection} />
+          <div className="flex flex-col w-3xl md-w-2xl gap-6">
+            <div className="overflow-auto mt-[60px] rounded-md bg-gray-100">{renderSection()}</div>
+            {['brand', 'price', 'market', 'social', 'photos'].includes(activeSection) && (
+              <UpdateButton
+                onClick={() => {
+                  console.log(`Update clicked for section: ${activeSection}`);
+                  // TODO: implement update logic based on section
+                }}
+                disabled={false} // Replace with logic to enable/disable based on validation
+              />
+            )}
+          </div>
 
-    </div>
+        </div>
+
+      </div>
     </ProtectedRoute>
 
 

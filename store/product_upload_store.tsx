@@ -44,7 +44,7 @@ export interface CategoryLevels {
   level2?: Category;
   level3?: Category;
   level4?: Category;
-  level5?: Category;
+  // level5?: Category;
 }
 
 export interface Pricing {
@@ -201,11 +201,11 @@ export const useProductFormStore = create<ProductFormStore>()(
         },
         submitForm: async () => {
           const { formData } = get();
-          const {storeId, businessDetailsData} = useSellerStore();
+          // const {storeId, businessDetailsData} = useSellerStore();
           const apiPayload = transformPayload(
             formData,
-            storeId,
-            businessDetailsData?.brandName,
+            "d013b10b-af22-407d-aa32-eec4d6e1bb50",
+            "Aman G",
           );
           console.log("apiPayload", apiPayload);
           try {

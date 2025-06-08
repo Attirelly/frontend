@@ -130,7 +130,8 @@ export default function DashboardSidebar({
                 <div className="flex justify-center">
                   <button 
                   className="bg-black text-white text-sm py-2 px-6 rounded-xl hover:bg-gray-800 transition"
-                  onClick={handleUpdate}>
+                  // onClick={handleUpdate}
+                  >
                     Update
                   </button>
                 </div>

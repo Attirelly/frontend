@@ -26,7 +26,7 @@ export default function CategorySelector() {
     level2: false,
     level3: false,
     level4: false,
-    level5: false,
+    // level5: false,
   });
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
 
@@ -35,7 +35,7 @@ export default function CategorySelector() {
     level2: category?.level2 || null,
     level3: category?.level3 || null,
     level4: category?.level4 || null,
-    level5: category?.level5 || null,
+    // level5: category?.level5 || null,
   });
 
   const closeAllDropdowns = () => {
@@ -44,19 +44,19 @@ export default function CategorySelector() {
       level2: false,
       level3: false,
       level4: false,
-      level5: false,
+      // level5: false,
     });
   };
 
   useEffect(() => {
     const isValid =
-      !!category?.level1 &&
-      !!category?.level2 &&
-      !!category?.level3 &&
-      !!category?.level4;
+      !!selectedCategories?.level1 &&
+      !!selectedCategories?.level2 &&
+      !!selectedCategories?.level3 &&
+      !!selectedCategories?.level4;
 
     setStepValidation(currentStep, isValid);
-  }, [category, currentStep]);
+  }, [selectedCategories, currentStep]);
 
   // Load categories from API
   useEffect(() => {
