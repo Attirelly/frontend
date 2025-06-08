@@ -60,6 +60,7 @@ export default function CategorySelector() {
       !!selectedCategories?.level2 &&
       !!selectedCategories?.level3 &&
       !!selectedCategories?.level4;
+      // ###
 
     setStepValidation(currentStep, isValid);
   }, [selectedCategories, currentStep]);
