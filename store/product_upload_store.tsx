@@ -206,7 +206,6 @@ export const useProductFormStore = create<ProductFormStore>()(
         },
         submitForm: async () => {
           const { formData } = get();
-          // const {storeId, businessDetailsData} = useSellerStore();
           const apiPayload = transformPayload(
             formData,
             "d013b10b-af22-407d-aa32-eec4d6e1bb50",
