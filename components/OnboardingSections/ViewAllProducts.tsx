@@ -14,8 +14,10 @@ import type {
   FilterOptions,
 } from "@/types/ProductTypes";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function ProductsPage() {
+  const router = useRouter();
   const {
     products,
     setProducts,
@@ -104,12 +106,13 @@ export default function ProductsPage() {
       title: "Image",
       dataIndex: "image",
       render: (_: any, record: Product) => {
+        console.log(record)
         const record_images = (record?.images || [])
 
         const imageSrc =
           Array.isArray(record_images) && record_images.length > 0
             ? record_images[0]
-            : "https://media.istockphoto.com/id/1473190581/photo/percent-down-arrow.jpg?s=1024x1024&w=is&k=20&c=QtZpGfeC6pxV0vb-pgEKxjfXK2fftE2OZw77lQs1d9E="; // A fallback image stored in public folder
+            : "/window.svg"; // A fallback image stored in public folder
         console.log(imageSrc)
         return (
           <Image
@@ -263,7 +266,7 @@ export default function ProductsPage() {
           }
           onRow={(record) => ({
             onClick: () => {
-              console.log("Row clicked:", record);
+              router.push(`/product_upload/${record.product_id}`);
             },
             style: { cursor: "pointer" },
           })}

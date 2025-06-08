@@ -28,7 +28,7 @@ type SortConfig = {
   direction: 'ascending' | 'descending';
 };
 
-export default function Home() {
+export default function SellerCRM() {
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
   // const [displayedSellers, setDisplayedSellers] = useState<Seller[]>([]);

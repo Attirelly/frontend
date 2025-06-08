@@ -12,8 +12,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'attirellydev.s3.ap-south-1.amazonaws.com',
-        pathname: '/**', // allow all paths
+        hostname: '**',
+        // pathname: '/**', // allow all paths
       },
     ],
   }

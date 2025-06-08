@@ -204,7 +204,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   };
 
   return (
-    <div className="space-y-8 w-3xl mx-auto bg-gray-100">
+    <div className="space-y-8 rounded-md overflow-hidden w-3xl">
       {/* Brand Owner Section */}
       <Section title="Brand owner details" subtitle="This is for internal data, your customers won't see this.">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -270,9 +270,9 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
 
           <InputField label="Pin code" value={pinCode} onChange={setPinCode} required />
         </div>
-        <button className="mt-4 px-4 py-2 border border-black rounded hover:bg-black hover:text-white transition">
+        {/* <button className="mt-4 px-4 py-2 border border-black rounded hover:bg-black hover:text-white transition">
           Add another outlet
-        </button>
+        </button> */}
       </Section>
     </div>
   );
