@@ -29,7 +29,7 @@ const sectionComponents = [
   MediaAssets,
 ];
 
-export default function ProductUploadPage() {
+export default function ProductUpdatePage() {
   const params = useParams();
   const { variants, sizes, colors } = useFormData();
   const isLoading = useIsLoading();

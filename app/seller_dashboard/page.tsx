@@ -14,6 +14,7 @@ import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { logout } from '@/utils/logout';
+import ProductUploadPage from '../product_upload/page';
 
 type City = { id: string; name: string; state_id: string };
 
@@ -121,6 +122,8 @@ export default function SellerDashboardPage() {
         return <ViewAllProducts/>;
       case 'bulk_products':
         return <BulkUploadPage/>;
+      case 'one_product':
+        return <ProductUploadPage/>;
       default:
         return null;
     }
@@ -137,7 +140,7 @@ export default function SellerDashboardPage() {
         } />
       <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <DashboardSidebar selected={activeSection} onSelect={setActiveSection} />
-        <div className="overflow-auto rounded-md bg-gray-100">{renderSection()}</div>
+        <div className="overflow-auto mt-[60px] rounded-md bg-gray-100">{renderSection()}</div>
       </div>
 
     </div>
