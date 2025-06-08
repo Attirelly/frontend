@@ -2,10 +2,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { send } from 'process';
 import Image from "next/image";
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
+import axios from 'axios';
 import Header from '@/components/Header';
 
 export default function SellerSignup() {
@@ -87,6 +87,27 @@ export default function SellerSignup() {
             if (!agreed) {
                 alert('You must accept the SMS authorization terms.');
                 return;
+            }
+            try {
+                const response = await api.get("/users/new_user_auth", {
+                    params: { contact_number: phone },
+                });
+
+            } catch (error: any) {
+                if (axios.isAxiosError(error)) {
+                    if (error.response?.status === 403) {
+                        // Mobile number already exists
+                        alert("Mobile number already exists");
+                        console.error("Mobile number already exists");
+                        return false;
+                    } else {
+                        console.error("Unexpected error:", error.message);
+                    }
+                } else {
+                    console.error("Unknown error:", error);
+                }
+
+                return false;
             }
             const confirmed = window.confirm('Please confirm you phone number');
             if (!confirmed) return;
