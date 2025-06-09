@@ -13,8 +13,10 @@ import {
   useStepValidations,
 } from "@/store/product_upload_store";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import Blank from "@/components/ProductUploadSection/Blank";
 
 const sectionComponents = [
+  Blank,
   BrandAndSeller,
   CategorySelector,
   ProductAttributes,

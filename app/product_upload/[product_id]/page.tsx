@@ -21,6 +21,7 @@ import { convertToFormData } from "@/utils/convert";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const sectionComponents = [
+  Blank,
   BrandAndSeller,
   CategorySelector,
   ProductAttributes,
@@ -34,7 +35,7 @@ export default function ProductUpdatePage() {
   const { variants, sizes, colors } = useFormData();
   const isLoading = useIsLoading();
   const product_id = params.product_id;
-  const { updateFormData, setLoading } = useFormActions();
+  const { updateFormData, setLoading,setCurrentStep } = useFormActions();
   const currentStep = useCurrentStep();
   const CurrentComponent = sectionComponents[currentStep];
 
@@ -55,6 +56,7 @@ export default function ProductUpdatePage() {
           updateFormData("pricing", formData.pricing);
           updateFormData("variants", formData.variants);
           updateFormData("media", formData.media);
+          setCurrentStep(1);
           setLoading(false);
         } catch (error) {
           console.error("Failed to fetch product for editing", error);
