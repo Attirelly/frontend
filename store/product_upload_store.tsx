@@ -108,25 +108,24 @@ export interface FormData {
 
 interface ProductFormStore {
   isLoading?: boolean;
-  currentStep: number ; 
-  formData: FormData ; 
+  currentStep: number;
+  formData: FormData;
   draftId: string | null;
   stepValidations: Record<number, boolean>;
   actions: {
     setCurrentStep: (step: number) => void;
     updateFormData: (section: keyof FormData, data: any) => void;
-    saveDraft: () => Promise<string>;
+    saveDraft: () => Promise<void>;
     loadDraft: (draftId: string) => void;
     clearDraft: () => void;
     submitForm: () => Promise<void>;
-    updateForm: () => Promise<void>; 
+    updateForm: () => Promise<void>;
     setStepValidation: (step: number, isValid: boolean) => void;
     setLoading: (loading: boolean) => void;
   };
 }
 
 export const useProductFormStore = create<ProductFormStore>()(
-  
   persist(
     (set, get) => ({
       isLoading: false,
@@ -135,16 +134,16 @@ export const useProductFormStore = create<ProductFormStore>()(
       draftId: null,
       stepValidations: {},
       actions: {
-        setLoading :(loading:boolean)=>{
+        setLoading: (loading: boolean) => {
           set({ isLoading: loading });
         },
         updateForm: async () => {
           const { formData } = get();
-          const {storeId, businessDetailsData} = useSellerStore();
+          const { storeId, businessDetailsData } = useSellerStore();
           const apiPayload = transformPayload(
             formData,
             storeId,
-            businessDetailsData?.brandName,
+            businessDetailsData?.brandName
           );
           try {
             await api.put(`/products/${formData.product_id}`, apiPayload);
@@ -178,16 +177,20 @@ export const useProductFormStore = create<ProductFormStore>()(
             },
           })),
         saveDraft: async () => {
-          const draftId = get().draftId || `draft_${Date.now()}`;
-          set({ draftId });
-
-          // In production: await API call to save draft
-          // await fetch('/api/drafts', {
-          //   method: 'POST',
-          //   body: JSON.stringify(get())
-          // });
-
-          return draftId;
+          const { formData, currentStep } = get();
+          try {
+            const response = await api.post("/drafts", {
+              data: formData,
+              current_step: currentStep,
+            });
+           
+            setTimeout(() => {
+              toast.success("Draft saved successfully!");
+            }, 0);
+          } catch (error) {
+            console.log("Error in saving draft");
+            
+          }
         },
         loadDraft: (draftId) => {
           // In production: Load from API
@@ -209,7 +212,7 @@ export const useProductFormStore = create<ProductFormStore>()(
           const apiPayload = transformPayload(
             formData,
             "d013b10b-af22-407d-aa32-eec4d6e1bb50",
-            "Aman G",
+            "Aman G"
           );
           console.log("apiPayload", apiPayload);
           try {
@@ -224,7 +227,7 @@ export const useProductFormStore = create<ProductFormStore>()(
               stepValidations: {},
             });
             // Toast or notification can be added here
-            toast.success("Product submitted successfully!"); 
+            toast.success("Product submitted successfully!");
           } catch (error) {
             console.error("Submission error:", error);
             throw error;
