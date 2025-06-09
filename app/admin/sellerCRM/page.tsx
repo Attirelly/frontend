@@ -43,7 +43,7 @@ export default function SellerCRM() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
- 
+
   const isSelected = (id: string) => selectedSellerIds.includes(id);
 
   // Debounce search input
@@ -112,7 +112,7 @@ export default function SellerCRM() {
         );
         const data = res.data;
 
-        const sellers: Seller[] = data.hits.map((hit:any) => ({
+        const sellers: Seller[] = data.hits.map((hit: any) => ({
           id: hit.id,
           name: hit.store_name,
           email: hit.registered_email,
@@ -443,7 +443,7 @@ export default function SellerCRM() {
                       }
                     />
                   </th>
-                  <th 
+                  <th
                     className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
                     onClick={() => requestSort('name')}
                   >
@@ -451,7 +451,7 @@ export default function SellerCRM() {
                       Name {getSortIndicator('name')}
                     </div>
                   </th>
-                  <th 
+                  <th
                     className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
                     onClick={() => requestSort('email')}
                   >
@@ -459,7 +459,7 @@ export default function SellerCRM() {
                       Email {getSortIndicator('email')}
                     </div>
                   </th>
-                  <th 
+                  <th
                     className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
                     onClick={() => requestSort('area')}
                   >
@@ -467,7 +467,7 @@ export default function SellerCRM() {
                       Area {getSortIndicator('area')}
                     </div>
                   </th>
-                  <th 
+                  <th
                     className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
                     onClick={() => requestSort('city')}
                   >
@@ -478,7 +478,15 @@ export default function SellerCRM() {
                   <th className="px-6 py-3 border">Store Type</th>
                   <th className="px-6 py-3 border">Outfits</th>
                   <th className="px-6 py-3 border">Gender</th>
-                  <th 
+                  <th
+                    className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
+                    onClick={() => requestSort('created_at')}
+                  >
+                    <div className="flex items-center">
+                      Created At {getSortIndicator('created_at')}
+                    </div>
+                  </th>
+                  <th
                     className="px-6 py-3 border cursor-pointer hover:bg-gray-200"
                     onClick={() => requestSort('status')}
                   >
@@ -520,11 +528,15 @@ export default function SellerCRM() {
                         {seller?.genders?.join(" , ")}
                       </td>
                       <td className="px-6 py-3 border">
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          seller.status 
-                            ? "bg-green-100 text-green-800" 
-                            : "bg-red-100 text-red-800"
-                        }`}>
+                        {seller.created_at ? new Date(seller.created_at).toLocaleDateString('en-IN', {
+                          day: 'numeric', month: 'short', year: 'numeric'
+                        }) : "-"}
+                      </td>
+                      <td className="px-6 py-3 border">
+                        <span className={`px-2 py-1 rounded-full text-xs ${seller.status
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}>
                           {seller.status ? "Active" : "Inactive"}
                         </span>
                       </td>
@@ -565,7 +577,7 @@ export default function SellerCRM() {
                 >
                   Previous
                 </button>
-                
+
                 {/* Page numbers */}
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   let pageNum;
@@ -578,7 +590,7 @@ export default function SellerCRM() {
                   } else {
                     pageNum = currentPage - 2 + i;
                   }
-                  
+
                   return (
                     <button
                       key={pageNum}

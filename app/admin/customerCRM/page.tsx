@@ -209,9 +209,12 @@ export default function CustomerPage() {
           </button>
         </div>
       </div>
-      <div className="flex flex-row gap-2">
+      <div 
+      // className="flex flex-row gap-2"
+      className="flex flex-col md:flex-row gap-4 w-full"
+      >
         {/* Left Sidebar for Facets */}
-        <div className="w-full md:w-[20%] p-6 border-2 border-solid border-gray-200 bg-gray-50 rounded-lg mb-8 md:mb-0">
+        <div className="w-full md:w-[25%] p-4 border-2 border-solid border-gray-200 bg-gray-50 rounded-lg mb-8 md:mb-0">
           <h2 className="text-xl font-semibold mb-4">Filters</h2>
           <div>
             <div>Start Date</div>
@@ -219,7 +222,7 @@ export default function CustomerPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="border border-gray-300 rounded px-4 py-2"
+              className="border border-gray-300 rounded px-4 py-2 w-full max-w-full"
               placeholder="Start Date"
             />
           </div>
@@ -230,7 +233,7 @@ export default function CustomerPage() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border border-gray-300 rounded px-4 py-2"
+              className="border border-gray-300 rounded px-4 py-2 w-full max-w-full"
               placeholder="End Date"
             />
           </div>
