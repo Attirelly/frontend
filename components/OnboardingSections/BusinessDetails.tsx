@@ -13,6 +13,7 @@ type BrandType = { id: string; store_type: string };
 type GenderType = { id: string; gender_value: string };
 type City = { id: string; name: string; state_id: string };
 type Area = { id: string; name: string; city_id: string };
+type Pincode = { id: string, code: string, city_id: string };
 
 const RequiredLabel: FC<{ children: React.ReactNode }> = ({ children }) => (
   <label className="block text-sm font-medium mb-1">
@@ -49,6 +50,11 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   const [selectedArea, setSelectedArea] = useState<Area[]>([]);
   const [selectedAreaOption, setSelectedAreaOption] = useState<SelectOption | null>(null);
 
+  const [pincodes, setPincodes] = useState<Pincode[]>([]);
+  const [pincodeOptions, setPincodeOptions] = useState<SelectOption[]>([]);
+  const [selectedPincode, setSelectedPincode] = useState<Pincode[]>([]);
+  const [selectedPincodeOption, setSelectedPincodeOption] = useState<SelectOption | null>(null);
+
   const [ownerName, setOwnerName] = useState(businessDetailsData?.ownerName || '');
   const [ownerEmail, setOwnerEmail] = useState(businessDetailsData?.ownerEmail || '');
   const [brandName, setBrandName] = useState(businessDetailsData?.brandName || '');
@@ -66,17 +72,19 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [storeTypesRes, gendersRes, citiesRes, areasRes] = await Promise.all([
+        const [storeTypesRes, gendersRes, citiesRes, areasRes, pincodeRes] = await Promise.all([
           api.get('/stores/store_types'),
           api.get('/genders/'),
           api.get('/location/cities/'),
-          api.get('/location/areas/')
+          api.get('/location/areas/'),
+          api.get('location/pincodes/')
         ]);
 
         setBrandTypes(storeTypesRes.data);
         setGenders(gendersRes.data);
         setCities(citiesRes.data);
         setAreas(areasRes.data);
+        setPincodes(pincodeRes.data);
 
         setCityOptions(citiesRes.data.map((c: City) => ({ value: c.id, label: c.name })));
         setAreaOptions(areasRes.data.map((a: Area) => ({ value: a.id, label: a.name })));
@@ -90,6 +98,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
 
   const cityInitializedRef = useRef(false);
   const areaInitializedRef = useRef(false);
+  const pincodeInitializedRef = useRef(false);
 
   useEffect(() => {
     if (
@@ -119,7 +128,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     cityInitializedRef.current = true;
   }, [businessDetailsData, cities, cityOptions]);
 
-  useEffect(() => {
+    useEffect(() => {
     if (selectedCityOption?.value) {
       const filteredAreas = areas
         .filter(area => area.city_id === selectedCityOption.value)
@@ -131,6 +140,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
       setSelectedArea([]);
     }
   }, [selectedCityOption, areas]);
+
 
   useEffect(() => {
     if (
@@ -159,6 +169,50 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     areaInitializedRef.current = true;
   }, [businessDetailsData, areas, areaOptions]);
 
+
+
+  useEffect(() => {
+    if (
+      pincodeInitializedRef.current ||
+      !businessDetailsData ||
+      !businessDetailsData.pinCode ||
+      pincodes.length === 0 ||
+      pincodeOptions.length === 0
+    ) return;
+
+    const pincodeFromStore = businessDetailsData.pinCode[0];
+    const fullPincode = pincodes.find(p => p.id === pincodeFromStore.id);
+    const pincodeOption = pincodeOptions.find(opt => opt.value === pincodeFromStore.id);
+
+    if (fullPincode) setSelectedPincode([fullPincode]);
+
+    if (pincodeOption) {
+      setSelectedPincodeOption(pincodeOption);
+    } else if (fullPincode) {
+      setSelectedPincodeOption({
+        value: fullPincode.id,
+        label: fullPincode.code,
+      });
+    }
+
+    pincodeInitializedRef.current = true;
+  }, [businessDetailsData, pincodes, pincodeOptions]);
+
+  
+
+  useEffect(() => {
+    if (selectedCityOption?.value) {
+      const filteredPincodes = pincodes
+        .filter(p => p.city_id === selectedCityOption.value)
+        .map(p => ({ value: p.id, label: p.code }));
+      setPincodeOptions(filteredPincodes);
+    } else {
+      setPincodeOptions([]);
+      setSelectedPincode([]);
+      setSelectedPincodeOption(null);
+    }
+  }, [selectedCityOption, pincodes]);
+
   useEffect(() => {
     const valid =
       ownerName.trim() &&
@@ -167,7 +221,8 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
       selectedBrandTypes.length > 0 &&
       selectedGenderTypes.length > 0 &&
       selectedCity.length > 0 &&
-      pinCode.trim();
+      selectedPincode.length > 0
+      // pinCode.trim();
 
     setBusinessDetailsValid(Boolean(valid));
     onValidationChange?.(Boolean(valid));
@@ -183,7 +238,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
         rentOutfits,
         city: selectedCity,
         area: selectedArea,
-        pinCode,
+        pinCode: selectedPincode,
         brandAddress,
       });
     }
@@ -191,7 +246,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     ownerName, ownerEmail, brandName,
     selectedBrandTypes, selectedGenderTypes,
     selectedCity, selectedArea,
-    pinCode, rentOutfits, brandAddress
+    selectedPincode, rentOutfits, brandAddress
   ]);
 
 
@@ -204,7 +259,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   };
 
   return (
-    <div className="space-y-8 rounded-md overflow-hidden w-3xl">
+    <div className="space-y-8 rounded-md w-3xl">
       {/* Brand Owner Section */}
       <Section title="Brand owner details" subtitle="This is for internal data, your customers won't see this.">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -268,7 +323,20 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
           }}
             isDisabled={!selectedCityOption} />
 
-          <InputField label="Pin code" value={pinCode} onChange={setPinCode} required />
+          {/* <InputField label="Pin code" value={pinCode} onChange={setPinCode} required /> */}
+
+          <SelectField
+            label="Pincode"
+            options={pincodeOptions}
+            value={selectedPincodeOption}
+            onChange={(option) => {
+              setSelectedPincodeOption(option);
+              const found = pincodes.find(p => p.id === option?.value);
+              setSelectedPincode(found ? [found] : []);
+              setPinCode(found?.id || '');
+            }}
+            isDisabled={!selectedCityOption}
+          />
         </div>
         {/* <button className="mt-4 px-4 py-2 border border-black rounded hover:bg-black hover:text-white transition">
           Add another outlet

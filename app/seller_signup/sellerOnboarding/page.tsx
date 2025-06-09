@@ -67,7 +67,7 @@ export default function SellerOnboardingPage() {
       const store_payload = {
         store_owner_id: sellerId,
         store_name: businessDetailsData.brandName,
-        pincode: businessDetailsData.pinCode,
+        pincode_id: businessDetailsData.pinCode[0].code,
         whatsapp_number: businessDetailsData.businessWpNum,
         store_address: businessDetailsData.brandAddress,
         rental: businessDetailsData.rentOutfits === 'Yes',
@@ -75,6 +75,7 @@ export default function SellerOnboardingPage() {
         genders: businessDetailsData.genders,
         area: businessDetailsData.area[0],
         city: businessDetailsData.city[0],
+        pincode: businessDetailsData.pinCode[0]
       };
 
       try {

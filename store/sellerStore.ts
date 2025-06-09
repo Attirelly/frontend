@@ -28,6 +28,7 @@ type GenderType = {
   gender_value: string
 }
 
+
 type City = {
   id : string,
   name : string,
@@ -38,6 +39,12 @@ type Area = {
   id : string,
   name : string,
   city_id : string | null
+}
+
+type Pincode = {
+  id: string,
+  code: string,
+  city_id: string | null
 }
 
 type StoreTypePriceRange = {
@@ -55,7 +62,7 @@ type BusinessDetailsData = {
   rentOutfits: string | null;
   city: City[];
   area: Area[];
-  pinCode: string | null;
+  pinCode: Pincode[];
   brandAddress: string | null;
 };
 
