@@ -16,14 +16,20 @@ import { api } from '@/lib/axios';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { logout } from '@/utils/logout';
 import { useUpdateStore } from '@/utils/handleUpdate';
+import Toast from '@/components/ui/Toast';
 
 import ProductUploadPage from '../product_upload/page';
 
 type City = { id: string; name: string; state_id: string };
 
-type Area = { id: string, name: string, city_id: string }
+type Area = { id: string, name: string, city_id: string };
+
+type Pincode = { id: string, code: string, city_id: string };
 
 export default function SellerDashboardPage() {
+  const { handleUpdate } = useUpdateStore();
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
   const {
     setStoreId,
     storeId,
@@ -53,6 +59,7 @@ export default function SellerDashboardPage() {
 
         const cityData: City[] = storeData.city ? [storeData.city] : [];
         const areaData: Area[] = storeData.area ? [storeData.area] : [];
+        const pincodeData: Pincode[] = storeData.pincode ? [storeData.pincode] : [];
 
         setStoreId(storeData.store_id);
         setQrId(storeData.qr_id);
@@ -70,16 +77,16 @@ export default function SellerDashboardPage() {
           rentOutfits: storeData.rental === true ? 'Yes' : 'No',
           city: cityData || [],
           area: areaData || [],
-          pinCode: storeData.pincode || '',
+          pinCode: pincodeData || [],
           brandAddress: storeData.store_address || ''
         });
 
         // setBusinessDetailsValid(true);
 
         setPriceFiltersData({
-          avgPriceMin: storeData.average_price_min,
-          avgPriceMax: storeData.average_price_max,
-          priceRanges: priceRangeRes.data
+          avgPriceMin: storeData.average_price_min || null,
+          avgPriceMax: storeData.average_price_max || null,
+          priceRanges: priceRangeRes.data || []
         });
 
         setWhereToSellData({
@@ -132,6 +139,18 @@ export default function SellerDashboardPage() {
     }
   };
 
+  const handleUpdateClick = async () => {
+    const res = await handleUpdate(activeSection, false);
+    if(res){
+      setToastMessage("Store updated!");
+      setToastType("success");
+    }
+    else{
+      setToastMessage("Store not updated!");
+      setToastType("error");
+    }
+  }
+
   return (
     <ProtectedRoute role="admin">
       <div className='min-h-screen bg-gray-100'>
@@ -144,20 +163,24 @@ export default function SellerDashboardPage() {
         <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
           <DashboardSidebar selected={activeSection} onSelect={setActiveSection} />
           <div className="flex flex-col w-3xl md-w-2xl gap-6">
-            <div className="overflow-auto mt-[60px] rounded-md bg-gray-100">{renderSection()}</div>
+            <div className=" mt-[60px] rounded-md bg-gray-100">{renderSection()}</div>
             {['brand', 'price', 'market', 'social', 'photos'].includes(activeSection) && (
               <UpdateButton
-                onClick={() => {
-                  console.log(`Update clicked for section: ${activeSection}`);
-                  // TODO: implement update logic based on section
-                }}
+                onClick={handleUpdateClick}
+
                 disabled={false} // Replace with logic to enable/disable based on validation
               />
             )}
           </div>
 
         </div>
-
+        {toastMessage && (
+          <Toast
+            message={toastMessage}
+            type={toastType}
+            onClose={() => setToastMessage("")}
+          />
+        )}
       </div>
     </ProtectedRoute>
 

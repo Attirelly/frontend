@@ -75,7 +75,7 @@ export default function DashboardSidebar({
       const store_up_payload = {
         store_owner_id: sellerId,
         store_name: businessDetailsData.brandName,
-        pincode: businessDetailsData.pinCode,
+        pincode_id: businessDetailsData.pinCode[0].id,
         whatsapp_number: businessDetailsData.businessWpNum,
         store_address: businessDetailsData.brandAddress,
         rental: businessDetailsData.rentOutfits === 'Yes',
@@ -83,6 +83,7 @@ export default function DashboardSidebar({
         genders: businessDetailsData.genders,
         area: businessDetailsData.area[0],
         city: businessDetailsData.city[0],
+        pincode: businessDetailsData.pinCode[0],
         average_price_min: priceFiltersData.avgPriceMin,
         average_price_max: priceFiltersData.avgPriceMax,
         store_type_price_range_links: priceFiltersData.priceRanges,
@@ -126,7 +127,7 @@ export default function DashboardSidebar({
           {openGroups[group.heading] && (
             <div className="mt-3 space-y-3">
               {/* Conditionally show update button for 'Store Profile' */}
-              {group.heading === 'Store Profile' && (
+              {/* {group.heading === 'Store Profile' && (
                 <div className="flex justify-center">
                   <button 
                   className="bg-black text-white text-sm py-2 px-6 rounded-xl hover:bg-gray-800 transition"
@@ -135,7 +136,7 @@ export default function DashboardSidebar({
                     Update
                   </button>
                 </div>
-              )}
+              )} */}
               {/* Render section items */}
               {group.ids.map((id) => {
                 const section = sections.find((s) => s.id === id);

@@ -7,7 +7,7 @@ import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
 
 type Props = {
-  role?: 'admin' | 'user'; // optional prop to check role
+  role?: 'admin' | 'user' | 'super_admin'; // optional prop to check role
   children: React.ReactNode;   // components inside this wrapper
 };
 
@@ -43,7 +43,7 @@ export default function ProtectedRoute({ role, children }: Props) {
         }
       } catch (err) {
         // Not authenticated or token invalid
-        router.replace(role === 'admin' ? '/seller_signin' : '/customer_signin');
+        router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
       }
     };
 
