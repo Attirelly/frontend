@@ -9,11 +9,13 @@ import ProductUploadSideBar from "@/components/ProductUploadSection/ProductUploa
 import {
   useCurrentStep,
   useFormActions,
+  useFormData,
   useIsLoading,
   useStepValidations,
 } from "@/store/product_upload_store";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Blank from "@/components/ProductUploadSection/Blank";
+import { useEffect } from "react";
 
 const sectionComponents = [
   Blank,
@@ -27,9 +29,21 @@ const sectionComponents = [
 
 export default function ProductUploadPage() {
   const currentStep = useCurrentStep();
-  const { updateFormData, setLoading } = useFormActions();
   const isLoading = useIsLoading();
   const CurrentComponent = sectionComponents[currentStep];
+  const { loadDraft, setLoading } = useFormActions();
+  useEffect(() => {
+    async function loadDraftData() {
+      await loadDraft();
+    }
+    try {
+      setLoading(true);
+      loadDraftData();
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4">
@@ -65,7 +79,7 @@ function FormNavigation() {
   const totalSteps = sectionComponents.length;
   const stepValidations = useStepValidations();
   const isCurrentStepValid = stepValidations[currentStep] === true;
-
+  const { saveDraft } = useFormActions();
   return (
     <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
       {currentStep > 0 && (
@@ -76,6 +90,13 @@ function FormNavigation() {
           Previous
         </button>
       )}
+      <button
+        onClick={() => saveDraft()}
+        className={`ml-auto px-4 py-2 rounded-md bg-green-600 text-white"
+     `}
+      >
+        SaveDraft
+      </button>
       {currentStep < totalSteps - 1 ? (
         <button
           disabled={!isCurrentStepValid}

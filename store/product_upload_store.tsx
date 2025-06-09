@@ -116,7 +116,7 @@ interface ProductFormStore {
     setCurrentStep: (step: number) => void;
     updateFormData: (section: keyof FormData, data: any) => void;
     saveDraft: () => Promise<void>;
-    loadDraft: (draftId: string) => void;
+    loadDraft: () => Promise<void>;
     clearDraft: () => void;
     submitForm: () => Promise<void>;
     updateForm: () => Promise<void>;
@@ -126,7 +126,7 @@ interface ProductFormStore {
 }
 
 export const useProductFormStore = create<ProductFormStore>()(
-  persist(
+  // persist(
     (set, get) => ({
       isLoading: false,
       currentStep: 0,
@@ -139,11 +139,10 @@ export const useProductFormStore = create<ProductFormStore>()(
         },
         updateForm: async () => {
           const { formData } = get();
-          const { storeId, businessDetailsData } = useSellerStore();
           const apiPayload = transformPayload(
             formData,
-            storeId,
-            businessDetailsData?.brandName
+            "d013b10b-af22-407d-aa32-eec4d6e1bb50",
+            "Aman G"
           );
           try {
             await api.put(`/products/${formData.product_id}`, apiPayload);
@@ -179,27 +178,41 @@ export const useProductFormStore = create<ProductFormStore>()(
         saveDraft: async () => {
           const { formData, currentStep } = get();
           try {
-            const response = await api.post("/drafts", {
+            const response = await api.post("/product_draft", {
               data: formData,
               current_step: currentStep,
             });
-           
+
             setTimeout(() => {
               toast.success("Draft saved successfully!");
             }, 0);
           } catch (error) {
             console.log("Error in saving draft");
-            
           }
         },
-        loadDraft: (draftId) => {
-          // In production: Load from API
-          // const response = await fetch(`/api/drafts/${draftId}`);
-          // const data = await response.json();
-          // set(data);
+        loadDraft: async () => {
+          try {
+            const response = await api.get("/product_draft");
+            if (response.data) {
+              const { data, current_step } = response.data;
 
-          set({ draftId });
+              const { updateFormData, setCurrentStep } = get().actions;
+
+              updateFormData("keyDetails", data.keyDetails);
+              updateFormData("category", data.category);
+              updateFormData("attributes", data.attributes);
+              updateFormData("pricing", data.pricing);
+              updateFormData("variants", data.variants);
+              updateFormData("media", data.media);
+
+              setCurrentStep(current_step);
+            }
+          } catch (error) {
+            console.error("Error in loading draft:", error);
+            toast.error("Failed to load draft.");
+          }
         },
+
         clearDraft: () => {
           set({
             currentStep: 0,
@@ -235,14 +248,14 @@ export const useProductFormStore = create<ProductFormStore>()(
         },
       },
     }),
-    {
-      name: "product-form-store",
-      partialize: (state) => ({
-        ...state,
-        actions: undefined,
-      }),
-    }
-  )
+  //   {
+  //     name: "product-form-store",
+  //     partialize: (state) => ({
+  //       ...state,
+  //       actions: undefined,
+  //     }),
+  //   }
+  // )
 );
 
 // Selector hooks for better usage
