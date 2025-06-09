@@ -5,32 +5,32 @@ import { CheckCircle, AlertCircle } from "lucide-react";
 
 const sections = [
   {
-    id: 0,
+    id: 1,
     title: "Brand and seller info",
     description: "Provide who's selling and where it ships from",
   },
   {
-    id: 1,
+    id: 2,
     title: "Category & Subcategory",
     description: "Enter your product's categories",
   },
   {
-    id: 2,
+    id: 3,
     title: "Product basics",
     description: "Enter your product's core attributes",
   },
   {
-    id: 3,
+    id: 4,
     title: "Pricing and availability",
     description: "Set how much it costs and when it's sold",
   },
   {
-    id: 4,
+    id: 5,
     title: "Variants and inventory",
     description: "Define every version and its stock",
   },
   {
-    id: 5,
+    id: 6,
     title: "Media assets",
     description: "Showcase your product visually",
   }
