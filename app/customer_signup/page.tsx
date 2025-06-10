@@ -8,7 +8,7 @@ import { api } from '@/lib/axios'
 import Header from '@/components/Header';
 import Image from 'next/image';
 import axios, { AxiosError } from 'axios';
-import SocialLoginButtons from '@/components/SocialLoginButtons';
+import SocialLoginButtons from '@/components/Customer/SocialLoginButtons';
 
 
 

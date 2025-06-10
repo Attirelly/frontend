@@ -1,15 +1,15 @@
 'use client';
 import { useEffect, useState } from 'react';
-import DashboardSidebar from '@/components/DashboardSidebar';
-import SocialLinksComponent from '@/components/OnboardingSections/SocialLinks';
-import BusinessDetailsComponent from '@/components/OnboardingSections/BusinessDetails';
-import PriceFiltersComponent from '@/components/OnboardingSections/PriceFilters';
-import WhereToSellComponent from '@/components/OnboardingSections/WhereToSell';
-import StorePhotosComponent from '@/components/OnboardingSections/StorePhotos';
-import QrCodeGeneration from '@/components/OnboardingSections/QrGeneration';
-import ViewAllProducts from '@/components/OnboardingSections/ViewAllProducts'
-import BulkUploadPage from '@/components/OnboardingSections/BulkuploadProducts';
-import UpdateButton from '@/components/OnboardingSections/UpdateButton';
+import DashboardSidebar from '@/components/Seller/DashboardSidebar';
+import SocialLinksComponent from '@/components/Seller/Sections/SocialLinks';
+import BusinessDetailsComponent from '@/components/Seller/Sections/BusinessDetails';
+import PriceFiltersComponent from '@/components/Seller/Sections/PriceFilters';
+import WhereToSellComponent from '@/components/Seller/Sections/WhereToSell';
+import StorePhotosComponent from '@/components/Seller/Sections/StorePhotos';
+import QrCodeGeneration from '@/components/Seller/Sections/QrGeneration';
+import ViewAllProducts from '@/components/Seller/Sections/ViewAllProducts'
+import BulkUploadPage from '@/components/Seller/Sections/BulkUploadProducts';
+import UpdateButton from '@/components/Seller/UpdateButton';
 import Header from '@/components/Header';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';

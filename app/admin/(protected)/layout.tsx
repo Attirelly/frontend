@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, ReactNode, useRef, useEffect } from "react";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/admin/Sidebar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useRouter } from "next/navigation";
 import {logout} from "@/utils/logout";
