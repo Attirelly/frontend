@@ -154,6 +154,9 @@ type SellerState = {
 
   hasFetchedProducts: boolean;
   setHasFetchedProducts: (fetched: boolean) => void;
+  
+  batch_id : string | null , 
+  setBatchId : (batch_id :string|null )=>void ;
 
 
   resetSellerStore: () => void;
@@ -166,7 +169,9 @@ export const useSellerStore = create<SellerState>((set) => ({
     furthestStep: typeof step === 'function' ? step(state.furthestStep) : step,
   })),
 
-
+  batch_id :null,
+  setBatchId : (batch_id)=>set({batch_id:batch_id}), 
+  
   sellerNumber: null,
   setSellerNumber: (num) => set({ sellerNumber: num }),
 

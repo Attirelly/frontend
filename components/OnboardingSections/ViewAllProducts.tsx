@@ -16,7 +16,7 @@ import type {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default function ProductsPage() {
+export default function ProductsPage({ batchId = null }: { batchId?: string | null } ) {
   const router = useRouter();
   const {
     products,
@@ -27,6 +27,8 @@ export default function ProductsPage() {
     setHasFetchedProducts,
     storeId,
   } = useSellerStore();
+
+
 
   const [filteredData, setFilteredData] = useState<Product[]>([]);
   const [isReady, setIsReady] = useState(false);
@@ -53,13 +55,14 @@ export default function ProductsPage() {
   });
 
   useEffect(() => {
-    if (hasFetchedProducts) {
-      setIsReady(true);
-      return;
-    }
+    // if (hasFetchedProducts) {
+    //   setIsReady(true);
+    //   return;
+    // }
     const fetchInitialData = async () => {
       try {
-        const res = await api.get(`/products/products_by_store/${storeId}`); // Adjust this to your actual endpoint
+        const url = batchId ?  `/products/products_by_store/${storeId}?batch_id=${batchId}` :  `/products/products_by_store/${storeId}`
+        const res = await api.get(url); // Adjust this to your actual endpoint
         const json = res.data;
         setFilteredData(json.table_data);
         setProducts(json.table_data);
