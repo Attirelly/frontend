@@ -76,7 +76,7 @@ export default function BulkUploadPage() {
   };
 
   return (
-    <div className="space-y-6 w-3xl mx-auto py-6 overflow-hidden">
+    <div className="space-y-6 w-3xl mx-auto overflow-hidden">
       {/* Section 1: Upload CSV */}
       <Section
         title="Upload CSV"

@@ -251,7 +251,8 @@ export default function ProductsPage({ batchId = null }: { batchId?: string | nu
     return <LoadingSpinner />;
   }
   return (
-    <div style={{ display: "flex-col", padding: 20 }} className="space-y-4">
+    // <div style={{ display: "flex-col" }} className="space-y-4 flex-col">
+    <div style={{ display: "flex-col" }} className="space-y-4 flex-col">
       <ProductFilters
         filters={filters}
         setFilters={setFilters}

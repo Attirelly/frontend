@@ -1,4 +1,4 @@
-import AddStoreProduct from "@/components/AddStoreProducts";
+import AddStoreProduct from "@/components/admin/AddStoreProducts";
 import React, { Suspense } from 'react';
 
 export default function AddStoreProductPage() {

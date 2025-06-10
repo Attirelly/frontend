@@ -1,4 +1,4 @@
-import SellerSignup from "@/components/Register"
+import SellerSignup from "@/components/Seller/Register"
 export default function SellerOnboardingPage() {   
      
     return (

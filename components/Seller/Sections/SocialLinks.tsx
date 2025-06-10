@@ -63,7 +63,7 @@ export default function SocialLinksComponent() {
 
         {/* Website URL */}
         <div>
-          <label className="block text-sm font-medium mb-1">Shopify URL</label>
+          <label className="block text-sm font-medium mb-1">Website URL</label>
           <input
             type="url"
             className="w-full border border-gray-300 rounded-md px-3 py-2"
@@ -106,7 +106,7 @@ export default function SocialLinksComponent() {
       </div>
 
       {/* Shopify Integration */}
-      <div className="bg-white shadow-sm max-w-2xl space-y-6 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between">
+      {/* <div className="bg-white shadow-sm max-w-2xl space-y-6 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between">
         <div className="space-y-3 md:w-2/3">
           <h3 className="text-xl font-semibold">Integrate with Shopify</h3>
           <p className="text-gray-500">Connect your Shopify store, so Attirelly can engage</p>
@@ -119,7 +119,7 @@ export default function SocialLinksComponent() {
             className="w-15 h-15 rounded-2xl object-cover"
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
