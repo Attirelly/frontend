@@ -1,6 +1,7 @@
 import { type FC, useRef, useState } from "react";
 import { api } from "@/lib/axios";
 import { useSellerStore } from "@/store/sellerStore";
+import ProductsPage from "./ViewAllProducts";
 
 export default function BulkUploadPage() {
   const { storeId, socialLinksData, businessDetailsData } = useSellerStore();
@@ -8,6 +9,7 @@ export default function BulkUploadPage() {
   const [selectedFileName, setSelectedFileName] = useState("");
   const shopify_url = socialLinksData?.websiteUrl || "";
   const storeName = businessDetailsData?.brandName || "";
+  const {batch_id, setBatchId} = useSellerStore();
 
   const handleBrowseClick = () => {
     if (fileInputRef.current) {
@@ -35,19 +37,25 @@ export default function BulkUploadPage() {
     formData.append("brand_id", "37cdb2a5-4bd1-43e1-8af3-b001648b5da3");
 
     try {
-      const response = await api.post("/products/bulk_product_upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("Upload successful:", response.data);
+      const response = await api.post(
+        "/products/bulk_product_upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("my response" , response) ;
+      if(response.data){
+        setBatchId(response.data)
+      }
     } catch (error) {
       console.error("Upload failed:", error);
     }
   };
 
   const handleSyncShopify = async () => {
-
     try {
       console.log("Syncing Shopify products...");
       const response = await api.post("/products/sync_with_shopify", null, {
@@ -55,22 +63,25 @@ export default function BulkUploadPage() {
           base_url: shopify_url,
           store_id: storeId,
           store_name: storeName,
-          brand_id : "37cdb2a5-4bd1-43e1-8af3-b001648b5da3",
-        }
+          brand_id: "37cdb2a5-4bd1-43e1-8af3-b001648b5da3",
+        },
       });
-
+      console.log("my response" , response) ;
+      if(response.data){
+        setBatchId(response.data)
+      }
     } catch (error) {
       console.error("Syncing Failed:", error);
     }
-
-
-
   };
 
   return (
     <div className="space-y-6 w-3xl mx-auto overflow-hidden">
       {/* Section 1: Upload CSV */}
-      <Section title="Upload CSV" subtitle="Upload your product list as a CSV file">
+      <Section
+        title="Upload CSV"
+        subtitle="Upload your product list as a CSV file"
+      >
         <div className="flex gap-4">
           <input
             type="text"
@@ -106,7 +117,10 @@ export default function BulkUploadPage() {
 
       {/* Section 2: Sync Shopify Products */}
       {shopify_url && (
-        <Section title="Sync Shopify Products" subtitle="Sync products from your connected Shopify store">
+        <Section
+          title="Sync Shopify Products"
+          subtitle="Sync products from your connected Shopify store"
+        >
           <label className="text-sm font-medium block mb-1">Shopify URL</label>
           <input
             type="text"
@@ -125,15 +139,20 @@ export default function BulkUploadPage() {
         </Section>
       )}
 
+      {batch_id && (
+        <div className="mt-8">
+          <ProductsPage batchId={batch_id} />
+        </div>
+      )}
     </div>
   );
 }
 
-const Section: FC<{ title: string; subtitle: string; children: React.ReactNode }> = ({
-  title,
-  subtitle,
-  children,
-}) => (
+const Section: FC<{
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+}> = ({ title, subtitle, children }) => (
   <div className="p-6 space-y-4 rounded-2xl shadow-sm bg-white">
     <h2 className="text-lg font-semibold mb-1">{title}</h2>
     <p className="text-sm text-gray-500 mb-4">{subtitle}</p>
@@ -141,4 +160,3 @@ const Section: FC<{ title: string; subtitle: string; children: React.ReactNode }
     {children}
   </div>
 );
-
