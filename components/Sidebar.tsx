@@ -1,8 +1,8 @@
 // components/Sidebar.tsx
 'use client';
 
-import CurationListingPage from "@/app/admin/curationModule/page";
-import SellerCRM from "@/app/admin/sellerCRM/page";
+import CurationListingPage from "@/app/admin/(protected)/curationModule/page";
+import SellerCRM from "@/app/admin/(protected)/sellerCRM/page";
 import CustomerPage from "@/app/customer/page";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

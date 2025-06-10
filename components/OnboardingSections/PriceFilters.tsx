@@ -29,8 +29,8 @@ export default function PriceFiltersComponent() {
   const { storeId, setPriceFiltersData, setPriceFiltersValid, priceFiltersData } = useSellerStore();
   console.log(priceFiltersData)
 
-  const [minPrice, setMinPrice] = useState(priceFiltersData?.avgPriceMin.toString() || '');
-  const [maxPrice, setMaxPrice] = useState(priceFiltersData?.avgPriceMax.toString() || '');
+  const [minPrice, setMinPrice] = useState(priceFiltersData?.avgPriceMin?.toString() || '');
+  const [maxPrice, setMaxPrice] = useState(priceFiltersData?.avgPriceMax?.toString() || '');
   const [storeTypes, setStoreTypes] = useState<StoreType[]>([]);
   const [priceRanges, setPriceRanges] = useState<PriceRange[]>([]);
   const [selectedPrices, setSelectedPrices] = useState<StoreTypePriceRange[]>(priceFiltersData?.priceRanges || []);

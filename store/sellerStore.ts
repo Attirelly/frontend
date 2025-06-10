@@ -67,8 +67,8 @@ type BusinessDetailsData = {
 };
 
 type PriceFiltersData = {
-  avgPriceMin : number,
-  avgPriceMax : number,
+  avgPriceMin : number | null,
+  avgPriceMax : number | null,
   priceRanges : StoreTypePriceRange[]
 }
 
