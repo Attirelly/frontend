@@ -162,7 +162,7 @@ export default function SellerDashboardPage() {
           } />
         <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
           <DashboardSidebar selected={activeSection} onSelect={setActiveSection} />
-          <div className="flex flex-col w-3xl md-w-2xl gap-6">
+          <div className="flex flex-col w-full md-w-2xl gap-6">
             <div className=" mt-[60px] rounded-md bg-gray-100">{renderSection()}</div>
             {['brand', 'price', 'market', 'social', 'photos'].includes(activeSection) && (
               <UpdateButton

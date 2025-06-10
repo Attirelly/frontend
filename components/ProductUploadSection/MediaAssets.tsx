@@ -308,7 +308,7 @@ export default function MediaAssets() {
   };
 
   return (
-    <div className="max-w-4xl space-y-6 bg-white ">
+    <div className="max-w-4xl mx-auto bg-white rounded-lg">
       {/* Cropper Modal */}
       {cropperOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex flex-col items-center justify-center p-4">
@@ -364,7 +364,7 @@ export default function MediaAssets() {
         </p>
       </div>
 
-      <div className="grid gap-8">
+      <div className="grid gap-8 mt-2">
         {/* Main Product Image Upload */}
         <div
           onClick={handleMainImageClick}

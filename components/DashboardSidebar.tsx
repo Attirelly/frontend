@@ -120,7 +120,7 @@ export default function DashboardSidebar({
           >
             <h3 className="text-md font-semibold">{group.heading}</h3>
             <span className="text-sm text-gray-500">
-              {openGroups[group.heading] ? '∧' : '∨'}
+              {openGroups[group.heading] ? '^' : '⌄'}
             </span>
           </div>
 
@@ -165,4 +165,6 @@ export default function DashboardSidebar({
       ))}
     </div>
   );
+
+
 }

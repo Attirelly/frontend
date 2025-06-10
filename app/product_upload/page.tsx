@@ -80,48 +80,59 @@ function FormNavigation() {
   const stepValidations = useStepValidations();
   const isCurrentStepValid = stepValidations[currentStep] === true;
   const { saveDraft } = useFormActions();
-  return (
-    <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
-      {currentStep > 0 && (
+   return (
+    <div className="flex flex-wrap justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
+      {/* Previous Button - left aligned */}
+      <div className="order-1">
+        {currentStep > 0 && (
+          <button
+            onClick={() => setCurrentStep(currentStep - 1)}
+            className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+            Previous
+          </button>
+        )}
+      </div>
+
+      {/* Save Draft Button - center aligned */}
+      <div className="order-2 mx-auto md:mx-0">
         <button
-          onClick={() => setCurrentStep(currentStep - 1)}
-          className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+          onClick={() => saveDraft()}
+          className="px-4 py-2 rounded-md bg-amber-600 text-white hover:bg-amber-700"
         >
-          Previous
+          Save Draft
         </button>
-      )}
-      <button
-        onClick={() => saveDraft()}
-        className={`ml-auto px-4 py-2 rounded-md bg-green-600 text-white"
-     `}
-      >
-        SaveDraft
-      </button>
-      {currentStep < totalSteps - 1 ? (
-        <button
-          disabled={!isCurrentStepValid}
-          onClick={() => setCurrentStep(currentStep + 1)}
-          className={`ml-auto px-4 py-2 rounded-md ${
-            isCurrentStepValid
-              ? "bg-indigo-600 text-white"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
-        >
-          Next
-        </button>
-      ) : (
-        <button
-          disabled={!isCurrentStepValid}
-          onClick={submitForm}
-          className={`ml-auto px-4 py-2  text-white rounded-md ${
-            isCurrentStepValid
-              ? "bg-green-600 hover:bg-green-700"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
-        >
-          Submit Product
-        </button>
-      )}
+      </div>
+
+      {/* Next/Submit Button - right aligned */}
+      <div className="order-3 w-full md:w-auto">
+        {currentStep < totalSteps - 1 ? (
+          <button
+            disabled={!isCurrentStepValid}
+            onClick={() => setCurrentStep(currentStep + 1)}
+            className={`w-full md:w-auto px-4 py-2 rounded-md ${
+              isCurrentStepValid
+                ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            Next
+          </button>
+        ) : (
+          <button
+            disabled={!isCurrentStepValid}
+            onClick={submitForm}
+            className={`w-full md:w-auto px-4 py-2 text-white rounded-md ${
+              isCurrentStepValid
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            Submit Product
+          </button>
+        )}
+      </div>
     </div>
   );
+
 }
