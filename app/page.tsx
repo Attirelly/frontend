@@ -933,8 +933,8 @@ export default function Home() {
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 p-8">
           <div className="flex items-center justify-center mb-6">
-            <Users className="w-8 h-8 text-blue-600 mr-3" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <Users className="w-8 h-8 text-shadow-gray-700 mr-3" />
+            <h1 className="text-4xl font-bold text-shadow-gray-700">
               Seller CRM Dashboard
             </h1>
           </div>
@@ -1192,7 +1192,7 @@ export default function Home() {
                             <td className="px-6 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.outfits?.map((outfit, idx) => (
-                                  <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                  <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                     {outfit}
                                   </span>
                                 ))}
@@ -1201,7 +1201,7 @@ export default function Home() {
                             <td className="px-6 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.genders?.map((gender, idx) => (
-                                  <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
+                                  <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                     {gender}
                                   </span>
                                 ))}
