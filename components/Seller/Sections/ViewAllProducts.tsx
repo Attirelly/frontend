@@ -252,7 +252,7 @@ export default function ProductsPage({ batchId = null }: { batchId?: string | nu
   }
   return (
     // <div style={{ display: "flex-col" }} className="space-y-4 flex-col">
-    <div style={{ display: "flex-col" }} className="space-y-4 flex-col">
+    <div style={{ display: "flex-col" }} className="space-y-4 flex-col w-4xl">
       <ProductFilters
         filters={filters}
         setFilters={setFilters}

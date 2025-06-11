@@ -241,6 +241,8 @@ export const useProductFormStore = create<ProductFormStore>()(
             });
             // Toast or notification can be added here
             toast.success("Product submitted successfully!");
+
+          const res = await api.delete('/product_draft/') ; 
           } catch (error) {
             console.error("Submission error:", error);
             throw error;
