@@ -53,7 +53,7 @@ export default function PricingAndAvailability() {
             />
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-1">
               Available for rent?
             </label>
@@ -79,7 +79,7 @@ export default function PricingAndAvailability() {
                 No
               </label>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Column 2 */}
