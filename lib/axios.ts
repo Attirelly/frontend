@@ -10,8 +10,21 @@ export const api = axios.create({
   },
 });
 
+// Request Interceptor: Attach the Access Token if available
+api.interceptors.request.use(
+  (config) => {
+    // Check if the window object is available (to avoid issues during SSR)
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null; // Retrieve the access token
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`; // Attach token to the Authorization header
+    }
+    return config;
+  },
+  (error) => Promise.reject(error) // Handle request errors
+);
 
 
+// Response interceptor 
 api.interceptors.response.use(
   (response) => response,  // ✅ If response is OK (2xx), return as-is
   async (error) => {

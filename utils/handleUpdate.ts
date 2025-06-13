@@ -1,11 +1,14 @@
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
-import Toast from '@/components/ui/Toast';
-import { useState } from 'react';
+
+import { useEffect, useState } from 'react';
 
 export const useUpdateStore = () => {
     const router = useRouter();
+    useEffect(()=>{
+       router.prefetch("/seller_dashboard")
+    } , [])
     const {
         sellerId,
         storeId,

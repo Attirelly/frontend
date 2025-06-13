@@ -17,14 +17,18 @@ export default function SellerSignup() {
     const [sendOTP, setSendOTP] = useState(false);
     const { setSellerId, setSellerNumber } = useSellerStore()
     const resetSellerStore = useSellerStore((state) => state.resetSellerStore);
-    useEffect(() => {
-        // Reset everything when component mounts (optional)
-        resetSellerStore();
-    }, []);
-
     const isPhoneValid = /^\d{10}$/.test(phone);
     // const isOTPValid = /^\d{6}$/.test(otp);
     const router = useRouter();
+    useEffect(() => {
+        // Reset everything when component mounts (optional)
+        resetSellerStore();
+        router.prefetch("/seller_signup/sellerOnboarding")
+    }, []);
+
+    
+
+
 
     const handleChange = (index: number, value: string) => {
         if (!/^\d*$/.test(value)) return; // allow only digits

@@ -15,8 +15,13 @@ import type {
 } from "@/types/ProductTypes";
 import Image from "next/image";
 // import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export default function ProductsPage({ batchId = null }: { batchId?: string | null } ) {
+export default function ProductsPage({
+  batchId = null,
+}: {
+  batchId?: string | null;
+}) {
   // const router = useRouter();
   const {
     products,
@@ -27,8 +32,6 @@ export default function ProductsPage({ batchId = null }: { batchId?: string | nu
     setHasFetchedProducts,
     storeId,
   } = useSellerStore();
-
-
 
   const [filteredData, setFilteredData] = useState<Product[]>([]);
   const [isReady, setIsReady] = useState(false);
@@ -54,14 +57,16 @@ export default function ProductsPage({ batchId = null }: { batchId?: string | nu
     imageUploadStatus: null,
   });
 
+
+
+
   useEffect(() => {
-    // if (hasFetchedProducts) {
-    //   setIsReady(true);
-    //   return;
-    // }
+
     const fetchInitialData = async () => {
       try {
-        const url = batchId ?  `/products/products_by_store_async/${storeId}?batch_id=${batchId}` :  `/products/products_by_store_async/${storeId}`
+        const url = batchId
+          ? `/products/products_by_store_async/${storeId}?batch_id=${batchId}`
+          : `/products/products_by_store_async/${storeId}`;
         const res = await api.get(url); // Adjust this to your actual endpoint
         const json = res.data;
         setFilteredData(json.table_data);
@@ -98,7 +103,17 @@ export default function ProductsPage({ batchId = null }: { batchId?: string | nu
     setFilterOptions,
   ]);
 
-  console.log(products);
+    useEffect(() => {
+    // Prefetch current page items
+    const start = (pagination.current - 1) * pagination.pageSize;
+    const end = start + pagination.pageSize;
+    const currentPageData = products.slice(start, end);
+    currentPageData.forEach((product) => {
+      router.prefetch(`/product_upload/${product.product_id}`);
+    });
+  }, [pagination, products]);
+
+
 
   const handleImageUpload = (record: Product) => {
     message.success(`Image uploaded for ${record.product_name}`);
@@ -109,14 +124,14 @@ export default function ProductsPage({ batchId = null }: { batchId?: string | nu
       title: "Image",
       dataIndex: "image",
       render: (_: any, record: Product) => {
-        console.log(record)
-        const record_images = (record?.images || [])
+        console.log(record);
+        const record_images = record?.images || [];
 
         const imageSrc =
           Array.isArray(record_images) && record_images.length > 0
             ? record_images[0]
             : "/window.svg"; // A fallback image stored in public folder
-        console.log(imageSrc)
+        console.log(imageSrc);
         return (
           <Image
             src={imageSrc}
@@ -246,6 +261,14 @@ export default function ProductsPage({ batchId = null }: { batchId?: string | nu
         filters.imageUploadStatus === item.imageUploadStatus)
     );
   });
+
+  // useEffect(() => {
+  //   useEffect(() => {
+  //     result.forEach((r) => {
+  //       router.prefetch(`/product_upload/${r.product_id}`);
+  //     });
+  //   }, [result]);
+  // });
 
   if (!isReady || !filterOptions) {
     return <LoadingSpinner />;
