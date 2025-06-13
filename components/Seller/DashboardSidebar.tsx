@@ -14,18 +14,18 @@ const sections = [
   { id: 'bulk_products', title: 'Add bulk products', iconUrl: '/OnboardingSections/business_details.png' },
   { id: 'all_products', title: 'View all products', iconUrl: '/OnboardingSections/business_details.png' },
   { id: 'qr_code', title: 'Add QR code', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'new_user', title: 'Add new user', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'view_edit_user', title: 'View and edit users', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'horizontal_image', title: 'Add horizontal image', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'vertical_image', title: 'Add vertical image', iconUrl: '/OnboardingSections/business_details.png' },
+  // { id: 'new_user', title: 'Add new user', iconUrl: '/OnboardingSections/business_details.png' },
+  // { id: 'view_edit_user', title: 'View and edit users', iconUrl: '/OnboardingSections/business_details.png' },
+  // { id: 'horizontal_image', title: 'Add horizontal image', iconUrl: '/OnboardingSections/business_details.png' },
+  // { id: 'vertical_image', title: 'Add vertical image', iconUrl: '/OnboardingSections/business_details.png' },
 ];
 
 const sectionGroups = [
   { heading: 'Store Profile', ids: ['brand', 'price', 'market', 'social', 'photos'] },
   { heading: 'Add Products', ids: ['one_product', 'bulk_products', 'all_products'] },
   { heading: 'QR Code', ids: ['qr_code'] },
-  { heading: 'User Profile', ids: ['new_user', 'view_edit_user'] },
-  { heading: 'Images for Paid Marketing', ids: ['horizontal_image', 'vertical_image'] },
+  // { heading: 'User Profile', ids: ['new_user', 'view_edit_user'] },
+  // { heading: 'Images for Paid Marketing', ids: ['horizontal_image', 'vertical_image'] },
 ];
 
 export default function DashboardSidebar({

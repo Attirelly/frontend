@@ -44,13 +44,18 @@ export default function PricingAndAvailability() {
         <div className="flex flex-col gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">MRP</label>
+            <div className="flex w-full border border-gray-300 rounded-md overflow-hidden">
+            <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">
+                Rs
+              </span>
             <input
               type="number"
               value={mrp}
               onChange={(e) => setMRP(e.target.value === "" ? undefined : Number(e.target.value))}
-              className="w-full border border-gray-300 rounded-md p-2"
-              placeholder="e.g., 1000 , 2000 "
+              className="w-full  p-2"
+              placeholder="1000"
             />
+            </div>
           </div>
 
           {/* <div>
@@ -88,13 +93,18 @@ export default function PricingAndAvailability() {
             <label className="block text-sm font-medium mb-1">
               Listing Price
             </label>
+            <div className="flex w-full border border-gray-300 rounded-md overflow-hidden">
+            <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">
+                Rs
+              </span>
             <input
               type="number"
               value={price}
               onChange={(e) => setStoreListPrice(e.target.value === "" ? undefined : Number(e.target.value))}
-              className="w-full border border-gray-300 rounded-md p-2"
-              placeholder="e.g.,1000"
+              className="w-full p-2"
+              placeholder="1000"
             />
+          </div>
           </div>
         </div>
       </div>

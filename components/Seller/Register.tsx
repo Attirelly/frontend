@@ -7,6 +7,7 @@ import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
 import axios from 'axios';
 import Header from '@/components/Header';
+import { toast } from 'sonner';
 
 export default function SellerSignup() {
     const [phone, setPhone] = useState('');
@@ -66,11 +67,14 @@ export default function SellerSignup() {
                     const newSellerId = response.data.id
                     console.log(newSellerId)
                     setSellerId(newSellerId)
+                    await api.post("/users/login", { contact_number: phone });
 
                     router.push('/seller_signup/sellerOnboarding');
+
                 }
                 catch (error) {
                     console.error('Error fetching stores by section:', error);
+                    toast.error('Failed to sign up!');
                 }
             }
             else {

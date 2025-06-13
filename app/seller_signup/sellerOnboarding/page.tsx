@@ -12,36 +12,103 @@ import NextPrevNavigation from '@/components/Seller/NextPrevNavigation';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUpdateStore } from '@/utils/handleUpdate';
-import Toast from '@/components/ui/Toast';
+import { toast } from 'sonner';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { City, Area, Pincode } from '@/types/SellerTypes';
+// import Toast from '@/components/ui/Toast';
 
 const sectionOrder = ['brand', 'price', 'market', 'social', 'photos'];
 
 export default function SellerOnboardingPage() {
   const { handleUpdate } = useUpdateStore();
-  const [toastMessage, setToastMessage] = useState("");
-    const [toastType, setToastType] = useState<"success" | "error">("success");
+  // const [toastMessage, setToastMessage] = useState("");
+  //   const [toastType, setToastType] = useState<"success" | "error">("success");
   const {
     sellerId,
-    businessDetailsValid,
-    businessDetailsData,
-    sellerNumber,
-    setSellerEmail,
-    setSellerName,
+    sellerName,
+    sellerEmail,
     setBusinessDetailsData,
     setStoreId,
-    storeId,
-    priceFiltersData,
-    priceFiltersValid,
+    setPriceFiltersData,
+    setSocialLinksData,
+    setWhereToSellData,
+    setStorePhotosData,
     activeSection,
     setActiveSection,
-    whereToSellData,
-    socialLinksValid,
-    socialLinksData,
     setFurthestStep,
-    storePhotosData
+    furthestStep
   } = useSellerStore();
+  console.log(sellerId);
 
   const router = useRouter();
+
+  useEffect(() => {
+    console.log(sellerName)
+      if (!sellerId || !sellerName) return;
+      const fetchInitialData = async () => {
+        try {
+          console.log(sellerId)
+          const response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } });
+          const storeData = response.data;
+          setFurthestStep(storeData.curr_section);
+          console.log(storeData);
+  
+          const cityData: City[] = storeData.city ? [storeData.city] : [];
+          const areaData: Area[] = storeData.area ? [storeData.area] : [];
+          const pincodeData: Pincode[] = storeData.pincode ? [storeData.pincode] : [];
+  
+          setStoreId(storeData.store_id);
+          // setQrId(storeData.qr_id);
+  
+          const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id: storeData.store_id } });
+          console.log(priceRangeRes);
+  
+          setBusinessDetailsData({
+            ownerName: sellerName || '',
+            ownerEmail: sellerEmail || '',
+            brandName: storeData.store_name || '',
+            businessWpNum: storeData.whatsapp_number || '',
+            brandTypes: storeData.store_types || [],
+            genders: storeData.genders || [],
+            rentOutfits: storeData.rental === true ? 'Yes' : 'No',
+            city: cityData || [],
+            area: areaData || [],
+            pinCode: pincodeData || [],
+            brandAddress: storeData.store_address || ''
+          });
+  
+          // setBusinessDetailsValid(true);
+  
+          setPriceFiltersData({
+            avgPriceMin: storeData.average_price_min || null,
+            avgPriceMax: storeData.average_price_max || null,
+            priceRanges: priceRangeRes.data || []
+          });
+  
+          setWhereToSellData({
+            isOnline: storeData.is_online === true ? true : true,
+            isBoth: false
+          });
+  
+          setSocialLinksData({
+            instagramUsname: storeData.instagram_link ? new URL(storeData.instagram_link).pathname.split('/').filter(Boolean)[0] : null,
+            instagramUrl: storeData.instagram_link || '',
+            facebookUrl: storeData.facebook_link || '',
+            websiteUrl: storeData.shopify_url || ''
+          });
+  
+          setStorePhotosData({
+            profileUrl: storeData.profile_image || '',
+            bannerUrl: storeData.listing_page_image || ''
+          });
+  
+        } catch (error) {
+          console.error('Error fetching initial data:', error);
+          alert('error fetching data, signin again');
+        }
+      };
+      fetchInitialData();
+    }, [sellerId]);
 
 
   const currentSectionIndex = sectionOrder.indexOf(activeSection ?? 'brand');
@@ -64,123 +131,27 @@ export default function SellerOnboardingPage() {
   };
 
   const goToNextSection = async () => {
-    const res = await handleUpdate(activeSection, true);
+    const nextStep = currentSectionIndex + 1;
+    console.log(currentSectionIndex, furthestStep, activeSection);
+    const res = await handleUpdate(activeSection, true, Math.max(furthestStep, nextStep));
     if(res){
-      setToastMessage("Store updated!");
-      setToastType("success");
+      // setToastMessage("Store updated!");
+      // setToastType("success");
+      toast.success("Store updated!")
     }
     else{
-      setToastMessage("Store not updated!");
-      setToastType("error");
+      // setToastMessage("Store not updated!");
+      // setToastType("error");
+      toast.error("Store not updated!")
       return;
     }
+    setFurthestStep((prev) => Math.max(prev, nextStep)); // 👈 prevents regress
 
-    // if (activeSection === 'brand' && businessDetailsValid && businessDetailsData) {
-    //   const seller_up_payload = {
-    //     email: businessDetailsData.ownerEmail,
-    //     name: businessDetailsData.ownerName,
-    //   };
-    //   const store_payload = {
-    //     store_owner_id: sellerId,
-    //     store_name: businessDetailsData.brandName,
-    //     pincode_id: businessDetailsData.pinCode[0].id,
-    //     whatsapp_number: businessDetailsData.businessWpNum,
-    //     store_address: businessDetailsData.brandAddress,
-    //     rental: businessDetailsData.rentOutfits === 'Yes',
-    //     store_types: businessDetailsData.brandTypes,
-    //     genders: businessDetailsData.genders,
-    //     area: businessDetailsData.area[0],
-    //     city: businessDetailsData.city[0],
-    //     pincode: businessDetailsData.pinCode[0]
-    //   };
-
-    //   try {
-    //     await api.put(`/users/update_user/${sellerId}`, seller_up_payload);
-    //     setSellerEmail(businessDetailsData?.ownerEmail || "");
-    //     setSellerName(businessDetailsData?.ownerName || "");
-    //     if (!storeId) {
-    //       const response = await api.post('/stores/create', store_payload);
-    //       setStoreId(response.data.store_id);
-    //     }
-    //     else {
-    //       await api.put(`/stores/${storeId}`, store_payload);
-    //     }
-
-    //   } catch (error) {
-    //     alert('Seller not updated');
-    //     return;
-    //   }
-    // }
-
-    // if (activeSection === 'price' && priceFiltersValid && priceFiltersData) {
-    //   const price_payload = {
-    //     average_price_min: priceFiltersData.avgPriceMin,
-    //     average_price_max: priceFiltersData.avgPriceMax,
-    //     store_type_price_range_links: priceFiltersData.priceRanges
-    //   };
-    //   try {
-    //     await api.put(`/stores/${storeId}`, price_payload);
-    //     console.log('store updated');
-    //   } catch (error) {
-    //     alert('Cannot update store');
-    //     return;
-    //   }
-    // }
-
-    // if (activeSection === 'market' && whereToSellData) {
-    //   const market_payload = {
-    //     "is_online": whereToSellData.isOnline
-    //   }
-    //   try {
-    //     await api.put(`/stores/${storeId}`, market_payload);
-    //     console.log('store updated');
-    //   } catch (error) {
-    //     alert('Cannot update store')
-    //     return;
-    //   }
-    // }
-    // if (activeSection === 'social' && socialLinksData) {
-    //   const social_payload = {
-    //     "instagram_link": socialLinksData.instagramUrl || '',
-    //     "facebook_link": socialLinksData.facebookUrl || '',
-    //     "shopify_url": socialLinksData.websiteUrl || ''
-    //   }
-    //   try {
-    //     console.log('inside store');
-    //     await api.put(`/stores/${storeId}`, social_payload);
-    //     console.log('store updated')
-    //   } catch (error) {
-    //     alert('Cannot update store');
-    //     return;
-    //   }
-    // }
-    // if (activeSection === 'photos' && storePhotosData) {
-    //   const photos_payload = {
-    //     "listing_page_image": storePhotosData.bannerUrl,
-    //     "profile_image": storePhotosData.profileUrl
-    //   }
-    //   try {
-    //     await api.put(`/stores/${storeId}`, photos_payload);
-    //     console.log('store updated')
-    //     try {
-    //       // here we will create jwt tokens
-    //       await api.post("/users/login", { contact_number: sellerNumber });
-    //       router.push('/seller_dashboard');
-    //     }
-    //     catch (error) {
-    //       console.error('Error fetching stores by section:', error);
-    //     }
-    //   } catch (error) {
-    //     alert('Cannot update store');
-    //     return;
-    //   }
-    // }
     if (currentSectionIndex < sectionOrder.length - 1) {
-      const nextStep = currentSectionIndex + 1;
       setActiveSection(sectionOrder[nextStep]);
-      setFurthestStep((prev) => Math.max(prev, nextStep)); // 👈 prevents regress
     }
   };
+  console.log(furthestStep);
 
   const goToPreviousSection = () => {
     if (currentSectionIndex > 0) {
@@ -195,6 +166,7 @@ export default function SellerOnboardingPage() {
   };
 
   return (
+    <ProtectedRoute role='admin'>
     <div className="min-h-screen bg-gray-100">
       <Header
         title="Attirelly"
@@ -218,13 +190,7 @@ export default function SellerOnboardingPage() {
           />
         </div>
       </div>
-      {toastMessage && (
-                <Toast
-                  message={toastMessage}
-                  type={toastType}
-                  onClose={() => setToastMessage("")}
-                />
-              )}
     </div>
+    </ProtectedRoute>
   );
 }

@@ -13,6 +13,12 @@ export default function CreateCurationPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('prefetching');
+    router.prefetch('/admin/curationModule/addStoreProduct');
+    console.log('fetched');
+  }, []);
+
+  useEffect(() => {
     async function fetchUsedSegments() {
       try {
         const response = await api.get('/homepage/used_section'); // Replace with actual URL

@@ -330,7 +330,7 @@ export default function CustomerPage() {
                       </td>
                       <td className="px-6 py-3 border text-center space-x-2">
                         <div className="flex gap-2 justify-center">
-                          <Link href={`/customer/${customer.id}`}>
+                          <Link href={`/customer/${customer.id}`} target="_blank" rel="noopener noreferrer">
                             <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
                               View
                             </button>

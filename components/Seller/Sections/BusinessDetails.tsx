@@ -3,17 +3,18 @@ import { useEffect, useRef, useState, type FC } from 'react';
 import dynamic from 'next/dynamic';
 import { api } from '@/lib/axios';
 import { useSellerStore } from '@/store/sellerStore';
+import { City, Area, BrandType, GenderType, Pincode, SelectOption } from '@/types/SellerTypes';
 
 const Select = dynamic(() => import('react-select').then(mod => mod.default), {
   ssr: false,
 });
 
-type SelectOption = { value: string; label: string };
-type BrandType = { id: string; store_type: string };
-type GenderType = { id: string; gender_value: string };
-type City = { id: string; name: string; state_id: string };
-type Area = { id: string; name: string; city_id: string };
-type Pincode = { id: string, code: string, city_id: string };
+// type SelectOption = { value: string; label: string };
+// type BrandType = { id: string; store_type: string };
+// type GenderType = { id: string; gender_value: string };
+// type City = { id: string; name: string; state_id: string };
+// type Area = { id: string; name: string; city_id: string };
+// type Pincode = { id: string, code: string, city_id: string };
 
 const RequiredLabel: FC<{ children: React.ReactNode }> = ({ children }) => (
   <label className="block text-sm font-medium mb-1">
@@ -28,7 +29,9 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     setBusinessDetailsData,
     businessDetailsData,
     sellerNumber,
-    sellerId } = useSellerStore();
+    sellerId,
+    sellerName,
+    sellerEmail } = useSellerStore();
   const [sameAsOwner, setSameAsOwner] = useState(true);
 
   const [brandTypes, setBrandTypes] = useState<BrandType[]>([]);
@@ -128,7 +131,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     cityInitializedRef.current = true;
   }, [businessDetailsData, cities, cityOptions]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (selectedCityOption?.value) {
       const filteredAreas = areas
         .filter(area => area.city_id === selectedCityOption.value)
@@ -198,7 +201,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     pincodeInitializedRef.current = true;
   }, [businessDetailsData, pincodes, pincodeOptions]);
 
-  
+
 
   useEffect(() => {
     if (selectedCityOption?.value) {
@@ -222,7 +225,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
       selectedGenderTypes.length > 0 &&
       selectedCity.length > 0 &&
       selectedPincode.length > 0
-      // pinCode.trim();
+    // pinCode.trim();
 
     setBusinessDetailsValid(Boolean(valid));
     onValidationChange?.(Boolean(valid));
@@ -302,7 +305,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
         <ToggleChips label="Brand Type" items={brandTypes} selected={selectedBrandTypes} toggle={(item) => toggleSelection(item, selectedBrandTypes, setSelectedBrandTypes)} />
         <ToggleChips label="Genders Catered" items={genders} selected={selectedGenderTypes} toggle={(item) => toggleSelection(item, selectedGenderTypes, setSelectedGenderTypes)} />
 
-        <RadioGroup label="Do you rent outfits" options={['Yes', 'No']} selected={rentOutfits} onChange={setRentOutfits} />
+        {/* <RadioGroup label="Do you rent outfits" options={['Yes', 'No']} selected={rentOutfits} onChange={setRentOutfits} /> */}
       </Section>
 
       {/* Brand Location Section */}

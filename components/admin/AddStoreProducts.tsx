@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/axios';
 import { AxiosError } from 'axios';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface Store {
   store_id: string;
@@ -32,6 +34,7 @@ export default function AddStoreProduct() {
   const [curationName, setCurationName] = useState('');
   const [viewAllUrl, setViewAllUrl] = useState('');
   const [storesFromSection, setStoresFromSection] = useState<Store[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     if (!curation_id) return;
@@ -147,11 +150,13 @@ export default function AddStoreProduct() {
 
     try {
       await api.put(`/homepage/section/${curation_id}`, payload);
-      alert('Section Updated successfully!');
+      // alert('Section Updated successfully!');
+      toast.success("Curation submitted successfully!");
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       console.error('Failed to update section:', error);
-      alert(err.response?.data?.message || 'Failed to update section.');
+      toast.error(err.response?.data?.message || 'Failed to update section.');
+      // alert(err.response?.data?.message || 'Failed to update section.');
     }
   };
 
@@ -192,12 +197,15 @@ export default function AddStoreProduct() {
 
     try {
       const response = await api.post('/homepage/section', payload);
-      alert('Section created successfully!');
+      // alert('Section created successfully!');
+      toast.success("Curation submitted successfully!");
+      router.replace("/admin/curationModule/createCuration");
       console.log('Created:', response.data);
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       console.error('Failed to create section:', error);
-      alert(err.response?.data?.message || 'Failed to create section.');
+      toast.error(err.response?.data?.message || "Failed to create section.");
+      // alert(err.response?.data?.message || 'Failed to create section.');
     }
   };
 

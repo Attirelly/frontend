@@ -37,7 +37,9 @@ export default function ProtectedRoute({ role, children }: Props) {
         console.log(user);
 
         if (role && user.role !== role) {
-          router.replace('/unauthorized');
+          // router.replace('/unauthorized');
+          alert("Unauthorized");
+           router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
         } else {
           setIsReady(true);
         }
