@@ -1,8 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 
 interface RowData {
   store_id: string;
@@ -21,25 +23,25 @@ interface RowData {
 
 export default function StoreRankingPanel() {
   const [data, setData] = useState<RowData[]>([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [entries, setEntries] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
   // Filter sellers by search
-  
-
-  
 
   useEffect(() => {
-    axios.get('http://localhost:8000/homepage/section_store_details').then((res) => {
-      console.log(res);
-      setData(res.data);
-    });
+    axios
+      .get("http://localhost:8000/homepage/section_store_details")
+      .then((res) => {
+        console.log(res);
+        setData(res.data);
+      });
   }, []);
 
-  const filtered = data.filter((store) =>
-    store.store_name.toLowerCase().includes(search.toLowerCase()) ||
-    store.section_name.toLowerCase().includes(search.toLowerCase())
+  const filtered = data.filter(
+    (store) =>
+      store.store_name.toLowerCase().includes(search.toLowerCase()) ||
+      store.section_name.toLowerCase().includes(search.toLowerCase())
   );
   const totalPages = Math.ceil(filtered.length / entries);
   const startIndex = (currentPage - 1) * entries;
@@ -56,13 +58,20 @@ export default function StoreRankingPanel() {
     <div className="p-6 space-y-6">
       {/* Header */}
 
-
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">View Store Ranking</h2>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" 
-        onClick={()=>router.push('/admin/addSection')}>Add Section</button>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" 
-        onClick={()=>router.push('/admin/addStore')}>Add Store</button>
+        <Link
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          href="/admin/addSection"
+        >
+          Add Section
+        </Link>
+        <Link
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          href ="/admin/addStore"
+        >
+          Add Store
+        </Link>
       </div>
 
       {/* Center Heading */}
@@ -70,8 +79,11 @@ export default function StoreRankingPanel() {
 
       {/* Banner Buttons */}
       <div className="flex justify-center gap-4">
-        {['Section 2', 'Section 3', 'Section 4'].map((sec) => (
-          <button key={sec} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+        {["Section 2", "Section 3", "Section 4"].map((sec) => (
+          <button
+            key={sec}
+            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+          >
             {sec} Banner
           </button>
         ))}
@@ -90,7 +102,9 @@ export default function StoreRankingPanel() {
             className="border px-2 py-1 rounded"
           >
             {[5, 10, 15, 20].map((num) => (
-              <option key={num} value={num}>{num}</option>
+              <option key={num} value={num}>
+                {num}
+              </option>
             ))}
           </select>
           <span> entries</span>
@@ -128,9 +142,15 @@ export default function StoreRankingPanel() {
                 <td className="border px-4 py-2">{store.section_name}</td>
 
                 <td className="border px-4 py-2 space-x-2">
-                  <button className="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded">Edit</button>
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Delete</button>
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">View</button>
+                  <button className="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded">
+                    Edit
+                  </button>
+                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                    Delete
+                  </button>
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+                    View
+                  </button>
                 </td>
               </tr>
             ))}
@@ -151,7 +171,9 @@ export default function StoreRankingPanel() {
           <button
             key={i}
             onClick={() => goToPage(i + 1)}
-            className={`px-3 py-1 border rounded ${currentPage === i + 1 ? 'bg-blue-500 text-white' : ''}`}
+            className={`px-3 py-1 border rounded ${
+              currentPage === i + 1 ? "bg-blue-500 text-white" : ""
+            }`}
           >
             {i + 1}
           </button>

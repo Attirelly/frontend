@@ -1,6 +1,7 @@
 'use client';
 import React from "react";
 import { useRouter } from 'next/navigation';
+import Link from "next/link";
 
 
 export default function Hero() {
@@ -19,14 +20,14 @@ export default function Hero() {
           Become exclusive partners in select cities
         </p>
         <div className="flex gap-10 mt-6 flex-wrap">
-          <button className="w-40 bg-black text-white px-6 py-3 rounded-lg font-medium "
-            onClick={() => router.push("/seller_signup")}>
+          <Link className="w-40 bg-black text-white px-6 py-3 rounded-lg font-medium "
+            href="/seller_signup">
             Register
-          </button>
-          <button className="w-40 border border-white bg-none text-white px-6 py-3 rounded-lg font-medium"
-            onClick={() => router.push("/seller_signin")}>
+          </Link>
+          <Link className="w-40 border border-white bg-none text-white px-6 py-3 rounded-lg font-medium"
+            href="/seller_signin">
             Login
-          </button>
+          </Link>
         </div>
 
 

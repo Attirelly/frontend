@@ -112,11 +112,11 @@ export default function SellerSignup() {
             <Header
                 title="Attirelly"
                 actions={
-                    <button
+                    <Link
                         className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100"
-                        onClick={() => router.push(`/seller_signup`)}>
+                        href="/seller_signup" >
                         Sign Up
-                    </button>
+                    </Link>
                 }
             />
 

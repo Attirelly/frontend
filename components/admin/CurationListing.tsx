@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { api } from '@/lib/axios';
+import Link from 'next/link';
 
 interface Curation {
   section_id: string;
@@ -65,12 +66,12 @@ export default function CurationPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Curation Module</h1>
-        <button
-          onClick={() => router.push('/admin/curationModule/createCuration')}
+        <Link
+          href ='/admin/curationModule/createCuration'
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           Create Curation
-        </button>
+        </Link>
       </div>
 
       {/* Table */}

@@ -6,6 +6,7 @@ import {useRouter} from 'next/navigation';
 import Image from 'next/image';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api } from '@/lib/axios';
+import { useEffect } from 'react';
 
 type FacebookLoginResponse = {
     status: string;
@@ -20,6 +21,9 @@ type FacebookLoginResponse = {
 
 export default function SocialLoginButtons() {
     const router = useRouter();
+    useEffect(()=>{
+       router.prefetch("/customer_dashboard")
+    },[])
     // ----------------- Google Login -----------------
     const handleGoogleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
@@ -28,7 +32,7 @@ export default function SocialLoginButtons() {
                     access_token: tokenResponse.access_token,
                 });
                 alert('Google login successful!');
-                router.push('customer_dashboard');
+                router.push('/customer_dashboard');
             } catch (err) {
                 console.error('Google login error:', err);
                 alert('Google login failed.');
@@ -61,7 +65,7 @@ export default function SocialLoginButtons() {
                         });
 
                         alert('Facebook login successful!');
-                        router.push('customer_dashboard');
+                        router.push('/customer_dashboard');
                     } catch (err) {
                         console.error('Facebook login error:', err);
                         alert('Facebook login failed.');
