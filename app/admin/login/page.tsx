@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
@@ -15,6 +15,11 @@ export default function SellerSignup() {
     const router = useRouter();
     const [error, setError] = useState('');
     // const setUser = useSellerStore((state) => state.setUser);
+    useEffect(() => {
+        console.log('prefetching');
+        router.prefetch('/admin');
+        console.log('fetched');
+    }, []);
 
 
 

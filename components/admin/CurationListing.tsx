@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { api } from '@/lib/axios';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 interface Curation {
@@ -20,6 +21,12 @@ export default function CurationPage() {
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    console.log('prefetching');
+    router.prefetch('/admin/curationModule/createCuration');
+    console.log('fetched');
+  }, []);
 
   useEffect(() => {
     async function fetchCurations() {
@@ -50,11 +57,13 @@ export default function CurationPage() {
     if (!confirmed) return;
     try {
       await api.delete(`/homepage/section/${section_id}`);
-      alert('Curation deleted successfully.');
+      // alert('Curation deleted successfully.');
+      toast.success("Curation deleted!")
       setCurations((prev) => prev.filter((curation) => curation.section_id !== section_id));
     } catch (error) {
       console.error('Failed to delete curation:', error);
-      alert('Failed to delete curation.');
+      // alert('Failed to delete curation.');
+      toast.error("Curation not deleted!")
     }
   };
 

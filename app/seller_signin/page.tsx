@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { send } from 'process';
@@ -25,6 +25,12 @@ export default function SellerSignup() {
 
     const isPhoneValid = /^\d{10}$/.test(phone);
     const router = useRouter();
+
+    useEffect(() => {
+        console.log('started');
+        router.prefetch('/seller_dashboard');
+        console.log(router);
+    }, []);
 
     const handleChange = (index: number, value: string) => {
         if (!/^\d*$/.test(value)) return; // allow only digits

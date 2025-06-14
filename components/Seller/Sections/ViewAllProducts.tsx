@@ -14,7 +14,7 @@ import type {
   FilterOptions,
 } from "@/types/ProductTypes";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function ProductsPage({
@@ -22,7 +22,7 @@ export default function ProductsPage({
 }: {
   batchId?: string | null;
 }) {
-  const router = useRouter();
+  // const router = useRouter();
   const {
     products,
     setProducts,
@@ -293,7 +293,8 @@ export default function ProductsPage({
           }
           onRow={(record) => ({
             onClick: () => {
-              router.push(`/product_upload/${record.product_id}`);
+              // router.push(`/product_upload/${record.product_id}`);
+              window.open(`/product_upload/${record.product_id}`, '_blank', 'noopener,noreferrer');
             },
             style: { cursor: "pointer" },
           })}

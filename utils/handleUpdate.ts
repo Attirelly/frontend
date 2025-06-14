@@ -28,7 +28,7 @@ export const useUpdateStore = () => {
     const [toastMessage, setToastMessage] = useState("");
     const [toastType, setToastType] = useState<"success" | "error">("success");
 
-    const handleUpdate = async (activeSection?: string, onBoarding?: boolean) => {
+    const handleUpdate = async (activeSection?: string, onBoarding?: boolean, curr_section?: number) => {
         if (activeSection === 'brand' && businessDetailsValid && businessDetailsData) {
             console.log(activeSection);
             const seller_up_payload = {
@@ -44,6 +44,7 @@ export const useUpdateStore = () => {
                 rental: businessDetailsData.rentOutfits === 'Yes',
                 store_types: businessDetailsData.brandTypes,
                 genders: businessDetailsData.genders,
+                curr_section: curr_section,
                 area: businessDetailsData.area[0],
                 city: businessDetailsData.city[0],
                 pincode: businessDetailsData.pinCode[0]
@@ -72,7 +73,8 @@ export const useUpdateStore = () => {
             const price_payload = {
                 average_price_min: priceFiltersData.avgPriceMin,
                 average_price_max: priceFiltersData.avgPriceMax,
-                store_type_price_range_links: priceFiltersData.priceRanges
+                store_type_price_range_links: priceFiltersData.priceRanges,
+                curr_section: curr_section,
             };
             try {
                 await api.put(`/stores/${storeId}`, price_payload);
@@ -87,7 +89,8 @@ export const useUpdateStore = () => {
         if (activeSection === 'market' && whereToSellData) {
             console.log(activeSection);
             const market_payload = {
-                "is_online": whereToSellData.isOnline
+                is_online : whereToSellData.isOnline,
+                curr_section: curr_section,
             }
             try {
                 await api.put(`/stores/${storeId}`, market_payload);
@@ -101,9 +104,10 @@ export const useUpdateStore = () => {
         if (activeSection === 'social' && socialLinksData) {
             console.log(activeSection);
             const social_payload = {
-                "instagram_link": socialLinksData.instagramUrl || '',
-                "facebook_link": socialLinksData.facebookUrl || '',
-                "shopify_url": socialLinksData.websiteUrl || ''
+                instagram_link: socialLinksData.instagramUrl || '',
+                facebook_link: socialLinksData.facebookUrl || '',
+                shopify_url : socialLinksData.websiteUrl || '',
+                curr_section: curr_section,
             }
             try {
                 console.log('inside store');
@@ -118,8 +122,9 @@ export const useUpdateStore = () => {
         if (activeSection === 'photos' && storePhotosData) {
             console.log(activeSection);
             const photos_payload = {
-                "listing_page_image": storePhotosData.bannerUrl,
-                "profile_image": storePhotosData.profileUrl
+                listing_page_image : storePhotosData.bannerUrl,
+                profile_image : storePhotosData.profileUrl,
+                curr_section: curr_section,
             }
             try {
                 await api.put(`/stores/${storeId}`, photos_payload);

@@ -1,6 +1,7 @@
 "use client";
 import { api } from "@/lib/axios";
 import { use, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface User {
   id: string;
@@ -253,8 +254,10 @@ export default function StoreFormPage({ params }: { params: { id: string } }) {
 
       await api.put(`/stores/${id}`, formData);
       setMode("view");
+      toast.success("Store updated successfully")
     } catch (err) {
       setError("Failed to save changes");
+      toast.error("Store not successful")
       console.error("Error saving data:", err);
     } finally {
       setIsSubmitting(false);

@@ -16,9 +16,10 @@ import { api } from '@/lib/axios';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { logout } from '@/utils/logout';
 import { useUpdateStore } from '@/utils/handleUpdate';
-import Toast from '@/components/ui/Toast';
+// import Toast from '@/components/ui/Toast';
 
 import ProductUploadPage from '../product_upload/page';
+import { toast } from 'sonner';
 
 type City = { id: string; name: string; state_id: string };
 
@@ -28,8 +29,8 @@ type Pincode = { id: string, code: string, city_id: string };
 
 export default function SellerDashboardPage() {
   const { handleUpdate } = useUpdateStore();
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] = useState<"success" | "error">("success");
+  // const [toastMessage, setToastMessage] = useState("");
+  // const [toastType, setToastType] = useState<"success" | "error">("success");
   const {
     setStoreId,
     storeId,
@@ -142,12 +143,14 @@ export default function SellerDashboardPage() {
   const handleUpdateClick = async () => {
     const res = await handleUpdate(activeSection, false);
     if(res){
-      setToastMessage("Store updated!");
-      setToastType("success");
+      // setToastMessage("Store updated!");
+      // setToastType("success");
+      toast.success("Store Updated!")
     }
     else{
-      setToastMessage("Store not updated!");
-      setToastType("error");
+      // setToastMessage("Store not updated!");
+      // setToastType("error");
+      toast.error("Store not updated!");
     }
   }
 
@@ -174,13 +177,13 @@ export default function SellerDashboardPage() {
           </div>
 
         </div>
-        {toastMessage && (
+        {/* {toastMessage && (
           <Toast
             message={toastMessage}
             type={toastType}
             onClose={() => setToastMessage("")}
           />
-        )}
+        )} */}
       </div>
     </ProtectedRoute>
 

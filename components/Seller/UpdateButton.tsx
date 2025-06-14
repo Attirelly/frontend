@@ -10,7 +10,7 @@ export default function UpdateButton({ onClick, disabled = false }: UpdateButton
     <div className="mt-6">
       <button
         className={`bg-black text-white text-sm py-2 px-6 rounded-xl transition ${
-          disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'
+          disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800 cursor-pointer'
         }`}
         onClick={onClick}
         disabled={disabled}
