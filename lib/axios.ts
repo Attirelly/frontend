@@ -11,17 +11,17 @@ export const api = axios.create({
 });
 
 // Request Interceptor: Attach the Access Token if available
-api.interceptors.request.use(
-  (config) => {
-    // Check if the window object is available (to avoid issues during SSR)
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null; // Retrieve the access token
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`; // Attach token to the Authorization header
-    }
-    return config;
-  },
-  (error) => Promise.reject(error) // Handle request errors
-);
+// api.interceptors.request.use(
+//   (config) => {
+//     // Check if the window object is available (to avoid issues during SSR)
+//     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null; // Retrieve the access token
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`; // Attach token to the Authorization header
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error) // Handle request errors
+// );
 
 
 // Response interceptor 
@@ -47,7 +47,7 @@ api.interceptors.response.use(
           if(requestedUrl?.includes("/seller_dashboard")){
             logout("/seller_signin");
           } else if (requestedUrl?.includes("/customer_dashboard")){
-            logout("/customer_sigin");
+            logout("/customer_signup");
           }
           return Promise.reject(refreshError);
         }
