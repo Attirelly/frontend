@@ -19,6 +19,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { api } from "@/lib/axios";
 import { convertToFormData } from "@/utils/convert";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useSellerStore } from "@/store/sellerStore";
 
 const sectionComponents = [
   Blank,
@@ -31,6 +32,7 @@ const sectionComponents = [
 ];
 
 export default function ProductUpdatePage() {
+  const {setStoreId} = useSellerStore();
   const params = useParams();
   const { variants, sizes, colors } = useFormData();
   const isLoading = useIsLoading();
@@ -46,6 +48,7 @@ export default function ProductUpdatePage() {
           setLoading(true);
           const res = await api.get(`/products/${product_id}`);
           const product = res.data;
+          setStoreId(product.store_id); // Set the store ID from the product data
           console.log("Fetched product data:", product);
           const formData = convertToFormData(product);
           console.log("Fetched product data after conversion :", formData);

@@ -8,11 +8,13 @@ import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
 import Header from '@/components/Header';
 import axios, { AxiosError } from 'axios';
+import { toast } from 'sonner';
 
 
 
 export default function SellerSignup() {
     const [phone, setPhone] = useState('');
+    const [currSection, setCurrSection] = useState(0);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
     const [sendOTP, setSendOTP] = useState(false);
@@ -29,6 +31,7 @@ export default function SellerSignup() {
     useEffect(() => {
         console.log('started');
         router.prefetch('/seller_dashboard');
+        router.prefetch('/seller_signup/sellerOnboarding');
         console.log(router);
     }, []);
 
@@ -68,7 +71,19 @@ export default function SellerSignup() {
                 try {
                     // here we will create jwt tokens
                     await api.post("/users/login", { contact_number: phone });
-                    router.push('/seller_dashboard');
+                    if (currSection < 5) {
+                        toast.error("Please complete onboarding first!")
+                        try {
+                            await api.post("/users/login", { contact_number: phone });
+                            router.push('/seller_signup/sellerOnboarding')
+                        } catch (error) {
+                            toast.error("failed to login");
+                        }
+                    }
+                    else {
+                        router.push('/seller_dashboard');
+                        toast.success("logged in successfully");
+                    }
                 }
                 catch (error) {
                     console.error('Error fetching stores by section:', error);
@@ -89,9 +104,21 @@ export default function SellerSignup() {
 
                 const response = await api.get('/users/user', { params: { phone_number: phone } });
                 console.log(response);
-                setSellerId(response.data.id);
-                setSellerName(response.data.name);
-                setSellerEmail(response.data.email);
+                const user_data = response.data;
+                const curr_section_res = await api.get('/stores/get_store_section', { params: { user_id: user_data.id } })
+                console.log(curr_section_res)
+                setCurrSection(curr_section_res.data);
+                // if(curr_section < 5){
+                //     toast.error("Onboarding not completed!")
+                //     return;
+                // }
+                setSellerId(user_data.id);
+                setSellerName(user_data.name);
+                setSellerEmail(user_data.email);
+                setSendOTP(true);
+                // Handle sending OTP
+                alert(`OTP sent to ${phone}`);
+                setSellerNumber(phone);
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     console.log('Status Code:', error.response.status);
@@ -103,12 +130,6 @@ export default function SellerSignup() {
                     alert('An unexpected error occurred. Please try again.');
                 }
             }
-
-            setSellerNumber(phone);
-
-            setSendOTP(true);
-            // Handle sending OTP
-            alert(`OTP sent to ${phone}`);
         }
     };
 

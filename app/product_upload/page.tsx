@@ -32,28 +32,32 @@ export default function ProductUploadPage() {
   const isLoading = useIsLoading();
   const CurrentComponent = sectionComponents[currentStep];
   const { loadDraft, setLoading } = useFormActions();
-  useEffect(() => {
-    async function loadDraftData() {
-      await loadDraft();
-    }
-    try {
-      setLoading(true);
-      loadDraftData();
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-    }
-  }, []);
+  // useEffect(() => {
+  //   async function loadDraftData() {
+  //     await loadDraft();
+  //   }
+  //   try {
+  //     setLoading(true);
+  //     loadDraftData();
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //   }
+  // }, []);
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4">
       <div className="flex w-full max-w-4xl gap-4">
         {/* Sidebar */}
-        <div className="min-w-[240px] max-w-sm border-gray-200 p-6 overflow-y-auto">
-          {/* <h2 className="text-xl font-bold mb-4">Product Upload</h2> */}
-          {/* <DraftControls /> */}
-          <ProductUploadSideBar />
-        </div>
+        {currentStep !== 0 && (
+          <div className="min-w-[240px] max-w-sm border-gray-200 p-6 overflow-y-auto">
+            {/* <h2 className="text-xl font-bold mb-4">Product Upload</h2> */}
+            {/* <DraftControls /> */}
+            <ProductUploadSideBar />
+          </div>
+        )}
+
 
         {/* Main content */}
         <div className="flex-1 p-6 overflow-auto">
@@ -63,7 +67,10 @@ export default function ProductUploadPage() {
             ) : (
               <>
                 <CurrentComponent />
-                <FormNavigation />
+                {currentStep !== 0 && (
+                  <FormNavigation />
+                )}
+
               </>
             )}
           </div>
@@ -80,7 +87,7 @@ function FormNavigation() {
   const stepValidations = useStepValidations();
   const isCurrentStepValid = stepValidations[currentStep] === true;
   const { saveDraft } = useFormActions();
-   return (
+  return (
     <div className="flex flex-wrap justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
       {/* Previous Button - left aligned */}
       <div className="order-1">
@@ -110,11 +117,10 @@ function FormNavigation() {
           <button
             disabled={!isCurrentStepValid}
             onClick={() => setCurrentStep(currentStep + 1)}
-            className={`w-full md:w-auto px-4 py-2 rounded-md ${
-              isCurrentStepValid
-                ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
+            className={`w-full md:w-auto px-4 py-2 rounded-md ${isCurrentStepValid
+              ? "bg-indigo-600 text-white hover:bg-indigo-700"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
           >
             Next
           </button>
@@ -122,11 +128,10 @@ function FormNavigation() {
           <button
             disabled={!isCurrentStepValid}
             onClick={submitForm}
-            className={`w-full md:w-auto px-4 py-2 text-white rounded-md ${
-              isCurrentStepValid
-                ? "bg-green-600 hover:bg-green-700"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
+            className={`w-full md:w-auto px-4 py-2 text-white rounded-md ${isCurrentStepValid
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
           >
             Submit Product
           </button>

@@ -41,13 +41,15 @@ export const useUpdateStore = () => {
                 pincode_id: businessDetailsData.pinCode[0].id,
                 whatsapp_number: businessDetailsData.businessWpNum,
                 store_address: businessDetailsData.brandAddress,
-                rental: businessDetailsData.rentOutfits === 'Yes',
+                // rental: businessDetailsData.rentOutfits === 'Yes',
                 store_types: businessDetailsData.brandTypes,
                 genders: businessDetailsData.genders,
+                categories: businessDetailsData.categories,
                 curr_section: curr_section,
                 area: businessDetailsData.area[0],
                 city: businessDetailsData.city[0],
-                pincode: businessDetailsData.pinCode[0]
+                pincode: businessDetailsData.pinCode[0],
+                registered_email: businessDetailsData.ownerEmail
             };
 
             try {
@@ -88,6 +90,7 @@ export const useUpdateStore = () => {
 
         if (activeSection === 'market' && whereToSellData) {
             console.log(activeSection);
+            console.log(whereToSellData);
             const market_payload = {
                 is_online : whereToSellData.isOnline,
                 curr_section: curr_section,

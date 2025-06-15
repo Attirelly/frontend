@@ -2,7 +2,8 @@ import { Area } from "react-easy-crop";
 
 export default function getCroppedImg(
   imageSrc: string,
-  crop: Area
+  crop: Area,
+  quality: number = 0.7
 ): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -31,7 +32,7 @@ export default function getCroppedImg(
       canvas.toBlob((blob) => {
         if (blob) resolve(blob);
         else reject(new Error("Failed to crop image"));
-      }, "image/jpeg");
+      }, "image/jpeg", quality);
     };
     image.onerror = reject;
   });

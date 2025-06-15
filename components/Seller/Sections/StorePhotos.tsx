@@ -11,6 +11,7 @@ import getCroppedImg from "@/lib/cropImage"; // You’ll create this
 
 import Modal from "react-modal"; // or use any dialog/modal you like
 import { Area } from "react-easy-crop";
+import { FiTrash2 } from "react-icons/fi";
 
 interface UploadResponse {
   upload_url: string;
@@ -106,6 +107,29 @@ export default function PhotosPage() {
 
     // type === "profile" ? setProfileUploading(false) : setBannerUploading(false);
   };
+  // async function deleteImageFromS3(imageUrl: string) {
+  //   try {
+  //     const payload = {
+  //       file_url: imageUrl,
+  //     }
+  //     await api.delete(`/products/delete_image`, {data:{ "file_url" : imageUrl }});
+  //   } catch (error) {
+  //     console.error("Error deleting image from S3:", error);
+  //   }
+  // }
+  // const removeMainImage = async (imageUrl: string, type: string) => {
+  //   await deleteImageFromS3(imageUrl); 
+  //   setMainPreview(null);
+  //   updateFormData("media", {
+  //     ...media,
+  //     mainImage: null,
+  //   });
+  //   if (mainImageInputRef.current) {
+  //     mainImageInputRef.current.value = "";
+  //   }
+  //   toast.info("Main image removed");
+  //   // console.log("Image removed:", imageUrl);
+  // };
 
   useEffect(() => {
     if (profileUrl && bannerUrl) {
@@ -158,7 +182,8 @@ export default function PhotosPage() {
 
                 const croppedBlob = await getCroppedImg(
                   URL.createObjectURL(croppingImage),
-                  croppedAreaPixels
+                  croppedAreaPixels,
+                  0.1
                 );
 
                 const uploadedUrl = await uploadToS3(
@@ -214,11 +239,23 @@ export default function PhotosPage() {
               </div>
             </>
           ) : bannerUrl ? (
-            <img
-              src={bannerUrl}
-              alt="Banner Preview"
-              className="w-full h-40 object-cover rounded-lg"
-            />
+            <div className="relative group">
+              <img
+                src={bannerUrl}
+                alt="Banner Preview"
+                className="w-full h-40 object-cover rounded-lg"
+              />
+              {/* <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeMainImage(bannerUrl, 'banner');
+                }}
+                className="absolute top-1 right-1 bg-white p-1 rounded-full shadow-md hover:bg-gray-100 transition opacity-0 group-hover:opacity-100"
+                aria-label="Remove image"
+              >
+                <FiTrash2 className="text-red-500" />
+              </button> */}
+            </div>
           ) : (
             <div className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm">
               Click to upload image (svg, png, jpg)
@@ -254,11 +291,23 @@ export default function PhotosPage() {
               </div>
             </>
           ) : profileUrl ? (
+            <div className="relative group">
             <img
               src={profileUrl}
               alt="Profile Preview"
               className="w-full h-40 object-cover rounded-lg"
             />
+            {/* <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeMainImage(profileUrl, 'profile');
+                }}
+                className="absolute top-1 right-1 bg-white p-1 rounded-full shadow-md hover:bg-gray-100 transition opacity-0 group-hover:opacity-100"
+                aria-label="Remove image"
+              >
+                <FiTrash2 className="text-red-500" />
+              </button> */}
+            </div>
           ) : (
             <div className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm">
               Click to upload image (svg, png, jpg)

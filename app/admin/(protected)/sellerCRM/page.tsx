@@ -43,7 +43,7 @@
 //   const [currentPage, setCurrentPage] = useState(1);
 //   const [itemsPerPage, setItemsPerPage] = useState(10);
 //   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
- 
+
 //   const isSelected = (id: string) => selectedSellerIds.includes(id);
 
 //   // Debounce search input
@@ -565,7 +565,7 @@
 //                 >
 //                   Previous
 //                 </button>
-                
+
 //                 {/* Page numbers */}
 //                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
 //                   let pageNum;
@@ -578,7 +578,7 @@
 //                   } else {
 //                     pageNum = currentPage - 2 + i;
 //                   }
-                  
+
 //                   return (
 //                     <button
 //                       key={pageNum}
@@ -638,6 +638,7 @@ type Seller = {
   outfits?: string[];
   genders?: string[];
   created_at?: Date;
+  curr_section?: number;
   location?: string; // Added for CSV compatibility
 };
 
@@ -656,7 +657,7 @@ export default function Home() {
     [key: string]: string[];
   }>({});
   const [facets, setFacets] = useState<Facets>({});
-  const [viewAll, setViewAll] = useState<{[key: string]: boolean}>({});
+  const [viewAll, setViewAll] = useState<{ [key: string]: boolean }>({});
   const [selectedSellerIds, setSelectedSellerIds] = useState<string[]>([]);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [currentPage, setCurrentPage] = useState(1);
@@ -664,7 +665,7 @@ export default function Home() {
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
- 
+
   const isSelected = (id: string) => selectedSellerIds.includes(id);
 
   // Debounce search input
@@ -690,7 +691,7 @@ export default function Home() {
   // Handle bulk status change
   const handleBulkStatusChange = async (newStatus: boolean) => {
     if (selectedSellerIds.length === 0) return;
-    
+
     const originalFilteredSellers = JSON.parse(JSON.stringify(filteredSellers));
     const originalSellers = JSON.parse(JSON.stringify(sellers));
 
@@ -735,6 +736,7 @@ export default function Home() {
           `/search/search_store?query=${query}&facets=city&facets=area&facets=store_types&facets=outfits&facets=genders&facets=price_ranges&facets=age_groups&facets=rental`
         );
         const data = res.data;
+        console.log(data)
 
         const sellers: Seller[] = data.hits.map((hit: any) => ({
           id: hit.id,
@@ -745,6 +747,8 @@ export default function Home() {
           city: hit.city,
           store_types: hit.store_types || [],
           genders: hit.genders || [],
+          curr_section: hit.curr_section || 0,
+          created_at: hit.created_at? new Date(hit.created_at) :  undefined,
           outfits: hit.outfits || [],
           status: hit.active,
         }));
@@ -794,7 +798,7 @@ export default function Home() {
   };
 
   // Filter sellers based on selected facets
-  const filterSellers = (selectedFacets: {[key: string]: string[]}) => {
+  const filterSellers = (selectedFacets: { [key: string]: string[] }) => {
     const filtered = sellers.filter((seller) => {
       const matchesFacets = Object.keys(selectedFacets).every((facet) => {
         const selected = selectedFacets[facet];
@@ -919,6 +923,7 @@ export default function Home() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedSellers.slice(indexOfFirstItem, indexOfLastItem);
 
+  console.log(currentItems)
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   // Get sort direction indicator
@@ -1102,7 +1107,7 @@ export default function Home() {
                             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                           />
                         </th>
-                        <th 
+                        <th
                           className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('name')}
                         >
@@ -1110,7 +1115,7 @@ export default function Home() {
                             Name {getSortIndicator('name')}
                           </div>
                         </th>
-                        <th 
+                        <th
                           className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('email')}
                         >
@@ -1118,7 +1123,7 @@ export default function Home() {
                             Email {getSortIndicator('email')}
                           </div>
                         </th>
-                        <th 
+                        <th
                           className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('area')}
                         >
@@ -1126,7 +1131,7 @@ export default function Home() {
                             Area {getSortIndicator('area')}
                           </div>
                         </th>
-                        <th 
+                        <th
                           className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('city')}
                         >
@@ -1134,10 +1139,20 @@ export default function Home() {
                             City {getSortIndicator('city')}
                           </div>
                         </th>
+                        {/* <th
+                          className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort('created_at')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Created At {getSortIndicator('created_at')}
+                          </div>
+                        </th> */}
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
                         <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Type</th>
                         <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Outfits</th>
                         <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
-                        <th 
+                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                        <th
                           className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('status')}
                         >
@@ -1180,6 +1195,9 @@ export default function Home() {
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">{seller.city}</div>
                             </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-900">{seller.created_at ? seller.created_at?.toLocaleDateString() + " " + seller.created_at?.toLocaleTimeString() : "N/A"}</div>
+                            </td>
                             <td className="px-6 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.store_types?.map((type, idx) => (
@@ -1207,21 +1225,30 @@ export default function Home() {
                                 ))}
                               </div>
                             </td>
+                            <td className="px-6 py-4">
+                              <div className="flex flex-wrap gap-1">
+                                {seller.curr_section !== undefined && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    {/* {(seller.curr_section / 6) * 100}% */}
+                                    {seller.curr_section} / 6
+                                  </span>
+                                )}
+                              </div>
+                            </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                                seller.status 
-                                  ? "bg-green-100 text-green-800" 
-                                  : "bg-red-100 text-red-800"
-                              }`}>
+                              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${seller.status
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                                }`}>
                                 {seller.status ? "Active" : "Inactive"}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <Link href={`/store/${seller.id}`} target="blank" rel="noopener noreferrer">
-                              <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                                <Eye className="w-4 h-4 mr-1" />
-                                View
-                              </button>
+                                <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                  <Eye className="w-4 h-4 mr-1" />
+                                  View
+                                </button>
                               </Link>
                             </td>
                           </tr>
@@ -1244,26 +1271,24 @@ export default function Home() {
                     <button
                       onClick={() => paginate(1)}
                       disabled={currentPage === 1}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === 1 
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                          : 'bg-blue-500 text-white hover:bg-blue-600'
-                      }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === 1
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                        }`}
                     >
                       First
                     </button>
                     <button
                       onClick={() => paginate(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === 1 
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                          : 'bg-blue-500 text-white hover:bg-blue-600'
-                      }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === 1
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                        }`}
                     >
                       Previous
                     </button>
-                    
+
                     {/* Page numbers */}
                     {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                       let pageNum;
@@ -1276,16 +1301,15 @@ export default function Home() {
                       } else {
                         pageNum = currentPage - 2 + i;
                       }
-                      
+
                       return (
                         <button
                           key={pageNum}
                           onClick={() => paginate(pageNum)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            currentPage === pageNum 
-                              ? 'bg-blue-600 text-white' 
-                              : 'bg-blue-500 text-white hover:bg-blue-600'
-                          }`}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === pageNum
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-blue-500 text-white hover:bg-blue-600'
+                            }`}
                         >
                           {pageNum}
                         </button>
@@ -1295,22 +1319,20 @@ export default function Home() {
                     <button
                       onClick={() => paginate(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === totalPages 
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                          : 'bg-blue-500 text-white hover:bg-blue-600'
-                      }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === totalPages
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                        }`}
                     >
                       Next
                     </button>
                     <button
                       onClick={() => paginate(totalPages)}
                       disabled={currentPage === totalPages}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        currentPage === totalPages 
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                          : 'bg-blue-500 text-white hover:bg-blue-600'
-                      }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === totalPages
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                        }`}
                     >
                       Last
                     </button>

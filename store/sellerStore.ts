@@ -1,11 +1,12 @@
 'use client'
 import { create } from 'zustand'
 import {Product, FilterOptions} from '@/types/ProductTypes'
+import { BrandType, GenderType, City, Area, Pincode, Category, StoreTypePriceRange } from '@/types/SellerTypes';
 
-type BrandType = {
-  id: string,
-  store_type: string
-};
+// type BrandType = {
+//   id: string,
+//   store_type: string
+// };
 
 type SectionKey = 'brand' | 'price' | 'market' | 'social' | 'photos';
 
@@ -23,34 +24,34 @@ type User = {
   created_at: string;
 };
 
-type GenderType = {
-  id: string,
-  gender_value: string
-}
+// type GenderType = {
+//   id: string,
+//   gender_value: string
+// }
 
 
-type City = {
-  id : string,
-  name : string,
-  state_id : string | null
-}
+// type City = {
+//   id : string,
+//   name : string,
+//   state_id : string
+// }
 
-type Area = {
-  id : string,
-  name : string,
-  city_id : string | null
-}
+// type Area = {
+//   id : string,
+//   name : string,
+//   city_id : string
+// }
 
-type Pincode = {
-  id: string,
-  code: string,
-  city_id: string | null
-}
+// type Pincode = {
+//   id: string,
+//   code: string,
+//   city_id: string
+// }
 
-type StoreTypePriceRange = {
-  store_type: string;
-  price_range: string;
-};
+// type StoreTypePriceRange = {
+//   store_type: string;
+//   price_range: string;
+// };
 
 type BusinessDetailsData = {
   ownerName: string | null;
@@ -58,12 +59,14 @@ type BusinessDetailsData = {
   brandName: string;
   businessWpNum: string | null
   brandTypes: BrandType[];
+  categories: Category[]; 
   genders: GenderType[];
   rentOutfits: string | null;
   city: City[];
   area: Area[];
   pinCode: Pincode[];
   brandAddress: string | null;
+  // storeLocation: string | null; // New field for storing the full address or location details
 };
 
 type PriceFiltersData = {

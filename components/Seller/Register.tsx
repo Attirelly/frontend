@@ -100,12 +100,13 @@ export default function SellerSignup() {
                 const response = await api.get("/users/new_user_auth", {
                     params: { contact_number: phone },
                 });
-
+                console.log(response);
             } catch (error: any) {
                 if (axios.isAxiosError(error)) {
                     if (error.response?.status === 403) {
                         // Mobile number already exists
-                        alert("Mobile number already exists");
+                        // alert("Mobile number already exists");
+                        toast.error("Mobile number already exists");
                         console.error("Mobile number already exists");
                         return false;
                     } else {

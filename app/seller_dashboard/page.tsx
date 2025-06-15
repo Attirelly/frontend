@@ -20,12 +20,13 @@ import { useUpdateStore } from '@/utils/handleUpdate';
 
 import ProductUploadPage from '../product_upload/page';
 import { toast } from 'sonner';
+import { City, Area, Pincode } from '@/types/SellerTypes';
 
-type City = { id: string; name: string; state_id: string };
+// type City = { id: string; name: string; state_id: string };
 
-type Area = { id: string, name: string, city_id: string };
+// type Area = { id: string, name: string, city_id: string };
 
-type Pincode = { id: string, code: string, city_id: string };
+// type Pincode = { id: string, code: string, city_id: string };
 
 export default function SellerDashboardPage() {
   const { handleUpdate } = useUpdateStore();
@@ -39,13 +40,12 @@ export default function SellerDashboardPage() {
     sellerName,
     sellerEmail,
     setBusinessDetailsData,
-    setBusinessDetailsValid,
     setPriceFiltersData,
-    setPriceFiltersValid,
     setWhereToSellData,
     setSocialLinksData,
     setStorePhotosData,
-    setQrId
+    setQrId,
+    setFurthestStep
   } = useSellerStore();
   const [activeSection, setActiveSection] = useState('');
 
@@ -57,6 +57,8 @@ export default function SellerDashboardPage() {
         const response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } })
         const storeData = response.data;
         console.log(storeData);
+        const curr_section = storeData.curr_section;
+        
 
         const cityData: City[] = storeData.city ? [storeData.city] : [];
         const areaData: Area[] = storeData.area ? [storeData.area] : [];
@@ -64,48 +66,60 @@ export default function SellerDashboardPage() {
 
         setStoreId(storeData.store_id);
         setQrId(storeData.qr_id);
+        setFurthestStep(curr_section);
 
         const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id: storeData.store_id } });
         console.log(priceRangeRes);
+        if (curr_section >= 1) {
+          setBusinessDetailsData({
+            ownerName: sellerName || '',
+            ownerEmail: sellerEmail || '',
+            brandName: storeData.store_name || '',
+            businessWpNum: storeData.whatsapp_number || '',
+            brandTypes: storeData.store_types || [],
+            categories: storeData.categories || [],
+            genders: storeData.genders || [],
+            rentOutfits: storeData.rental === true ? 'Yes' : 'No',
+            city: cityData || [],
+            area: areaData || [],
+            pinCode: pincodeData || [],
+            brandAddress: storeData.store_address || ''
+          });
+        }
 
-        setBusinessDetailsData({
-          ownerName: sellerName || '',
-          ownerEmail: sellerEmail || '',
-          brandName: storeData.store_name || '',
-          businessWpNum: storeData.whatsapp_number || '',
-          brandTypes: storeData.store_types || [],
-          genders: storeData.genders || [],
-          rentOutfits: storeData.rental === true ? 'Yes' : 'No',
-          city: cityData || [],
-          area: areaData || [],
-          pinCode: pincodeData || [],
-          brandAddress: storeData.store_address || ''
-        });
 
         // setBusinessDetailsValid(true);
+        if (curr_section >= 2) {
+          setPriceFiltersData({
+            avgPriceMin: storeData.average_price_min || null,
+            avgPriceMax: storeData.average_price_max || null,
+            priceRanges: priceRangeRes.data || []
+          });
+        }
 
-        setPriceFiltersData({
-          avgPriceMin: storeData.average_price_min || null,
-          avgPriceMax: storeData.average_price_max || null,
-          priceRanges: priceRangeRes.data || []
-        });
+        if (curr_section >= 3) {
+          setWhereToSellData({
+            isOnline: storeData.is_online === true ? true : false,
+            isBoth: false
+          });
+        }
 
-        setWhereToSellData({
-          isOnline: storeData.is_online === true ? true : true,
-          isBoth: false
-        });
+        if (curr_section >= 4) {
+          setSocialLinksData({
+            instagramUsname: storeData.instagram_link ? new URL(storeData.instagram_link).pathname.split('/').filter(Boolean)[0] : null,
+            instagramUrl: storeData.instagram_link || '',
+            facebookUrl: storeData.facebook_link || '',
+            websiteUrl: storeData.shopify_url || ''
+          });
+        }
 
-        setSocialLinksData({
-          instagramUsname: storeData.instagram_link ? new URL(storeData.instagram_link).pathname.split('/').filter(Boolean)[0] : null,
-          instagramUrl: storeData.instagram_link || '',
-          facebookUrl: storeData.facebook_link || '',
-          websiteUrl: storeData.shopify_url || ''
-        });
+        if (curr_section >= 5) {
+          setStorePhotosData({
+            profileUrl: storeData.profile_image || '',
+            bannerUrl: storeData.listing_page_image || ''
+          });
+        }
 
-        setStorePhotosData({
-          profileUrl: storeData.profile_image || '',
-          bannerUrl: storeData.listing_page_image || ''
-        });
 
       } catch (error) {
         console.error('Error fetching initial data:', error);
@@ -142,12 +156,12 @@ export default function SellerDashboardPage() {
 
   const handleUpdateClick = async () => {
     const res = await handleUpdate(activeSection, false);
-    if(res){
+    if (res) {
       // setToastMessage("Store updated!");
       // setToastType("success");
       toast.success("Store Updated!")
     }
-    else{
+    else {
       // setToastMessage("Store not updated!");
       // setToastType("error");
       toast.error("Store not updated!");
@@ -177,13 +191,6 @@ export default function SellerDashboardPage() {
           </div>
 
         </div>
-        {/* {toastMessage && (
-          <Toast
-            message={toastMessage}
-            type={toastType}
-            onClose={() => setToastMessage("")}
-          />
-        )} */}
       </div>
     </ProtectedRoute>
 
