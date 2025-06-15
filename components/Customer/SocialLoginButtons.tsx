@@ -70,7 +70,7 @@ export default function SocialLoginButtons() {
                         console.error('Facebook login error:', err);
                         alert('Facebook login failed.');
                     }
-                })();
+                })();``
             },
             { scope: 'email, public_profile' }
         );

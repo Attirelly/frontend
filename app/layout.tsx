@@ -1,10 +1,11 @@
-// import 'antd/dist/reset.css'; 
-import '@ant-design/v5-patch-for-react-19';
+// import 'antd/dist/reset.css';
+import "@ant-design/v5-patch-for-react-19";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Providers } from './providers';
+import { Providers } from "./providers";
 import "./globals.css";
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
+import { AuthProvider } from "@/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +32,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster richColors /> 
-        <Providers>{children}</Providers>
+        <Toaster richColors />
+        <Providers>
+          <AuthProvider>{children}</AuthProvider>
+        </Providers>
       </body>
     </html>
   );

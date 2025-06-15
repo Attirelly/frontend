@@ -1,9 +1,9 @@
 'use client'
 import Header from '@/components/Header';
-import ProtectedRoute from '@/components/ProtectedRoute';
 // import {useRouter} from 'next/navigation';
 import { logout } from '@/utils/logout';
 import { api } from '@/lib/axios';
+import ProtectedRouteComp from '@/components/ProtectedRouteComp';
 
 export default function CustomerDashboard() {
 
@@ -21,7 +21,7 @@ export default function CustomerDashboard() {
     }
 
     return (
-        <ProtectedRoute role="user">
+        <ProtectedRouteComp requiredRole="user">
             <div>
                 {/* Header */}
                 <Header
@@ -35,14 +35,9 @@ export default function CustomerDashboard() {
                         </button>
                     }
                 />
-                <button
-                    className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100"
-                    onClick={handleApi}
-                >
-                    Log out
-                </button>
+                <section>Hello Customer</section>
             </div>
-        </ProtectedRoute>
+        </ProtectedRouteComp>
     )
 
 }
