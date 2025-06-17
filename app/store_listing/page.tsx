@@ -1,6 +1,7 @@
 'use client';
-import ListingPageHeader from "@/components/ui/ListingPageHeader";
-import StoreTypeTabs from "@/components/ui/StoreTypes";
+import ListingPageHeader from "@/components/listings/ListingPageHeader";
+import StoreCard from "@/components/listings/StoreCard";
+import StoreTypeTabs from "@/components/listings/StoreTypes";
 import { api } from "@/lib/axios";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { useEffect, useState } from "react";
@@ -40,9 +41,18 @@ export default function StoreListingPage() {
 <h1 className="text-2xl font-bold text-gray-800">Showing stores for {query} in {city?.name}</h1>
 <StoreTypeTabs defaultValue={defaultStoreType?.id}/>
 <div className="border-t border-gray-300"></div>
+<StoreCard
+  imageUrl="/OnboardingSections/qr.png"
+  storeName="Sample Store"
+  location="New York, NY"
+  storeTypes={["Designer Label", "Boutique"]}
+  priceRanges={["Affordable","Luxury"]}
+  bestSelling={["Saree", "Kurta"]}
+  discount={20}
+  instagramFollowers="520K"
+/>
             </div>
 
-            
             {/* Other components or content for the store listing page */}
         </div>
     );
