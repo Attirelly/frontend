@@ -16,6 +16,7 @@ import type {
 import Image from "next/image";
 // import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ProductsPage({
   batchId = null,
@@ -58,7 +59,7 @@ export default function ProductsPage({
   });
 
 
-
+  const router = useRouter()
 
   useEffect(() => {
 
