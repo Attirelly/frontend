@@ -54,3 +54,12 @@ body {
 .ais-Pagination-item--disabled {
   @apply opacity-50 cursor-not-allowed;
 }
+
+.city-select__control {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.city-select__indicator-separator {
+  display: none;
+}
