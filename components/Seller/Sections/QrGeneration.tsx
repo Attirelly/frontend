@@ -3,10 +3,9 @@ import { useState, useEffect } from 'react';
 import { useSellerStore } from '@/store/sellerStore';
 import { api } from '@/lib/axios';
 import { jsPDF } from 'jspdf';
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function QrCodeGeneration() {
-    const { qrId, setQrId, storeId } = useSellerStore();
+    const { qrId, setQrId, storeId, furthestStep } = useSellerStore();
     const [qrImageUrl, setQrImageUrl] = useState('');
 
 
@@ -33,6 +32,7 @@ export default function QrCodeGeneration() {
         try {
             const response = await api.post(`/qrcode/qr_gen_user/${storeId}`);
             const qrData = response.data;
+            await api.put(`/stores/${storeId}`, {curr_section:furthestStep + 1});
             setQrId(qrData.qr_id);
             setQrImageUrl(qrData.qr_path);
             console.log(qrData);
@@ -40,12 +40,11 @@ export default function QrCodeGeneration() {
             console.error("QR generation failed", err);
         }
     };
+    console.log(furthestStep);
 
     const handleDownload = async () => {
         try {
             const response = await api.get(qrImageUrl, { responseType: 'blob', });
-            // const blob = await response.blob();
-            // const url = window.URL.createObjectURL(blob);
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64data = reader.result as string;
@@ -61,13 +60,6 @@ export default function QrCodeGeneration() {
             };
             reader.readAsDataURL(response.data);
 
-            // const a = document.createElement("a");
-            // a.href = url;
-            // a.download = `attirelly-qr-${storeId}.png`;
-            // document.body.appendChild(a);
-            // a.click();
-            // a.remove();
-            // window.URL.revokeObjectURL(url); // clean up
         } catch (error) {
             console.error("Download failed:", error);
         }

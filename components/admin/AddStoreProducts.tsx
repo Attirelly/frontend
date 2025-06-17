@@ -5,16 +5,22 @@ import { api } from '@/lib/axios';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import Select from 'react-select';
+import { City, Area } from '@/types/SellerTypes';
+import { Image } from '@/types/ProductTypes';
 
 interface Store {
   store_id: string;
   store_name: string;
+  city: City;
+  area: Area;
 }
 
 interface Product {
   product_id: string;
   product_name: string;
   store_id: string;
+  images: Image[];
 }
 
 export default function AddStoreProduct() {
@@ -242,6 +248,26 @@ export default function AddStoreProduct() {
     console.log('updated:', updated);
   };
 
+  const storeOptions = stores.map((store) => ({
+    label: `${store.store_name} : ${store.city.name}, ${store.area.name} (ID: ${store.store_id.slice(0, 6)})`,
+    value: store.store_id,
+  }));
+
+  console.log(products);
+
+  // const getProductOptions = (storeId: string) =>
+  //   (productsByStore[storeId] || []).map((product) => ({
+  //     label: product.product_name,
+  //     value: product.product_id,
+  //   }));
+
+  const getProductOptions = (storeId: string) =>
+    (productsByStore[storeId] || []).map((product) => ({
+      label: product.product_name,
+      value: product.product_id,          // include SKU
+      image: product.images[0]?.image_url,      // include product image URL
+    }));
+
   return (
     <div className="min-h-screen bg-white p-8">
       <h1 className="text-2xl font-bold mb-6">Curation Module</h1>
@@ -281,7 +307,7 @@ export default function AddStoreProduct() {
           return (
             <div key={index} className="flex gap-4">
               <div className="w-64">
-                <input
+                {/* <input
                   list="store-options"
                   placeholder="Select or type store"
                   className={`border rounded px-4 py-2 w-full ${storeId ? 'border-green-400' : 'border-gray-300'}`}
@@ -289,10 +315,25 @@ export default function AddStoreProduct() {
                   value={storeName}
                   id={storeId}
                   onChange={(e) => handleStoreChange(index, e.target.value)}
+                /> */}
+                <Select
+                  className={`border rounded w-64 ${storeId ? 'border-green-400' : 'border-gray-300'}`}
+                  placeholder="Select Store"
+                  options={storeOptions}
+                  isClearable
+                  value={storeOptions.find(opt => opt.value === storeSelections[index]) || null}
+                  onChange={(selectedOption) => {
+                    const updatedStoreSelections = [...storeSelections];
+                    const updatedProductSelections = [...productSelections];
+                    updatedStoreSelections[index] = selectedOption?.value || '';
+                    updatedProductSelections[index] = ''; // Reset product on store change
+                    setStoreSelections(updatedStoreSelections);
+                    setProductSelections(updatedProductSelections);
+                  }}
                 />
               </div>
 
-              {curation_type === 'product' ? (
+              {/* {curation_type === 'product' ? (
                 <input
                   list={`product-options-${index}`}
                   placeholder="Select or type product"
@@ -300,6 +341,42 @@ export default function AddStoreProduct() {
                   disabled={!storeId}
                   value={productName}
                   onChange={(e) => handleProductChange(index, e.target.value)}
+                />
+              ) : (
+                <input
+                  className="border rounded px-4 py-2 w-64 opacity-50"
+                  disabled
+                  style={{ visibility: 'hidden' }}
+                  placeholder="Select Product"
+                />
+              )} */}
+              {curation_type === 'product' ? (
+                <Select
+                  className="w-64"
+                  options={getProductOptions(storeSelections[index])}
+                  isClearable
+                  isDisabled={!storeSelections[index]}
+                  value={getProductOptions(storeSelections[index]).find(opt => opt.value === productSelections[index]) || null}
+                  onChange={(selectedOption) => {
+                    const updated = [...productSelections];
+                    updated[index] = selectedOption?.value || '';
+                    setProductSelections(updated);
+                  }}
+                  formatOptionLabel={(option) => (
+                    <div className="flex items-center gap-2">
+                      {option.image && (
+                        <img
+                          src={option.image}
+                          alt={option.label}
+                          className="w-8 h-8 object-cover rounded"
+                        />
+                      )}
+                      <div className="flex flex-col">
+                        <span className="font-medium text-sm">{option.label}</span>
+                        {/* <span className="text-xs text-gray-500">{option.sku}</span> */}
+                      </div>
+                    </div>
+                  )}
                 />
               ) : (
                 <input
@@ -320,7 +397,7 @@ export default function AddStoreProduct() {
         })}
       </div>
 
-      <datalist id="store-options">
+      {/* <datalist id="store-options">
         {stores.map((store) => (
           <option key={store.store_id} value={`${store.store_name} (ID: ${store.store_id})`} />
         ))}
@@ -336,7 +413,7 @@ export default function AddStoreProduct() {
             ))}
           </datalist>
         );
-      })}
+      })} */}
 
       <div className="flex justify-between">
         <button className="bg-gray-300 text-black rounded-full px-6 py-2">Back</button>

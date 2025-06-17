@@ -98,7 +98,7 @@ export default function SocialLinksComponent() {
         </div>
         <div className="mt-4 md:mt-0 md:w-1/3 flex justify-center">
           <img
-            src={'/OnboardingSections/instagram.png'}
+            src={'/OnboardingSections/instagram.svg'}
             alt={'bros'}
             className="w-15 h-15 rounded-2xl object-cover"
           />

@@ -1,0 +1,20 @@
+import { create } from 'zustand'
+import { City, BrandType } from '@/types/SellerTypes'
+
+type HeaderState = {
+    city: City|null;
+    setCity: (city: City|null) => void;
+    query: string;
+    setQuery: (query: string) => void;
+    defaultStoreType: BrandType | null;
+    setDefaultStoreType: (storeType: BrandType | null) => void;
+}
+
+export const useHeaderStore = create<HeaderState>((set) => ({
+    city: null,
+    setCity: (city) => set({ city }),
+    query: '',
+    setQuery: (query) => set({ query }),
+    defaultStoreType: null,
+    setDefaultStoreType: (storeType) => set({ defaultStoreType: storeType }),
+}));

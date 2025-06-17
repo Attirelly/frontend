@@ -69,6 +69,7 @@ export default function SellerOnboardingPage() {
             brandName: storeData.store_name || '',
             businessWpNum: storeData.whatsapp_number || '',
             brandTypes: storeData.store_types || [],
+            categories: storeData.categories || [],
             genders: storeData.genders || [],
             rentOutfits: storeData.rental === true ? 'Yes' : 'No',
             city: cityData || [],
@@ -86,7 +87,7 @@ export default function SellerOnboardingPage() {
           });
   
           setWhereToSellData({
-            isOnline: storeData.is_online === true ? true : true,
+            isOnline: storeData.is_online === true ? true : false,
             isBoth: false
           });
   

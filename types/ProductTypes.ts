@@ -57,3 +57,9 @@ export interface Product {
   // subLocation: string;
   imageUploadStatus: "Pending" | "Completed";
 }
+
+export interface Image {
+  product_id: string;
+  image_url: string;
+  image_id: string;
+}

@@ -64,6 +64,7 @@ export default function WhereToSellComponent() {
       ? 'online'
       : 'offline'
   );
+  console.log(whereToSellData);
 
   useEffect(() => {
     if (selected == 'both') {

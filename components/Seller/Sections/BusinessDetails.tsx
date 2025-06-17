@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type FC } from 'react';
 import dynamic from 'next/dynamic';
 import { api } from '@/lib/axios';
 import { useSellerStore } from '@/store/sellerStore';
-import { City, Area, BrandType, GenderType, Pincode, SelectOption } from '@/types/SellerTypes';
+import { City, Area, BrandType, GenderType, Pincode, SelectOption, Category } from '@/types/SellerTypes';
 
 const Select = dynamic(() => import('react-select').then(mod => mod.default), {
   ssr: false,
@@ -58,12 +58,24 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   const [selectedPincode, setSelectedPincode] = useState<Pincode[]>([]);
   const [selectedPincodeOption, setSelectedPincodeOption] = useState<SelectOption | null>(null);
 
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>(businessDetailsData?.categories || []);
+  const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
+  const [selectedCategoryOptions, setSelectedCategoryOptions] = useState<SelectOption[]>(
+    (businessDetailsData?.categories || []).map(cat => ({
+      value: cat.category_id,
+      label: cat.name,
+    }))
+  );
+
   const [ownerName, setOwnerName] = useState(businessDetailsData?.ownerName || '');
   const [ownerEmail, setOwnerEmail] = useState(businessDetailsData?.ownerEmail || '');
   const [brandName, setBrandName] = useState(businessDetailsData?.brandName || '');
   const [businessWpNum, setBusinessWpNum] = useState(businessDetailsData?.businessWpNum || '');
   const [pinCode, setPinCode] = useState(businessDetailsData?.pinCode || '');
   const [brandAddress, setBrandAddress] = useState(businessDetailsData?.brandAddress || '');
+  // const [storeLocation, setStoreLocation] = useState(businessDetailsData?.storeLocation || '');
+  const hasHydrated = useRef(false);
 
   useEffect(() => {
     if (sameAsOwner) {
@@ -71,16 +83,45 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     }
   }, [sameAsOwner, sellerNumber]);
 
+  useEffect(() => {
+    if (businessDetailsData && !hasHydrated.current) {
+      setOwnerName(businessDetailsData.ownerName || '');
+      setOwnerEmail(businessDetailsData.ownerEmail || '');
+      setBrandName(businessDetailsData.brandName || '');
+      setBusinessWpNum(businessDetailsData.businessWpNum || '');
+      setPinCode(businessDetailsData.pinCode || '');
+      setBrandAddress(businessDetailsData.brandAddress || '');
+
+      setSelectedBrandTypes(businessDetailsData.brandTypes || []);
+      setSelectedCategories(businessDetailsData.categories || []);
+
+      setSelectedCategoryOptions(
+        (businessDetailsData.categories || []).map(cat => ({
+          value: cat.category_id,
+          label: cat.name,
+        }))
+      );
+      setSelectedGenderTypes(businessDetailsData.genders || []);
+      setRentOutfits(businessDetailsData.rentOutfits || null);
+      setSelectedCity(businessDetailsData.city || []);
+      setSelectedArea(businessDetailsData.area || []);
+      setSelectedPincode(businessDetailsData.pinCode || []);
+      // setStoreLocation(businessDetailsData.storeLocation || '');
+      hasHydrated.current = true;
+    }
+  }, [businessDetailsData]);
+
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [storeTypesRes, gendersRes, citiesRes, areasRes, pincodeRes] = await Promise.all([
+        const [storeTypesRes, gendersRes, citiesRes, areasRes, pincodeRes, categoriesRes] = await Promise.all([
           api.get('/stores/store_types'),
           api.get('/genders/'),
           api.get('/location/cities/'),
           api.get('/location/areas/'),
-          api.get('location/pincodes/')
+          api.get('/location/pincodes/'),
+          api.get('/categories/')
         ]);
 
         setBrandTypes(storeTypesRes.data);
@@ -88,7 +129,11 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
         setCities(citiesRes.data);
         setAreas(areasRes.data);
         setPincodes(pincodeRes.data);
-
+        setCategories(categoriesRes.data);
+        setCategoryOptions(categoriesRes.data.map((cat: Category) => ({
+          value: cat.category_id,
+          label: cat.name
+        })));
         setCityOptions(citiesRes.data.map((c: City) => ({ value: c.id, label: c.name })));
         setAreaOptions(areasRes.data.map((a: Area) => ({ value: a.id, label: a.name })));
       } catch (error) {
@@ -224,8 +269,16 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
       selectedBrandTypes.length > 0 &&
       selectedGenderTypes.length > 0 &&
       selectedCity.length > 0 &&
-      selectedPincode.length > 0
-    // pinCode.trim();
+      selectedPincode.length > 0 &&
+      selectedCategoryOptions.length >= 1 &&
+    selectedCategoryOptions.length <= 3;
+      console.log(selectedCategoryOptions.length);
+      const categoriesForZustand = selectedCategoryOptions.map(opt => ({
+    category_id: opt.value,
+    name: opt.label,
+  }));
+
+  setSelectedCategories(categoriesForZustand); 
 
     setBusinessDetailsValid(Boolean(valid));
     onValidationChange?.(Boolean(valid));
@@ -237,23 +290,26 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
         brandName,
         businessWpNum,
         brandTypes: selectedBrandTypes,
+        categories: categoriesForZustand,
         genders: selectedGenderTypes,
         rentOutfits,
         city: selectedCity,
         area: selectedArea,
         pinCode: selectedPincode,
         brandAddress,
+        // storeLocation
       });
     }
   }, [
     ownerName, ownerEmail, brandName,
     selectedBrandTypes, selectedGenderTypes,
     selectedCity, selectedArea,
-    selectedPincode, rentOutfits, brandAddress
+    selectedPincode, rentOutfits, brandAddress,
+    selectedCategoryOptions
   ]);
 
 
-
+  console.log(businessDetailsData);
   const toggleSelection = <T extends { id: string }>(
     item: T, current: T[], setCurrent: React.Dispatch<React.SetStateAction<T[]>>
   ) => {
@@ -303,6 +359,21 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
         </div>
 
         <ToggleChips label="Brand Type" items={brandTypes} selected={selectedBrandTypes} toggle={(item) => toggleSelection(item, selectedBrandTypes, setSelectedBrandTypes)} />
+        <MultiSelectField
+          label="Expertise in"
+          options={categoryOptions}
+          value={selectedCategoryOptions}
+          onChange={(selectedOptions) => {
+            setSelectedCategoryOptions(selectedOptions);
+
+            const selectedCats = selectedOptions.map(opt => ({
+              category_id: opt.value,
+              name: opt.label,
+            }));
+            setSelectedCategories(selectedCats);
+          }}
+          isDisabled={false}
+        />
         <ToggleChips label="Genders Catered" items={genders} selected={selectedGenderTypes} toggle={(item) => toggleSelection(item, selectedGenderTypes, setSelectedGenderTypes)} />
 
         {/* <RadioGroup label="Do you rent outfits" options={['Yes', 'No']} selected={rentOutfits} onChange={setRentOutfits} /> */}
@@ -317,7 +388,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
             setSelectedCity(found ? [found] : []);
           }} />
 
-          <InputField label="Brand address" value={brandAddress} onChange={setBrandAddress} />
+          <InputField label="Brand address" value={brandAddress} onChange={setBrandAddress} placeholder='Enter your Google map store link' />
 
           <SelectField label="Area" options={areaOptions} value={selectedAreaOption} onChange={(option) => {
             setSelectedAreaOption(option);
@@ -340,6 +411,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
             }}
             isDisabled={!selectedCityOption}
           />
+          {/* <InputField label="Store Location URL" value={storeLocation} onChange={setStoreLocation} placeholder='Enter your Google map store link' /> */}
         </div>
         {/* <button className="mt-4 px-4 py-2 border border-black rounded hover:bg-black hover:text-white transition">
           Add another outlet
@@ -434,6 +506,43 @@ const SelectField: FC<{
     />
   </div>
 );
+
+// type MultiSelectFieldProps = {
+//   label: string;
+//   options: SelectOption[];
+//   value: SelectOption[];
+//   onChange: (options: SelectOption[]) => void;
+//   isDisabled?: boolean;
+//   maxSelected?: number;
+// };
+
+const MultiSelectField: FC<{
+  label: string;
+  options: SelectOption[];
+  value: SelectOption[];
+  onChange: (options: SelectOption[]) => void;
+  isDisabled?: boolean;
+}> = ({ label, options, value, onChange, isDisabled = false }) => (
+  <div>
+    <RequiredLabel>{label}</RequiredLabel>
+    <Select
+      isMulti
+      options={options}
+      value={value}
+      onChange={(newValue) => {
+        const selected = (newValue as SelectOption[]) || [];
+        if (selected.length <= 3) {
+          onChange(selected);
+        }
+      }}
+      isDisabled={isDisabled}
+      placeholder="Select up to 3"
+      closeMenuOnSelect={false}
+      classNamePrefix="react-select"
+    />
+  </div>
+);
+
 
 const RadioGroup: FC<{
   label: string;
