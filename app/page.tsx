@@ -81,6 +81,8 @@ export default function Home() {
         filters.push(facets[key].map((value) => `${key}:${value}`));
       }
     }
+
+    console.log(filters)
     const encoded = encodeURIComponent(JSON.stringify(filters));
     return encoded;
   };

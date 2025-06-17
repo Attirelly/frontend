@@ -15,15 +15,14 @@ import type {
 } from "@/types/ProductTypes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 
 export default function ProductsPage({
   batchId = null,
 }: {
   batchId?: string | null;
 }) {
-  const router = useRouter();
+
   const {
     products,
     setProducts,
