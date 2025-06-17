@@ -1,17 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-// import { Instagram } from 'lucide-react';
+import type { StoreCardType } from '@/types/SellerTypes';
 
 type StoreCardProps = {
     imageUrl: string;
     storeName: string;
     location: string;
-    storeTypes: string[]; // e.g. ["Designer Label", "Boutique"]
+    storeTypes: string[];
     priceRanges: string[];
-    bestSelling?: string[] | []; // e.g. ["Saree", "Kurta"]
-    discount?: number; // null or number like 15
-    instagramFollowers?: string; // e.g. "520K" or null
+    bestSelling?: string[] | []
+    discount?: number;
+    instagramFollowers?: string;
 };
 
 export default function StoreCard({
@@ -33,6 +33,9 @@ export default function StoreCard({
                     alt={storeName}
                     fill
                     className="object-cover rounded"
+                    sizes="(max-width: 640px) 100vw, 
+                            (max-width: 1024px) 50vw, 
+                             33vw"
                 />
                 {/* absolute bottom-0 left-0 mb-4 w-fit h-7 flex items-center pl-2 pr-4 rounded-r-full bg-blue-600 relative overflow-hidden text-white text-xs font-medium */}
                 {discount && (

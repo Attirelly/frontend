@@ -44,7 +44,7 @@ export default function StoreListingPage() {
         <div className="border-t border-gray-300"></div>
         <div className="flex">
 
-          <div>System yadav</div>
+          <div>Filter Bar</div>
           <div className="w-full">
             <StoreContainerPage />
           </div>
