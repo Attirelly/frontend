@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { SelectOption, BrandType } from '@/types/SellerTypes';
 import { api } from '@/lib/axios';
 import { toast } from 'sonner';
+import { useHeaderStore } from '@/store/listing_header_store';
 
 
 
@@ -20,15 +21,21 @@ export default function StoreTypeTabs({
     //   onChange,
     defaultValue,
 }: StoreTypeTabsProps) {
+    const {setStoreType} = useHeaderStore();
     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
     const [tabs, setTabs] = useState<SelectOption[]>([]);
-    const [selected, setSelected] = useState(defaultValue || tabs[0]?.value);
+    const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
 
-    const handleTabClick = (value: string) => {
-        setSelected(value);
+    const handleTabClick = (value: SelectOption) => {
+        const storeType : BrandType =  {
+            id : value.value,
+            store_type : value.label
+        }
+        setSelectedStoreType(storeType);
+        setStoreType(storeType);
         // onChange(value);
     };
-    console.log(selected);
+    // console.log(selected);
 
     useEffect(() => {
         const fetchStoreTypes = async () => {
@@ -56,11 +63,11 @@ export default function StoreTypeTabs({
                     <button
                         className={clsx(
                             'px-4 py-2 text-sm font-medium rounded-full transition-all duration-200',
-                            selected === tab.value
+                            selectedStoreType?.id === tab.value
                                 ? 'bg-white shadow text-black'
                                 : 'text-gray-600 hover:text-black'
                         )}
-                        onClick={() => handleTabClick(tab.value)}
+                        onClick={() => handleTabClick(tab)}
                     >
                         {tab.label}
                     </button>

@@ -6,8 +6,8 @@ type HeaderState = {
     setCity: (city: City|null) => void;
     query: string;
     setQuery: (query: string) => void;
-    defaultStoreType: BrandType | null;
-    setDefaultStoreType: (storeType: BrandType | null) => void;
+    storeType: BrandType | null;
+    setStoreType: (storeType: BrandType | null) => void;
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
@@ -15,6 +15,6 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setCity: (city) => set({ city }),
     query: '',
     setQuery: (query) => set({ query }),
-    defaultStoreType: null,
-    setDefaultStoreType: (storeType) => set({ defaultStoreType: storeType }),
+    storeType: null,
+    setStoreType: (storeType: BrandType | null) => set({ storeType }),
 }));

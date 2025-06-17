@@ -18,7 +18,7 @@ const priorityOrder = [
 ];
 
 export default function ListingPageHeader() {
-    const { setCity, query, setQuery, setDefaultStoreType } = useHeaderStore();
+    const { setCity, query, setQuery} = useHeaderStore();
     const [cities, setCities] = useState<City[]>([]);
     // const [stores, setStoreTypes] = useState('');
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
@@ -56,34 +56,34 @@ export default function ListingPageHeader() {
         fetchCities();
     }, []);
     // console.log(defaultStoreType);
-    useEffect(() => {
-        const setDefaultValue = (data: BrandType[]) => {
-            // console.log(store_types);
-            const found = priorityOrder.find((priorityName) =>
-                data.some((st) => st.store_type === priorityName)
-            );
-            if (found) {
-                const matched = data.find((st) => st.store_type === found);
-                if (matched) {
-                    setDefaultStoreType(matched);
-                }
-            }
+    // useEffect(() => {
+    //     const setDefaultValue = (data: BrandType[]) => {
+    //         // console.log(store_types);
+    //         const found = priorityOrder.find((priorityName) =>
+    //             data.some((st) => st.store_type === priorityName)
+    //         );
+    //         if (found) {
+    //             const matched = data.find((st) => st.store_type === found);
+    //             if (matched) {
+    //                 setDefaultStoreType(matched);
+    //             }
+    //         }
 
-        }
-        const fetchStores = async () => {
-            try {
-                const storeRes = await api.get('stores/store_by_city', { params: { city_id: selectedCity?.id || '' } });
-                // console.log(storeRes.data);
-                const { stores, store_types } = storeRes.data;
-                console.log(stores);
-                setDefaultValue(store_types);
-            }
-            catch (error) {
-                toast.error("Failed to fetch stores");
-            }
-        }
-        fetchStores();
-    }, [query, selectedCity]);
+    //     }
+    //     const fetchStores = async () => {
+    //         try {
+    //             const storeRes = await api.get('stores/store_by_city', { params: { city_id: selectedCity?.id || '' } });
+    //             // console.log(storeRes.data);
+    //             const { stores, store_types } = storeRes.data;
+    //             console.log(stores);
+    //             setDefaultValue(store_types);
+    //         }
+    //         catch (error) {
+    //             toast.error("Failed to fetch stores");
+    //         }
+    //     }
+    //     fetchStores();
+    // }, [query, selectedCity]);
 
     useEffect(() => {
         if (selectedCity) {
