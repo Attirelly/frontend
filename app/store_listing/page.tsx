@@ -13,29 +13,6 @@ export default function StoreListingPage() {
 
   const { query, city } = useHeaderStore();
 
-  // useEffect(() => {
-  //     const fetchStoreTypes = async () => {
-  //         try{
-  //             const res = await api.get("stores/store_types");
-  //             console.log(res.data);
-  //         }
-  //         catch(error){
-  //             toast.error("Failed to fetch store types");
-  //         }
-  //     }
-  //     fetchStoreTypes();
-  // }, []);
-  //   const tabs = [
-  //   { label: 'Designer Labels', value: 'designer' },
-  //   { label: 'Retail Stores', value: 'retail' },
-  //   { label: 'Rental Outfits', value: 'rental' },
-  //   { label: 'Boutiques', value: 'boutiques' },
-  // ];
-
-  // const handleTabChange = (val: string) => {
-  //   console.log('Selected:', val);
-  // };
-
   return (
     <div className="bg-gray-50">
       <ListingPageHeader />
@@ -51,16 +28,6 @@ export default function StoreListingPage() {
           </div>
 
         </div>
-        {/* <StoreCard
-          imageUrl="/OnboardingSections/qr.png"
-          storeName="Sample Store"
-          location="New York, NY"
-          storeTypes={["Designer Label", "Boutique"]}
-          priceRanges={["Affordable", "Luxury"]}
-          bestSelling={["Saree", "Kurta"]}
-          discount={20}
-          instagramFollowers="520K"
-        /> */}
       </div>
 
       {/* Other components or content for the store listing page */}

@@ -1,21 +1,23 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Select from 'react-select';
+import dynamic from 'next/dynamic';
+
+const Select = dynamic(() => import('react-select'), { ssr: false });
 import { toast } from 'sonner';
 import { api } from '@/lib/axios';
 import { BrandType, City } from '@/types/SellerTypes';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { SelectOption } from '@/types/SellerTypes';
 
-const priorityOrder = [
-    'Designer Labels',
-    'Retail brands',
-    'Boutiques',
-    'Western Wear',
-    'Exhibition',
-    'Stylist',
-];
+// const priorityOrder = [
+//     'Designer Labels',
+//     'Retail brands',
+//     'Boutiques',
+//     'Western Wear',
+//     'Exhibition',
+//     'Stylist',
+// ];
 
 export default function ListingPageHeader() {
     const { setCity, query, setQuery} = useHeaderStore();
@@ -55,36 +57,7 @@ export default function ListingPageHeader() {
         };
         fetchCities();
     }, []);
-    // console.log(defaultStoreType);
-    // useEffect(() => {
-    //     const setDefaultValue = (data: BrandType[]) => {
-    //         // console.log(store_types);
-    //         const found = priorityOrder.find((priorityName) =>
-    //             data.some((st) => st.store_type === priorityName)
-    //         );
-    //         if (found) {
-    //             const matched = data.find((st) => st.store_type === found);
-    //             if (matched) {
-    //                 setDefaultStoreType(matched);
-    //             }
-    //         }
-
-    //     }
-    //     const fetchStores = async () => {
-    //         try {
-    //             const storeRes = await api.get('stores/store_by_city', { params: { city_id: selectedCity?.id || '' } });
-    //             // console.log(storeRes.data);
-    //             const { stores, store_types } = storeRes.data;
-    //             console.log(stores);
-    //             setDefaultValue(store_types);
-    //         }
-    //         catch (error) {
-    //             toast.error("Failed to fetch stores");
-    //         }
-    //     }
-    //     fetchStores();
-    // }, [query, selectedCity]);
-
+    
     useEffect(() => {
         if (selectedCity) {
             setCity(selectedCity);
@@ -107,7 +80,8 @@ export default function ListingPageHeader() {
                         <Select
                             options={cityOptions}
                             value={selectedCity ? getOptionFromCity(selectedCity) : null}
-                            onChange={(val) => {
+                            onChange={(newValue, _actionMeta) => {
+                                const val = newValue as SelectOption | null;
                                 const city = cities.find((c) => c.id === val?.value);
                                 setSelectedCity(city || null);
                             }}
