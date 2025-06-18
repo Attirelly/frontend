@@ -20,7 +20,7 @@ import { SelectOption } from '@/types/SellerTypes';
 // ];
 
 export default function ListingPageHeader() {
-    const { setCity, query, setQuery} = useHeaderStore();
+    const { setCity, query, setQuery } = useHeaderStore();
     const [cities, setCities] = useState<City[]>([]);
     // const [stores, setStoreTypes] = useState('');
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
@@ -57,7 +57,7 @@ export default function ListingPageHeader() {
         };
         fetchCities();
     }, []);
-    
+
     useEffect(() => {
         if (selectedCity) {
             setCity(selectedCity);
@@ -65,61 +65,67 @@ export default function ListingPageHeader() {
     }, [selectedCity]);
 
     return (
-        <header className="bg-white shadow">
-            <div className="flex items-center justify-between px-20 py-4">
-                {/* Logo */}
-                <div className="text-2xl font-bold text-black">Attirelly</div>
+        <header className="bg-[#FFFFFF] shadow">
+            <div className="grid grid-cols-[1fr_2fr_1fr] items-center px-20 py-4">
+                {/* Left: Logo */}
+                <div className="flex justify-Left">
+                    <div className="text-3xl font-bold text-black">Attirelly</div>
+                </div>
 
-                {/* Center: City Selector + Search */}
-                <div className="flex border border-gray-300 rounded-full items-center gap-4 w-1/2 px-4">
-                    {/* City Selector */}
-                    <div className="flex items-center gap-2 w-[50%]">
-                        <div className="opacity-80">
-                            <img src="/ListingPageHeader/location_pin.png" alt="Location" />
+                {/* Center: Search Component */}
+                <div className="flex justify-center">
+                    <div className="flex border border-gray-300 rounded-full items-center gap-4 w-full max-w-[600px] px-4">
+                        {/* City Selector */}
+                        <div className="flex items-center gap-2 w-[50%]">
+                            <div className="opacity-80">
+                                <img src="/ListingPageHeader/location_pin.svg" alt="Location" />
+                            </div>
+                            <Select
+                                options={cityOptions}
+                                value={selectedCity ? getOptionFromCity(selectedCity) : null}
+                                onChange={(newValue, _actionMeta) => {
+                                    const val = newValue as SelectOption | null;
+                                    const city = cities.find((c) => c.id === val?.value);
+                                    setSelectedCity(city || null);
+                                }}
+                                className="w-full"
+                                classNamePrefix="city-select"
+                                isSearchable
+                                placeholder="City Name"
+                            />
                         </div>
-                        <Select
-                            options={cityOptions}
-                            value={selectedCity ? getOptionFromCity(selectedCity) : null}
-                            onChange={(newValue, _actionMeta) => {
-                                const val = newValue as SelectOption | null;
-                                const city = cities.find((c) => c.id === val?.value);
-                                setSelectedCity(city || null);
-                            }}
-                            className="w-full"
-                            classNamePrefix="city-select"
-                            isSearchable
-                            placeholder="City Name"
-                        />
-                    </div>
 
-                    <div className="border-l-2 border-gray-300 h-5 my-2" />
+                        <div className="border-l-2 border-gray-300 h-5 my-2" />
 
-                    {/* Search Bar */}
-                    <div className="flex items-center px-4 py-2 w-full">
-                        <div className="mr-2 opacity-80">
-                            <img src="/ListingPageHeader/search_lens.png" alt="Search" />
+                        {/* Search Input */}
+                        <div className="flex items-center px-4 py-2 w-full">
+                            <div className="mr-2 opacity-80">
+                                <img src="/ListingPageHeader/search_lens.svg" alt="Search" />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Find your style..."
+                                className="w-full focus:outline-none text-sm"
+                                value={tempQuery}
+                                onChange={(e) => setTempQuery(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                            />
                         </div>
-                        <input
-                            type="text"
-                            placeholder="Find your style..."
-                            className="w-full focus:outline-none text-sm"
-                            value={tempQuery}
-                            onChange={(e) => setTempQuery(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                        />
                     </div>
                 </div>
 
-                {/* Profile + Cart */}
-                <div className="flex items-center gap-6 text-sm">
-                    <div className="flex items-center gap-2">
-                        <span>Archit</span>
-                        <div className="opacity-100">
-                            <img src="/ListingPageHeader/user_logo.png" alt="User" />
+                {/* Right: Profile + Cart */}
+                <div className="flex justify-center">
+                    <div className="flex items-center justify-between gap-10 text-sm w-full max-w-[200px]">
+                        <div className="flex items-center gap-2">
+                            <span>Archit</span>
+                            <div className="opacity-100">
+                                <img src="/ListingPageHeader/user_logo.svg" alt="User" />
+                            </div>
                         </div>
-                    </div>
-                    <div className="opacity-100">
-                        <img src="/ListingPageHeader/shopping_cart.png" alt="Cart" />
+                        <div className="opacity-100">
+                            <img src="/ListingPageHeader/shopping_cart.svg" alt="Cart" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,10 +134,10 @@ export default function ListingPageHeader() {
             <nav className="flex justify-center gap-8 py-2 text-sm text-gray-600">
                 <a href="#">Men</a>
                 <a href="#">Women</a>
-                <a href="#">Wedding</a>
+                {/* <a href="#">Wedding</a>
                 <a href="#">Stores</a>
                 <a href="#">Locations</a>
-                <a href="#">Trends</a>
+                <a href="#">Trends</a> */}
             </nav>
         </header>
     );

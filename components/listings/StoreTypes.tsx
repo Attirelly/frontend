@@ -57,7 +57,7 @@ export default function StoreTypeTabs({
     }, []);
 
     return (
-        <div className="flex bg-gray-200 rounded-full overflow-hidden w-fit px-2 py-2">
+        <div className="flex bg-[#F5F5F5] rounded-full overflow-hidden w-fit px-2 py-2">
             {tabs.map((tab, index) => (
                 <div key={tab.value} className="flex items-center">
                     <button

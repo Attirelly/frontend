@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import type { StoreCardType } from '@/types/SellerTypes';
+import { CornerShadowOverlay } from '@/components/ui/CornerGradiantOverlay';
 
 type StoreCardProps = {
     imageUrl: string;
@@ -25,18 +26,21 @@ export default function StoreCard({
     instagramFollowers,
 }: StoreCardProps) {
     return (
-        <div className="relative border border-gray-200 rounded p-4 flex gap-4 bg-white hover:[box-shadow:0px_4px_20px_rgba(0,0,0,0.15)] transition-all">
+        <div className="relative border border-[#F1F1F1] rounded-xl p-4 flex gap-4 bg-[#FFFFFF] hover:[box-shadow:0px_4px_20px_rgba(0,0,0,0.15)] transition-all">
             {/* Store Image */}
             <div className="relative w-60 h-60 overflow-hidden flex-shrink-0">
                 <Image
                     src={imageUrl}
                     alt={storeName}
                     fill
-                    className="object-cover rounded"
+                    className="object-cover rounded-xl"
                     sizes="(max-width: 640px) 100vw, 
                             (max-width: 1024px) 50vw, 
                              33vw"
                 />
+                {/* <CornerShadowOverlay opacity={0.1} size={60} /> */}
+                {/* Radial Gradient Overlay */}
+                {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,0,0,0.5),_transparent_80%)]" /> */}
                 {/* absolute bottom-0 left-0 mb-4 w-fit h-7 flex items-center pl-2 pr-4 rounded-r-full bg-blue-600 relative overflow-hidden text-white text-xs font-medium */}
                 {discount && (
                     <div className="absolute bottom-0 left-0 mb-4 w-fit h-7 flex items-center pl-2 pr-10 overflow-hidden bg-[linear-gradient(to_right,_#2563eb_60%,_transparent)]  text-white text-xs font-medium">
@@ -49,6 +53,7 @@ export default function StoreCard({
                         />
                         Flat {discount}% OFF
                         {/* <div className="absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-red to-red pointer-events-none" /> */}
+
                     </div>
                 )}
             </div>
@@ -108,9 +113,6 @@ export default function StoreCard({
                         ))}
                     </div>
                 )}
-
-
-
             </div>
         </div>
     );

@@ -9,6 +9,8 @@ type HeaderState = {
     setQuery: (query: string) => void;
     storeType: BrandType | null;
     setStoreType: (storeType: BrandType | null) => void; 
+    deliveryType: string;
+    setDeliveryType : (delivery : string) => void;
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
@@ -18,4 +20,6 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setQuery: (query) => set({ query }),
     storeType: null,
     setStoreType: (storeType: BrandType | null) => set({ storeType }),
+    deliveryType: '',
+    setDeliveryType: (delivery: string) => set({ deliveryType: delivery }),
 }));
