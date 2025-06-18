@@ -1,4 +1,5 @@
 'use client';
+import DynamicFilter from "@/components/listings/DynamicFilter";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import StoreCard from "@/components/listings/StoreCard";
 import StoreContainerPage from "@/components/listings/StoreContainer";
@@ -44,7 +45,7 @@ export default function StoreListingPage() {
         <div className="border-t border-gray-300"></div>
         <div className="flex">
 
-          <div>Filter Bar</div>
+          <DynamicFilter/>
           <div className="w-full">
             <StoreContainerPage />
           </div>
