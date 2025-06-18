@@ -4,6 +4,7 @@ import StoreCard from "./StoreCard";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { useEffect, useState } from "react";
 import { StoreCardType } from "@/types/SellerTypes";
+import { toast } from "sonner";
 
 export default function StoreContainerPage() {
     const { city, query, storeType } = useHeaderStore();
@@ -13,28 +14,35 @@ export default function StoreContainerPage() {
     useEffect(() => {
         console.log(city, query, storeType);
         const fetchStores = async () => {
-            const res = await api.get(
-                `/search/search_store?query=${query}`
-            );
-            const data = res.data;
-            const storeCards: StoreCardType[] = data.hits.map((sc: any) => ({
-                id: sc.id,
-                imageUrl: sc.profile_image || "/OnboardingSections/qr.png",
-                storeName: sc.store_name,
-                location: `${sc.area}, ${sc.city}`,
-                storeTypes: sc.store_types || [],
-                priceRanges: ["Affordable", "Luxury"],
-                bestSelling: ["Tshirt", "Shoes"],
-                discount: 15,
-                instagramFollowers: "220k",
-            }));
-            console.log(data.hits);
-            console.log(storeCards);
-            setStores(storeCards);
+            const params = new URLSearchParams();
+            if (query) params.append("query", query);
+            if (city) params.append("city", city.name);
+            if (storeType) params.append("store_types", storeType.store_type);
+            try {
+                const res = await api.get(
+                    `/search/search_store?${params.toString()}`
+                );
+                const data = res.data;
+                const storeCards: StoreCardType[] = data.hits.map((sc: any) => ({
+                    id: sc.id,
+                    imageUrl: sc.profile_image || "/OnboardingSections/qr.png",
+                    storeName: sc.store_name,
+                    location: `${sc.area}, ${sc.city}`,
+                    storeTypes: sc.store_types || [],
+                    priceRanges: ["Affordable", "Luxury"],
+                    bestSelling: ["Tshirt", "Shoes"],
+                    discount: 15,
+                    instagramFollowers: "220k",
+                }));
+                console.log(data.hits);
+                console.log(storeCards);
+                setStores(storeCards);
+            } catch (error) {
+                toast.error("Failed to fetch stores");
+            }
         }
-
         fetchStores();
-    }, [query, storeType]);
+    }, [query, storeType, city]);
     return (
         <div className="grid lg:grid-cols-1 sm:grid-cols-2  gap-4">
             {stores.map((store, index) => (
