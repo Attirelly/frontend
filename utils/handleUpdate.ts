@@ -20,7 +20,7 @@ export const useUpdateStore = () => {
         businessDetailsData,
         priceFiltersValid,
         whereToSellData,
-        priceFiltersData,
+        priceFiltersData,   
         socialLinksData,
         storePhotosData,
         storePhotosValid
@@ -69,9 +69,9 @@ export const useUpdateStore = () => {
                 return false;
             }
         }
-
+    
         if (activeSection === 'price' && priceFiltersValid && priceFiltersData) {
-            console.log(activeSection);
+            console.log("fasfasfasdfasd", priceFiltersData);
             const price_payload = {
                 average_price_min: priceFiltersData.avgPriceMin,
                 average_price_max: priceFiltersData.avgPriceMax,

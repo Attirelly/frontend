@@ -10,8 +10,10 @@ export interface GenderType { id: string; gender_value: string };
 export interface Category { category_id: string; name: string }
 
 export interface StoreTypePriceRange {
-  store_type: string;
-  price_range: string;
+  store_type_id:string;
+  price_range_id:string;
+  store_type?: string;
+  price_range?: string;
 };
 
 export interface StoreCardType {

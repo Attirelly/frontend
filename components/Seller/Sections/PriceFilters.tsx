@@ -15,8 +15,10 @@ interface PriceRange {
 }
 
 type StoreTypePriceRange = {
-  store_type: string;
-  price_range: string;
+  store_type_id : string;
+  price_range_id:string ;
+  store_type?: string;
+  price_range?: string;
 }
 
 const PRICE_RANGE_TEXT: Record<string, string> = {
@@ -27,7 +29,7 @@ const PRICE_RANGE_TEXT: Record<string, string> = {
 
 export default function PriceFiltersComponent() {
   const { storeId, setPriceFiltersData, setPriceFiltersValid, priceFiltersData } = useSellerStore();
-  console.log(priceFiltersData)
+  console.log("teatastt gas" ,priceFiltersData)
 
   const [minPrice, setMinPrice] = useState(priceFiltersData?.avgPriceMin?.toString() || '');
   const [maxPrice, setMaxPrice] = useState(priceFiltersData?.avgPriceMax?.toString() || '');
@@ -44,6 +46,10 @@ export default function PriceFiltersComponent() {
           api.get(`/stores/${storeId}`),
           api.get(`/stores/price_ranges`)
         ]);
+
+        console.log("storeres" , storeRes);
+        console.log("price " , priceRangeRes)
+        
         const storeData = storeRes.data;
         if (storeData?.store_types) {
           const fetchedStoreTypes: StoreType[] = storeData.store_types;
@@ -52,7 +58,7 @@ export default function PriceFiltersComponent() {
           // Clean up old selectedPrices that refer to deleted storeTypes
           const validStoreTypeIds = new Set(fetchedStoreTypes.map((st) => st.id));
           setSelectedPrices((prev) =>
-            prev.filter((item) => validStoreTypeIds.has(item.store_type))
+            prev.filter((item) => validStoreTypeIds.has(item.store_type_id))
           );
         }
         setPriceRanges(priceRangeRes.data);
@@ -67,17 +73,17 @@ export default function PriceFiltersComponent() {
 
 
 
-  const handleSelect = (storeTypeId: string, priceRangeId: string) => {
+  const handleSelect = (storeTypeId: string, priceRangeId: string , store_type : string , price_range :string) => {
     setSelectedPrices((prev) => {
-      const updated = prev.filter((item) => item.store_type !== storeTypeId);
-      return [...updated, { store_type: storeTypeId, price_range: priceRangeId }];
+      const updated = prev.filter((item) => item.store_type_id !== storeTypeId);
+      return [...updated, { store_type_id : storeTypeId  , store_type: store_type, price_range_id : priceRangeId , price_range:price_range }];
     });
   };
   console.log(selectedPrices)
 
   useEffect(() => {
     const allStoreTypesSelected = storeTypes.every((storeType) =>
-      selectedPrices.some((entry) => entry.store_type === storeType.id)
+      selectedPrices.some((entry) => entry.store_type_id === storeType.id)
     );
 
     const isValid =
@@ -156,7 +162,7 @@ export default function PriceFiltersComponent() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {priceRanges.map((price) => {
                 const isSelected = selectedPrices.some(
-                  (entry) => entry.store_type === storeType.id && entry.price_range === price.id
+                  (entry) => entry.store_type_id === storeType.id && entry.price_range_id === price.id
                 );
                 return (
                   <label
@@ -169,7 +175,7 @@ export default function PriceFiltersComponent() {
                       name={`price-${storeType.id}`}  // group by store type
                       value={price.id}
                       checked={isSelected}
-                      onChange={() => handleSelect(storeType.id, price.id)}
+                      onChange={() => handleSelect(storeType.id, price.id , storeType.store_type , price.label)}
                       className="accent-black"
                     />
                     <div>
