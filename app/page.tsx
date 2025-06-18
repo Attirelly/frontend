@@ -186,7 +186,7 @@ export default function Home() {
 
       setSellers(sellers);
       setTotalItems(data.total || data.hits.length);
-
+      console.log("algolia" , data)
       const newFacets: Facets = {
         area: Object.entries(data.facets?.area || {}),
         city: Object.entries(data.facets?.city || {}),
