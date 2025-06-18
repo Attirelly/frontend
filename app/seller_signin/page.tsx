@@ -65,9 +65,8 @@ export default function SellerSignup() {
                 return;
             }
             // send api to verify otp 
-
-            // if success
-            if (fullOtp === '123456') {
+            try {
+                await api.post('/otp/verify_otp', null ,{ params: { phone_number: "7015241757", otp: fullOtp } })
                 try {
                     // here we will create jwt tokens
                     await api.post("/users/login", { contact_number: phone });
@@ -89,10 +88,37 @@ export default function SellerSignup() {
                     console.error('Error fetching stores by section:', error);
                 }
             }
-            else {
-                alert('wrong otp');
-                return;
+            catch (error) {
+                toast.error("OTP not correct")
             }
+
+            // if success
+            // if (fullOtp === '123456') {
+            //     try {
+            //         // here we will create jwt tokens
+            //         await api.post("/users/login", { contact_number: phone });
+            //         if (currSection < 5) {
+            //             toast.error("Please complete onboarding first!")
+            //             try {
+            //                 await api.post("/users/login", { contact_number: phone });
+            //                 router.push('/seller_signup/sellerOnboarding')
+            //             } catch (error) {
+            //                 toast.error("failed to login");
+            //             }
+            //         }
+            //         else {
+            //             router.push('/seller_dashboard');
+            //             toast.success("logged in successfully");
+            //         }
+            //     }
+            //     catch (error) {
+            //         console.error('Error fetching stores by section:', error);
+            //     }
+            // }
+            // else {
+            //     alert('wrong otp');
+            //     return;
+            // }
         }
         else {
 
@@ -115,10 +141,16 @@ export default function SellerSignup() {
                 setSellerId(user_data.id);
                 setSellerName(user_data.name);
                 setSellerEmail(user_data.email);
-                setSendOTP(true);
-                // Handle sending OTP
-                alert(`OTP sent to ${phone}`);
-                setSellerNumber(phone);
+                try {
+                    await api.post('/otp/send_otp', null ,{ params: { phone_number: "7015241757", otp_template: "UserLoginOTP" } })
+                    setSendOTP(true);
+                    alert(`OTP sent to ${phone}`);
+                    setSellerNumber(phone);
+                }
+                catch {
+                    toast.error("Failed to send OTP!");
+                }
+
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     console.log('Status Code:', error.response.status);
