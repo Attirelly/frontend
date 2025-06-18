@@ -4,7 +4,7 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { useEffect, useState } from "react";
 import { StoreCardType } from "@/types/SellerTypes";
 import { toast } from "sonner";
-import DynamicFilter from "@/app/StoreSideFilter/DynamicFilter/DynamicFilter";
+
 import { useFilterStore } from "@/store/filterStore";
 
 export default function StoreContainerPage() {
