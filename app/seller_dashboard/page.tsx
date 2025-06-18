@@ -155,6 +155,7 @@ export default function SellerDashboardPage() {
   };
 
   const handleUpdateClick = async () => {
+    console.log("activesession" , activeSection);
     const res = await handleUpdate(activeSection, false);
     if (res) {
       // setToastMessage("Store updated!");

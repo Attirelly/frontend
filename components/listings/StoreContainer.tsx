@@ -3,7 +3,6 @@ import StoreCard from "./StoreCard";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { useEffect, useState } from "react";
 import { StoreCardType } from "@/types/SellerTypes";
-import DynamicFilter from "@/app/StoreSideFilter/DynamicFilter/DynamicFilter";
 import { useFilterStore } from "@/store/filterStore";
 
 export default function StoreContainerPage() {
@@ -30,8 +29,9 @@ export default function StoreContainerPage() {
     const fetchStores = async () => {
 
       const algoia_facets = buildFacetFilters(selectedFilters) ;   
-      const res = await api.get(`/search/search_store?query=${query}&page=0&limit=10&facetFilters=${algoia_facets}`);
-
+      
+      const res = await api.get(`/search/search_store?query=${query}&page=0&limit=20&facetFilters=${algoia_facets}`);
+      console.log("fasfdasdasf", res.data)
 
 
 
