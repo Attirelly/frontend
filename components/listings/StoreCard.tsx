@@ -1,8 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import type { StoreCardType } from '@/types/SellerTypes';
-import { CornerShadowOverlay } from '@/components/ui/CornerGradiantOverlay';
+import {event} from '@/lib/gtag'
 
 type StoreCardProps = {
     imageUrl: string;
@@ -13,6 +12,7 @@ type StoreCardProps = {
     bestSelling?: string[] | []
     discount?: number;
     instagramFollowers?: string;
+    id:string
 };
 
 export default function StoreCard({
@@ -24,9 +24,24 @@ export default function StoreCard({
     bestSelling = [],
     discount,
     instagramFollowers,
+    id,
 }: StoreCardProps) {
+
+    const handleCardClick = () => {
+        console.log(storeName, id);
+        event({
+            action: "Store",
+            params: {
+                store_name : storeName,
+                store_id: id
+            }
+        });
+        
+    }
+
     return (
-        <div className="relative border border-[#F1F1F1] rounded-xl p-4 flex gap-4 bg-[#FFFFFF] hover:[box-shadow:0px_4px_20px_rgba(0,0,0,0.15)] transition-all">
+        <div className="relative border border-[#F1F1F1] rounded-xl p-4 flex gap-4 bg-[#FFFFFF] hover:[box-shadow:0px_4px_20px_rgba(0,0,0,0.15)] transition-all"
+        onClick={handleCardClick}>
             {/* Store Image */}
             <div className="relative w-60 h-60 overflow-hidden flex-shrink-0">
                 <Image
@@ -38,10 +53,6 @@ export default function StoreCard({
                             (max-width: 1024px) 50vw, 
                              33vw"
                 />
-                {/* <CornerShadowOverlay opacity={0.1} size={60} /> */}
-                {/* Radial Gradient Overlay */}
-                {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,0,0,0.5),_transparent_80%)]" /> */}
-                {/* absolute bottom-0 left-0 mb-4 w-fit h-7 flex items-center pl-2 pr-4 rounded-r-full bg-blue-600 relative overflow-hidden text-white text-xs font-medium */}
                 {discount && (
                     <div className="absolute bottom-0 left-0 mb-4 w-fit h-7 flex items-center pl-2 pr-10 overflow-hidden bg-[linear-gradient(to_right,_#2563eb_60%,_transparent)]  text-white text-xs font-medium">
                         <Image

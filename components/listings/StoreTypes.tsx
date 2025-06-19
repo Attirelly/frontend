@@ -6,6 +6,7 @@ import { SelectOption, BrandType } from '@/types/SellerTypes';
 import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import { useHeaderStore } from '@/store/listing_header_store';
+import { event } from '@/lib/gtag';
 
 
 
@@ -21,16 +22,22 @@ export default function StoreTypeTabs({
     //   onChange,
     defaultValue,
 }: StoreTypeTabsProps) {
-    const {setStoreType} = useHeaderStore();
+    const { setStoreType } = useHeaderStore();
     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
     const [tabs, setTabs] = useState<SelectOption[]>([]);
     const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
 
     const handleTabClick = (value: SelectOption) => {
-        const storeType : BrandType =  {
-            id : value.value,
-            store_type : value.label
+        const storeType: BrandType = {
+            id: value.value,
+            store_type: value.label
         }
+        event({
+            action: "Store Type Select",
+            params: {
+                "Store Type": value.label
+            }
+        });
         setSelectedStoreType(storeType);
         setStoreType(storeType);
         // onChange(value);
@@ -44,8 +51,8 @@ export default function StoreTypeTabs({
                 console.log(res.data);
                 setStoreTypes(res.data);
                 const options: SelectOption[] = res.data.map((t: BrandType) => ({
-                    label : t.store_type,
-                    value : t.id
+                    label: t.store_type,
+                    value: t.id
                 }));
                 setTabs(options);
             }
