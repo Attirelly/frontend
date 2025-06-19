@@ -81,8 +81,8 @@ export default function ListingPageHeader() {
                                 <img src="/ListingPageHeader/location_pin.svg" alt="Location" />
                             </div>
                             <Select
-                                options={cityOptions}
-                                value={selectedCity ? getOptionFromCity(selectedCity) : null}
+                                options={[{label:"All Cities" , value : ""},...cityOptions]}
+                                value={selectedCity ? getOptionFromCity(selectedCity) : { label: "All Cities", value: "" }}
                                 onChange={(newValue, _actionMeta) => {
                                     const val = newValue as SelectOption | null;
                                     const city = cities.find((c) => c.id === val?.value);
