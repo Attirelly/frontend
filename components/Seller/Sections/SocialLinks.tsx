@@ -43,11 +43,10 @@ export default function SocialLinksComponent() {
 
   const handleInstagramConnect = () => {
     if(validateInstagramUrl(instagramUrl)){
-      const appId = process.env.INSTAGRAM_APP_ID
+      const appId = process.env.NEXT_INSTAGRAM_APP_ID
       const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`)
       console.log(redirectUri)
-      window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${instagramUrl}`
-   
+      window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${instagramUrl}`   
     }
   };
   return (
