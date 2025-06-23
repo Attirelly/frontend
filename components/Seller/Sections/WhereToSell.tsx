@@ -68,7 +68,7 @@ export default function WhereToSellComponent() {
 
   useEffect(() => {
     if (selected == 'both') {
-      setWhereToSellData({ isOnline: true, isBoth: true });
+      setWhereToSellData({ isOnline: false, isBoth: true });
     } else {
       if (selected === 'online')
         setWhereToSellData({ isOnline: true, isBoth: false });

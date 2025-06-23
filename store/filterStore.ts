@@ -21,24 +21,45 @@ interface FilterState {
 export const useFilterStore = create<FilterState>((set, get) => ({
   facets: {},
   selectedFilters: {},
+  // setFacets: (apiFacets) => {
+  //   const facets: Facets = {};
+
+  //   for (const [facetName, values] of Object.entries(apiFacets)) {
+  //     facets[facetName] = Object.entries(values).map(([name, count]) => ({
+  //       name,
+  //       count,
+  //       selected: false,
+  //     }));
+  //   }
+
+  //   set({ 
+  //     facets,
+  //     selectedFilters: Object.keys(apiFacets).reduce((acc, key) => {
+  //       acc[key] = [];
+  //       return acc;
+  //     }, {} as Record<string, string[]>)
+  //   });
+  // },
   setFacets: (apiFacets) => {
-    const facets: Facets = {};
-    
+    const currentFacets = get().facets;
+    const updatedFacets: Facets = { ...currentFacets };
+
     for (const [facetName, values] of Object.entries(apiFacets)) {
-      facets[facetName] = Object.entries(values).map(([name, count]) => ({
-        name,
-        count,
-        selected: false,
-      }));
+      const existing = currentFacets[facetName] || [];
+
+      const updatedFacetValues: FacetValue[] = Object.entries(values).map(([name, count]) => {
+        const match = existing.find((item) => item.name === name);
+        return {
+          name,
+          count,
+          selected: match?.selected ?? false,
+        };
+      });
+
+      updatedFacets[facetName] = updatedFacetValues;
     }
 
-    set({ 
-      facets,
-      selectedFilters: Object.keys(apiFacets).reduce((acc, key) => {
-        acc[key] = [];
-        return acc;
-      }, {} as Record<string, string[]>)
-    });
+    set({ facets: updatedFacets });
   },
   toggleFilter: (facetName, value) => {
     set((state) => {
@@ -58,9 +79,9 @@ export const useFilterStore = create<FilterState>((set, get) => ({
         .filter(f => f.selected)
         .map(f => f.name);
 
-      return { 
-        facets: updatedFacets, 
-        selectedFilters: updatedSelectedFilters 
+      return {
+        facets: updatedFacets,
+        selectedFilters: updatedSelectedFilters
       };
     });
   },
@@ -77,9 +98,9 @@ export const useFilterStore = create<FilterState>((set, get) => ({
         resetSelectedFilters[facetName] = [];
       }
 
-      return { 
-        facets: resetFacets, 
-        selectedFilters: resetSelectedFilters 
+      return {
+        facets: resetFacets,
+        selectedFilters: resetSelectedFilters
       };
     });
   },

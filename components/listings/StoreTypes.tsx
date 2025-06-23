@@ -6,6 +6,8 @@ import { SelectOption, BrandType } from '@/types/SellerTypes';
 import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import { useHeaderStore } from '@/store/listing_header_store';
+import { event } from '@/lib/gtag';
+import { manrope } from '@/font';
 
 
 
@@ -21,16 +23,22 @@ export default function StoreTypeTabs({
     //   onChange,
     defaultValue,
 }: StoreTypeTabsProps) {
-    const {setStoreType} = useHeaderStore();
+    const { setStoreType } = useHeaderStore();
     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
     const [tabs, setTabs] = useState<SelectOption[]>([]);
     const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
 
     const handleTabClick = (value: SelectOption) => {
-        const storeType : BrandType =  {
-            id : value.value,
-            store_type : value.label
+        const storeType: BrandType = {
+            id: value.value,
+            store_type: value.label
         }
+        event({
+            action: "Store Type Select",
+            params: {
+                "Store Type": value.label
+            }
+        });
         setSelectedStoreType(storeType);
         setStoreType(storeType);
         // onChange(value);
@@ -44,8 +52,8 @@ export default function StoreTypeTabs({
                 console.log(res.data);
                 setStoreTypes(res.data);
                 const options: SelectOption[] = res.data.map((t: BrandType) => ({
-                    label : t.store_type,
-                    value : t.id
+                    label: t.store_type,
+                    value: t.id
                 }));
                 setTabs(options);
             }
@@ -62,18 +70,20 @@ export default function StoreTypeTabs({
                 <div key={tab.value} className="flex items-center">
                     <button
                         className={clsx(
-                            'px-4 py-2 text-sm font-medium rounded-full transition-all duration-200',
+                            manrope.className,
+                            'px-4 py-2 rounded-full transition-all duration-200 mx-2',
                             selectedStoreType?.id === tab.value
                                 ? 'bg-white shadow text-black'
-                                : 'text-gray-600 hover:text-black'
+                                : 'text-[#565656] hover:text-black'
                         )}
+                        style={{fontWeight:500}}
                         onClick={() => handleTabClick(tab)}
                     >
                         {tab.label}
                     </button>
 
                     {index !== tabs.length - 1 && (
-                        <div className="h-6 border-r border-gray-300 mx-1" />
+                        <div className="h-6 border-r border-gray-300 mx-2" />
                     )}
                 </div>
             ))}

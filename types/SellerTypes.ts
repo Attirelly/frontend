@@ -16,6 +16,11 @@ export interface StoreTypePriceRange {
   price_range?: string;
 };
 
+export interface PriceRangeType{
+  id : string,
+  label? : string
+}
+
 export interface StoreCardType {
   id: string;
   imageUrl: string;
@@ -26,4 +31,17 @@ export interface StoreCardType {
   bestSelling?: string[] | []
   discount?: number;
   instagramFollowers?: string;
+}
+
+export interface StoreInfoType {
+  id : string, 
+  imageUrl : string,
+  locationUrl: string,
+  storeName: string,
+  post_count: string, 
+  instagramFollowers?: string,
+  product_count: string,
+  bio: string,
+  storeTypes: string[],
+  priceRanges: string[]
 }
