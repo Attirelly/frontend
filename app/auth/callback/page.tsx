@@ -6,11 +6,11 @@ import { api } from "@/lib/axios";
 
 export default function InstagramCallback() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const code = searchParams.get("code");
+  const state = searchParams.get("state");
 
   useEffect(() => {
-    const searchParams = useSearchParams();
-    const code = searchParams.get("code");
-    const state = searchParams.get("state");
     console.log(code);
     console.log(state);
 
