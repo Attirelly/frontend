@@ -11,7 +11,7 @@ export default function SellerOnboardingPage() {
       <Header
         title="Attirelly"
         actions={
-          <label className="text-black">Need help? Call +91-7015241757</label>
+          <label className="text-black">Need help? Call +91-9821205090</label>
         }
       />
       <Hero />
