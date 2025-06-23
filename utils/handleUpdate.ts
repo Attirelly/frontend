@@ -49,7 +49,8 @@ export const useUpdateStore = () => {
                 area: businessDetailsData.area[0],
                 city: businessDetailsData.city[0],
                 pincode: businessDetailsData.pinCode[0],
-                registered_email: businessDetailsData.ownerEmail
+                registered_email: businessDetailsData.ownerEmail,
+                // store_type_price_range_links: priceFiltersData?.priceRanges,
             };
 
             try {
@@ -71,11 +72,11 @@ export const useUpdateStore = () => {
         }
     
         if (activeSection === 'price' && priceFiltersValid && priceFiltersData) {
-            console.log("fasfasfasdfasd", priceFiltersData);
             const price_payload = {
                 average_price_min: priceFiltersData.avgPriceMin,
                 average_price_max: priceFiltersData.avgPriceMax,
                 store_type_price_range_links: priceFiltersData.priceRanges,
+                price_ranges:priceFiltersData.priceRangesStr,
                 curr_section: curr_section,
             };
             try {
@@ -93,6 +94,7 @@ export const useUpdateStore = () => {
             console.log(whereToSellData);
             const market_payload = {
                 is_online : whereToSellData.isOnline,
+                is_both : whereToSellData.isBoth,
                 curr_section: curr_section,
             }
             try {

@@ -9,6 +9,8 @@ import { api } from '@/lib/axios';
 import { BrandType, City } from '@/types/SellerTypes';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { SelectOption } from '@/types/SellerTypes';
+import {rubik, manrope} from '@/font'
+
 
 // const priorityOrder = [
 //     'Designer Labels',
@@ -69,14 +71,16 @@ export default function ListingPageHeader() {
             <div className="grid grid-cols-[1fr_2fr_1fr] items-center px-20 py-4">
                 {/* Left: Logo */}
                 <div className="flex justify-Left">
-                    <div className="text-3xl font-bold text-black">Attirelly</div>
+                    {/* <div className="text-3xl font-bold text-black">Attirelly</div> */}
+                    <div className={`${rubik.className} text-[32px] w-[132px] h-[38px]`}
+                        style={{fontWeight: 700}}>Attirelly</div>
                 </div>
 
                 {/* Center: Search Component */}
                 <div className="flex justify-center">
                     <div className="flex border border-gray-300 rounded-full items-center gap-4 w-full max-w-[600px] px-4">
                         {/* City Selector */}
-                        <div className="flex items-center gap-2 w-[50%]">
+                        <div className="flex items-center gap-2 w-[250px] h-[24px]">
                             <div className="opacity-80">
                                 <img src="/ListingPageHeader/location_pin.svg" alt="Location" />
                             </div>
@@ -88,7 +92,7 @@ export default function ListingPageHeader() {
                                     const city = cities.find((c) => c.id === val?.value);
                                     setSelectedCity(city || null);
                                 }}
-                                className="w-full"
+                                className={`${manrope.className} w-full`}
                                 classNamePrefix="city-select"
                                 isSearchable
                                 placeholder="City Name"
@@ -105,7 +109,9 @@ export default function ListingPageHeader() {
                             <input
                                 type="text"
                                 placeholder="Find your style..."
-                                className="w-full focus:outline-none text-sm"
+                                // className="w-full focus:outline-none text-sm"
+                                className={`${manrope.className} w-[118px] h-[22px] text-[16px] focus:outline-none`}
+                                style={{fontWeight:400}}
                                 value={tempQuery}
                                 onChange={(e) => setTempQuery(e.target.value)}
                                 onKeyDown={handleKeyDown}
@@ -118,12 +124,13 @@ export default function ListingPageHeader() {
                 <div className="flex justify-center">
                     <div className="flex items-center justify-between gap-10 text-sm w-full max-w-[200px]">
                         <div className="flex items-center gap-2">
-                            <span>Archit</span>
+                            <span className={`${manrope.className} w-[45px] h-[22px]`}
+                            style={{fontWeight:400}}>Archit</span>
                             <div className="opacity-100">
                                 <img src="/ListingPageHeader/user_logo.svg" alt="User" />
                             </div>
                         </div>
-                        <div className="opacity-100">
+                        <div className="opacity-100 w-[32px] h-[32px]">
                             <img src="/ListingPageHeader/shopping_cart.svg" alt="Cart" />
                         </div>
                     </div>
@@ -132,8 +139,8 @@ export default function ListingPageHeader() {
 
             {/* Navigation Links */}
             <nav className="flex justify-center gap-8 py-2 text-sm text-gray-600">
-                <a href="#">Men</a>
-                <a href="#">Women</a>
+                <a href="#" className={`${manrope.className} `} style={{fontWeight:400}}>Men</a>
+                <a href="#" className={`${manrope.className} `} style={{fontWeight:400}}>Women</a>
                 {/* <a href="#">Wedding</a>
                 <a href="#">Stores</a>
                 <a href="#">Locations</a>

@@ -14,6 +14,7 @@ export default function StoreContainerPage() {
 
   const [stores, setStores] = useState<StoreCardType[]>([]);
   const [page, setPage] = useState(0);
+  const [filters, setFilters] = useState('');
   const [totalPages, setTotalPages] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -34,8 +35,10 @@ export default function StoreContainerPage() {
   const fetchStores = async (currentPage: number) => {
     setLoading(true);
     const facetFilters = buildFacetFilters(selectedFilters);
+    console.log('filters', filters);
+    // const fi = "is_both:'true'";
     const res = await api.get(
-      `/search/search_store?query=${query} ${storeType?.store_type || ''} ${city?.name || ''}&page=${currentPage}&limit=10&facetFilters=${facetFilters}`
+      `/search/search_store?query=${query} ${storeType?.store_type || ''} ${city?.name || ''}&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
     );
     console.log('facet Filters', selectedFilters);
     event({
@@ -44,16 +47,20 @@ export default function StoreContainerPage() {
         filter_location: selectedFilters.area,
         filter_gender: selectedFilters.genders,
         filter_category: selectedFilters.categories,
-        // filter_pricerange:selectedFilters.price_range,
-        // filter_bestselling: selectedFilters.bestSelling,
-        // filter_discounts:selectedFilters.discounts,
+        filter_pricerange:selectedFilters.price_ranges,
+        filter_bestselling: selectedFilters.categories,
+        filter_discounts:selectedFilters.discount,
 
       }
     })
     const data = res.data;
     console.log(data);
+    // setFacets(data.facets);
 
-    if (currentPage === 0 && Object.keys(facets).length === 0) {
+    // if (currentPage === 0 && Object.keys(facets).length === 0) {
+    //   setFacets(data.facets);
+    // }
+    if (currentPage === 0){
       setFacets(data.facets);
     }
 
@@ -64,8 +71,8 @@ export default function StoreContainerPage() {
       location: `${sc.area}, ${sc.city}`,
       storeTypes: sc.store_types || [],
       priceRanges: [...new Set(sc.store_type_price_range.map(item => item.price_range))],
-      bestSelling: ["Tshirt", "Shoes"],
-      discount: 15,
+      bestSelling: sc.categories,
+      discount: sc.discount,
       instagramFollowers: "220k",
     }));
 
@@ -84,13 +91,27 @@ export default function StoreContainerPage() {
     setLoading(false);
   };
 
+
+
   // Trigger fetch on filter/search changes
   useEffect(() => {
     setPage(0);
     setHasMore(true);
     setStores([]);
     fetchStores(0);
-  }, [query, storeType, selectedFilters, city]);
+  }, [query, storeType, selectedFilters, city, filters]);
+
+  useEffect(() => {
+    if (deliveryType == 'In Store') {
+      setFilters("is_online:'false' OR is_both:'true'");
+    }
+    else if (deliveryType == 'Home Delivery') {
+      setFilters("is_online:'true' OR is_both:'true'");
+    }
+    else {
+      setFilters("");
+    }
+  }, [deliveryType]);
 
   // Trigger fetch on scroll
   useEffect(() => {
@@ -114,6 +135,8 @@ export default function StoreContainerPage() {
   }, [loaderRef, hasMore, loading]);
 
   // Fetch next page when page changes (except page=0 which is handled above)
+
+
   useEffect(() => {
     if (page !== 0) {
       console.log("Fetching page", page);

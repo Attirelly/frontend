@@ -98,6 +98,10 @@ export default function PriceFiltersComponent() {
         avgPriceMin: Number(minPrice),
         avgPriceMax: Number(maxPrice),
         priceRanges: selectedPrices,
+        priceRangesStr: selectedPrices.map((item) => ({
+          "id": item.price_range_id,
+          "label": item.price_range
+        })),
       });
     }
   }, [minPrice, maxPrice, selectedPrices, storeTypes]);

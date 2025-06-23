@@ -11,6 +11,8 @@ type HeaderState = {
     setStoreType: (storeType: BrandType | null) => void; 
     deliveryType: string;
     setDeliveryType : (delivery : string) => void;
+    viewType: string;
+    setViewType: (viewType: string) => void;
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
@@ -22,4 +24,6 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setStoreType: (storeType: BrandType | null) => set({ storeType }),
     deliveryType: '',
     setDeliveryType: (delivery: string) => set({ deliveryType: delivery }),
+    viewType: '',
+    setViewType: (viewType: string) => set({ viewType }),
 }));

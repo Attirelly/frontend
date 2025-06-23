@@ -10,17 +10,39 @@ import { api } from "@/lib/axios";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import {manrope} from "@/font";
 
 export default function StoreListingPage() {
 
-  const { query, city } = useHeaderStore();
+  const { query, city, storeType } = useHeaderStore();
   const [showFilters, setShowFilters] = useState(false);
+
+  const getHeading = () => {
+  if (storeType && query && city) {
+    return `Showing ${storeType.store_type} for ${query} in ${city.name}`;
+  } else if (storeType && query) {
+    return `Showing ${storeType.store_type} for ${query}`;
+  } else if (storeType && city) {
+    return `Showing ${storeType.store_type} in ${city.name}`;
+  } else if (query && city) {
+    return `Showing stores for ${query} in ${city.name}`;
+  } else if (storeType) {
+    return `Showing ${storeType.store_type}`;
+  } else if (query) {
+    return `Showing stores for ${query}`;
+  } else if (city) {
+    return `Showing stores in ${city.name}`;
+  } else {
+    return '';
+  }
+};
 
   return (
     <div className="bg-[#FFFFFF]">
       <ListingPageHeader />
-      <div className="mx-40 mt-8 gap-10 flex flex-col">
-        <h1 className="text-2xl font-bold text-gray-800">Showing stores for {query} in {city?.name}</h1>
+      <div className="mx-45 mt-8 gap-10 flex flex-col">
+       {/* <h1 className="text-2xl font-bold text-gray-800">{getHeading()}</h1> */}
+       <h1 className={`${manrope.className} text-4xl`} style={{fontWeight:500}}>{getHeading()}</h1>
         <StoreTypeTabs />
         <div className="border-t border-gray-300"/>
         <div className="grid grid-cols-[1fr_3fr] gap-3">
@@ -29,7 +51,7 @@ export default function StoreListingPage() {
             <DynamicFilter />
           </div>
           <div className="flex flex-col gap-5">
-            <TwoOptionToggle options={['In Store', 'Home Delivery']} />
+            <TwoOptionToggle options={['Home Delivery', 'In Store']} />
             <div className="w-full">
               <StoreContainerPage />
             </div>

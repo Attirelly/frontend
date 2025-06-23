@@ -1,7 +1,7 @@
 'use client'
 import { create } from 'zustand'
 import {Product, FilterOptions} from '@/types/ProductTypes'
-import { BrandType, GenderType, City, Area, Pincode, Category, StoreTypePriceRange } from '@/types/SellerTypes';
+import { BrandType, GenderType, City, Area, Pincode, Category, StoreTypePriceRange, PriceRangeType } from '@/types/SellerTypes';
 
 // type BrandType = {
 //   id: string,
@@ -72,7 +72,8 @@ type BusinessDetailsData = {
 type PriceFiltersData = {
   avgPriceMin : number | null,
   avgPriceMax : number | null,
-  priceRanges : StoreTypePriceRange[]
+  priceRanges : StoreTypePriceRange[],
+  priceRangesStr : PriceRangeType[]
 }
 
 type WhereToSellData = {

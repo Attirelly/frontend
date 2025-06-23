@@ -7,6 +7,7 @@ import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { event } from '@/lib/gtag';
+import { manrope } from '@/font';
 
 
 
@@ -69,18 +70,20 @@ export default function StoreTypeTabs({
                 <div key={tab.value} className="flex items-center">
                     <button
                         className={clsx(
-                            'px-4 py-2 text-sm font-medium rounded-full transition-all duration-200',
+                            manrope.className,
+                            'px-4 py-2 rounded-full transition-all duration-200 mx-2',
                             selectedStoreType?.id === tab.value
                                 ? 'bg-white shadow text-black'
-                                : 'text-gray-600 hover:text-black'
+                                : 'text-[#565656] hover:text-black'
                         )}
+                        style={{fontWeight:500}}
                         onClick={() => handleTabClick(tab)}
                     >
                         {tab.label}
                     </button>
 
                     {index !== tabs.length - 1 && (
-                        <div className="h-6 border-r border-gray-300 mx-1" />
+                        <div className="h-6 border-r border-gray-300 mx-2" />
                     )}
                 </div>
             ))}

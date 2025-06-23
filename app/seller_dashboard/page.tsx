@@ -93,14 +93,18 @@ export default function SellerDashboardPage() {
           setPriceFiltersData({
             avgPriceMin: storeData.average_price_min || null,
             avgPriceMax: storeData.average_price_max || null,
-            priceRanges: priceRangeRes.data || []
+            priceRanges: priceRangeRes.data || [],
+            priceRangesStr: priceRangeRes?.data.map((item) => ({
+                "id" : item.price_range_id,
+                "label" : item.price_range
+            }))
           });
         }
 
         if (curr_section >= 3) {
           setWhereToSellData({
             isOnline: storeData.is_online === true ? true : false,
-            isBoth: false
+            isBoth: storeData.is_both === true? true : false
           });
         }
 
