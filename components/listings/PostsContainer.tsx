@@ -13,23 +13,25 @@ export default function PostGalleryContainer() {
 
   const POSTS_PER_PAGE = 9;
 
-  const loadMorePosts = () => {
-    
-    const nextPage = page + 1;
-    const start = page * POSTS_PER_PAGE;
-    const end = start + POSTS_PER_PAGE;
-    const nextPosts = instaMedia.slice(start, end);
-    console.log("sysetm",nextPage, start, end, nextPosts);
-    setVisiblePosts((prev) => [...prev, ...nextPosts]);
-    setPage(nextPage);
-  };
-
+  // Load posts when media is available
   useEffect(() => {
     if (instaMedia && instaMedia.length > 0) {
       setVisiblePosts(instaMedia.slice(0, POSTS_PER_PAGE));
+      setPage(1); // reset page on new data
     }
   }, [instaMedia]);
 
+  const loadMorePosts = () => {
+    const start = page * POSTS_PER_PAGE;
+    if (start >= instaMedia.length) return; // No more posts to load
+
+    const end = start + POSTS_PER_PAGE;
+    const nextPosts = instaMedia.slice(start, end);
+    setVisiblePosts((prev) => [...prev, ...nextPosts]);
+    setPage((prev) => prev + 1);
+  };
+
+  // Setup scroll observer once
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -48,7 +50,7 @@ export default function PostGalleryContainer() {
     return () => {
       if (current) observer.unobserve(current);
     };
-  }, [visiblePosts]);
+  }, []); // 👈 run only once
 
   return (
     <div className="w-full max-w-4xl mx-auto">
