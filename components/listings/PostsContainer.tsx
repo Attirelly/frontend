@@ -2,6 +2,7 @@
 
 import GridPostGallery, { InstagramPost } from '@/components/listings/GridPostGallery';
 import { useEffect, useRef, useState } from 'react';
+import { useHeaderStore } from '@/store/listing_header_store';
 
 const generateMockPosts = (start: number, count: number): InstagramPost[] => {
   return Array.from({ length: count }, (_, i) => {
@@ -16,10 +17,12 @@ const generateMockPosts = (start: number, count: number): InstagramPost[] => {
 };
 
 export default function PostGalleryContainer() {
+  const {instaMedia} = useHeaderStore();
   const [posts, setPosts] = useState<InstagramPost[]>(generateMockPosts(0, 9));
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
+  console.log('instaMedia' , instaMedia);
 
   const fetchMorePosts = async () => {
     setLoading(true);

@@ -3,8 +3,10 @@ import {api} from '@/lib/axios'
 import StoreInfoPage from "./StoreInfoHeader";
 import PostCatalogueButton from "./PostCatalogueButton";
 import { StoreInfoType } from "@/types/SellerTypes";
+import { useHeaderStore } from "@/store/listing_header_store";
 
 export default function StoreInfoContainer(){
+  const {setInstaMedia} = useHeaderStore();
   const [store, setStore] = useState<StoreInfoType>();
     useEffect(() => {
       const fetchStore = async () => {
@@ -14,6 +16,7 @@ export default function StoreInfoContainer(){
         console.log(instaRes.data.media);
         const instaData = instaRes.data;
         const storeData = storeRes.data;
+        setInstaMedia(instaData.media);
         const storeFinal : StoreInfoType = {
           id: storeData.store_id,
           // imageUrl: storeData.profile_image,
