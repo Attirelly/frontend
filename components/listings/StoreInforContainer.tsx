@@ -11,19 +11,22 @@ export default function StoreInfoContainer(){
         const storeRes = await api.get('/stores/446e5536-4531-4440-94d0-11438558baac');
         const instaRes = await api.get('instagram/seller/2ba895ad-55c5-4e81-a0aa-e0f43962a685/data');
         console.log(storeRes.data);
-        console.log(instaRes.data);
+        console.log(instaRes.data.media);
+        const instaData = instaRes.data;
         const storeData = storeRes.data;
         const storeFinal : StoreInfoType = {
           id: storeData.store_id,
-          imageUrl: storeData.profile_image,
+          // imageUrl: storeData.profile_image,
+          imageUrl: instaData.profile_picture,
           locationUrl: storeData.store_address,
           storeName: storeData.store_name,
-          post_count: "1,234",
+          post_count: instaData.media_count,
           product_count: "345",
-          bio: "lala ausbfbojandfn  ❤️💫 sdgfaefa",
+          bio: instaData.biography,
           storeTypes: storeData.store_types.map((item : any) => item.store_type),
           priceRanges: storeData.price_ranges.map((item:any) => item.label),
-          instagramFollowers:"234"
+          instagramFollowers:instaData.followers_count
+
         }
         setStore(storeFinal);
       }
