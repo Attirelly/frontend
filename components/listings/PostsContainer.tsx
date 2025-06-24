@@ -14,10 +14,12 @@ export default function PostGalleryContainer() {
   const POSTS_PER_PAGE = 9;
 
   const loadMorePosts = () => {
+    
     const nextPage = page + 1;
     const start = page * POSTS_PER_PAGE;
     const end = start + POSTS_PER_PAGE;
     const nextPosts = instaMedia.slice(start, end);
+    console.log("sysetm",nextPage, start, end, nextPosts);
     setVisiblePosts((prev) => [...prev, ...nextPosts]);
     setPage(nextPage);
   };
