@@ -27,10 +27,11 @@ export default function PostGalleryContainer() {
 
     const end = start + POSTS_PER_PAGE;
     const nextPosts = instaMedia.slice(start, end);
+    console.log('jnzvc',end, start, nextPosts);
     setVisiblePosts((prev) => [...prev, ...nextPosts]);
     setPage((prev) => prev + 1);
   };
-
+  console.log(visiblePosts);
   // Setup scroll observer once
   useEffect(() => {
     const observer = new IntersectionObserver(
