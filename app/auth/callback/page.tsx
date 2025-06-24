@@ -9,12 +9,13 @@ import { useSellerStore } from "@/store/sellerStore";
 
 function CallbackHandler() {
 
-    const {sellerId} = useSellerStore();
+  const {sellerId} = useSellerStore();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const code = searchParams.get("code");
   const state = searchParams.get("state");
+  console.log(sellerId);
 
   useEffect(() => {
     const authenticate = async () => {
