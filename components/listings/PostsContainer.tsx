@@ -1,62 +1,81 @@
+// 'use client';
+
+// import GridPostGallery from '@/components/listings/GridPostGallery';
+// import { useEffect, useRef, useState } from 'react';
+// import { useHeaderStore } from '@/store/listing_header_store';
+// import { instaMediaType } from '@/types/SellerTypes';
+
+// export default function PostGalleryContainer() {
+//   const { instaMedia } = useHeaderStore();
+//   const [visiblePosts, setVisiblePosts] = useState<instaMediaType[]>([]);
+//   const [page, setPage] = useState(1);
+//   const loaderRef = useRef<HTMLDivElement>(null);
+
+//   const POSTS_PER_PAGE = 9;
+
+//   // Load posts when media is available
+//   useEffect(() => {
+//     if (instaMedia && instaMedia.length > 0) {
+//       setVisiblePosts(instaMedia.slice(0, POSTS_PER_PAGE));
+//       setPage(1); // reset page on new data
+//     }
+//   }, [instaMedia]);
+
+//   const loadMorePosts = () => {
+//     const start = visiblePosts.length;
+//     if (start >= instaMedia.length) return;
+
+//     const end = start + POSTS_PER_PAGE;
+//     const nextPosts = instaMedia.slice(start, end);
+//     setVisiblePosts((prev) => [...prev, ...nextPosts]);
+// };
+//   console.log(visiblePosts);
+//   // Setup scroll observer once
+//   useEffect(() => {
+//     const observer = new IntersectionObserver(
+//       (entries) => {
+//         if (entries[0].isIntersecting) {
+//           loadMorePosts();
+//         }
+//       },
+//       {
+//         root: document.getElementById('scrollable-container'),
+//         threshold: 0.1,
+//       }
+//     );
+
+//     const current = loaderRef.current;
+//     if (current) observer.observe(current);
+//     return () => {
+//       if (current) observer.unobserve(current);
+//     };
+//   }, []); // 👈 run only once
+
+//   return (
+//     <div className="w-full max-w-4xl mx-auto">
+//       <div id="scrollable-container" className="h-[850px] overflow-y-auto">
+//         <GridPostGallery posts={visiblePosts} />
+//         <div ref={loaderRef} className="text-center py-3 text-sm text-gray-400">
+//           {visiblePosts.length < instaMedia.length ? 'Loading more...' : 'End of posts'}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
 'use client';
 
-import GridPostGallery, { InstagramPost } from '@/components/listings/GridPostGallery';
-import { useEffect, useRef, useState } from 'react';
-
-const generateMockPosts = (start: number, count: number): InstagramPost[] => {
-  return Array.from({ length: count }, (_, i) => {
-    const id = (start + i).toString();
-    return {
-      id,
-      media_url: "/ListingPageHeader/store_profile_image.svg",
-      caption: `Post #${id}`,
-      media_type: i % 4 === 0 ? 'VIDEO' : 'IMAGE',
-    };
-  });
-};
+import GridPostGallery from '@/components/listings/GridPostGallery';
+import { useHeaderStore } from '@/store/listing_header_store';
 
 export default function PostGalleryContainer() {
-  const [posts, setPosts] = useState<InstagramPost[]>(generateMockPosts(0, 9));
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const loaderRef = useRef<HTMLDivElement>(null);
-
-  const fetchMorePosts = async () => {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    const newPosts = generateMockPosts(page * 9, 9);
-    setPosts((prev) => [...prev, ...newPosts]);
-    setPage((prev) => prev + 1);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loading) {
-          fetchMorePosts();
-        }
-      },
-      { root: document.getElementById('scrollable-container'), threshold: 0.1 }
-    );
-
-    const current = loaderRef.current;
-    if (current) observer.observe(current);
-    return () => {
-      if (current) observer.unobserve(current);
-    };
-  }, [loading]);
+  const { instaMedia } = useHeaderStore();
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div
-        id="scrollable-container"
-        className="h-[850px] overflow-y-auto"
-      >
-        <GridPostGallery posts={posts} />
-        <div ref={loaderRef} className="text-center py-3 text-sm text-gray-400">
-          {loading ? 'Loading more...' : ''}
-        </div>
+      <div id="scrollable-container" className="h-[850px] overflow-y-auto">
+        <GridPostGallery posts={instaMedia} />
       </div>
     </div>
   );

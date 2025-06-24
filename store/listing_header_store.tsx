@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { City, BrandType } from '@/types/SellerTypes'
+import { City, BrandType, instaMediaType } from '@/types/SellerTypes'
 
 
 type HeaderState = {
@@ -13,6 +13,9 @@ type HeaderState = {
     setDeliveryType : (delivery : string) => void;
     viewType: string;
     setViewType: (viewType: string) => void;
+    instaMedia: instaMediaType[];
+    setInstaMedia:(instaMedia: instaMediaType[]) => void;
+
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
@@ -26,4 +29,6 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setDeliveryType: (delivery: string) => set({ deliveryType: delivery }),
     viewType: 'Posts',
     setViewType: (viewType: string) => set({ viewType }),
+    instaMedia: [],
+    setInstaMedia: (instaMedia) => set({ instaMedia }),
 }));
