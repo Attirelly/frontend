@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { api } from "@/lib/axios";
 import StoreCard from "./StoreCard";
@@ -7,14 +7,16 @@ import { useEffect, useRef, useState } from "react";
 import { StoreCardType } from "@/types/SellerTypes";
 import { useFilterStore } from "@/store/filterStore";
 import { event } from "@/lib/gtag";
+import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";
 
 export default function StoreContainerPage() {
-  const { facets, setFacets, getSelectedFilters, selectedFilters } = useFilterStore();
+  const { facets, setFacets, getSelectedFilters, selectedFilters } =
+    useFilterStore();
   const { city, query, storeType, deliveryType } = useHeaderStore();
 
   const [stores, setStores] = useState<StoreCardType[]>([]);
   const [page, setPage] = useState(0);
-  const [filters, setFilters] = useState('');
+  const [filters, setFilters] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -35,24 +37,25 @@ export default function StoreContainerPage() {
   const fetchStores = async (currentPage: number) => {
     setLoading(true);
     const facetFilters = buildFacetFilters(selectedFilters);
-    console.log('filters', filters);
+    console.log("filters", filters);
     // const fi = "is_both:'true'";
     const res = await api.get(
-      `/search/search_store?query=${query} ${storeType?.store_type || ''} ${city?.name || ''}&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
+      `/search/search_store?query=${query} ${storeType?.store_type || ""} ${
+        city?.name || ""
+      }&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
     );
-    console.log('facet Filters', selectedFilters);
+    console.log("facet Filters", selectedFilters);
     event({
-      action: 'Fiter_applied',
+      action: "Fiter_applied",
       params: {
         filter_location: selectedFilters.area,
         filter_gender: selectedFilters.genders,
         filter_category: selectedFilters.categories,
-        filter_pricerange:selectedFilters.price_ranges,
+        filter_pricerange: selectedFilters.price_ranges,
         filter_bestselling: selectedFilters.categories,
-        filter_discounts:selectedFilters.discount,
-
-      }
-    })
+        filter_discounts: selectedFilters.discount,
+      },
+    });
     const data = res.data;
     console.log(data);
     // setFacets(data.facets);
@@ -60,7 +63,7 @@ export default function StoreContainerPage() {
     // if (currentPage === 0 && Object.keys(facets).length === 0) {
     //   setFacets(data.facets);
     // }
-    if (currentPage === 0){
+    if (currentPage === 0) {
       setFacets(data.facets);
     }
 
@@ -70,7 +73,9 @@ export default function StoreContainerPage() {
       storeName: sc.store_name,
       location: `${sc.area}, ${sc.city}`,
       storeTypes: sc.store_types || [],
-      priceRanges: [...new Set(sc.store_type_price_range.map(item => item.price_range))],
+      priceRanges: [
+        ...new Set(sc.store_type_price_range.map((item) => item.price_range)),
+      ],
       bestSelling: sc.categories,
       discount: sc.discount,
       instagramFollowers: "220k",
@@ -91,8 +96,6 @@ export default function StoreContainerPage() {
     setLoading(false);
   };
 
-
-
   // Trigger fetch on filter/search changes
   useEffect(() => {
     setPage(0);
@@ -102,13 +105,11 @@ export default function StoreContainerPage() {
   }, [query, storeType, selectedFilters, city, filters]);
 
   useEffect(() => {
-    if (deliveryType == 'In Store') {
+    if (deliveryType == "In Store") {
       setFilters("is_online:'false' OR is_both:'true'");
-    }
-    else if (deliveryType == 'Home Delivery') {
+    } else if (deliveryType == "Home Delivery") {
       setFilters("is_online:'true' OR is_both:'true'");
-    }
-    else {
+    } else {
       setFilters("");
     }
   }, [deliveryType]);
@@ -136,7 +137,6 @@ export default function StoreContainerPage() {
 
   // Fetch next page when page changes (except page=0 which is handled above)
 
-
   useEffect(() => {
     if (page !== 0) {
       console.log("Fetching page", page);
@@ -155,15 +155,26 @@ export default function StoreContainerPage() {
         console.log(`🧭 Reached ${threshold}% of pages loaded`);
         setScrollMilestones((prev) => [...prev, threshold]);
         event({
-          action: 'page_scroll',
+          action: "page_scroll",
           params: {
-            scroll_percentage: threshold
-          }
+            scroll_percentage: threshold,
+          },
         });
       }
     });
   }, [page, totalPages, scrollMilestones]);
 
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-4">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div key={index} className="flex items-center">
+            <StoreCardSkeleton />
+          </div>
+        ))}
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-4">
       {stores.map((store, index) => (
@@ -180,11 +191,6 @@ export default function StoreContainerPage() {
           id={store.id}
         />
       ))}
-
-      {/* Loader/Trigger Div */}
-      <div ref={loaderRef} className="text-center py-6 text-gray-400">
-        {loading ? "Loading more stores..." : !hasMore && "No more stores"}
-      </div>
     </div>
   );
 }

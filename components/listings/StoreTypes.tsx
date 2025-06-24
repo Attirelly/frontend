@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { event } from '@/lib/gtag';
 import { manrope } from '@/font';
+import StoreTypeTabsSkeleton from './skeleton/StoreTypeHeaderSkeleton';
 
 
 
@@ -27,7 +28,7 @@ export default function StoreTypeTabs({
     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
     const [tabs, setTabs] = useState<SelectOption[]>([]);
     const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
-
+    const [loading, setLoading] = useState(true);
     const handleTabClick = (value: SelectOption) => {
         const storeType: BrandType = {
             id: value.value,
@@ -48,6 +49,7 @@ export default function StoreTypeTabs({
     useEffect(() => {
         const fetchStoreTypes = async () => {
             try {
+                setLoading(true)
                 const res = await api.get("stores/store_types");
                 console.log(res.data);
                 setStoreTypes(res.data);
@@ -60,10 +62,16 @@ export default function StoreTypeTabs({
             catch (error) {
                 toast.error("Failed to fetch store types");
             }
+            finally{
+                setLoading(false)
+            }
         }
         fetchStoreTypes();
     }, []);
 
+    if(loading){
+        return <StoreTypeTabsSkeleton/>
+    }
     return (
         <div className="flex bg-[#F5F5F5] rounded-full overflow-hidden w-fit px-2 py-2">
             {tabs.map((tab, index) => (
