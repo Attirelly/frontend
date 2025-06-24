@@ -19,7 +19,7 @@ function CallbackHandler() {
         window.history.replaceState({}, document.title, window.location.pathname);
 
         const response = await api.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/instagram`,
+          `${process.env.NEXT_PUBLIC_API_URL}/instagram/auth`,
           {
             code,
             instagram_url: state,
