@@ -5,8 +5,11 @@ import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { api } from "@/lib/axios";
+import { useSellerStore } from "@/store/sellerStore";
 
 function CallbackHandler() {
+
+    const {sellerId} = useSellerStore();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -23,6 +26,7 @@ function CallbackHandler() {
           {
             code,
             instagram_url: state,
+            seller_id:sellerId
           },
           {
             headers: {
@@ -33,7 +37,9 @@ function CallbackHandler() {
         );
 
         const { user_id } = response.data;
-        router.push(`/profile/${user_id}`);
+        console.log(response)  ; 
+
+        router.push(`/seller_dashboard`);
       } catch (error: any) {
         console.error("Authentication error:", error);
         router.push(`/?error=${encodeURIComponent(error.message)}`);

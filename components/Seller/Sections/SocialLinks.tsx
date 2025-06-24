@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useSellerStore } from "@/store/sellerStore";
 
 export default function SocialLinksComponent() {
-  const { setSocialLinksData, setSocialLinksValid, socialLinksData } =
+  const { setSocialLinksData, setSocialLinksValid, socialLinksData  } =
     useSellerStore();
   const [instagramUsname, setInstagramUsname] = useState(
     socialLinksData?.instagramUsname || ""
