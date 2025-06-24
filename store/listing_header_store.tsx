@@ -24,6 +24,6 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setStoreType: (storeType: BrandType | null) => set({ storeType }),
     deliveryType: '',
     setDeliveryType: (delivery: string) => set({ deliveryType: delivery }),
-    viewType: '',
+    viewType: 'Posts',
     setViewType: (viewType: string) => set({ viewType }),
 }));
