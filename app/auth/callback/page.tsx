@@ -15,7 +15,7 @@ function CallbackHandler() {
 
   const code = searchParams.get("code");
   const state = searchParams.get("state");
-  console.log(sellerId);
+  console.log('kdnsvknsdgf',sellerId);
 
   useEffect(() => {
     const authenticate = async () => {
