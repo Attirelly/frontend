@@ -7,10 +7,11 @@ import { api } from "@/lib/axios";
 export default function InstagramCallback() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const code = searchParams.get("code");
-  const state = searchParams.get("state");
+  
 
   useEffect(() => {
+    const code = searchParams.get("code");
+    const state = searchParams.get("state");
     console.log(code);
     console.log(state);
 
@@ -51,7 +52,7 @@ export default function InstagramCallback() {
     } else {
       router.push("/");
     }
-  }, [router]);
+  }, [searchParams , router]);
 
   return (
     <div className="loading-screen">
