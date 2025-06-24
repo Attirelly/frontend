@@ -22,16 +22,13 @@ export default function PostGalleryContainer() {
   }, [instaMedia]);
 
   const loadMorePosts = () => {
-    const start = page * POSTS_PER_PAGE;
-    console.log('sda',start);
-    if (start >= instaMedia.length) return; // No more posts to load
+    const start = visiblePosts.length;
+    if (start >= instaMedia.length) return;
 
     const end = start + POSTS_PER_PAGE;
     const nextPosts = instaMedia.slice(start, end);
-    console.log('jnzvc',end, start, nextPosts);
     setVisiblePosts((prev) => [...prev, ...nextPosts]);
-    setPage((prev) => prev + 1);
-  };
+};
   console.log(visiblePosts);
   // Setup scroll observer once
   useEffect(() => {
