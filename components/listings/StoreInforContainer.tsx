@@ -9,7 +9,9 @@ export default function StoreInfoContainer(){
     useEffect(() => {
       const fetchStore = async () => {
         const storeRes = await api.get('/stores/446e5536-4531-4440-94d0-11438558baac');
+        const instaRes = await api.get('instagram/seller/2ba895ad-55c5-4e81-a0aa-e0f43962a685/data');
         console.log(storeRes.data);
+        console.log(instaRes.data);
         const storeData = storeRes.data;
         const storeFinal : StoreInfoType = {
           id: storeData.store_id,
