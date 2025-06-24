@@ -23,6 +23,7 @@ export default function PostGalleryContainer() {
 
   const loadMorePosts = () => {
     const start = page * POSTS_PER_PAGE;
+    console.log('sda',start);
     if (start >= instaMedia.length) return; // No more posts to load
 
     const end = start + POSTS_PER_PAGE;
