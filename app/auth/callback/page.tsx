@@ -7,25 +7,23 @@ import { api } from "@/lib/axios";
 export default function InstagramCallback() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
 
   useEffect(() => {
     const code = searchParams.get("code");
     const state = searchParams.get("state");
-    console.log(code);
-    console.log(state);
+
+    if (!code || !state) {
+      router.push("/");
+      return;
+    }
 
     const authenticate = async () => {
       try {
-        // Clean URL
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
+        // Clean the URL
+        window.history.replaceState({}, document.title, window.location.pathname);
 
         const response = await api.post(
-          `http://localhost:8000/auth/instagram`,
+          `http://localhost:8000/instagram/auth`,
           {
             code,
             instagram_url: state,
@@ -34,12 +32,11 @@ export default function InstagramCallback() {
             headers: {
               "Content-Type": "application/json",
             },
-            withCredentials: true, 
+            withCredentials: true,
           }
         );
 
-
-        const { user_id } = response.data ; 
+        const { user_id } = response.data;
         router.push(`/profile/${user_id}`);
       } catch (error: any) {
         console.error("Authentication error:", error);
@@ -47,12 +44,8 @@ export default function InstagramCallback() {
       }
     };
 
-    if (code && state) {
-      authenticate();
-    } else {
-      router.push("/");
-    }
-  }, [searchParams , router]);
+    authenticate();
+  }, [searchParams, router]);
 
   return (
     <div className="loading-screen">
