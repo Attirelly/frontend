@@ -42,12 +42,16 @@ export default function StoreProfilePage() {
           <PostCatalogueButton />
 
           {viewType === 'Posts' && (
-            // <div className=" border border-gray-200 rounded-lg mt-4">
+            <div className="mt-8">
               <PostGalleryContainer />
+              </div>
           )}
         </div>
       </div>
-      <ListingFooter />
+      <div className="mt-10">
+<ListingFooter />
+      </div>
+      
     </div>
   );
 }
