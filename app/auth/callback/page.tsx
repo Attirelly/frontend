@@ -42,7 +42,8 @@ function CallbackHandler() {
         router.push(`/seller_dashboard`);
       } catch (error: any) {
         console.error("Authentication error:", error);
-        router.push(`/?error=${encodeURIComponent(error.message)}`);
+        router.push('/seller_dashboard')
+        // router.push(`/?error=${encodeURIComponent(error.message)}`);
       }
     };
 
