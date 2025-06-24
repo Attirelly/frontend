@@ -4,26 +4,25 @@ import { useHeaderStore } from '@/store/listing_header_store';
 import React, { useEffect, useState } from 'react';
 import { event } from '@/lib/gtag';
 import { manrope } from '@/font';
+import Image from 'next/image';
 
-type TwoOptionToggleProps = {
-  options: [string, string];
-};
-
-export default function PostCatalogueButton({ options }: TwoOptionToggleProps) {
-  const [selected, setSelected] = useState<string>('Posts');
+export default function PostCatalogueButton() {
+  const [selected, setSelected] = useState<'Posts' | 'Catalogue'>('Posts');
   const { setViewType } = useHeaderStore();
 
   useEffect(() => {
     setViewType(selected);
-    event({
-      action: 'Store Mode',
-      params: { value: selected },
-    });
+    // event({
+    //   action: 'Store Mode',
+    //   params: { value: selected },
+    // });
   }, [selected]);
 
-  const getIconPath = (option: string) => {
-    if (option === 'Posts') return '/ListingPageHeader/posts.svg';
-    if (option === 'Catalogue') return '/ListingPageHeader/catalogue.svg';
+  const options: ('Posts' | 'Catalogue')[] = ['Posts', 'Catalogue'];
+
+  const getIconPath = (option: 'Posts' | 'Catalogue') => {
+    if (option === 'Posts') return '/ListingPageHeader/post_icon.svg';
+    if (option === 'Catalogue') return '/ListingPageHeader/catalogue_logo.svg';
     return '';
   };
 
@@ -36,9 +35,11 @@ export default function PostCatalogueButton({ options }: TwoOptionToggleProps) {
           className={`${manrope.className} relative px-6 pt-4 pb-3 flex flex-col items-center text-sm transition-colors duration-200`}
         >
           <div className="flex items-center gap-2">
-            <img
+            <Image
               src={getIconPath(option)}
               alt={option}
+              width={16}
+              height={16}
               className="w-4 h-4"
             />
             <span

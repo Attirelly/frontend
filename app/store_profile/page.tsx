@@ -1,14 +1,14 @@
 'use client';
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
-import { api } from "@/lib/axios";
 import { useHeaderStore } from "@/store/listing_header_store";
-import { useEffect, useState } from "react";
-import StoreInfoPage from "@/components/listings/StoreInfoHeader";
+import { useState } from "react";
 import StoreInfoContainer from "@/components/listings/StoreInforContainer";
+import PostCatalogueButton from "@/components/listings/PostCatalogueButton";
+import PostGalleryContainer from "@/components/listings/PostsContainer";
+import ListingFooter from "@/components/listings/ListingFooter";
 
 export default function StoreProfilePage() {
-
-  const { query, city, storeType } = useHeaderStore();
+  const { query, city, storeType, viewType } = useHeaderStore();
   const [showFilters, setShowFilters] = useState(false);
 
   const getHeading = () => {
@@ -32,15 +32,22 @@ export default function StoreProfilePage() {
   };
 
   return (
-    <div className="bg-[#FFFFFF]">
+    <div className="flex flex-col min-h-screen bg-[#FFFFFF]">
+      {/* Top fixed content */}
       <ListingPageHeader />
-      <div className="flex flex-col items-center">
-        <div className="mt-8">
-          {/* <StoreInfoPage /> */}
-          <StoreInfoContainer/>
-        </div>
+      <div className="flex-1 flex flex-col items-center w-full">
+        <div className="mt-8 w-full max-w-4xl px-4">
+          <StoreInfoContainer />
+          <hr className="border border-[#D9D9D9]" />
+          <PostCatalogueButton />
 
+          {viewType === 'Posts' && (
+            // <div className=" border border-gray-200 rounded-lg mt-4">
+              <PostGalleryContainer />
+          )}
+        </div>
       </div>
+      <ListingFooter />
     </div>
   );
 }

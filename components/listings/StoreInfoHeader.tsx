@@ -28,7 +28,8 @@ export default function StoreInfoPage({
                 <div className="flex flex-col items-center">
                     <div className="relative w-32 h-32">
                         <Image
-                            src="/ListingPageHeader/store_profile_image.svg"
+                            // src="/ListingPageHeader/store_profile_image.svg"
+                            src={imageUrl}
                             alt={storeName}
                             fill
                             className="rounded-full object-cover"
@@ -121,8 +122,8 @@ export default function StoreInfoPage({
                                             <Image
                                                 src={imageObj.url}
                                                 alt="Store Type"
-                                                width={14}
-                                                height={14}
+                                                width={18}
+                                                height={18}
                                             />
                                         )}
                                         {type}

@@ -25,7 +25,7 @@ export default function ProtectedRoute({ role, children }: Props) {
   useEffect(() => {
     const verifyUser = async () => {
       try {
-        const res = await api.get('users/me'); 
+        const res = await api.get('users/me');
         const user = res.data;
         if(user.role == "admin"){
           setSellerNumber(user.contact_number);
