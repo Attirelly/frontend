@@ -21,6 +21,7 @@ function CallbackHandler() {
     const authenticate = async () => {
       try {
         window.history.replaceState({}, document.title, window.location.pathname);
+        console.log("seller id" , sellerId) ; 
 
         const response = await api.post(
           `${process.env.NEXT_PUBLIC_API_URL}/instagram/auth`,
