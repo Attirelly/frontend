@@ -17,7 +17,13 @@ export default function ListingFooter() {
               className="px-4 py-2 border border-gray-300 bg-transparent rounded-l-md text-sm focus:outline-none"
             />
             <button className="bg-black text-white px-4 rounded-r-md">
-              <span className="text-lg">{'>'}</span>
+              {/* <span className="text-lg">{'>'}</span> */}
+              <Image
+              src="FooterIcons/arrow-right.svg"
+              alt="arrow-right"
+              width={8}
+              height={8}
+              />
             </button>
           </div>
 
