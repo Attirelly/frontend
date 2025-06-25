@@ -17,7 +17,7 @@ const DynamicFilter = () => {
   const [isCollapsed, setIsCollapsed] = useState(false); // main toggle
   const [loading , setLoading] = useState(false);
 
-  console.log("dsaasdasdafadfsaddas",facets);
+  // console.log("dsaasdasdafadfsaddas",facets);
 
   const handleSearchChange = (facetName: string, value: string) => {
     setSearchTerms((prev) => ({

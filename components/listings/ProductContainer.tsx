@@ -12,27 +12,39 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [filters, setFilters] = useState("");
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const buildFacetFilters = (filters: Record<string, string[]>) => {
-    const filtersArray: string[][] = [];
-    Object.entries(filters).forEach(([key, values]) => {
-      if (values.length > 0) {
-        filtersArray.push(values.map((v) => `${key}:${v}`));
+  const buildFacetFilters = (facets: Record<string, string[]>): string => {
+    const filters: string[][] = [];
+    for (const key in facets) {
+      if (facets[key].length > 0) {
+        filters.push(facets[key].map((value) => `${key}:${value}`));
       }
-    });
-    return encodeURIComponent(JSON.stringify(filtersArray));
+    }
+    return encodeURIComponent(JSON.stringify(filters));
   };
+
+//   const buildFacetFilters = (filters: Record<string, string[]>) => {
+//     const filtersArray: string[][] = [];
+//     Object.entries(filters).forEach(([key, values]) => {
+//       if (values.length > 0) {
+//         filtersArray.push(values.map((v) => `${key}:${v}`));
+//       }
+//     });
+//     return encodeURIComponent(JSON.stringify(filtersArray));
+//   };
 
   const fetchProducts = async (currentPage: number) => {
     setLoading(true);
     const facetFilters = buildFacetFilters(selectedFilters);
+    console.log('system hi system', facetFilters, selectedFilters);
 
     try {
       const res = await api.get(
-        `/search/search_product?query=${storeId}&page=${currentPage}&limit=12&facetFilters=${facetFilters}`
+        `/search/search_product?query=${storeId}&page=${currentPage}&limit=12&filters=${filters}&facetFilters=${facetFilters}`
       );
       const data = res.data;
       console.log(data);
@@ -66,7 +78,7 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
     fetchProducts(0);
   }, [selectedFilters]);
 
-  console.log(facets)
+//   console.log(facets)
 
   useEffect(() => {
     if (page !== 0) fetchProducts(page);

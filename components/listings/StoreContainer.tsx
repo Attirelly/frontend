@@ -37,7 +37,7 @@ export default function StoreContainerPage() {
   const fetchStores = async (currentPage: number) => {
     setLoading(true);
     const facetFilters = buildFacetFilters(selectedFilters);
-    console.log("filters", filters);
+    console.log("filters", selectedFilters, facetFilters);
     // const fi = "is_both:'true'";
     const res = await api.get(
       `/search/search_store?query=${query} ${storeType?.store_type || ""} ${
