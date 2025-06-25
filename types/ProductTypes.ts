@@ -63,3 +63,12 @@ export interface Image {
   image_url: string;
   image_id: string;
 }
+
+export interface ProductCardType {
+  imageUrl: string;
+  title: string;
+  description: string;
+  price: number;
+  originalPrice: number;
+  discountPercentage: number;
+}

@@ -6,6 +6,8 @@ import StoreInfoContainer from "@/components/listings/StoreInforContainer";
 import PostCatalogueButton from "@/components/listings/PostCatalogueButton";
 import PostGalleryContainer from "@/components/listings/PostsContainer";
 import ListingFooter from "@/components/listings/ListingFooter";
+import Catalogue from "@/components/listings/Catalogue";
+import DynamicFilter from "@/components/listings/DynamicFilter";
 
 export default function StoreProfilePage() {
   const { query, city, storeType, viewType } = useHeaderStore();
@@ -44,6 +46,12 @@ export default function StoreProfilePage() {
           {viewType === 'Posts' && (
             <div className="mt-8">
               <PostGalleryContainer />
+              </div>
+          )}
+          {viewType === 'Catalogue' && (
+            <div className="mt-8 grid grid-cols-[1fr_3fr] gap-4">
+              <DynamicFilter/>
+              <Catalogue />
               </div>
           )}
         </div>

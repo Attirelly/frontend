@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useFilterStore } from '@/store/filterStore';
+import { useFilterStore, useProductFilterStore } from '@/store/filterStore';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { playfair_display, manrope } from '@/font';
@@ -10,11 +10,14 @@ import DynamicFilterSkeleton from './skeleton/DynamicFilterSkeleton';
 
 const DynamicFilter = () => {
   const { facets, selectedFilters, toggleFilter, resetFilters } = useFilterStore();
+  // const {facets} = useProductFilterStore();
 
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [openFacets, setOpenFacets] = useState<Record<string, boolean>>({});
   const [isCollapsed, setIsCollapsed] = useState(false); // main toggle
   const [loading , setLoading] = useState(false);
+
+  console.log("dsaasdasdafadfsaddas",facets);
 
   const handleSearchChange = (facetName: string, value: string) => {
     setSearchTerms((prev) => ({
