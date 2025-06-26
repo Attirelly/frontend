@@ -51,5 +51,9 @@ export interface instaMediaType {
   media_type: string,
   media_url: string,
   permalink: string,
-  timestamp: string
+  timestamp: string,
+  caption:string, 
+  username: string,
+  like_count: number,
+  comments_count:number
 }
