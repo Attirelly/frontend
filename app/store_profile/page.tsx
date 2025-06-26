@@ -34,32 +34,39 @@ export default function StoreProfilePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FFFFFF]">
-      {/* Top fixed content */}
+    <div className="flex flex-col bg-[#FFFFFF]">
+      {/* Full-width header */}
       <ListingPageHeader />
-      <div className="flex-1 flex flex-col items-center w-full">
+
+      {/* Centered content container */}
+      <div className="flex flex-col items-center w-full">
         <div className="mt-8 w-full max-w-4xl px-4">
           <StoreInfoContainer />
           <hr className="border border-[#D9D9D9]" />
           <PostCatalogueButton />
-
-          {viewType === 'Posts' && (
-            <div className="mt-8">
-              <PostGalleryContainer />
-              </div>
-          )}
-          {viewType === 'Catalogue' && (
-            <div className="mt-8 grid grid-cols-[1fr_3fr] gap-4">
-              <DynamicFilter/>
-              <Catalogue />
-              </div>
-          )}
         </div>
+
+        {viewType === 'Posts' && (
+          <div className="mt-8 flex justify-center w-full">
+            <div className="w-full max-w-[926px] px-4">
+              <PostGalleryContainer />
+            </div>
+          </div>
+        )}
+
+        {viewType === 'Catalogue' && (
+          <div className="mt-8 w-full px-4">
+            <div className="px-20 w-full grid grid-cols-[300px_1fr] gap-6">
+              <DynamicFilter />
+              <Catalogue />
+            </div>
+          </div>
+        )}
       </div>
+
       <div className="mt-10">
-<ListingFooter />
+        <ListingFooter />
       </div>
-      
     </div>
   );
 }

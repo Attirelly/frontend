@@ -73,10 +73,8 @@ export default function PostGalleryContainer() {
   const { instaMedia } = useHeaderStore();
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div id="scrollable-container" className="h-[850px] overflow-y-auto">
+      <div id="scrollable-container" className="h-[927px] overflow-y-auto">
         <GridPostGallery posts={instaMedia} />
       </div>
-    </div>
   );
 }

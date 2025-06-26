@@ -21,7 +21,7 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
     const filters: string[][] = [];
     for (const key in facets) {
       if (facets[key].length > 0) {
-        filters.push(facets[key].map((value) => `${key}:${value}`));
+        filters.push(facets[key].map((value) => `${key === 'prices' ? 'variants.price' : key === 'size' ? 'variants.size_name' : key === 'colours' ? 'variants.color_name' : key}:${value}`));
       }
     }
     return encodeURIComponent(JSON.stringify(filters));
@@ -104,7 +104,7 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-2">
         {products.map((product, index) => (
           <ProductCard key={`${product.title}-${index}`} {...product} />
         ))}

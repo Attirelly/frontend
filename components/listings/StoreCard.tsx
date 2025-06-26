@@ -3,6 +3,9 @@
 import Image from 'next/image';
 import {event} from '@/lib/gtag'
 import { manrope } from '@/font';
+import {useSellerStore} from '@/store/sellerStore'
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 type StoreCardProps = {
     imageUrl: string;
@@ -28,8 +31,16 @@ export default function StoreCard({
     id,
 }: StoreCardProps) {
 
+    const {setStoreId} = useSellerStore();
+    const router = useRouter();
+
+    useEffect(() => {
+       router.prefetch('/store_profile');
+    }, []);
+
     const handleCardClick = () => {
         console.log(storeName, id);
+        setStoreId(id);
         event({
             action: "Store",
             params: {
@@ -37,7 +48,7 @@ export default function StoreCard({
                 store_id: id
             }
         });
-        
+        router.push('/store_profile');
     }
 
     return (
