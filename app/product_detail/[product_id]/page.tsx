@@ -1,6 +1,8 @@
 "use client";
-import ListingPageHeader from "@/components/listings/ListingPageHeader";
-import { api } from "@/lib/axios";
+
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { FaWhatsapp } from "react-icons/fa";
 import {
   CheckCircle,
   ChevronLeft,
@@ -8,13 +10,10 @@ import {
   RefreshCcw,
   Truck,
 } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { FaWhatsapp } from "react-icons/fa";
-import { Brand, Color, Product, Size, Variant } from "./type";
+import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import ListingFooter from "@/components/listings/ListingFooter";
-import ProductMagnifierWithPreview from "./ProductMagnifier";
-import ProductMagnifier from "./ProductMagnifier";
+import { api } from "@/lib/axios";
+import { Brand, Color, Product, Size, Variant } from "./type";
 
 interface PageProps {
   params: {
@@ -33,7 +32,42 @@ export default function ProductDetail({ params }: PageProps) {
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
   );
+  const [isProductDetailCollapse, setProductDetailCollapse] = useState(true);
 
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const [lensPosition, setLensPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setLensPosition({ x, y });
+  };
+
+  const handleMouseLeave = () => {
+    setLensPosition(null);
+  };
+
+  const sendToWhatsApp = async() => {
+
+    try {
+      const response = await api.get(`/stores/store_basic?store_id=${product?.store_id}`)
+      const data = response.data ;
+      const phoneNumber = data.whatsapp_number; // Replace with your WhatsApp number
+      const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
+      const encodedMessage = encodeURIComponent(message);
+      const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+      console.log(url)
+      window.open(url, "_blank");
+
+    } catch (error) {
+      console.error("Failed to fetch product details", error);
+    }
+
+  };
   useEffect(() => {
     async function fetchProductDetails() {
       try {
@@ -86,16 +120,6 @@ export default function ProductDetail({ params }: PageProps) {
           self.findIndex((v) => v.size_id === value.size_id) === index
       ) || [];
 
-  const features =
-    product?.attributes
-      .filter((attr) => attr.name !== "Fabric")
-      .map((attr) => `${attr.name}: ${attr.value}`) || [];
-
-  const fabrics =
-    product?.attributes
-      .filter((attr) => attr.name === "Fabric")
-      .map((attr) => `${attr.name}: ${attr.value}`) || [];
-
   const images = selectedVariant?.images.map((img) => img.image_url) || [];
 
   const nextImage = () => {
@@ -116,24 +140,39 @@ export default function ProductDetail({ params }: PageProps) {
       <div className="mx-auto lg:w-[1263px] flex flex-col gap-2">
         <div className="w-full flex flex-col mt-10 mb-10">
           <div className="flex flex-row gap-20">
-            {/* product image */}
-            <div className="w-[607px] h-[740px] flex flex-col items-center">
-              <div className="w-[600px] h-[600px] relative rounded overflow-hidden border border-gray-200">
-                {/* <Image
+            {/* Left: Product image */}
+            <div className="w-[607px] h-[740px] flex flex-col items-center relative">
+              <div
+                ref={imageContainerRef}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                className="w-[600px] h-[600px] relative rounded overflow-hidden border border-gray-200"
+              >
+                <Image
                   src={images[activeIndex]}
                   alt={`Product Image ${activeIndex + 1}`}
                   fill
                   className="object-cover"
-                /> */}
-                {/* <ProductMagnifierWithPreview src={images[activeIndex]} zoom={2.5} /> */}
-                <ProductMagnifier
-                  src={images[activeIndex]}
-                  width={600}
-                  height={600}
-                  zoom={2}
-                  lensSize={150}
                 />
               </div>
+
+              {lensPosition && (
+                <div
+                  className="absolute pointer-events-none transition-all duration-75 ease-linear"
+                  style={{
+                    width: 100,
+                    height: 100,
+                    top: Math.floor(lensPosition.y / 100) * 100,
+                    left: Math.floor(lensPosition.x / 100) * 100,
+                    backgroundColor: "transparent",
+                    border: "1px solid rgba(0, 123, 255, 0.6)",
+                    borderRadius: 4,
+                    boxShadow: "0 0 4px rgba(0, 123, 255, 0.3)",
+                    zIndex: 20,
+                  }}
+                />
+              )}
+
               <div className="mt-4 flex items-center gap-2">
                 <button
                   className="p-2 border rounded hover:bg-gray-100"
@@ -170,10 +209,27 @@ export default function ProductDetail({ params }: PageProps) {
               </div>
             </div>
 
-            {/* product description */}
+            {/* Right: Product Description */}
             <div className="text-[#111] font-sans w-full max-w-xl space-y-4">
+              {/* ✅ Magnifier Preview Inside Description */}
+              {lensPosition && (
+                <div>
+                  <div
+                    className="border border-gray-300"
+                    style={{
+                      width: 600,
+                      height: 600,
+                      backgroundImage: `url(${images[activeIndex]})`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: `${600 * 2}px ${600 * 2}px`,
+                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${
+                        lensPosition.y * 2 - 150
+                      }px`,
+                    }}
+                  />
+                </div>
+              )}
               <p className="text-xl text-gray-600">By {product.brands.name}</p>
-
               <h1 className="text-4xl font-bold">{product.title}</h1>
 
               <div className="flex items-center gap-4">
@@ -183,14 +239,7 @@ export default function ProductDetail({ params }: PageProps) {
                 </p>
               </div>
 
-              <div className="my-6 w-full h-[1px] bg-[length:12px_1px] bg-repeat-x bg-[linear-gradient(to_right,_#666_60%,_transparent_40%)]" />
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-1">Description:</h2>
-                <p className="text-sm text-[#666666]">{product.description}</p>
-              </div>
-
-              {/* Color */}
+              {/* Color selection */}
               <div>
                 <p className="text-sm font-medium">
                   Color:{" "}
@@ -207,9 +256,7 @@ export default function ProductDetail({ params }: PageProps) {
                           ? "border-black"
                           : "border-gray-300"
                       }`}
-                      style={{
-                        backgroundColor: color.hex_code || "#ccc",
-                      }}
+                      style={{ backgroundColor: color.hex_code || "#ccc" }}
                       onClick={() =>
                         updateVariantBySelection(color, selectedSize)
                       }
@@ -218,7 +265,7 @@ export default function ProductDetail({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Size */}
+              {/* Size selection */}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-sm font-medium">
@@ -245,72 +292,86 @@ export default function ProductDetail({ params }: PageProps) {
                 </div>
               </div>
 
-              <button className="w-full bg-green-600 text-white flex items-center justify-center gap-2 py-3 rounded text-lg hover:bg-green-700 transition">
+              {/* WhatsApp Button */}
+              <button className="w-full bg-green-600 text-white flex items-center justify-center gap-2 py-3 rounded text-lg hover:bg-green-700 transition" onClick={sendToWhatsApp}>
                 <FaWhatsapp size={20} />
                 Buy on WhatsApp
               </button>
-            </div>
-          </div>
 
-          {/* Tabs */}
-          <div className="mt-12">
-            <div className="flex gap-8 pb-2">
-              <button
-                className={`text-lg font-medium ${
-                  activeTab === "description"
-                    ? "text-black border-b-2 border-black"
-                    : "text-gray-500"
-                }`}
-                onClick={() => setActiveTab("description")}
-              >
-                Description
-              </button>
-              <button
-                className={`text-lg font-medium ${
-                  activeTab === "reviews"
-                    ? "text-black border-b-2 border-black"
-                    : "text-gray-500"
-                }`}
-                onClick={() => setActiveTab("reviews")}
-              >
-                Reviews
-              </button>
-            </div>
-
-            {activeTab === "description" && (
-              <div className="mt-6 space-y-6">
-                <div>
-                  <h3 className="font-semibold text-lg">Product Overview</h3>
-                  <ul className="list-none mt-2 space-y-1 text-sm text-gray-700">
-                    {features.map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="bg-[#E7F4FC] w-[20px] h-[20px] rounded-full text-black flex justify-center">
-                          ✓
-                        </span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+              {/* Product Details & Care */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <h1 className="text-xl font-bold">Product Details</h1>
+                  <button
+                    onClick={() =>
+                      setProductDetailCollapse(!isProductDetailCollapse)
+                    }
+                    className="text-sm text-gray-600 hover:text-gray-800"
+                  >
+                    {isProductDetailCollapse ? "Show Details" : "Hide Details"}
+                  </button>
                 </div>
 
-                <div>
-                  <h3 className="font-semibold text-sm uppercase text-gray-500">
-                    Fabric
-                  </h3>
-                  <ul className="list-none mt-2 space-y-1 text-sm text-gray-700">
-                    {fabrics.map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="bg-[#E7F4FC] w-[20px] h-[20px] rounded-full text-black flex justify-center">
-                          ✓
-                        </span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                {!isProductDetailCollapse && (
+                  <div>
+                    <ul className="grid grid-cols-2 gap-4">
+                      {product.attributes.map((item, idx) => (
+                        <li key={idx} className="flex flex-col">
+                          <div className="text-sm font-medium text-gray-600">
+                            {item.name}
+                          </div>
+                          <div className="text-sm font-bold">{item.value}</div>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-4 pt-4 border-t">
+                      <h2 className="font-bold mb-1">Care Instructions</h2>
+                      <p>
+                        Do not wash with white clothes, Do not use hard
+                        detergents
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Description/Reviews Tabs */}
+              <div className="mt-12">
+                <div className="flex gap-8 pb-2">
+                  <button
+                    className={`text-lg font-medium ${
+                      activeTab === "description"
+                        ? "text-black border-b-2 border-black"
+                        : "text-gray-500"
+                    }`}
+                    onClick={() => setActiveTab("description")}
+                  >
+                    Description
+                  </button>
+                  <button
+                    className={`text-lg font-medium ${
+                      activeTab === "reviews"
+                        ? "text-black border-b-2 border-black"
+                        : "text-gray-500"
+                    }`}
+                    onClick={() => setActiveTab("reviews")}
+                  >
+                    Reviews
+                  </button>
                 </div>
 
+                {activeTab === "description" && (
+                  <div>
+                    <p className="text-sm text-[#666666]">
+                      {product.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Delivery Info */}
                 <div className="flex flex-col gap-4 mt-4 w-[500px]">
-                  <div className="border rounded p-4 space-y-2 text-sm ">
+                  <div className="border rounded p-4 space-y-2 text-sm">
                     <Truck size={18} className="text-black inline-block" />
                     <span className="font-semibold ml-1">Free Delivery</span>
                     <p>Enter your Postal code for Delivery Availability</p>
@@ -325,11 +386,14 @@ export default function ProductDetail({ params }: PageProps) {
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          </div>
+
+          <div className="mt-10">
+            <ListingFooter />
           </div>
         </div>
       </div>
-      <ListingFooter />
     </div>
   );
 }
