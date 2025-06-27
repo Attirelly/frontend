@@ -60,12 +60,12 @@ export default function StoreContainerPage() {
     console.log(data);
     // setFacets(data.facets);
 
-    // if (currentPage === 0 && Object.keys(facets).length === 0) {
-    //   setFacets(data.facets);
-    // }
-    if (currentPage === 0) {
+    if (currentPage === 0 && Object.keys(facets).length === 0) {
       setFacets(data.facets);
     }
+    // if (currentPage === 0) {
+    //   setFacets(data.facets);
+    // }
 
     const storeCards: StoreCardType[] = data.hits.map((sc: any) => ({
       id: sc.id,

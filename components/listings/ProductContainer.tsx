@@ -5,10 +5,12 @@ import { api } from '@/lib/axios';
 import ProductCard from './ProductCard';
 import { useProductFilterStore, useFilterStore } from '@/store/filterStore';
 import { ProductCardType } from '@/types/ProductTypes';
+import { useHeaderStore } from '@/store/listing_header_store';
 
 
 export default function ProductContainer({ storeId }: { storeId: string }) {
   const { selectedFilters, setFacets, facets } = useFilterStore();
+  const {query} = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -21,7 +23,7 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
     const filters: string[][] = [];
     for (const key in facets) {
       if (facets[key].length > 0) {
-        filters.push(facets[key].map((value) => `${key}:${value}`));
+        filters.push(facets[key].map((value) => `${key === 'prices' ? 'variants.price' : key === 'size' ? 'variants.size_name' : key === 'colours' ? 'variants.color_name' : key}:${value}`));
       }
     }
     return encodeURIComponent(JSON.stringify(filters));
@@ -44,7 +46,7 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
 
     try {
       const res = await api.get(
-        `/search/search_product?query=${storeId}&page=${currentPage}&limit=12&filters=${filters}&facetFilters=${facetFilters}`
+        `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filters}&facetFilters=${facetFilters}`
       );
       const data = res.data;
       console.log(data);
@@ -56,9 +58,11 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
         originalPrice: item.originalPrice || item.price || 500,
         discountPercentage: "23"
       }));
-
+      if (Object.keys(facets).length === 0) {
+      setFacets(data.facets);
+      }
       if (currentPage === 0) {
-        setFacets(data.facets);
+        // setFacets(data.facets);
         setProducts(formattedProducts);
       } else {
         setProducts((prev) => [...prev, ...formattedProducts]);
@@ -104,7 +108,7 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-2">
         {products.map((product, index) => (
           <ProductCard key={`${product.title}-${index}`} {...product} />
         ))}

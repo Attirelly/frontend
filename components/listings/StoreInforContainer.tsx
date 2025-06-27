@@ -6,7 +6,7 @@ import { StoreInfoType } from "@/types/SellerTypes";
 import { useHeaderStore } from "@/store/listing_header_store";
 
 export default function StoreInfoContainer(){
-  const {setInstaMedia} = useHeaderStore();
+  const {setInstaMedia, setProfilePic} = useHeaderStore();
   const [store, setStore] = useState<StoreInfoType>();
     useEffect(() => {
       const fetchStore = async () => {
@@ -17,6 +17,7 @@ export default function StoreInfoContainer(){
         const instaData = instaRes.data;
         const storeData = storeRes.data;
         setInstaMedia(instaData.media);
+        setProfilePic(instaData.profile_picture);
         const storeFinal : StoreInfoType = {
           id: storeData.store_id,
           // imageUrl: storeData.profile_image,

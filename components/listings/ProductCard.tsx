@@ -1,9 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-
 import { ProductCardType } from '@/types/ProductTypes';
-
+import { roboto } from '@/font';
 
 export default function ProductCard({
   imageUrl,
@@ -14,25 +13,29 @@ export default function ProductCard({
   discountPercentage,
 }: ProductCardType) {
   return (
-    <div className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2">
-      {/* <div className="rounded-xl"> */}
+    <div className="w-[279px] rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2">
+      <div className="relative w-full h-[321px] rounded-xl overflow-hidden">
         <Image
           src={imageUrl}
           alt={title}
-          width={279}
-          height={321}
-          className="object-cover rounded-xl"
+          fill
+          className="object-cover"
         />
-      {/* </div> */}
-      {/* <div className="p-4"> */}
-        <h3 className="text-[16px] font-semibold text-black mb-1">{title}</h3>
-        <p className="text-sm text-gray-600 mb-2 truncate">{description}</p>
-        <div className="flex items-center gap-2 text-[14px] font-medium">
-          <span className="text-black">₹{price.toLocaleString()}</span>
-          <span className="line-through text-gray-400">₹{originalPrice.toLocaleString()}</span>
-          <span className="text-green-600">{discountPercentage}% OFF</span>
-        </div>
       </div>
-    // </div>
+      <div className={`${roboto.className}`}
+      style={{fontWeight:500}}>
+        <h3 className="text-lg text-black mt-2 mb-1">
+        {title}
+      </h3>
+      <p className="text-base mb-2 truncate"
+      style={{fontWeight:300}}>{description}</p>
+      <div className="flex items-center gap-2 text-[14px] font-medium">
+        <span className="text-lg">₹{price.toLocaleString()}</span>
+        <span className="line-through text-gray-400 text-[15px]">₹{originalPrice.toLocaleString()}</span>
+        <span className="text-green-600">{discountPercentage}% OFF</span>
+      </div>
+      </div>
+      
+    </div>
   );
 }
