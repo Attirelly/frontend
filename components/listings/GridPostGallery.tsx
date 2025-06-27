@@ -86,6 +86,8 @@ export default function GridPostGallery({ posts }: Props) {
           onClose={closeDialog}
           onNext={nextPost}
           onPrev={prevPost}
+          isFirst={currentIndex == 0 ? true : false}
+          isLast={currentIndex == posts.length-1 ? true : false}
         />
       )}
     </>

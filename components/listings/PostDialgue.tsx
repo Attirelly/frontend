@@ -12,10 +12,12 @@ type Props = {
   onClose: () => void;
   onNext: () => void;
   onPrev: () => void;
+  isFirst: boolean;
+  isLast: boolean;
 };
 
-export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev }: Props) {
-  const {profilePic} = useHeaderStore();
+export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, isFirst, isLast }: Props) {
+  const { profilePic } = useHeaderStore();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -37,47 +39,47 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev }: 
       >
         <div className='grid grid-cols-[1.5fr_1fr]'>
           {post.media_type === 'VIDEO' ? (
-              <video
-                src={post.media_url}
-                controls
-                autoPlay
-                muted
-                className="max-w-full max-h-full object-contain"
-              />
+            <video
+              src={post.media_url}
+              controls
+              autoPlay
+              muted
+              className="max-w-full max-h-full object-contain"
+            />
           ) : (
-              <img
-                src={post.media_url}
-                alt="Instagram post"
-                className="max-w-full max-h-full object-contain"
-              />
+            <img
+              src={post.media_url}
+              alt="Instagram post"
+              className="max-w-full max-h-full object-contain"
+            />
           )}
           <div className={`${roboto.className} bg-white px-3 flex flex-col gap-3`}
-          style={{fontWeight:600}}>
+            style={{ fontWeight: 600 }}>
             <div className='flex pt-2 gap-4 items-center'>
-               <img
-               src={profilePic}
-               alt='Instagram Profile Pic'
-               className='w-10 h-10 rounded-full'/>
-               <span>{post.username}</span>
+              <img
+                src={profilePic}
+                alt='Instagram Profile Pic'
+                className='w-10 h-10 rounded-full' />
+              <span>{post.username}</span>
             </div>
 
             {/* <hr className='border border-gray-300 '/> */}
-            <span className='text-sm' style={{fontWeight:400}}>{post.caption || 'No Caption Found'}</span>
+            <span className='text-sm' style={{ fontWeight: 400 }}>{post.caption || 'No Caption Found'}</span>
             <div className='text-sm flex gap-3'>
               <div className='flex flex-col items-center'>
                 <img
-                src='/heart.png'
-                alt='comments'
-                className='w-4 h-4'/>
+                  src='/heart.png'
+                  alt='comments'
+                  className='w-4 h-4' />
                 <span>{post.like_count} {post.like_count == 1 ? 'Like' : 'Likes'}</span>
 
               </div>
               <div className='flex flex-col items-center'>
                 <img
-                src='/comment.png'
-                alt='likes'
-                className='w-4 h-4'/>
-                <span>{post.comments_count} {post.comments_count == 1? 'Comment' : 'Comments'}</span>
+                  src='/comment.png'
+                  alt='likes'
+                  className='w-4 h-4' />
+                <span>{post.comments_count} {post.comments_count == 1 ? 'Comment' : 'Comments'}</span>
               </div>
             </div>
           </div>
@@ -96,24 +98,29 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev }: 
         </button>
 
         {/* Navigation Arrows */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onPrev();
-          }}
-          className="absolute left-[-48px] top-1/2 transform -translate-y-1/2 text-white bg-black/70 rounded-full p-2"
-        >
-          <ChevronLeft size={22} />
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onNext();
-          }}
-          className="absolute right-[-48px] top-1/2 transform -translate-y-1/2 text-white bg-black/70 rounded-full p-2"
-        >
-          <ChevronRight size={22} />
-        </button>
+        {!isFirst && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onPrev();
+            }}
+            className="absolute left-[-48px] top-1/2 transform -translate-y-1/2 text-white bg-black/70 rounded-full p-2"
+          >
+            <ChevronLeft size={22} />
+          </button>
+        )}
+        {!isLast && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onNext();
+            }}
+            className="absolute right-[-48px] top-1/2 transform -translate-y-1/2 text-white bg-black/70 rounded-full p-2"
+          >
+            <ChevronRight size={22} />
+          </button>
+        )}
+
       </div>
     </div>
   );

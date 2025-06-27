@@ -5,10 +5,12 @@ import { api } from '@/lib/axios';
 import ProductCard from './ProductCard';
 import { useProductFilterStore, useFilterStore } from '@/store/filterStore';
 import { ProductCardType } from '@/types/ProductTypes';
+import { useHeaderStore } from '@/store/listing_header_store';
 
 
 export default function ProductContainer({ storeId }: { storeId: string }) {
   const { selectedFilters, setFacets, facets } = useFilterStore();
+  const {query} = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -44,7 +46,7 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
 
     try {
       const res = await api.get(
-        `/search/search_product?query=${storeId}&page=${currentPage}&limit=12&filters=${filters}&facetFilters=${facetFilters}`
+        `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filters}&facetFilters=${facetFilters}`
       );
       const data = res.data;
       console.log(data);
@@ -56,9 +58,11 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
         originalPrice: item.originalPrice || item.price || 500,
         discountPercentage: "23"
       }));
-
+      if (Object.keys(facets).length === 0) {
+      setFacets(data.facets);
+      }
       if (currentPage === 0) {
-        setFacets(data.facets);
+        // setFacets(data.facets);
         setProducts(formattedProducts);
       } else {
         setProducts((prev) => [...prev, ...formattedProducts]);
