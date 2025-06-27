@@ -26,7 +26,7 @@ export default function ListingPageHeader() {
     const [cities, setCities] = useState<City[]>([]);
     // const [stores, setStoreTypes] = useState('');
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
-    const [tempQuery, setTempQuery] = useState<string>('');
+    const [tempQuery, setTempQuery] = useState<string>(query);
     // const [defaultStoreType, setDefaultStoreType] = useState<BrandType | null>(null);
 
     // Create options from cities

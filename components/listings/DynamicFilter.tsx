@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useFilterStore, useProductFilterStore } from '@/store/filterStore';
@@ -8,16 +6,48 @@ import Image from 'next/image';
 import { playfair_display, manrope } from '@/font';
 import DynamicFilterSkeleton from './skeleton/DynamicFilterSkeleton';
 
-const DynamicFilter = () => {
-  const { facets, selectedFilters, toggleFilter, resetFilters } = useFilterStore();
-  // const {facets} = useProductFilterStore();
+type DynamicFilterProps = {
+  context: 'store' | 'product';
+};
+
+const DynamicFilter = ({ context }: DynamicFilterProps) => {
+  const filterStore =
+    context === 'store' ? useFilterStore() : useProductFilterStore();
+  const {
+    facets,
+    selectedFilters,
+    toggleFilter,
+    resetFilters,
+    setPriceRange,
+    priceRange,
+    priceBounds,
+  } = filterStore;
 
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [openFacets, setOpenFacets] = useState<Record<string, boolean>>({});
-  const [isCollapsed, setIsCollapsed] = useState(false); // main toggle
-  const [loading , setLoading] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([0, 0]);
 
-  // console.log("dsaasdasdafadfsaddas",facets);
+  useEffect(() => {
+    if (context === 'product' && priceBounds) {
+      setLocalPriceRange(priceBounds);
+    }
+  }, [context, priceBounds]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (
+        context === 'product' &&
+        priceRange &&
+        (localPriceRange[0] !== priceRange[0] || localPriceRange[1] !== priceRange[1])
+      ) {
+        setPriceRange(localPriceRange);
+      }
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timeout);
+  }, [localPriceRange]);
 
   const handleSearchChange = (facetName: string, value: string) => {
     setSearchTerms((prev) => ({
@@ -33,15 +63,13 @@ const DynamicFilter = () => {
     }));
   };
 
-  const formatFacetName = (name: string) => {
-    return name
+  const formatFacetName = (name: string) =>
+    name
       .split('_')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-  };
 
   useEffect(() => {
-    // Auto-expand all facets by default
     const defaultOpen: Record<string, boolean> = {};
     Object.keys(facets).forEach((facetName) => {
       defaultOpen[facetName] = true;
@@ -49,15 +77,11 @@ const DynamicFilter = () => {
     setOpenFacets(defaultOpen);
   }, [facets]);
 
-  if(loading){
-    return <DynamicFilterSkeleton/>
-  }
+  if (loading) return <DynamicFilterSkeleton />;
 
   if (isCollapsed) {
     return (
-      <div className="sticky top-20 z-10 ">
-
-
+      <div className="sticky top-20 z-10">
         <div className="w-fit px-3 py-2 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 flex items-center">
           <button
             className="flex items-center gap-2 text-sm font-medium text-gray-700"
@@ -78,9 +102,11 @@ const DynamicFilter = () => {
   }
 
   return (
-    <div className="sticky top-20 z-10 ">
-      <div className={`${manrope.className} h-[calc(100vh-5rem)] overflow-y-auto max-w-xs p-4 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 relative`}
-        style={{ fontWeight: 500 }}>
+    <div className="sticky top-20 z-10">
+      <div
+        className={`${manrope.className} h-[calc(100vh-5rem)] overflow-y-auto max-w-xs p-4 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 relative`}
+        style={{ fontWeight: 500 }}
+      >
         <div className="flex items-center justify-between mb-3">
           <h1 className={`${playfair_display.className}`}>Refine</h1>
           <button onClick={() => setIsCollapsed(true)}>
@@ -122,47 +148,87 @@ const DynamicFilter = () => {
                 </div>
 
                 {isOpen && (
-                  <>{fName !== 'Genders' && fName !== 'Price Ranges' && (
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      value={searchTerms[facetName] || ''}
-                      onChange={(e) => handleSearchChange(facetName, e.target.value)}
-                      className="mb-3 w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    />
-                  )}
+                  <>
+                    {context === 'product' && fName === 'Prices' ? (
+                      <div className="mb-3">
+                        <label className="text-sm text-gray-600 mb-1 block">
+                          Price Range
+                        </label>
+                        <input
+                          type="range"
+                          min={priceBounds?.[0] || 0}
+                          max={priceBounds?.[1] || 10000}
+                          value={localPriceRange[0]}
+                          onChange={(e) =>
+                            setLocalPriceRange([
+                              parseInt(e.target.value),
+                              localPriceRange[1],
+                            ])
+                          }
+                          className="w-full"
+                        />
+                        <input
+                          type="range"
+                          min={priceBounds?.[0] || 0}
+                          max={priceBounds?.[1] || 10000}
+                          value={localPriceRange[1]}
+                          onChange={(e) =>
+                            setLocalPriceRange([
+                              localPriceRange[0],
+                              parseInt(e.target.value),
+                            ])
+                          }
+                          className="w-full mt-1"
+                        />
+                        <div className="text-sm text-gray-600 mt-2">
+                          ₹{localPriceRange[0]} - ₹{localPriceRange[1]}
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {fName !== 'Genders' && fName !== 'Price Ranges' && (
+                          <input
+                            type="text"
+                            placeholder="Search..."
+                            value={searchTerms[facetName] || ''}
+                            onChange={(e) =>
+                              handleSearchChange(facetName, e.target.value)
+                            }
+                            className="mb-3 w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                          />
+                        )}
 
-
-                    <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
-                      {filteredValues.length > 0 ? (
-                        filteredValues.map((facet) => (
-                          <label
-                            key={facet.name}
-                            className="flex items-center justify-between space-x-2 cursor-pointer"
-                          >
-                            <div className="flex items-center space-x-2">
-                              <input
-                                type="checkbox"
-                                checked={facet.selected}
-                                onChange={() => toggleFilter(facetName, facet.name)}
-                                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                              />
-                              <div className='flex gap-4'>
-                                <span className='text-sm' style={{ fontWeight: 400 }}>{facet.name}</span>
-                                {fName === 'Price Ranges' && (
-                                  <span className='text-sm text-[#666666]' style={{fontWeight:400}}>{facet.name === 'Affordable' ? 'starts from 2000/-' : facet.name === 'Premium' ? 'start from 5000/-' : 'starts from 25000/-'}</span>
-                                )}
-
-                              </div>
-
+                        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                          {filteredValues.length > 0 ? (
+                            filteredValues.map((facet) => (
+                              <label
+                                key={facet.name}
+                                className="flex items-center justify-between space-x-2 cursor-pointer"
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={facet.selected}
+                                    onChange={() =>
+                                      toggleFilter(facetName, facet.name)
+                                    }
+                                    className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                  />
+                                  <div className='flex gap-4'>
+                                    <span className='text-sm' style={{ fontWeight: 400 }}>{facet.name}</span>
+                                    {fName === 'Price Ranges' && (<span className='text-sm text-[#666666]' style={{ fontWeight: 400 }}>{facet.name === 'Affordable' ? 'starts from 2000/-' : facet.name === 'Premium' ? 'start from 5000/-' : 'starts from 25000/-'}</span>)}
+                                  </div>
+                                </div>
+                              </label>
+                            ))
+                          ) : (
+                            <div className="text-gray-400 text-sm italic">
+                              No options found
                             </div>
-                            {/* <span className="text-gray-500 text-sm">{facet.count}</span> */}
-                          </label>
-                        ))
-                      ) : (
-                        <div className="text-gray-400 text-sm italic">No options found</div>
-                      )}
-                    </div>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
               </div>
