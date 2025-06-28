@@ -55,20 +55,38 @@ body {
   @apply opacity-50 cursor-not-allowed;
 }
 
-.city-select__control {
+/* .city-select__control {
   border: none !important;
   box-shadow: none !important;
+  
 }
 
 .city-select__indicator-separator {
   display: none;
   font-weight: 500;
+} */
+
+.city-select__control {
+  border: none !important;
+  box-shadow: none !important;
+  /* padding: 0.5rem 0.75rem; */
 }
 
-.scrollbar-none::-webkit-scrollbar {
+.city-select__indicator-separator {
   display: none;
 }
-.scrollbar-none {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+
+.city-select__option {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.city-select__option--is-focused,
+.city-select__option--is-selected {
+  background-color: #f3f3f3;
+}
+
+.city-select__single-value {
+  font-weight: 600;
+  color: #111;
 }
