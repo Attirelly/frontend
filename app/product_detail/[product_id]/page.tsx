@@ -17,6 +17,9 @@ import ListingFooter from "@/components/listings/ListingFooter";
 import { api } from "@/lib/axios";
 import { Brand, Color, Product, Size, Variant } from "./type";
 import { useParams } from 'next/navigation';
+// import { useSellerStore } from "@/store/sellerStore";
+import ShowMoreProducts from "@/components/curations/ShowMoreProducts";
+import { roboto, manrope } from "@/font";
 
 // interface PageProps {
 //   params: {
@@ -27,9 +30,8 @@ import { useParams } from 'next/navigation';
 export default function ProductDetail() {
   const params = useParams();
   const product_id = params?.product_id as string;
-  console.log(product_id);
-  // const { product_id } = params;
 
+  // const { setStoreId } = useSellerStore();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
@@ -79,8 +81,9 @@ export default function ProductDetail() {
       try {
         const response = await api.get(`/products/${product_id}`);
         const data: Product = response.data;
+        console.log(data)
         setProduct(data);
-
+        // setStoreId(data.store_id);
         const defaultVariant = data.variants[0];
         setSelectedVariant(defaultVariant);
         setSelectedColor(defaultVariant.color);
@@ -191,9 +194,8 @@ export default function ProductDetail() {
                   {images.map((src, idx) => (
                     <div
                       key={idx}
-                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${
-                        idx === activeIndex ? "border-black" : "border-gray-300"
-                      }`}
+                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${idx === activeIndex ? "border-black" : "border-gray-300"
+                        }`}
                       onClick={() => setActiveIndex(idx)}
                     >
                       <Image
@@ -228,9 +230,8 @@ export default function ProductDetail() {
                       backgroundImage: `url(${images[activeIndex]})`,
                       backgroundRepeat: "no-repeat",
                       backgroundSize: `${600 * 2}px ${600 * 2}px`,
-                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${
-                        lensPosition.y * 2 - 150
-                      }px`,
+                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${lensPosition.y * 2 - 150
+                        }px`,
                     }}
                   />
                 </div>
@@ -275,11 +276,10 @@ export default function ProductDetail() {
                       onClick={() =>
                         updateVariantBySelection(selectedColor, size)
                       }
-                      className={`border rounded-sm w-19 h-10 ${
-                        selectedSize.size_id === size.size_id
-                          ? "border-black font-semibold bg-[#EBEBEB]"
-                          : "border-gray-300"
-                      }`}
+                      className={`border rounded-sm w-19 h-10 ${selectedSize.size_id === size.size_id
+                        ? "border-black font-semibold bg-[#EBEBEB]"
+                        : "border-gray-300"
+                        }`}
                     >
                       {size.size_name}
                     </button>
@@ -296,11 +296,10 @@ export default function ProductDetail() {
                   {colors.map((color) => (
                     <button
                       key={color.color_id}
-                      className={`w-19 h-10 rounded-lg border-0.25  ${
-                        selectedColor.color_id === color.color_id
-                          ? "border-black"
-                          : "border-gray-300"
-                      }`}
+                      className={`w-19 h-10 rounded-lg border-0.25  ${selectedColor.color_id === color.color_id
+                        ? "border-black"
+                        : "border-gray-300"
+                        }`}
                       style={{ backgroundColor: color.hex_code || "#ccc" }}
                       onClick={() =>
                         updateVariantBySelection(color, selectedSize)
@@ -416,6 +415,29 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+      <div className="w-300 flex flex-col mx-auto">
+        <hr className="border-t border-transparent"
+          style={{
+            borderImage: 'repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)',
+            borderImageSlice: 1,
+          }}
+        />
+        <div className={`${roboto.className} flex mt-16 justify-between`}>
+          <span className="text-3xl"
+            style={{ fontWeight: 600 }}>More from {product.title}</span>
+          <span className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
+            style={{ fontWeight: 500 }}
+            onClick={() => console.log('tmkc')}>View All</span>
+        </div>
+
+
+        <div className="relative mt-6">
+          <ShowMoreProducts store_id={product.store_id} limit={5} />
+          <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
+        </div>
+      </div>
+
+
       <div className="mt-10">
         <ListingFooter />
       </div>

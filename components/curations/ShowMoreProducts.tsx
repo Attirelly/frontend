@@ -1,0 +1,103 @@
+import Image from "next/image";
+import ProductCard from "../listings/ProductCard";
+import { ProductCardType } from '@/types/ProductTypes';
+import { useEffect, useState } from "react";
+import { api } from "@/lib/axios";
+import { toast } from "sonner";
+const prods: ProductCardType[] = [
+    {
+        title: 'dasads',
+        price: 13,
+        originalPrice: 12,
+        imageUrl: ['https://picsum.photos/200/300'],
+        discountPercentage: 23,
+        description: 'asdasd',
+    },
+    {
+        title: 'dasads',
+        price: 13,
+        originalPrice: 12,
+        imageUrl: ['https://picsum.photos/200/300'],
+        discountPercentage: 23,
+        description: 'asdasd',
+    },
+    {
+        title: 'dasads',
+        price: 13,
+        originalPrice: 12,
+        imageUrl: ['https://picsum.photos/200/300'],
+        discountPercentage: 23,
+        description: 'asdasd',
+    },
+    {
+        title: 'dasads',
+        price: 13,
+        originalPrice: 12,
+        imageUrl: ['https://picsum.photos/200/300'],
+        discountPercentage: 23,
+        description: 'asdasd',
+    },
+    {
+        title: 'dasads',
+        price: 13,
+        originalPrice: 12,
+        imageUrl: ['https://picsum.photos/200/300'],
+        discountPercentage: 23,
+        description: 'asdasd',
+    },
+];
+
+interface ShowMoreProductProps {
+    store_id: string,
+    limit? : number
+}
+export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductProps) {
+    const [products, setProducts] = useState<ProductCardType[]>([]);
+    const fetchProducts = async (store_id: string) => {
+        try {
+            const res = await api.get(
+                `/search/search_product?query=${store_id}&page=0&limit=${limit}&filters=&facetFilters=`
+            );
+            console.log(res.data);
+            const data = res.data;
+            const formattedProducts: ProductCardType[] = data.hits.map((item: any) => {
+                const price = item.price || 500;
+                const originalPrice = item.mrp || item.price || 500;
+
+                // Avoid division by zero
+                const discount =
+                    originalPrice > price
+                        ? Math.round(((originalPrice - price) / originalPrice) * 100)
+                        : 0;
+
+                return {
+                    imageUrl: item.image || [],
+                    title: item.title || 'Untitled Product',
+                    description: item.description || '',
+                    price,
+                    originalPrice,
+                    discountPercentage: discount.toString(), // If needed as a string
+                };
+            });
+            setProducts(formattedProducts);
+        }
+        catch (error) {
+            toast.error('failed to fetch products');
+        }
+    }
+    useEffect(() => {
+        if (store_id) {
+            fetchProducts(store_id);
+        }
+    }, []);
+    return (
+        <div className="flex gap-5 overflow-x-auto scrollbar-none">
+
+            {products.map((product, index) => (
+                <ProductCard key={`${product.title}-${index}`} {...product} />
+            ))}
+        </div>
+    )
+}
+
+// five product in a row , padding , gap - 5,
