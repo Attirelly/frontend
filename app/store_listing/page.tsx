@@ -48,7 +48,7 @@ export default function StoreListingPage() {
         <div className="grid grid-cols-[1fr_3fr] gap-3">
           {/* <div className="self-start"> */}
           <div>
-            <DynamicFilter />
+            <DynamicFilter context="store"/>
           </div>
           <div className="flex flex-col gap-5">
             <TwoOptionToggle options={['Home Delivery', 'In Store']} />

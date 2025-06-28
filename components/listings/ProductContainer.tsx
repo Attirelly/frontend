@@ -9,8 +9,8 @@ import { useHeaderStore } from '@/store/listing_header_store';
 
 
 export default function ProductContainer({ storeId }: { storeId: string }) {
-  const { selectedFilters, setFacets, facets } = useFilterStore();
-  const {query} = useHeaderStore();
+  const { selectedFilters, setFacets, facets, setPriceRange, priceRange, setPriceBounds } = useProductFilterStore();
+  const { query } = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -29,20 +29,20 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
     return encodeURIComponent(JSON.stringify(filters));
   };
 
-//   const buildFacetFilters = (filters: Record<string, string[]>) => {
-//     const filtersArray: string[][] = [];
-//     Object.entries(filters).forEach(([key, values]) => {
-//       if (values.length > 0) {
-//         filtersArray.push(values.map((v) => `${key}:${v}`));
-//       }
-//     });
-//     return encodeURIComponent(JSON.stringify(filtersArray));
-//   };
+  //   const buildFacetFilters = (filters: Record<string, string[]>) => {
+  //     const filtersArray: string[][] = [];
+  //     Object.entries(filters).forEach(([key, values]) => {
+  //       if (values.length > 0) {
+  //         filtersArray.push(values.map((v) => `${key}:${v}`));
+  //       }
+  //     });
+  //     return encodeURIComponent(JSON.stringify(filtersArray));
+  //   };
 
   const fetchProducts = async (currentPage: number) => {
     setLoading(true);
     const facetFilters = buildFacetFilters(selectedFilters);
-    console.log('system hi system', facetFilters, selectedFilters);
+    console.log("filters", filters, currentPage);
 
     try {
       const res = await api.get(
@@ -51,18 +51,36 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
       const data = res.data;
       console.log(data);
       const formattedProducts: ProductCardType[] = data.hits.map((item: any) => ({
-        imageUrl: item.image || 'https://picsum.photos/300/400',
+        imageUrl: item.image || [],
         title: item.title || 'Untitled Product',
         description: item.description || '',
         price: item.price || 500,
-        originalPrice: item.originalPrice || item.price || 500,
+        originalPrice: item.mrp || item.price || 500,
         discountPercentage: "23"
       }));
+
+      // set price range
+
+
+      // set facets only first time
       if (Object.keys(facets).length === 0) {
-      setFacets(data.facets);
+        setFacets(data.facets);
+        if (data.facets?.prices) {
+          const priceKeys = Object.keys(data.facets.prices)
+            .map(Number)
+            .filter((n) => !isNaN(n));
+
+          if (priceKeys.length > 0) {
+            const min = Math.min(...priceKeys);
+            const max = Math.max(...priceKeys);
+            setPriceBounds([min, max]);      // 👈 stays constant
+            setPriceRange([min, max]);
+          }
+        }
       }
+
       if (currentPage === 0) {
-        // setFacets(data.facets);
+        console.log('setting new ');
         setProducts(formattedProducts);
       } else {
         setProducts((prev) => [...prev, ...formattedProducts]);
@@ -78,11 +96,18 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
   };
 
   useEffect(() => {
+    console.log(priceRange);
+    const priceFilter = `price >= ${priceRange[0]} AND price <= ${priceRange[1]}`
+    setFilters(priceFilter);
+  }, [priceRange]);
+
+  useEffect(() => {
     setPage(0);
     fetchProducts(0);
-  }, [selectedFilters]);
+  }, [filters, query, selectedFilters]);
 
-//   console.log(facets)
+
+  //   console.log(facets)
 
   useEffect(() => {
     if (page !== 0) fetchProducts(page);
@@ -108,7 +133,7 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-2">
         {products.map((product, index) => (
           <ProductCard key={`${product.title}-${index}`} {...product} />
         ))}

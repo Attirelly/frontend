@@ -121,6 +121,10 @@ type FacetValue = {
 type Facets = Record<string, FacetValue[]>;
 
 interface FilterState {
+  priceRange : [number, number];
+  setPriceRange : (range : [number, number]) => void;
+  priceBounds: [number, number];
+  setPriceBounds: (bounds: [number, number]) => void;
   facets: Facets;
   selectedFilters: Record<string, string[]>;
   setFacets: (apiFacets: Record<string, Record<string, number>>) => void;
@@ -131,6 +135,10 @@ interface FilterState {
 
 function createFilterStore() {
   return create<FilterState>((set, get) => ({
+    priceRange: [0, 0],
+    setPriceRange: (range: [number, number]) => set({ priceRange: range }),
+    priceBounds: [0, 0],
+    setPriceBounds: (bounds: [number, number]) => set({ priceBounds: bounds }),
     facets: {},
     selectedFilters: {},
 

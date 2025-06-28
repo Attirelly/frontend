@@ -6,6 +6,7 @@ import { manrope } from '@/font';
 import {useSellerStore} from '@/store/sellerStore'
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useFilterStore } from '@/store/filterStore';
 
 type StoreCardProps = {
     imageUrl: string;
