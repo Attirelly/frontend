@@ -68,13 +68,19 @@
 
 import GridPostGallery from '@/components/listings/GridPostGallery';
 import { useHeaderStore } from '@/store/listing_header_store';
+import GridPostGallerySkeleton from './skeleton/store_desc/GridPostGallerySkeleton';
 
 export default function PostGalleryContainer() {
   const { instaMedia } = useHeaderStore();
+  const loading = !instaMedia || instaMedia.length === 0;
 
   return (
-      <div id="scrollable-container" className="h-[927px] overflow-y-auto">
+      <div id="scrollable-container" className="h-[927px] overflow-y-auto scrollbar-none">
+      {loading ? (
+        <GridPostGallerySkeleton /> // ✅ Show skeleton
+      ) : (
         <GridPostGallery posts={instaMedia} />
-      </div>
+      )}
+    </div>
   );
 }

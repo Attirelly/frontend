@@ -146,16 +146,7 @@ export default function StoreInfoPage({
                         </div>
                     </div>
 
-
-                    {/* Example display of store types and price ranges */}
-                    {/* <div className="mt-2 text-sm text-gray-800">
-                        <p><strong>Store Types:</strong> {storeTypes?.join(", ")}</p>
-                        <p><strong>Price Ranges:</strong> {priceRanges?.join(", ")}</p>
-                    </div> */}
-
                 </div>
-
-
             </div>
         </div>
     );

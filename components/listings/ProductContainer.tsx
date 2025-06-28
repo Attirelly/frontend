@@ -6,6 +6,7 @@ import ProductCard from './ProductCard';
 import { useProductFilterStore, useFilterStore } from '@/store/filterStore';
 import { ProductCardType } from '@/types/ProductTypes';
 import { useHeaderStore } from '@/store/listing_header_store';
+import ProductGridSkeleton from './skeleton/catalogue/ProductGridSkeleton';
 
 
 export default function ProductContainer({ storeId }: { storeId: string }) {
@@ -50,14 +51,25 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
       );
       const data = res.data;
       console.log(data);
-      const formattedProducts: ProductCardType[] = data.hits.map((item: any) => ({
-        imageUrl: item.image || [],
-        title: item.title || 'Untitled Product',
-        description: item.description || '',
-        price: item.price || 500,
-        originalPrice: item.mrp || item.price || 500,
-        discountPercentage: "23"
-      }));
+      const formattedProducts: ProductCardType[] = data.hits.map((item: any) => {
+        const price = item.price || 500;
+        const originalPrice = item.mrp || item.price || 500;
+
+        // Avoid division by zero
+        const discount =
+          originalPrice > price
+            ? Math.round(((originalPrice - price) / originalPrice) * 100)
+            : 0;
+
+        return {
+          imageUrl: item.image || [],
+          title: item.title || 'Untitled Product',
+          description: item.description || '',
+          price,
+          originalPrice,
+          discountPercentage: discount.toString(), // If needed as a string
+        };
+      });
 
       // set price range
 
@@ -133,12 +145,22 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-2">
-        {products.map((product, index) => (
-          <ProductCard key={`${product.title}-${index}`} {...product} />
-        ))}
-      </div>
-      {hasMore && <div ref={loaderRef} className="h-12" />}
+      {loading && products.length === 0 ? (
+        <ProductGridSkeleton />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-2">
+          {products.map((product, index) => (
+            <ProductCard key={`${product.title}-${index}`} {...product} />
+          ))}
+        </div>
+      )}
+      {hasMore && (
+        <div ref={loaderRef} className="h-12 flex justify-center items-center">
+          {loading && products.length > 0 ? (
+            <span className="text-gray-500 text-sm">Loading more products...</span>
+          ) : null}
+        </div>
+      )}
     </>
   );
 }
