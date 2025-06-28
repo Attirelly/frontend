@@ -5,8 +5,10 @@ import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 import {
   CheckCircle,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   RefreshCcw,
   Truck,
 } from "lucide-react";
@@ -33,7 +35,8 @@ export default function ProductDetail({ params }: PageProps) {
     "description"
   );
   const [isProductDetailCollapse, setProductDetailCollapse] = useState(true);
-
+  const [isProductDescriptionCollapse, setProductDescriptionCollapse] =
+    useState(true);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const [lensPosition, setLensPosition] = useState<{
     x: number;
@@ -51,22 +54,21 @@ export default function ProductDetail({ params }: PageProps) {
     setLensPosition(null);
   };
 
-  const sendToWhatsApp = async() => {
-
+  const sendToWhatsApp = async () => {
     try {
-      const response = await api.get(`/stores/store_basic?store_id=${product?.store_id}`)
-      const data = response.data ;
+      const response = await api.get(
+        `/stores/store_basic?store_id=${product?.store_id}`
+      );
+      const data = response.data;
       const phoneNumber = data.whatsapp_number; // Replace with your WhatsApp number
       const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
       const encodedMessage = encodeURIComponent(message);
       const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-      console.log(url)
+      console.log(url);
       window.open(url, "_blank");
-
     } catch (error) {
       console.error("Failed to fetch product details", error);
     }
-
   };
   useEffect(() => {
     async function fetchProductDetails() {
@@ -137,7 +139,7 @@ export default function ProductDetail({ params }: PageProps) {
   return (
     <div className="w-full h-full">
       <ListingPageHeader />
-      <div className="mx-auto lg:w-[1263px] flex flex-col gap-2">
+      <div className="mx-auto lg:w-[1300px] flex flex-col gap-2">
         <div className="w-full flex flex-col mt-10 mb-10">
           <div className="flex flex-row gap-20">
             {/* Left: Product image */}
@@ -146,13 +148,13 @@ export default function ProductDetail({ params }: PageProps) {
                 ref={imageContainerRef}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
-                className="w-[600px] h-[600px] relative rounded overflow-hidden border border-gray-200"
+                className="w-[600px] h-[600px] relative rounded overflow-hidden"
               >
                 <Image
                   src={images[activeIndex]}
                   alt={`Product Image ${activeIndex + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-cover rounded-xl"
                 />
               </div>
 
@@ -175,7 +177,7 @@ export default function ProductDetail({ params }: PageProps) {
 
               <div className="mt-4 flex items-center gap-2">
                 <button
-                  className="p-2 border rounded hover:bg-gray-100"
+                  className="p-2 rounded-xl bg-gray-50 "
                   onClick={prevImage}
                 >
                   <ChevronLeft size={16} />
@@ -201,7 +203,7 @@ export default function ProductDetail({ params }: PageProps) {
                 </div>
 
                 <button
-                  className="p-2 border rounded hover:bg-gray-100"
+                  className="p-2 rounded-xlbg-gray-100"
                   onClick={nextImage}
                 >
                   <ChevronRight size={20} />
@@ -210,7 +212,7 @@ export default function ProductDetail({ params }: PageProps) {
             </div>
 
             {/* Right: Product Description */}
-            <div className="text-[#111] font-sans w-full max-w-xl space-y-4">
+            <div className="text-[#111] font-sans w-full max-w-xl">
               {/* ✅ Magnifier Preview Inside Description */}
               {lensPosition && (
                 <div>
@@ -229,29 +231,68 @@ export default function ProductDetail({ params }: PageProps) {
                   />
                 </div>
               )}
-              <p className="text-xl text-gray-600">By {product.brands.name}</p>
-              <h1 className="text-4xl font-bold">{product.title}</h1>
+              <p className="text-[32px] font-medium leading-9.5 tracking-normal">
+                By {product.brands.name}
+              </p>
+              <h1 className="text-2xl text-[#7D7D7D] font-medium tracking-tighter mt-2">
+                {product.title}
+              </h1>
 
-              <div className="flex items-center gap-4">
-                <p className="text-2xl font-semibold">₹{selectedVariant.mrp}</p>
-                <p className="text-xl line-through text-gray-400">
+              <div className="flex items-center gap-4 mt-4">
+                <p className="text-[27px] font-medium">
+                  ₹{selectedVariant.mrp}
+                </p>
+                <p className="text-[22px] line-through text-gray-400  #00AA63">
                   ₹{selectedVariant.price}
+                </p>
+                <p className="text-[20px] font-semibold  text-[#00AA63] tracking-normal">
+                  15%
                 </p>
               </div>
 
-              {/* Color selection */}
+              <hr className="border-t border-dashed border-[#A3A3A3] border-[0.5]px mt-7.5 mb-7.5 " />
+
+              {/* size collection */}
+
               <div>
-                <p className="text-sm font-medium">
-                  Color:{" "}
-                  <span className="font-semibold">
-                    {selectedColor.color_name}
-                  </span>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xl font-medium">
+                    <span className="text-[#7D7D7D]">Size:</span>{" "}
+                    <span>{selectedSize.size_name}</span>
+                  </p>
+                  <button className="text-lg text-[#7D7D7D] underline">
+                    View Size Chart
+                  </button>
+                </div>
+                <div className="flex gap-3 flex-wrap mt-5">
+                  {sizes.map((size) => (
+                    <button
+                      key={size.size_id}
+                      onClick={() =>
+                        updateVariantBySelection(selectedColor, size)
+                      }
+                      className={`border rounded-sm w-19 h-10 ${
+                        selectedSize.size_id === size.size_id
+                          ? "border-black font-semibold bg-[#EBEBEB]"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {size.size_name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color selection */}
+              <div className="mt-5 mb-5">
+                <p className="text-lg font-medium">
+                  <span className="text-[#7D7D7D]">Available Color: </span>
                 </p>
-                <div className="flex gap-3 mt-2">
+                <div className="flex gap-3 mt-5">
                   {colors.map((color) => (
                     <button
                       key={color.color_id}
-                      className={`w-8 h-8 rounded-full border-2 ${
+                      className={`w-19 h-10 rounded-lg border-0.25  ${
                         selectedColor.color_id === color.color_id
                           ? "border-black"
                           : "border-gray-300"
@@ -265,50 +306,28 @@ export default function ProductDetail({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Size selection */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-sm font-medium">
-                    Size: {selectedSize.size_name}
-                  </p>
-                  <button className="text-sm underline">View Size Chart</button>
-                </div>
-                <div className="flex gap-2 flex-wrap">
-                  {sizes.map((size) => (
-                    <button
-                      key={size.size_id}
-                      onClick={() =>
-                        updateVariantBySelection(selectedColor, size)
-                      }
-                      className={`px-4 py-2 border rounded ${
-                        selectedSize.size_id === size.size_id
-                          ? "border-black font-semibold"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {size.size_name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* WhatsApp Button */}
-              <button className="w-full bg-green-600 text-white flex items-center justify-center gap-2 py-3 rounded text-lg hover:bg-green-700 transition" onClick={sendToWhatsApp}>
-                <FaWhatsapp size={20} />
+              <button
+                className="w-full h-15 p-5 bg-[#00AA63] text-white flex items-center justify-center gap-6 rounded text-2xl hover:bg-green-700 transition"
+                onClick={sendToWhatsApp}
+              >
+                <FaWhatsapp size={36} />
                 Buy on WhatsApp
               </button>
 
               {/* Product Details & Care */}
-              <div>
+              <div className="mt-8">
                 <div className="flex justify-between items-center mb-2">
-                  <h1 className="text-xl font-bold">Product Details</h1>
+                  <h1 className="w-full text-xl font-500 border-y border-0.25 border-[#CCCCCC] py-5">
+                    Product Details
+                  </h1>
                   <button
                     onClick={() =>
                       setProductDetailCollapse(!isProductDetailCollapse)
                     }
                     className="text-sm text-gray-600 hover:text-gray-800"
                   >
-                    {isProductDetailCollapse ? "Show Details" : "Hide Details"}
+                    {isProductDetailCollapse ? <ChevronDown /> : <ChevronUp />}
                   </button>
                 </div>
 
@@ -317,17 +336,21 @@ export default function ProductDetail({ params }: PageProps) {
                     <ul className="grid grid-cols-2 gap-4">
                       {product.attributes.map((item, idx) => (
                         <li key={idx} className="flex flex-col">
-                          <div className="text-sm font-medium text-gray-600">
+                          <div className="text-sm font-40 text-[#766874]">
                             {item.name}
                           </div>
-                          <div className="text-sm font-bold">{item.value}</div>
+                          <div className="text-4 font-500 mt-2">
+                            {item.value}
+                          </div>
                         </li>
                       ))}
                     </ul>
 
-                    <div className="mt-4 pt-4 border-t">
-                      <h2 className="font-bold mb-1">Care Instructions</h2>
-                      <p>
+                    <div className="mt-4">
+                      <h2 className="font-400 mb-1 text-[#766874]">
+                        Care Instructions
+                      </h2>
+                      <p className="text-4 font-500 mt-2">
                         Do not wash with white clothes, Do not use hard
                         detergents
                       </p>
@@ -336,50 +359,49 @@ export default function ProductDetail({ params }: PageProps) {
                 )}
               </div>
 
-              {/* Description/Reviews Tabs */}
-              <div className="mt-12">
-                <div className="flex gap-8 pb-2">
+              {/* Product Description */}
+              <div className="mt-8">
+                <div className="flex justify-between items-center mb-2">
+                  <h1 className="w-full text-xl font-500 border-y border-0.25 border-[#CCCCCC] py-5">
+                    Product Description
+                  </h1>
                   <button
-                    className={`text-lg font-medium ${
-                      activeTab === "description"
-                        ? "text-black border-b-2 border-black"
-                        : "text-gray-500"
-                    }`}
-                    onClick={() => setActiveTab("description")}
+                    onClick={() =>
+                      setProductDescriptionCollapse(
+                        !isProductDescriptionCollapse
+                      )
+                    }
+                    className="text-sm text-gray-600 hover:text-gray-800"
                   >
-                    Description
-                  </button>
-                  <button
-                    className={`text-lg font-medium ${
-                      activeTab === "reviews"
-                        ? "text-black border-b-2 border-black"
-                        : "text-gray-500"
-                    }`}
-                    onClick={() => setActiveTab("reviews")}
-                  >
-                    Reviews
+                    {isProductDescriptionCollapse ? (
+                      <ChevronDown />
+                    ) : (
+                      <ChevronUp />
+                    )}
                   </button>
                 </div>
 
-                {activeTab === "description" && (
+                {!isProductDescriptionCollapse && (
                   <div>
-                    <p className="text-sm text-[#666666]">
-                      {product.description}
-                    </p>
+                    <div>{product.description}</div>
                   </div>
                 )}
+              </div>
 
+              <div>
                 {/* Delivery Info */}
                 <div className="flex flex-col gap-4 mt-4 w-[500px]">
-                  <div className="border rounded p-4 space-y-2 text-sm">
+                  <div className="border rounded-xl border-0.25 border-[#CCCCCC] p-4 space-y-2 text-sm">
                     <Truck size={18} className="text-black inline-block" />
                     <span className="font-semibold ml-1">Free Delivery</span>
-                    <p>Enter your Postal code for Delivery Availability</p>
+                    <p className="text-[#726C6C]">
+                      Enter your Postal code for Delivery Availability
+                    </p>
                   </div>
-                  <div className="border rounded p-4 space-y-2 text-sm">
+                  <div className="border rounded-xl border-0.25 border-[#CCCCCC] p-4 space-y-2 text-4">
                     <RefreshCcw size={18} className="text-black inline-block" />
                     <span className="font-semibold ml-1">Return Delivery</span>
-                    <p>
+                    <p className="text-[#726C6C]">
                       Free 30 days Delivery Return.{" "}
                       <span className="underline cursor-pointer">Details</span>
                     </p>
@@ -388,11 +410,10 @@ export default function ProductDetail({ params }: PageProps) {
               </div>
             </div>
           </div>
-
-          <div className="mt-10">
-            <ListingFooter />
-          </div>
         </div>
+      </div>
+      <div className="mt-10">
+        <ListingFooter />
       </div>
     </div>
   );
