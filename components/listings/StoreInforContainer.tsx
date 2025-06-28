@@ -15,14 +15,33 @@ export default function StoreInfoContainer() {
     const fetchStore = async () => {
       try {
         const storeRes = await api.get('/stores/446e5536-4531-4440-94d0-11438558baac');
-        const instaRes = await api.get('instagram/seller/2ba895ad-55c5-4e81-a0aa-e0f43962a685/data');
-
-        const instaData = instaRes.data;
         const storeData = storeRes.data;
+
+        const storeFinal: StoreInfoType = {
+          id: storeData.store_id,
+          // imageUrl: storeData.profile_image,
+          imageUrl: storeData.profile_image,
+          locationUrl: storeData.store_address,
+          storeName: storeData.store_name,
+          post_count: "",
+          product_count: "",
+          bio: "",
+          storeTypes: storeData.store_types.map((item: any) => item.store_type),
+          priceRanges: storeData.price_ranges.map((item: any) => item.label),
+          instagramFollowers: ""
+
+        };
+        setStore(storeFinal);
+
+
+        
+        const instaRes = await api.get('instagram/seller/2ba895ad-55c5-4e81-a0aa-e0f43962a6853/data');
+        const instaData = instaRes.data;
         setInstaMedia(instaData.media);
         setProfilePic(instaData.profile_picture);
 
-        const storeFinal: StoreInfoType = {
+
+        const storeFinal2: StoreInfoType = {
           id: storeData.store_id,
           // imageUrl: storeData.profile_image,
           imageUrl: instaData.profile_picture,
@@ -36,7 +55,7 @@ export default function StoreInfoContainer() {
           instagramFollowers: instaData.followers_count
 
         };
-        setStore(storeFinal);
+        setStore(storeFinal2);
 
       } catch (error) {
         toast.error('failed to fetch data');

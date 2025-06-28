@@ -92,18 +92,18 @@ export default function StoreInfoPage({
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-6">
                         <div className="flex gap-14">
-                            <div className="flex flex-col">
+                            {post_count?.length === 0 ? <div></div> : <div className="flex flex-col">
                                 <h2 style={{ fontWeight: 700 }}>{post_count}</h2>
                                 <span style={{ fontWeight: 400 }}>Posts</span>
-                            </div>
-                            <div className="flex flex-col">
+                            </div>}
+                            {instagramFollowers?.length === 0 ? <div></div> : <div className="flex flex-col">
                                 <h2 style={{ fontWeight: 700 }}>{instagramFollowers}</h2>
                                 <span style={{ fontWeight: 400 }}>Followers</span>
-                            </div>
-                            <div className="flex flex-col">
+                            </div>}
+                            {product_count?.length === 0 ? <div></div> :<div className="flex flex-col">
                                 <h2 style={{ fontWeight: 700 }}>{product_count}</h2>
                                 <span style={{ fontWeight: 400 }}>Products</span>
-                            </div>
+                            </div>}
                         </div>
 
                         <p style={{ fontWeight: 400 }}>{bio}</p>
