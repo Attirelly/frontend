@@ -23,7 +23,9 @@ export interface StoreTypePriceRange {
 
 export interface PriceRangeType{
   id : string,
-  label? : string
+  label? : string,
+  lower_value?: number,
+  upper_value?: number,
 }
 
 export interface StoreCardType {

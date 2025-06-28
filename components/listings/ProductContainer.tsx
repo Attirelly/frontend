@@ -8,8 +8,11 @@ import { ProductCardType } from '@/types/ProductTypes';
 import { useHeaderStore } from '@/store/listing_header_store';
 import ProductGridSkeleton from './skeleton/catalogue/ProductGridSkeleton';
 
-
-export default function ProductContainer({ storeId }: { storeId: string }) {
+interface ProductContainerProps {
+ storeId? : string,
+ colCount?: number
+}
+export default function ProductContainer({ storeId='', colCount=3 }: ProductContainerProps) {
   const { selectedFilters, setFacets, facets, setPriceRange, priceRange, setPriceBounds } = useProductFilterStore();
   const { query } = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
@@ -148,7 +151,7 @@ export default function ProductContainer({ storeId }: { storeId: string }) {
       {loading && products.length === 0 ? (
         <ProductGridSkeleton />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-2">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${colCount} gap-4 p-2`}>
           {products.map((product, index) => (
             <ProductCard key={`${product.title}-${index}`} {...product} />
           ))}

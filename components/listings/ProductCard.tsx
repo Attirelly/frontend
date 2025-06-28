@@ -16,12 +16,6 @@ export default function ProductCard({
 }: ProductCardType) {
   const [imageIndex, setImageIndex] = useState(0);
 
-  // useEffect(() => {
-  //   const nextIndex = (imageIndex + 1) % imageUrl.length;
-  //   const img = new window.Image();
-  //   img.src = imageUrl[nextIndex];
-  // }, [imageIndex]);
-
   useEffect(() => {
     imageUrl.forEach((url) => {
       const img = new window.Image();
@@ -42,16 +36,18 @@ export default function ProductCard({
   };
 
   return (
-    <div className="w-[279px] rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2">
-      <div className="relative w-full h-[321px] rounded-xl overflow-hidden group">
-        <Image
-          src={imageUrl[imageIndex]}
-          alt={title}
-          fill
-          className="object-cover transition-all duration-300"
-        />
+    <div className="w-full rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2">
+      <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group">
+        <div onMouseEnter={() => handleNext()} onMouseLeave={() => handlePrev()}>
+          <Image
+            src={imageUrl[imageIndex]}
+            alt={title}
+            fill
+            className="object-cover transition-all duration-300"
+          />
+        </div>
 
-        {/* Navigation Buttons */}
+
         {imageUrl.length > 1 && (
           <>
             <button

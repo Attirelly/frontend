@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { City, BrandType, instaMediaType } from '@/types/SellerTypes'
+import { City, BrandType, instaMediaType, PriceRangeType } from '@/types/SellerTypes'
 
 
 type HeaderState = {
@@ -7,6 +7,8 @@ type HeaderState = {
     setCity: (city: City|null) => void;
     query: string;
     setQuery: (query: string) => void;
+    priceRangeType : PriceRangeType | null;
+    setPriceRangeType : (priceRangeType : PriceRangeType | null) => void;
     storeType: BrandType | null;
     setStoreType: (storeType: BrandType | null) => void; 
     deliveryType: string;
@@ -25,6 +27,8 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setCity: (city) => set({ city }),
     query: '',
     setQuery: (query) => set({ query }),
+    priceRangeType: null,
+    setPriceRangeType: (priceRangeType) => set({ priceRangeType }),
     storeType: null,
     setStoreType: (storeType: BrandType | null) => set({ storeType }),
     deliveryType: '',
