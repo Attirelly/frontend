@@ -14,15 +14,19 @@ import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import ListingFooter from "@/components/listings/ListingFooter";
 import { api } from "@/lib/axios";
 import { Brand, Color, Product, Size, Variant } from "./type";
+import { useParams } from 'next/navigation';
 
-interface PageProps {
-  params: {
-    product_id: string;
-  };
-}
+// interface PageProps {
+//   params: {
+//     product_id: string;
+//   };
+// }
 
-export default function ProductDetail({ params }: PageProps) {
-  const { product_id } = params;
+export default function ProductDetail() {
+  const params = useParams();
+  const product_id = params?.product_id as string;
+  console.log(product_id);
+  // const { product_id } = params;
 
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
