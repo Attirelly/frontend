@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { playfair_display, manrope } from '@/font';
 import DynamicFilterSkeleton from './skeleton/DynamicFilterSkeleton';
+import { Range } from 'react-range';
 
 type DynamicFilterProps = {
   context: 'store' | 'product';
@@ -76,6 +77,11 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     });
     setOpenFacets(defaultOpen);
   }, [facets]);
+
+  const handleResetFilters = () => {
+    resetFilters();
+    setLocalPriceRange(priceBounds);
+  }
 
   if (loading) return <DynamicFilterSkeleton />;
 
@@ -151,37 +157,43 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                   <>
                     {context === 'product' && fName === 'Prices' ? (
                       <div className="mb-3">
-                        <label className="text-sm text-gray-600 mb-1 block">
-                          Price Range
-                        </label>
-                        <input
-                          type="range"
+                        <label className="text-sm text-gray-600 mb-1 block">Range</label>
+
+                        <Range
+                          step={100}
                           min={priceBounds?.[0] || 0}
                           max={priceBounds?.[1] || 10000}
-                          value={localPriceRange[0]}
-                          onChange={(e) =>
-                            setLocalPriceRange([
-                              parseInt(e.target.value),
-                              localPriceRange[1],
-                            ])
-                          }
-                          className="w-full"
+                          values={localPriceRange}
+                          onChange={(values) => setLocalPriceRange([values[0], values[1]])}
+                          renderTrack={({ props, children }) => (
+                            <div
+                              {...props}
+                              className="h-1 bg-gray-300 rounded-full"
+                              style={{ ...props.style }}
+                            >
+                              <div
+                                className="h-1 bg-black rounded-full"
+                                style={{
+                                  position: 'absolute',
+                                  left: `${((localPriceRange[0] - (priceBounds?.[0] || 0)) / ((priceBounds?.[1] || 10000) - (priceBounds?.[0] || 0))) * 100}%`,
+                                  width: `${((localPriceRange[1] - localPriceRange[0]) / ((priceBounds?.[1] || 10000) - (priceBounds?.[0] || 0))) * 100}%`,
+                                  top: 0,
+                                  bottom: 0,
+                                }}
+                              />
+                              {children}
+                            </div>
+                          )}
+                          renderThumb={({ props }) => (
+                            <div
+                              {...props}
+                              className="w-3 h-3 bg-black border border-white rounded-full shadow-md"
+                            />
+                          )}
                         />
-                        <input
-                          type="range"
-                          min={priceBounds?.[0] || 0}
-                          max={priceBounds?.[1] || 10000}
-                          value={localPriceRange[1]}
-                          onChange={(e) =>
-                            setLocalPriceRange([
-                              localPriceRange[0],
-                              parseInt(e.target.value),
-                            ])
-                          }
-                          className="w-full mt-1"
-                        />
+
                         <div className="text-sm text-gray-600 mt-2">
-                          ₹{localPriceRange[0]} - ₹{localPriceRange[1]}
+                          ₹{localPriceRange[0]} – ₹{localPriceRange[1]}
                         </div>
                       </div>
                     ) : (
@@ -238,7 +250,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
         })}
 
         <button
-          onClick={resetFilters}
+          onClick={() => handleResetFilters()}
           className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
         >
           Reset Filters
