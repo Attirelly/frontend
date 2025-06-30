@@ -5,6 +5,7 @@ import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import TwoOptionToggle from "@/components/listings/OnlineOffline";
 import PriceRangeTabs from "@/components/listings/PriceRangeTypes";
 import ProductContainer from "@/components/listings/ProductContainer";
+import SortByDropdown from "@/components/listings/SortByDropdown";
 import StoreTypeButtons from "@/components/listings/StoreTypeButtons";
 import StoreTypeTabs from "@/components/listings/StoreTypes";
 import { manrope } from "@/font";
@@ -47,7 +48,7 @@ export default function StoreProfilePage() {
                 <div className="flex flex-col mt-4 items-center">
                     <StoreTypeButtons options={['Retail Stores','Designer Labels']} defaultValue="Retail Stores" context="product"/>
                     <hr className="border border-[#D9D9D9] w-full mt-5 mb-4" />
-                    <PriceRangeTabs defaultValue="Affordable"/>
+                    
                     {/* Centered content container */}
                     <div className="flex flex-col items-center w-full">
                         <div className="mt-8 w-full px-4">
@@ -55,10 +56,21 @@ export default function StoreProfilePage() {
                                 <div>
                                     <DynamicFilter context="product" />
                                 </div>
+                                
 
+                                <div>
+
+                                    <div className="flex justify-between">
+<PriceRangeTabs defaultValue="Affordable"/>
+<SortByDropdown/>
+                    </div>
                                 <div className="overflow-y-auto scrollbar-none h-498">
+
                                     <ProductContainer colCount={4} />
                                 </div>
+
+                                </div>
+                                
                             </div>
                         </div>
                     </div>

@@ -30,7 +30,7 @@ export default function StoreTypeButtons({
     setStoreTypeString(selected);
   }, [selected]);
 
-  console.log(storeTypeString)
+  // console.log(storeTypeString)
   return (
     <div className="flex space-x-2">
       {options.map((option) => {

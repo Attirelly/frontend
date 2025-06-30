@@ -14,7 +14,7 @@ interface ProductContainerProps {
 }
 export default function ProductContainer({ storeId='', colCount=3 }: ProductContainerProps) {
   const { selectedFilters, setFacets, facets, setPriceRange, priceRange, setPriceBounds , setResults} = useProductFilterStore();
-  const { query, setQuery, storeTypeString, priceRangeType } = useHeaderStore();
+  const { query, setQuery, storeTypeString, priceRangeType, sortBy } = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -50,7 +50,7 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
 
     try {
       const res = await api.get(
-        `/search/search_product?query=${storeId} ${query} ${storeTypeString || ""} ${priceRangeType?.label || ""}&page=${currentPage}&limit=12&filters=${filters}&facetFilters=${facetFilters}`
+        `/search/search_product?query=${storeId} ${query} ${storeTypeString || ""} ${priceRangeType?.label || ""}&page=${currentPage}&limit=12&filters=${filters}&facetFilters=${facetFilters}&sort_by=${sortBy}`
       );
       const data = res.data;
       console.log(data);
@@ -128,7 +128,7 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
   useEffect(() => {
     setPage(0);
     fetchProducts(0);
-  }, [filters, query, selectedFilters, storeTypeString, priceRangeType]);
+  }, [filters, query, selectedFilters, storeTypeString, priceRangeType, sortBy]);
 
 
   //   console.log(facets)
