@@ -34,8 +34,7 @@ export default function SellerDashboardPage() {
   // const [toastType, setToastType] = useState<"success" | "error">("success");
   const {
     setStoreId,
-    storeId,
-    sellerNumber,
+    setStoreNameString,
     sellerId,
     sellerName,
     sellerEmail,
@@ -67,6 +66,7 @@ export default function SellerDashboardPage() {
         setStoreId(storeData.store_id);
         setQrId(storeData.qr_id);
         setFurthestStep(curr_section);
+        setStoreNameString(storeData.store_name)
 
         const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id: storeData.store_id } });
         console.log(priceRangeRes);

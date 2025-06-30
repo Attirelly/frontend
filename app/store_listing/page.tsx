@@ -51,7 +51,7 @@ export default function StoreListingPage() {
             <DynamicFilter context="store"/>
           </div>
           <div className="flex flex-col gap-5">
-            <TwoOptionToggle options={['Home Delivery', 'In Store']} />
+            <TwoOptionToggle options={['Home Delivery', 'In Store']} defaultValue="Home Delivery" context="store"/>
             <div className="w-full">
               <StoreContainerPage />
             </div>

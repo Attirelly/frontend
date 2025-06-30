@@ -27,6 +27,7 @@ export default function SellerOnboardingPage() {
     sellerId,
     sellerName,
     sellerEmail,
+    setStoreNameString,
     setBusinessDetailsData,
     setStoreId,
     setPriceFiltersData,
@@ -58,6 +59,7 @@ export default function SellerOnboardingPage() {
           const pincodeData: Pincode[] = storeData.pincode ? [storeData.pincode] : [];
   
           setStoreId(storeData.store_id);
+          setStoreNameString(storeData.store_name);
           // setQrId(storeData.qr_id);
   
           const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id: storeData.store_id } });

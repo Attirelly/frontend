@@ -87,7 +87,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
   if (isCollapsed) {
     return (
-      <div className="sticky top-20 z-10">
+      <div className="sticky top-2 z-10">
         <div className="w-fit px-3 py-2 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 flex items-center">
           <button
             className="flex items-center gap-2 text-sm font-medium text-gray-700"
@@ -108,7 +108,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   }
 
   return (
-    <div className="sticky top-20 z-10">
+    <div className="sticky top-2 z-10">
       <div
         className={`${manrope.className} h-[calc(100vh-5rem)] overflow-y-auto max-w-xs p-4 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 relative`}
         style={{ fontWeight: 500 }}

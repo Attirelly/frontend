@@ -31,7 +31,8 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     sellerNumber,
     sellerId,
     sellerName,
-    sellerEmail } = useSellerStore();
+    sellerEmail,
+  setStoreNameString } = useSellerStore();
   const [sameAsOwner, setSameAsOwner] = useState(true);
 
   const [brandTypes, setBrandTypes] = useState<BrandType[]>([]);
@@ -299,6 +300,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
         brandAddress,
         // storeLocation
       });
+      setStoreNameString(brandName);
     }
   }, [
     ownerName, ownerEmail, brandName,

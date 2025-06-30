@@ -39,7 +39,10 @@ export default function StoreProfilePage() {
         {viewType === 'Catalogue' && (
           <div className="mt-8 w-full px-4">
             <div className="px-20 w-full grid grid-cols-[300px_1fr] gap-6">
-              <DynamicFilter context="product" />
+              <div>
+                <DynamicFilter context="product" />
+              </div>
+
               <Catalogue />
             </div>
           </div>

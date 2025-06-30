@@ -49,7 +49,7 @@ const prods: ProductCardType[] = [
 
 interface ShowMoreProductProps {
     store_id: string,
-    limit? : number
+    limit?: number
 }
 export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductProps) {
     const [products, setProducts] = useState<ProductCardType[]>([]);
@@ -94,7 +94,9 @@ export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductPro
         <div className="flex gap-5 overflow-x-auto scrollbar-none">
 
             {products.map((product, index) => (
-                <ProductCard key={`${product.title}-${index}`} {...product} />
+                <div key={index} className="w-[240px] flex-shrink-0">
+                    <ProductCard {...product} />
+                </div>
             ))}
         </div>
     )
