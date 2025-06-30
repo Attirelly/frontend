@@ -1,21 +1,20 @@
 'use client';
+import DynamicFilter from "@/components/listings/DynamicFilter";
+import ListingFooter from "@/components/listings/ListingFooter";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
+import TwoOptionToggle from "@/components/listings/OnlineOffline";
+import PriceRangeTabs from "@/components/listings/PriceRangeTypes";
+import ProductContainer from "@/components/listings/ProductContainer";
+import StoreTypeButtons from "@/components/listings/StoreTypeButtons";
+import StoreTypeTabs from "@/components/listings/StoreTypes";
+import { manrope } from "@/font";
+import { useProductFilterStore } from "@/store/filterStore";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { useState } from "react";
-import StoreInfoContainer from "@/components/listings/StoreInforContainer";
-import PostCatalogueButton from "@/components/listings/PostCatalogueButton";
-import PostGalleryContainer from "@/components/listings/PostsContainer";
-import ListingFooter from "@/components/listings/ListingFooter";
-import Catalogue from "@/components/listings/Catalogue";
-import DynamicFilter from "@/components/listings/DynamicFilter";
-import BreadCrums from "@/components/listings/BreadCrums";
-import StoreTypeTabs from "@/components/listings/StoreTypes";
-import ProductContainer from "@/components/listings/ProductContainer";
-import PriceRangeTabs from "@/components/listings/PriceRangeTypes";
-import { manrope } from "@/font";
 
 export default function StoreProfilePage() {
     const { query, city, storeType, viewType } = useHeaderStore();
+    const {results} = useProductFilterStore();
     const [showFilters, setShowFilters] = useState(false);
 
     // const getHeading = () => {
@@ -44,11 +43,11 @@ export default function StoreProfilePage() {
             <ListingPageHeader />
             <div className="flex flex-col mx-20">
                 {/* <BreadCrums/> */}
-                <span className={`${manrope.className} text-xl mt-4`} style={{ fontWeight: 500 }}>{query}</span>
+                <span className={`${manrope.className} text-xl mt-4`} style={{ fontWeight: 500 }}>{results > 0 ? query : 'Sorry, no result found for your search'}</span>
                 <div className="flex flex-col mt-4 items-center">
-                    <StoreTypeTabs />
+                    <StoreTypeButtons options={['Retail Stores','Designer Labels']} defaultValue="Retail Stores" context="product"/>
                     <hr className="border border-[#D9D9D9] w-full mt-5 mb-4" />
-                    <PriceRangeTabs />
+                    <PriceRangeTabs defaultValue="Affordable"/>
                     {/* Centered content container */}
                     <div className="flex flex-col items-center w-full">
                         <div className="mt-8 w-full px-4">

@@ -66,6 +66,7 @@ export interface Image {
 
 export interface ProductCardType {
   imageUrl: string[];
+  storeName?:string;
   title: string;
   description: string;
   price: number;

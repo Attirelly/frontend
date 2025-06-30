@@ -5,22 +5,26 @@ import React, { useEffect, useState } from 'react';
 import {event} from '@/lib/gtag';
 import {manrope} from '@/font';
 
-type TwoOptionToggleProps = {
-  options: [string, string];
+interface TwoOptionToggleProps  {
+  options: [string, string],
+  defaultValue: string,
+  context:string,
 };
 
-export default function TwoOptionToggle({ options }: TwoOptionToggleProps) {
-  const [selected, setSelected] = useState<string>('Home Delivery');
-  const { setDeliveryType } = useHeaderStore();
+export default function TwoOptionToggle({ options, defaultValue, context }: TwoOptionToggleProps) {
+  const [selected, setSelected] = useState<string>(defaultValue);
+  const { setDeliveryType} = useHeaderStore();
   //   console.log(selected)
   useEffect(() => {
-    setDeliveryType(selected);
+    if(context === 'store'){
+setDeliveryType(selected);
     event({
       action: "Store Mode",
       params: {
          value : selected
       }
     });
+    }
   }, [selected]);
 
   return (

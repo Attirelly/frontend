@@ -35,7 +35,7 @@ export default function StoreInfoContainer() {
 
 
         
-        const instaRes = await api.get('instagram/seller/2ba895ad-55c5-4e81-a0aa-e0f43962a6853/data');
+        const instaRes = await api.get('instagram/seller/2ba895ad-55c5-4e81-a0aa-e0f43962a685/data');
         const instaData = instaRes.data;
         setInstaMedia(instaData.media);
         setProfilePic(instaData.profile_picture);

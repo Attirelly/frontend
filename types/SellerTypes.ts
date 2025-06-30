@@ -4,10 +4,17 @@ export interface Area { id: string, name: string, city_id: string };
 
 export interface Pincode { id: string, code: string, city_id: string };
 
+// export interface SelectOptionCity {
+//   value: string;
+//   label: string;
+//   name: string;
+//   country?: string;
+// };
+
 export interface SelectOption {
   value: string;
   label: string;
-  name: string;
+  name?: string;
   country?: string;
 };
 export interface BrandType { id: string; store_type: string };

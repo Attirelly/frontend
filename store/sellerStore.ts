@@ -113,6 +113,9 @@ type SellerState = {
   storeId : string | null;
   setStoreId: (id: string) => void;
 
+  storeNameString : string | null;
+  setStoreNameString : ( storeName : string) => void;
+
   activeSection : string;
   setActiveSection : (id : string) => void;
 
@@ -190,6 +193,9 @@ export const useSellerStore = create<SellerState>((set) => ({
 
   storeId: null,
   setStoreId: (id) => set({ storeId: id }),
+
+  storeNameString : null,
+  setStoreNameString : (storeName) => set({storeNameString : storeName}),
 
   activeSection: 'brand',
   setActiveSection : (id) => set({ activeSection : id}),

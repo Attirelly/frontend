@@ -32,7 +32,7 @@ const sectionComponents = [
 ];
 
 export default function ProductUpdatePage() {
-  const {setStoreId} = useSellerStore();
+  const {setStoreId, setStoreNameString} = useSellerStore();
   const params = useParams();
   const { variants, sizes, colors } = useFormData();
   const isLoading = useIsLoading();
@@ -48,7 +48,9 @@ export default function ProductUpdatePage() {
           setLoading(true);
           const res = await api.get(`/products/${product_id}`);
           const product = res.data;
+          console.log(product);
           setStoreId(product.store_id); // Set the store ID from the product data
+          setStoreNameString(product.store_name);
           console.log("Fetched product data:", product);
           const formData = convertToFormData(product);
           console.log("Fetched product data after conversion :", formData);

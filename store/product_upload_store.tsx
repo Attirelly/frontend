@@ -142,7 +142,8 @@ export const useProductFormStore = create<ProductFormStore>()(
         const { formData } = get();
         const storeId = useSellerStore.getState().storeId;
         console.log("Updating form with storeId:", storeId);
-        const storeName = useSellerStore.getState().businessDetailsData?.brandName || "dsa";
+        const storeName = useSellerStore.getState().storeNameString;
+        console.log(useSellerStore.getState().storeNameString);
         const apiPayload = transformPayload(
           formData,
           // "d013b10b-af22-407d-aa32-eec4d6e1bb50",
@@ -251,7 +252,7 @@ export const useProductFormStore = create<ProductFormStore>()(
       submitForm: async () => {
         const { formData } = get();
         const storeId = useSellerStore.getState().storeId;
-        const storeName = useSellerStore.getState().businessDetailsData?.brandName || "Default Store";
+        const storeName = useSellerStore.getState().storeNameString || "Default Store";
         const apiPayload = transformPayload(
           formData,
           // "d013b10b-af22-407d-aa32-eec4d6e1bb50",

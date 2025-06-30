@@ -62,15 +62,15 @@ export default function PriceRangeTabs({
             catch (error) {
                 toast.error("Failed to fetch price Ranges");
             }
-            finally{
+            finally {
                 setLoading(false)
             }
         }
         fetchStoreTypes();
     }, []);
 
-    if(loading){
-        return <StoreTypeTabsSkeleton/>
+    if (loading) {
+        return <StoreTypeTabsSkeleton />
     }
     return (
         <div className="flex bg-[#F5F5F5] rounded-full overflow-hidden w-fit px-10 py-1">
@@ -84,12 +84,13 @@ export default function PriceRangeTabs({
                                 ? 'bg-white shadow text-black'
                                 : 'text-[#565656] hover:text-black'
                         )}
-                        style={{fontWeight:500}}
+                        style={{ fontWeight: 500 }}
                         onClick={() => handleTabClick(tab)}
-                    >
+                    >   
+                    <div className='flex flex-col items-center'>
                         <span className='text-base'>{tab.label}</span>
-                        <br />
-                        <span className='text-xs text-[#8E8E8E]'>{tab.label === 'Affordable' ? '< 10,000' : tab.label === 'Premium' ? '10,000 - 25,000' : '> 25,000'}</span> 
+                        <span className='text-xs text-[#8E8E8E]'>{tab.label === 'Affordable' ? '< 10,000' : tab.label === 'Premium' ? '10,000 - 25,000' : '> 25,000'}</span>
+                     </div>
                     </button>
 
                     {index !== tabs.length - 1 && (

@@ -13,8 +13,8 @@ interface ProductContainerProps {
  colCount?: number
 }
 export default function ProductContainer({ storeId='', colCount=3 }: ProductContainerProps) {
-  const { selectedFilters, setFacets, facets, setPriceRange, priceRange, setPriceBounds } = useProductFilterStore();
-  const { query } = useHeaderStore();
+  const { selectedFilters, setFacets, facets, setPriceRange, priceRange, setPriceBounds , setResults} = useProductFilterStore();
+  const { query, setQuery, storeTypeString, priceRangeType } = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -50,13 +50,17 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
 
     try {
       const res = await api.get(
-        `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filters}&facetFilters=${facetFilters}`
+        `/search/search_product?query=${storeId} ${query} ${storeTypeString || ""} ${priceRangeType?.label || ""}&page=${currentPage}&limit=12&filters=${filters}&facetFilters=${facetFilters}`
       );
       const data = res.data;
       console.log(data);
+      setResults(data.hits.length);
       const formattedProducts: ProductCardType[] = data.hits.map((item: any) => {
         const price = item.price || 500;
         const originalPrice = item.mrp || item.price || 500;
+
+        // if product listing page then desc = store name else desc = ''
+        const desc = colCount === 4 ? item.store_name : ''; 
 
         // Avoid division by zero
         const discount =
@@ -67,7 +71,7 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
         return {
           imageUrl: item.image || [],
           title: item.title || 'Untitled Product',
-          description: item.description || '',
+          description: desc,                // setting product name as title and store name as description
           price,
           originalPrice,
           discountPercentage: discount.toString(), // If needed as a string
@@ -76,11 +80,7 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
 
       // set price range
 
-
-      // set facets only first time
-      if (Object.keys(facets).length === 0) {
-        setFacets(data.facets);
-        if (data.facets?.prices) {
+      if (data.facets?.prices) {
           const priceKeys = Object.keys(data.facets.prices)
             .map(Number)
             .filter((n) => !isNaN(n));
@@ -92,6 +92,11 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
             setPriceRange([min, max]);
           }
         }
+
+      // set facets only first time
+      if (Object.keys(facets).length === 0) {
+        setFacets(data.facets);
+        
       }
 
       if (currentPage === 0) {
@@ -103,6 +108,10 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
 
       setTotalPages(data.total_pages || 1);
       setHasMore(currentPage < (data.total_pages || 1) - 1);
+      // if(data.hits.length === 0){
+      //   setQuery('Sorry, no result found for your search');
+      //   return;
+      // }
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
@@ -119,7 +128,7 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
   useEffect(() => {
     setPage(0);
     fetchProducts(0);
-  }, [filters, query, selectedFilters]);
+  }, [filters, query, selectedFilters, storeTypeString, priceRangeType]);
 
 
   //   console.log(facets)
