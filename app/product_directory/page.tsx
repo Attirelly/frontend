@@ -15,7 +15,7 @@ import { useState } from "react";
 
 export default function StoreProfilePage() {
     const { query, city, storeType, viewType } = useHeaderStore();
-    const {results} = useProductFilterStore();
+    const { results } = useProductFilterStore();
     const [showFilters, setShowFilters] = useState(false);
 
     // const getHeading = () => {
@@ -45,32 +45,33 @@ export default function StoreProfilePage() {
             <div className="flex flex-col mx-20">
                 {/* <BreadCrums/> */}
                 <span className={`${manrope.className} text-xl mt-4`} style={{ fontWeight: 500 }}>{results > 0 ? query : 'Sorry, no result found for your search'}</span>
-                <div className="flex flex-col mt-4 items-center">
-                    <StoreTypeButtons options={['Retail Stores','Designer Labels']} defaultValue="Retail Stores" context="product"/>
-                    <hr className="border border-[#D9D9D9] w-full mt-5 mb-4" />
+                <div className="mt-10">
+<StoreTypeButtons options={['Retail Stores', 'Designer Labels']} defaultValue="Retail Stores" context="product" />
+                </div>
+                
+                <div className="flex flex-col mt-5 items-center">
                     
+                    <hr className="border border-[#D9D9D9] w-full mt-5 mb-4" />
+
                     {/* Centered content container */}
-                    <div className="flex flex-col items-center w-full">
-                        <div className="mt-8 w-full px-4">
+                    <div className="flex flex-col items-center w-full mt-8">
+                        <div className="w-full px-4">
                             <div className="w-full grid grid-cols-[300px_1fr] gap-6">
                                 <div>
                                     <DynamicFilter context="product" />
                                 </div>
-                                
-
                                 <div>
+                                    <div className="flex justify-between items-center">
+                                        <PriceRangeTabs defaultValue="Affordable" />
+                                        <SortByDropdown />
+                                    </div>
+                                    <div className="overflow-y-auto scrollbar-none h-498">
 
-                                    <div className="flex justify-between">
-<PriceRangeTabs defaultValue="Affordable"/>
-<SortByDropdown/>
-                    </div>
-                                <div className="overflow-y-auto scrollbar-none h-498">
+                                        <ProductContainer colCount={4} />
+                                    </div>
 
-                                    <ProductContainer colCount={4} />
                                 </div>
 
-                                </div>
-                                
                             </div>
                         </div>
                     </div>

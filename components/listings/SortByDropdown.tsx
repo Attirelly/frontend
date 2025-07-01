@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useHeaderStore } from "@/store/listing_header_store";
+import { manrope } from "@/font";
 
 const optionsMap: { label: string; value: string }[] = [
   { label: "New Arrivals", value: "date_desc" },
@@ -14,17 +15,19 @@ const SortByDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const selectedLabel =
-    optionsMap.find((option) => option.value === sortBy)?.label || "New Arrivals";
+    optionsMap.find((option) => option.value === sortBy)?.label || "date_desc";
 
   return (
     <div className="relative inline-block text-left">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-1 text-sm font-medium text-gray-600"
+        className={`${manrope.className} flex items-center space-x-1 text-base  text-gray-500`}
+        style={{fontWeight:500}}
       >
         <span>Sort by:</span>
-        <span className="text-black">{selectedLabel}</span>
+        <span className="text-gray-800"
+        style={{fontWeight:600}}>{selectedLabel}</span>
         <img
           src="/ListingPageHeader/dropdown.svg"
           alt="Dropdown"

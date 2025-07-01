@@ -35,7 +35,7 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setPriceRangeType: (priceRangeType) => set({ priceRangeType }),
     storeType: null,
     setStoreType: (storeType: BrandType | null) => set({ storeType }),
-    sortBy: 'New Arrivals',
+    sortBy: 'date_desc',
     setSortBy: (sortBy: string) => set({ sortBy }),
     storeTypeString: '',
     setStoreTypeString: (storeTypeString: string) => set({ storeTypeString }),
