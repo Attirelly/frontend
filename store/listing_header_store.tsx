@@ -11,6 +11,8 @@ type HeaderState = {
     setPriceRangeType : (priceRangeType : PriceRangeType | null) => void;
     storeType: BrandType | null;
     setStoreType: (storeType: BrandType | null) => void; 
+    sortBy : string;
+    setSortBy : (sortBy : string) => void;
     storeTypeString : string;
     setStoreTypeString : (storeTypeString : string) => void;
     deliveryType: string;
@@ -33,6 +35,8 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setPriceRangeType: (priceRangeType) => set({ priceRangeType }),
     storeType: null,
     setStoreType: (storeType: BrandType | null) => set({ storeType }),
+    sortBy: 'date_desc',
+    setSortBy: (sortBy: string) => set({ sortBy }),
     storeTypeString: '',
     setStoreTypeString: (storeTypeString: string) => set({ storeTypeString }),
     deliveryType: '',

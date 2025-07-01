@@ -30,7 +30,7 @@ export default function StoreTypeButtons({
     setStoreTypeString(selected);
   }, [selected]);
 
-  console.log(storeTypeString)
+  // console.log(storeTypeString)
   return (
     <div className="flex space-x-2">
       {options.map((option) => {
@@ -45,7 +45,7 @@ export default function StoreTypeButtons({
               ${manrope.className}
               px-4 py-2 rounded-2xl transition text-sm flex items-center gap-2
               ${selected === option
-                ? 'bg-[#F2F2F2] font-semibold'
+                ? 'bg-[#F2F2F2] font-semibold shadow-xl'
                 : 'bg-white text-black border-[#878787] font-normal'}
             `}
             onClick={() => setSelected(option)}

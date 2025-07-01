@@ -112,7 +112,7 @@ export default function ListingPageHeader() {
     router.push("/store_listing");
   };
 
-  const handleProductClick = (value:string) => {
+  const handleProductClick = (value: string) => {
     router.push(`product_detail/${value}`)
   };
 
@@ -133,21 +133,29 @@ export default function ListingPageHeader() {
   const selectedOption: SelectOption =
     selectedCity != null
       ? {
-          value: selectedCity.id,
-          label: selectedCity.name,
-          name: selectedCity.name,
-          country: "India",
-        }
+        value: selectedCity.id,
+        label: selectedCity.name,
+        name: selectedCity.name,
+        country: "India",
+      }
       : cityOptions[0];
 
   return (
     <div>
       <header className="bg-white shadow">
         <div className="grid grid-cols-[1fr_2fr_1fr] items-center px-20 py-4">
-          <div className="flex justify-start">
+          <div className="flex justify-between items-center">
             <div className={`${rubik.className} text-[32px] font-bold`}>
               Attirelly
             </div>
+            <nav className="flex justify-center gap-8 py-2 text-base text-[#373737]">
+              <a className={manrope.className} style={{ fontWeight: 400 }}>
+                Men
+              </a>
+              <a className={manrope.className} style={{ fontWeight: 400 }}>
+                Women
+              </a>
+            </nav>
           </div>
 
           <div className="flex justify-center">
@@ -215,25 +223,25 @@ export default function ListingPageHeader() {
                   <div className="absolute top-10 mt-2 bg-white rounded-md shadow-lg max-h-[480px] overflow-y-auto z-50 max-w-[500px] w-full">
                     {(storeSuggestions.length > 0 ||
                       productSuggestions.length > 0) && (
-                      <div className="px-4 py-3">
-                        <div className="text-gray-500 text-sm mb-2">
-                          SUGGESTIONS
+                        <div className="px-4 py-3">
+                          <div className="text-gray-500 text-sm mb-2">
+                            SUGGESTIONS
+                          </div>
+                          <div className="flex gap-2 flex-wrap">
+                            {[...storeSuggestions, ...productSuggestions].map(
+                              (suggestion, i) => (
+                                <button
+                                  key={i}
+                                  className="text-sm bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200"
+                                  onClick={() => handleSuggestionClick(suggestion)}
+                                >
+                                  {suggestion}
+                                </button>
+                              )
+                            )}
+                          </div>
                         </div>
-                        <div className="flex gap-2 flex-wrap">
-                          {[...storeSuggestions, ...productSuggestions].map(
-                            (suggestion, i) => (
-                              <button
-                                key={i}
-                                className="text-sm bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200"
-                                onClick={()=>handleSuggestionClick(suggestion)}
-                              >
-                                {suggestion}
-                              </button>
-                            )
-                          )}
-                        </div>
-                      </div>
-                    )}
+                      )}
 
                     {products.length > 0 && (
                       <div className="px-4 py-3">
@@ -244,7 +252,7 @@ export default function ListingPageHeader() {
                           <div
                             key={i}
                             className="flex items-center gap-3 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
-                            onClick={()=>handleProductClick(product.product_id)}
+                            onClick={() => handleProductClick(product.product_id)}
                           >
                             <img
                               src={product.image || "/placeholder.png"}
@@ -314,15 +322,6 @@ export default function ListingPageHeader() {
             </div>
           </div>
         </div>
-
-        <nav className="flex justify-center gap-8 py-2 text-sm text-gray-600">
-          <a className={manrope.className} style={{ fontWeight: 400 }}>
-            Men
-          </a>
-          <a className={manrope.className} style={{ fontWeight: 400 }}>
-            Women
-          </a>
-        </nav>
       </header>
 
       <StoreSearchType
