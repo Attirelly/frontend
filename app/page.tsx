@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo, ChangeEvent } from "react";
+import { useState, useEffect, useMemo, ChangeEvent, useRef } from "react";
 import {
   Search,
   Upload,
@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/axios";
 import Link from "next/link";
+import { toast } from "sonner";
+import { log } from "console";
 
 type Seller = {
   id?: string;
@@ -72,6 +74,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const buildFacetFilters = (facets: Record<string, string[]>): string => {
     const filters: string[][] = [];
@@ -82,7 +85,7 @@ export default function Home() {
       }
     }
 
-    console.log(filters)
+    console.log(filters);
     const encoded = encodeURIComponent(JSON.stringify(filters));
     return encoded;
   };
@@ -162,9 +165,7 @@ export default function Home() {
       const res = await api.get(
         `/search/search_store?query=${params.query || ""}&page=${
           (params.page || 1) - 1
-        }&limit=${
-          params.limit || 10
-        }&facetFilters=${algoia_facets}`
+        }&limit=${params.limit || 10}&facetFilters=${algoia_facets}`
       );
 
       const data = res.data;
@@ -186,7 +187,7 @@ export default function Home() {
 
       setSellers(sellers);
       setTotalItems(data.total || data.hits.length);
-      console.log("algolia" , data)
+      console.log("algolia", data);
       const newFacets: Facets = {
         area: Object.entries(data.facets?.area || {}),
         city: Object.entries(data.facets?.city || {}),
@@ -239,54 +240,37 @@ export default function Home() {
     setCurrentPage(1); // Reset to first page on filter change
   };
   // Handle CSV upload
-  const handleUploadCSV = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleUploadCSV = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("CSV upload triggered");
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      toast.error("Please select a CSV file");
+      return;
+    }
 
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      const text = event.target?.result as string;
-      const lines = text.split("\n");
-      const uploaded: Seller[] = lines
-        .slice(1)
-        .map((line) => {
-          const [id, name, email, location, category, status] = line.split(",");
-          return {
-            id: String(id),
-            name: name?.trim(),
-            email: email?.trim(),
-            location: location?.trim(),
-            category: category?.trim(),
-            status: status?.trim() === "true",
-          };
-        })
-        .filter((s) => s.name && s.email);
+    const formData = new FormData();
+    formData.append("file", file);
 
-      setSellers(uploaded);
-      setTotalItems(uploaded.length);
-      setCurrentPage(1);
+    try {
+      toast.loading("Uploading CSV...", { id: "upload" });
 
-      const newFacets: Facets = {
-        location: [
-          ...new Set(uploaded.map((s) => s.location).filter(Boolean)),
-        ].map((item) => [item!, 1]),
-        category: [
-          ...new Set(uploaded.map((s) => s.category).filter(Boolean)),
-        ].map((item) => [item!, 1]),
-        status: [...new Set(uploaded.map((s) => String(s.status)))].map(
-          (item) => [item, 1]
-        ),
-        email: [...new Set(uploaded.map((s) => s.email))].map((item) => [
-          item,
-          1,
-        ]),
-        name: [...new Set(uploaded.map((s) => s.name).filter(Boolean))].map(
-          (item) => [item!, 1]
-        ),
-      };
-      setFacets(newFacets);
-    };
-    reader.readAsText(file);
+      const response = await api.post("/stores/bulk_store_upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success(response.data.message || "CSV uploaded successfully", {
+        id: "upload",
+      });
+    } catch (error: any) {
+      console.error("Upload failed", error);
+      toast.error(error?.response?.data?.detail || "Upload failed", {
+        id: "upload",
+      });
+    } finally {
+      if (inputRef.current) inputRef.current.value = "";
+    }
   };
 
   // Handle CSV download
@@ -371,6 +355,7 @@ export default function Home() {
               <Upload className="w-5 h-5" />
               Upload CSV
               <input
+                ref={inputRef}
                 type="file"
                 accept=".csv"
                 onChange={handleUploadCSV}

@@ -1,7 +1,17 @@
-import { type FC, useRef, useState } from "react";
+"use client";
+
+import { type FC, useEffect, useRef, useState } from "react";
 import { api } from "@/lib/axios";
 import { useSellerStore } from "@/store/sellerStore";
 import ProductsPage from "./ViewAllProducts";
+
+interface Category {
+  category_id: string;
+  name: string;
+  parent_id: string | null;
+  children: Category[];
+  level?: number;
+}
 
 export default function BulkUploadPage() {
   const { storeId, socialLinksData, businessDetailsData } = useSellerStore();
@@ -9,27 +19,48 @@ export default function BulkUploadPage() {
   const [selectedFileName, setSelectedFileName] = useState("");
   const shopify_url = socialLinksData?.websiteUrl || "";
   const storeName = businessDetailsData?.brandName || "";
-  const {batch_id, setBatchId} = useSellerStore();
+  const { batch_id, setBatchId } = useSellerStore();
+
+  const [category, setCategory] = useState("");
+  const [sub1, setSub1] = useState("");
+  const [sub2, setSub2] = useState("");
+  const [sub3, setSub3] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
+
+
+   useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          
+          const response = await api.get("/categories/");
+          setCategories(response.data);
+
+        } catch (error) {
+
+          console.error("Error fetching categories:", error);
+        } finally {
+
+        }
+      };
+      fetchCategories();
+    }, []);
+
+  const getTemplateFileName = () => {
+    return `${category}-${sub1}-${sub2}-${sub3}.xlsx`.replace(/\s+/g, "_");
+  };
 
   const handleBrowseClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    if (fileInputRef.current) fileInputRef.current.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFileName(file.name);
-    }
+    if (file) setSelectedFileName(file.name);
   };
 
   const handleCreateProducts = async () => {
     const file = fileInputRef.current?.files?.[0];
-    if (!file) {
-      alert("Please select a file first.");
-      return;
-    }
+    if (!file) return alert("Please select a file first.");
 
     const formData = new FormData();
     formData.append("file", file);
@@ -41,15 +72,10 @@ export default function BulkUploadPage() {
         "/products/bulk_product_upload",
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      console.log("my response" , response) ;
-      if(response.data){
-        setBatchId(response.data)
-      }
+      if (response.data) setBatchId(response.data);
     } catch (error) {
       console.error("Upload failed:", error);
     }
@@ -57,7 +83,6 @@ export default function BulkUploadPage() {
 
   const handleSyncShopify = async () => {
     try {
-      console.log("Syncing Shopify products...");
       const response = await api.post("/products/sync_with_shopify", null, {
         params: {
           base_url: shopify_url,
@@ -66,10 +91,7 @@ export default function BulkUploadPage() {
           brand_id: "37cdb2a5-4bd1-43e1-8af3-b001648b5da3",
         },
       });
-      console.log("my response" , response) ;
-      if(response.data){
-        setBatchId(response.data)
-      }
+      if (response.data) setBatchId(response.data);
     } catch (error) {
       console.error("Syncing Failed:", error);
     }
@@ -77,7 +99,120 @@ export default function BulkUploadPage() {
 
   return (
     <div className="space-y-6 w-3xl mx-auto overflow-hidden">
-      {/* Section 1: Upload CSV */}
+      {/* Section: Category Selection + Download */}
+      <Section
+  title="Select Category & Download Format"
+  subtitle="Choose category and download format-specific Excel file"
+>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    {/* Category */}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+      <select
+        value={category}
+        onChange={(e) => {
+          setCategory(e.target.value);
+          setSub1("");
+          setSub2("");
+          setSub3("");
+        }}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
+      >
+        <option value="">Select Category</option>
+        {categories
+          .filter((cat) => cat.parent_id === null)
+          .map((cat) => (
+            <option key={cat.category_id} value={cat.category_id}>
+              {cat.name}
+            </option>
+          ))}
+      </select>
+    </div>
+
+    {/* Subcategory 1 */}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory 1</label>
+      <select
+        value={sub1}
+        onChange={(e) => {
+          setSub1(e.target.value);
+          setSub2("");
+          setSub3("");
+        }}
+        disabled={!category}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+      >
+        <option value="">Select Subcategory 1</option>
+        {categories
+          .filter((cat) => cat.parent_id === category)
+          .map((sub1) => (
+            <option key={sub1.category_id} value={sub1.category_id}>
+              {sub1.name}
+            </option>
+          ))}
+      </select>
+    </div>
+
+    {/* Subcategory 2 */}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory 2</label>
+      <select
+        value={sub2}
+        onChange={(e) => {
+          setSub2(e.target.value);
+          setSub3("");
+        }}
+        disabled={!sub1}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+      >
+        <option value="">Select Subcategory 2</option>
+        {categories
+          .filter((cat) => cat.parent_id === sub1)
+          .map((sub2) => (
+            <option key={sub2.category_id} value={sub2.category_id}>
+              {sub2.name}
+            </option>
+          ))}
+      </select>
+    </div>
+
+    {/* Subcategory 3 */}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory 3</label>
+      <select
+        value={sub3}
+        onChange={(e) => setSub3(e.target.value)}
+        disabled={!sub2}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+      >
+        <option value="">Select Subcategory 3</option>
+        {categories
+          .filter((cat) => cat.parent_id === sub2)
+          .map((sub3) => (
+            <option key={sub3.category_id} value={sub3.category_id}>
+              {sub3.name}
+            </option>
+          ))}
+      </select>
+    </div>
+  </div>
+
+  {/* Download Button */}
+  {sub3 && (
+    <div className="mt-6">
+      <a
+        href={`/templates/${category}-${sub1}-${sub2}-${sub3}.xlsx`.replace(/\s+/g, "_")}
+        download
+        className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+      >
+        Download Format
+      </a>
+    </div>
+  )}
+</Section>
+
+
+      {/* Section: Upload CSV */}
       <Section
         title="Upload CSV"
         subtitle="Upload your product list as a CSV file"
@@ -115,7 +250,7 @@ export default function BulkUploadPage() {
         </div>
       </Section>
 
-      {/* Section 2: Sync Shopify Products */}
+      {/* Section: Sync Shopify */}
       {shopify_url && (
         <Section
           title="Sync Shopify Products"
@@ -139,6 +274,7 @@ export default function BulkUploadPage() {
         </Section>
       )}
 
+      {/* Products Viewer */}
       {batch_id && (
         <div className="mt-8">
           <ProductsPage batchId={batch_id} />
