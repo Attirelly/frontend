@@ -51,6 +51,7 @@ export interface Pricing {
   mrp?: number;
   rent?: boolean;
   price?: number;
+  discount?: number;
 }
 
 export interface VariantImage {
