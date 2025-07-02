@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api } from '@/lib/axios';
 import { useEffect } from 'react';
+import { roboto } from '@/font'; 
 
 type FacebookLoginResponse = {
     status: string;
@@ -32,7 +33,7 @@ export default function SocialLoginButtons() {
                     access_token: tokenResponse.access_token,
                 });
                 alert('Google login successful!');
-                router.push('/customer_dashboard');
+                // router.push('/customer_dashboard');
             } catch (err) {
                 console.error('Google login error:', err);
                 alert('Google login failed.');
@@ -65,7 +66,7 @@ export default function SocialLoginButtons() {
                         });
 
                         alert('Facebook login successful!');
-                        router.push('/customer_dashboard');
+                        // router.push('/customer_dashboard');
                     } catch (err) {
                         console.error('Facebook login error:', err);
                         alert('Facebook login failed.');
@@ -80,29 +81,31 @@ export default function SocialLoginButtons() {
     return (
         <div className="w-full">
             {/* Divider */}
-            <div className="flex items-center my-6">
+            {/* <div className="flex items-center my-6">
                 <div className="flex-grow border-t border-gray-300 mx-4"></div>
                 <span className="text-gray-400 text-sm">or</span>
                 <div className="flex-grow border-t border-gray-300 mx-4"></div>
-            </div>
+            </div> */}
 
             {/* Social login buttons */}
-            <div className="flex justify-center gap-6">
+            <div className={`${roboto.className} flex flex-col justify-center gap-6`}
+            style={{fontWeight:700}}>
                 <button
                     type="button"
                     aria-label="Login with Google"
                     onClick={() => handleGoogleLogin()}
-                    className="w-12 h-12 rounded-full bg-white shadow border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                    className="w-105 h-13.5 rounded-xl bg-white shadow flex items-center justify-center hover:bg-gray-100 gap-2"
                 >
-                    <Image src="/google-logo.png" alt="Google" width={40} height={40} />
+                    <Image src="/Login/google.svg" alt="Google" width={24} height={24} />
+                    <span className='text-xl'>Sign In with Google</span>
                 </button>
                 <button
                     type="button"
                     aria-label="Login with Facebook"
                     onClick={handleFacebookLogin}
-                    className="w-12 h-12 rounded-full bg-white shadow border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                    className="w-105 h-13.5 rounded-xl bg-blue-500 shadow flex items-center justify-center hover: gap-2"
                 >
-                    <Image src="/facebook-logo.png" alt="Facebook" width={40} height={40} />
+                    <Image src="/Login/facebook_all_white.svg" alt="Facebook" width={24} height={24} />
                 </button>
             </div>
         </div>
