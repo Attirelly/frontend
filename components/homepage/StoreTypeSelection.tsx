@@ -17,7 +17,7 @@ const StoreTypeImage = [
 
 
 export default function StoreTypeSelection() {
-    const { setStoreType } = useHeaderStore();
+    const { setStoreType, storeType } = useHeaderStore();
     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
     const [tabs, setTabs] = useState<SelectOption[]>([]);
     const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
@@ -37,7 +37,7 @@ export default function StoreTypeSelection() {
         setStoreType(storeType);
         // onChange(value);
     };
-    // console.log(selected);
+    // console.log(storeType);
 
     useEffect(() => {
         const fetchStoreTypes = async () => {
@@ -62,31 +62,32 @@ export default function StoreTypeSelection() {
         fetchStoreTypes();
     }, []);
     return (
-        <div className="flex flex-col">
-            <span className="text-3xl text-[#242424]">FASHION CATEGORIES</span>
-            <div className="flex">
+        <div className={`${manrope.className} flex flex-col items-center`}
+            style={{ fontWeight: 500 }}>
+            <span className="text-3xl text-[#242424]" style={{ fontWeight: 400 }}>FASHION CATEGORIES</span>
+            <div className="flex gap-23 mt-8">
                 {tabs.map((tab, index) => {
                     const storeImage = StoreTypeImage.find(
                         (item) => item.name.toLowerCase() === tab.label.toLowerCase()
                     );
                     return (
+                            <div className="flex flex-col items-center cursor-pointer" onClick={() => handleTabClick(tab)}>
+                                <div className="w-23 h-23 rounded-full border border-[#BABABA] flex items-center justify-center">
+                                    <div className="relative w-14 h-14">
+                                        <Image
+                                            src={storeImage?.url || '/Homepage/tailor.svg'}
+                                            alt='Store Type'
+                                            fill
+                                        />
+                                    </div>
 
-                        <div>
-                            <div className="w-23 h-23 rounded-full border border-gray flex items-center justify-center">
-                                <div className="relative w-14 h-14">
-                                    <Image
-                                        src={storeImage?.url || '/Homepage/tailor.svg'}
-                                        alt='Store Type'
-                                        fill
-                                    />
+                                </div>
+                                <div>
+                                    <span key={tab.value} className="text-xl text-[#242424]">{tab.label}</span>
                                 </div>
 
                             </div>
-                            <div>
-                                <span key={tab.value} className="text-3xl text-[#242424]">{tab.label}</span>
-                            </div>
 
-                        </div>
 
                     )
                 })}
