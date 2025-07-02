@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { StoreInfoType } from "@/types/SellerTypes";
 import { manrope, roboto } from "@/font";
+import { useState } from "react";
+import CustomerSignIn from "../Customer/CustomerSignIn";
 
 const StoreTypeImage = [
     { name: "Designer Labels", url: "/ListingPageHeader/designer_labels.svg" },
@@ -148,6 +150,7 @@ export default function StoreInfoPage({
 
                 </div>
             </div>
+            
         </div>
     );
 }

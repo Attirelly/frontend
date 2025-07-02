@@ -69,6 +69,7 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
             : 0;
 
         return {
+          id:item.id,
           imageUrl: item.image || [],
           title: item.title || 'Untitled Product',
           description: desc,                // setting product name as title and store name as description
@@ -162,7 +163,7 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
       ) : (
         <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${colCount} gap-4 p-2`}>
           {products.map((product, index) => (
-            <ProductCard key={`${product.title}-${index}`} {...product} />
+            <ProductCard key={`${product.id}`} {...product} />
           ))}
         </div>
       )}

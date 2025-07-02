@@ -65,6 +65,7 @@ export interface Image {
 }
 
 export interface ProductCardType {
+  id:string;
   imageUrl: string[];
   storeName?:string;
   title: string;
