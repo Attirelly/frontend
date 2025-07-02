@@ -20,6 +20,7 @@ import { useParams } from 'next/navigation';
 // import { useSellerStore } from "@/store/sellerStore";
 import ShowMoreProducts from "@/components/curations/ShowMoreProducts";
 import { roboto, manrope } from "@/font";
+import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 
 // interface PageProps {
 //   params: {
@@ -32,6 +33,7 @@ export default function ProductDetail() {
   const product_id = params?.product_id as string;
 
   // const { setStoreId } = useSellerStore();
+  const [signIn, setSignIn] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
@@ -61,6 +63,7 @@ export default function ProductDetail() {
   };
 
   const sendToWhatsApp = async () => {
+    setSignIn(true);
     try {
       const response = await api.get(
         `/stores/store_basic?store_id=${product?.store_id}`
@@ -441,6 +444,9 @@ export default function ProductDetail() {
       <div className="mt-10">
         <ListingFooter />
       </div>
+      {signIn && (
+        <CustomerSignIn onClose={() => setSignIn(false)} />
+      )}
     </div>
   );
 }
