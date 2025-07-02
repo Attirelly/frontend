@@ -300,25 +300,28 @@ export default function ListingPageHeader() {
           </div>
 
           <div className="flex justify-center">
-            <div className="flex items-center justify-between gap-10 text-sm w-full max-w-[200px]">
+            <div className="flex items-center gap-6 text-sm w-full max-w-[200px]">
+              <img
+                src="/ListingPageHeader/shopping_cart_2.svg"
+                alt="Cart"
+                className="opacity-100 w-[32px] h-[32px]"
+              />
+              <div className="w-px h-10 bg-gray-300"></div>
               <div className="flex items-center gap-2">
+                <img
+                  src="/ListingPageHeader/user_logo.svg"
+                  alt="User"
+                  className="opacity-100"
+                />
                 <span
                   className={`${manrope.className}`}
                   style={{ fontWeight: 400 }}
                 >
                   Archit
                 </span>
-                <img
-                  src="/ListingPageHeader/user_logo.svg"
-                  alt="User"
-                  className="opacity-100"
-                />
+                
               </div>
-              <img
-                src="/ListingPageHeader/shopping_cart.svg"
-                alt="Cart"
-                className="opacity-100 w-[32px] h-[32px]"
-              />
+              
             </div>
           </div>
         </div>

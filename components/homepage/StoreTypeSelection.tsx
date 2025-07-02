@@ -1,0 +1,97 @@
+'use client';
+import { api } from "@/lib/axios";
+import { useHeaderStore } from "@/store/listing_header_store";
+import { BrandType, SelectOption } from "@/types/SellerTypes";
+import { useEffect, useState } from "react"
+import { toast } from "sonner";
+import { manrope } from "@/font";
+import Image from "next/image";
+
+const StoreTypeImage = [
+    { name: 'Designer Labels', url: '/Homepage/designer_labels.svg' },
+    { name: 'Retail Brands', url: '/Homepage/retail_stores.svg' },
+    { name: 'Boutiques', url: '/ListingPageHeader/boutiques.svg' },
+    { name: 'Tailor', url: '/Homepage/tailor.svg' },
+    { name: 'Styler', url: '/Homepage/styler.svg' },
+];
+
+
+export default function StoreTypeSelection() {
+    const { setStoreType } = useHeaderStore();
+    const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
+    const [tabs, setTabs] = useState<SelectOption[]>([]);
+    const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
+    const [loading, setLoading] = useState(true);
+    const handleTabClick = (value: SelectOption) => {
+        const storeType: BrandType = {
+            id: value.value,
+            store_type: value.label
+        }
+        // event({
+        //     action: "Store Type Select",
+        //     params: {
+        //         "Store Type": value.label
+        //     }
+        // });
+        setSelectedStoreType(storeType);
+        setStoreType(storeType);
+        // onChange(value);
+    };
+    // console.log(selected);
+
+    useEffect(() => {
+        const fetchStoreTypes = async () => {
+            try {
+                setLoading(true)
+                const res = await api.get("stores/store_types");
+                console.log(res.data);
+                setStoreTypes(res.data);
+                const options: SelectOption[] = res.data.map((t: BrandType) => ({
+                    label: t.store_type,
+                    value: t.id
+                }));
+                setTabs(options);
+            }
+            catch (error) {
+                toast.error("Failed to fetch store types");
+            }
+            finally {
+                setLoading(false)
+            }
+        }
+        fetchStoreTypes();
+    }, []);
+    return (
+        <div className="flex flex-col">
+            <span className="text-3xl text-[#242424]">FASHION CATEGORIES</span>
+            <div className="flex">
+                {tabs.map((tab, index) => {
+                    const storeImage = StoreTypeImage.find(
+                        (item) => item.name.toLowerCase() === tab.label.toLowerCase()
+                    );
+                    return (
+
+                        <div>
+                            <div className="w-23 h-23 rounded-full border border-gray flex items-center justify-center">
+                                <div className="relative w-14 h-14">
+                                    <Image
+                                        src={storeImage?.url || '/Homepage/tailor.svg'}
+                                        alt='Store Type'
+                                        fill
+                                    />
+                                </div>
+
+                            </div>
+                            <div>
+                                <span key={tab.value} className="text-3xl text-[#242424]">{tab.label}</span>
+                            </div>
+
+                        </div>
+
+                    )
+                })}
+            </div>
+        </div>
+
+    )
+}
