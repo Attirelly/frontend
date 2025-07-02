@@ -13,12 +13,14 @@ export default function PricingAndAvailability() {
   const [mrp, setMRP] = useState(pricing?.mrp );
   const [rent, setRent] = useState<boolean>(pricing?.rent || false);
   const [price, setStoreListPrice] = useState(pricing?.price);
+  const [discount, setDiscount] = useState(pricing?.discount);
 
 
    useEffect(() => {
     const isValid =
       !!pricing?.mrp &&
-      !!pricing?.price ;
+      !!pricing?.price && 
+      !!pricing?.discount;
 
     setStepValidation(currentStep, isValid);
   }, [ pricing, currentStep]);
@@ -28,9 +30,10 @@ export default function PricingAndAvailability() {
     updateFormData("pricing", {
       mrp,
       rent,
-      price
+      price,
+      discount
     });
-  }, [mrp, rent, price, updateFormData]);
+  }, [mrp, rent, price, discount,  updateFormData]);
 
   return (
     <div className="max-w-4xl mx-auto bg-white  rounded-lg self-start">
@@ -107,6 +110,30 @@ export default function PricingAndAvailability() {
           </div>
           </div>
         </div>
+        
+        {/* Column 3 */}
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Discount
+            </label>
+            <div className="flex w-[50%] border border-gray-300 rounded-md overflow-hidden">
+            
+            <input
+              type="number"
+              value={discount}
+              onChange={(e) => setDiscount(e.target.value === "" ? undefined : Number(e.target.value))}
+              className="w-full p-2"
+              placeholder="1000"
+            />
+            <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">
+                %
+            </span>
+          </div>
+          </div>
+        </div>
+
+        
       </div>
     </div>
   );

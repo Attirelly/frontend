@@ -15,8 +15,9 @@ interface Category {
   name: string;
   parent_id: string | null;
   children: Category[];
+  level?: number;
 }
-
+  
 export default function CategorySelector() {
   const { category } = useFormData();
   const { updateFormData, setStepValidation, setLoading } = useFormActions();
