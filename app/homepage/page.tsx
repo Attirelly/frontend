@@ -1,7 +1,9 @@
 import CardTypeOne from "@/components/homepage/CardTypeOne";
+import CardTypeThree from "@/components/homepage/CardTypeThree";
 import CardTwoType from "@/components/homepage/CardTypeTwo";
 import HeroSection from "@/components/homepage/HeroSection";
 import StoreTypeSelection from "@/components/homepage/StoreTypeSelection";
+import ListingFooter from "@/components/listings/ListingFooter";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
 
 export default function HomePage() {
@@ -17,11 +19,16 @@ export default function HomePage() {
             </div>
 
             <div className="mx-auto">
-                <CardTypeOne imageUrl="/Homepage/CardTypeOne.svg" discountText="23" title="Embroidary Kurta"/>
+               <CardTypeThree imageUrl="/Homepage/CardTypeTwo.svg" title="Label Parampara by Archit" description="Modal Town, Ludhiana"/>
             </div>
 
+            <div className="mx-auto">
+                <CardTypeOne imageUrl="/Homepage/CardTypeOne.svg" discountText="23" title="Embroidary Kurta"/>
+            </div>
+            
 
 
+            <ListingFooter/>
         </div>
     )
 }
