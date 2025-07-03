@@ -18,7 +18,7 @@ export default function CardTwoType({ imageurl, title, description }: CardTwoTyp
             </div>
             <div className="flex flex-col gap-1 items-center justify-center">
                 <span className={`${manrope.className} text-lg`} style={{ fontWeight: 500 }}>{title}</span>
-                <span className={`${manrope.className} text-[10px]`} style={{ fontWeight: 400 }}>{description}</span>
+                <span className={`${manrope.className} text-[10px] text-[#5F5F5F]`} style={{ fontWeight: 400 }}>{description}</span>
             </div>
         </div>
 
