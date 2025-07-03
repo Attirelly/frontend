@@ -11,7 +11,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ imageUrl, discountText, title, description }) => {
   return (
-    <div className={`${manrope.className} relative w-[24.5rem] h-[36.75rem] rounded-xl overflow-hidden shadow-lg`}>
+    <div className={`${manrope.className} relative w-[392px] h-full rounded-xl overflow-hidden shadow-lg`}>
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
