@@ -11,6 +11,7 @@ export default function HomePage() {
             <div className="mt-16 mx-auto mb-16">
                 <StoreTypeSelection />
             </div>
+            <div>HI</div>
 
             <div className="mx-auto">
                 <CardTypeOne imageUrl="/Homepage/CardTypeOne.svg" discountText="23" title="Embroidary Kurta"/>
