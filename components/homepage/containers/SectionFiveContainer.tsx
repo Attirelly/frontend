@@ -24,7 +24,7 @@ export default function SectionFiveContainer() {
         <div className="flex gap-[23px] justify-center">
             {cards.map((card) => (
                 <CardTypeFive
-                    imageUrl="/HomePage/CardTypeFive.svg"
+                    imageUrl={card.imageUrl}
                     title="Embroidary Kurta"
                     description="The new men's collection, 100% Jaipuri cotton"
                     price={50000}
