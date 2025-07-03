@@ -32,7 +32,7 @@ const CardTypeThree: React.FC<CardProps> = ({ imageUrl, discountText, title, des
       </div> */}
 
       {/* Text Content */}
-      <div className="flex flex-col items-center justify-center absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 pb-7 text-white">
+      <div className="flex flex-col items-center justify-center absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 pb-7 text-white mx-auto">
         <h3 className="text-base" style={{fontWeight:500}}>{title}</h3>
         <h2 className="text-xs" style={{fontWeight:400}}>{description}</h2>
       </div>
