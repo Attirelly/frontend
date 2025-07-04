@@ -143,18 +143,18 @@ export default function ListingPageHeader() {
 
   return (
     <div>
-      <header className="bg-white shadow">
-        <div className="grid grid-cols-[1fr_2fr_1fr] items-center px-20 py-4">
+      <header className="bg-white shadow h-[70px]">
+        <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-20 h-full">
           <div className="flex justify-between items-center">
             <div className={`${rubik.className} text-[32px] font-bold`}>
               Attirelly
             </div>
-            <div>
-             <MenWomenNavbar/>
-            </div>
+            
 
           </div>
-
+<div className="flex h-full items-center">
+             <MenWomenNavbar/>
+            </div>
           <div className="flex justify-center">
             <div className="flex border border-gray-300 rounded-full items-center gap-4 w-full max-w-[600px] px-4 relative">
               <div className="flex items-center gap-2 w-[250px] h-[24px]">

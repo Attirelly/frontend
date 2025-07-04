@@ -161,7 +161,8 @@ export default function ProductContainer({ storeId='', colCount=3 }: ProductCont
       {loading && products.length === 0 ? (
         <ProductGridSkeleton />
       ) : (
-        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${colCount} gap-4 p-2`}>
+        // <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${colCount} gap-4 p-2`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${colCount === 4 ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-4 p-2`}>
           {products.map((product, index) => (
             <ProductCard key={`${product.id}`} {...product} />
           ))}
