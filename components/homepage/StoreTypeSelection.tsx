@@ -64,14 +64,14 @@ export default function StoreTypeSelection() {
     return (
         <div className={`${manrope.className} flex flex-col items-center`}
             style={{ fontWeight: 500 }}>
-            <span className="text-3xl text-[#242424]" style={{ fontWeight: 400 }}>FASHION CATEGORIES</span>
+            <span className="text-3xl text-[#242424]" style={{ fontWeight: 400 }}>SHOP BY CATEGORY</span>
             <div className="flex gap-23 mt-8">
                 {tabs.map((tab, index) => {
                     const storeImage = StoreTypeImage.find(
                         (item) => item.name.toLowerCase() === tab.label.toLowerCase()
                     );
                     return (
-                            <div className="flex flex-col items-center cursor-pointer" onClick={() => handleTabClick(tab)}>
+                            <div key={tab.value} className="flex flex-col items-center cursor-pointer" onClick={() => handleTabClick(tab)}>
                                 <div className="w-23 h-23 rounded-full border border-[#BABABA] flex items-center justify-center">
                                     <div className="relative w-14 h-14">
                                         <Image
