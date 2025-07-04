@@ -9,6 +9,7 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { rubik, manrope } from "@/font";
 import StoreSearchType from "./StoreSearchType";
 import { useRouter } from "next/navigation";
+import MenWomenNavbar from "./MenWomenNavbar";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -148,14 +149,10 @@ export default function ListingPageHeader() {
             <div className={`${rubik.className} text-[32px] font-bold`}>
               Attirelly
             </div>
-            <nav className="flex justify-center gap-8 py-2 text-base text-[#373737]">
-              <a className={manrope.className} style={{ fontWeight: 400 }}>
-                Men
-              </a>
-              <a className={manrope.className} style={{ fontWeight: 400 }}>
-                Women
-              </a>
-            </nav>
+            <div>
+             <MenWomenNavbar/>
+            </div>
+
           </div>
 
           <div className="flex justify-center">
@@ -319,9 +316,9 @@ export default function ListingPageHeader() {
                 >
                   Archit
                 </span>
-                
+
               </div>
-              
+
             </div>
           </div>
         </div>
