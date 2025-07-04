@@ -17,7 +17,10 @@ export default function HomePage() {
     return (
         <div className="flex flex-col">
             <ListingPageHeader />
-            <HeroSection />
+            <div className="px-20">
+<HeroSection />
+            </div>
+            
             <div className="mt-16 mx-auto mb-16">
                 <StoreTypeSelection />
             </div>
@@ -29,15 +32,15 @@ export default function HomePage() {
 
             {/* eight images ( 4 in each row) */}
             <div className="px-11">
-<SectionTwoContainer />
+                <SectionTwoContainer />
             </div>
-            
+
 
             {/* five images small without much detail */}
             <div className="px-11">
-<SectionThreeContainer />
+                <SectionThreeContainer />
             </div>
-            
+
 
 
 
@@ -45,13 +48,13 @@ export default function HomePage() {
             <div className="px-11">
                 <SectionFourContainer />
             </div>
-            
-            
+
+
             {/* 5 images big and with detail */}
             <div className="px-11">
-<SectionFiveContainer />
+                <SectionFiveContainer />
             </div>
-            
+
 
 
 
