@@ -87,7 +87,7 @@ export default function MenWomenNavbar() {
             {columns.map((column, colIndex) => (
               <div
                 key={colIndex}
-                className={`p-4 w-full ${colIndex === 0 ? 'rounded-bl-xl' : colIndex === 4 ? 'rounded-br-xl' : ''}`}
+                className={`p-4 w-full ${colIndex === 0 ? 'rounded-bl-xl' : colIndex === Math.min(category.children.length-1, 4) ? 'rounded-br-xl' : ''}`}
                 style={{
                   backgroundColor: colIndex % 2 === 0 ? '#f9f9f9' : '#ffffff',
                 }}
