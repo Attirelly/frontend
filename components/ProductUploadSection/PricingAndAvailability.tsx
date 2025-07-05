@@ -19,8 +19,7 @@ export default function PricingAndAvailability() {
    useEffect(() => {
     const isValid =
       !!pricing?.mrp &&
-      !!pricing?.price && 
-      !!pricing?.discount;
+      !!pricing?.price;
 
     setStepValidation(currentStep, isValid);
   }, [ pricing, currentStep]);
@@ -112,7 +111,7 @@ export default function PricingAndAvailability() {
         </div>
         
         {/* Column 3 */}
-        <div className="flex flex-col gap-4">
+        {/* <div className="flex flex-col gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">
               Discount
@@ -131,7 +130,7 @@ export default function PricingAndAvailability() {
             </span>
           </div>
           </div>
-        </div>
+        </div> */}
 
         
       </div>
