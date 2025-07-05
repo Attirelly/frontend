@@ -2,7 +2,7 @@
 
 import { manrope } from '@/font';
 import Image from 'next/image';
-import CardTypeSix from '../cards/CardTypeSix';
+import CardTwoType from '../cards/CardTypeTwo';
 
 interface CardData {
   id: string;
@@ -17,13 +17,17 @@ const cards: CardData[] = [
   { id: '2', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
   { id: '3', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
   { id: '4', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
+  { id: '5', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
+  { id: '6', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
+  { id: '7', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
+  { id: '8', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
 ];
 
-export default function SectionTwoContainer() {
+export default function SectionTenContainer() {
   return (
     <div className='w-[1242px] mx-auto space-y-8'>
       <div className='flex justify-between'>
-             <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>NEW SUITS</span>
+             <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>STORES IN MOHALI</span>
              <div className='flex items-center gap-2'>
                <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
                <Image
@@ -39,7 +43,7 @@ export default function SectionTwoContainer() {
            <div className='flex flex-col'>
 <div className="grid grid-cols-4 gap-x-10 gap-y-6">
       {cards.map((card) => (
-        <CardTypeSix
+        <CardTwoType
           key={card.id}
           imageUrl={card.imageUrl}
           title={card.title}

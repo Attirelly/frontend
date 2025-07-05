@@ -19,7 +19,7 @@ const cards: CardData[] = [
   { id: '4', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
 ];
 
-export default function SectionTwoContainer() {
+export default function SectionSixContainer() {
   return (
     <div className='w-[1242px] mx-auto space-y-8'>
       <div className='flex justify-between'>

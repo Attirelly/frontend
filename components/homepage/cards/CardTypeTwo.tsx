@@ -7,7 +7,7 @@ interface CardTwoTypeProps {
 }
 export default function CardTwoType({ imageUrl, title, description }: CardTwoTypeProps) {
     return (
-        <div className="flex flex-col p-3 items-center justify-center gap-2">
+        <div className="flex flex-col items-center justify-center gap-2">
             <div className="relative w-66 h-66">
                 <Image
                     src={imageUrl}
