@@ -156,10 +156,10 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
         const storeRanges = res.data?.[0]?.price_ranges || [];
         setPriceRanges(storeRanges);
 
-        if (storeRanges.length > 0) {
-          setSelectedPriceRange(storeRanges[0]);
-          setPriceRangeType(storeRanges[0]);
-        }
+        // if (storeRanges.length > 0) {
+        //   setSelectedPriceRange(storeRanges[0]);
+        //   setPriceRangeType(storeRanges[0]);
+        // }
       } catch (error) {
         toast.error('Failed to fetch price ranges');
       } finally {
@@ -189,7 +189,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
               ${manrope.className}
               px-4 py-2 rounded-3xl transition text-base flex items-center gap-2
               ${isSelected
-                ? 'bg-[#F2F2F2] border border-black font-semibold'
+                ? 'bg-[#F2F2F2] border border-[#717171] font-semibold'
                 : 'bg-white text-[#717171] font-normal border border-transparent'}
             `}
             onClick={() => handleTabClick(range)}
