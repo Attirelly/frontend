@@ -114,7 +114,7 @@ const STORE_TYPE_OPTIONS = [
 
 //  for testing on vercel
    {store_type: 'Retail Brand', id: '8e8853ef-4c41-4c79-8e3c-654c35dce5a7'},
-    {store_type: 'Designer Label', id: '1626d56a-5750-455a-a681-004c8a978718'},  
+   {store_type: 'Designer Label', id: '1626d56a-5750-455a-a681-004c8a978718'},  
 ];
 
 export default function StoreProfilePage() {

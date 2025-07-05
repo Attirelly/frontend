@@ -28,7 +28,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   const [openFacets, setOpenFacets] = useState<Record<string, boolean>>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([0,0]);
+  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([0,1]);
 
   useEffect(() => {
     if (context === 'product' && priceBounds) {
@@ -45,9 +45,9 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
       ) {
         setPriceRange(localPriceRange);
       }
-    }, 300); // 300ms delay
+    }, 100); // 100ms delay
 
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timeout);   
   }, [localPriceRange]);
 
   const handleSearchChange = (facetName: string, value: string) => {
@@ -106,7 +106,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
       </div>
     );
   }
-
+  console.log("priceBounds", priceBounds);  
   return (
     <div className="sticky top-2 z-10">
       <div
@@ -133,7 +133,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           const filteredValues = values.filter((facet) =>
             facet.name.toLowerCase().includes(searchValue)
           );
-
+           
           return (
             <React.Fragment key={facetName}>
               <div className="mb-4">
@@ -161,12 +161,8 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
                         <Range
                           step={100}
-                          min={priceBounds?.[0] || 0}
+                          min={0}
                           max={priceBounds?.[1] || 10000}
-                          // min={0}                          
-                          // max={10000}
-                          // min={0}
-                          // max={100000}
                           values={localPriceRange}
                           onChange={(values) => setLocalPriceRange([values[0], values[1]])}
                           renderTrack={({ props, children }) => (
@@ -265,3 +261,5 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 };
 
 export default DynamicFilter;
+
+

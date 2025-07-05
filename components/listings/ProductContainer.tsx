@@ -231,10 +231,11 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
     try {
       const filterParam = skipFilters ? "" : filters;
       const res = await api.get(
-        `/search/search_product?query=${storeId} ${query} ${storeTypeString || ""} ${priceRangeType?.label || ""}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&sort_by=${sortBy}`
+        `/search/search_product?query=${storeId} ${query} ${storeTypeString || ""}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&sort_by=${sortBy}`
       );
 
       const data = res.data;
+      console.log("algolia_data",data);
       setResults(data.hits.length);
 
       const formattedProducts: ProductCardType[] = data.hits.map((item: any) => {
@@ -305,7 +306,7 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
   useEffect(() => {
     setPage(0);
     fetchProducts(0);
-  }, [filters, query, selectedFilters, storeTypeString, priceRangeType, sortBy]);
+  }, [filters ,  query, selectedFilters, storeTypeString, priceRangeType, sortBy]);
 
   useEffect(() => {
     if (page !== 0) fetchProducts(page);
