@@ -1,13 +1,24 @@
-'use client';
-import { useEffect, useRef, useState, type FC } from 'react';
-import dynamic from 'next/dynamic';
-import { api } from '@/lib/axios';
-import { useSellerStore } from '@/store/sellerStore';
-import { City, Area, BrandType, GenderType, Pincode, SelectOption, Category } from '@/types/SellerTypes';
+"use client";
+import { useEffect, useRef, useState, type FC } from "react";
+import dynamic from "next/dynamic";
+import { api } from "@/lib/axios";
+import { useSellerStore } from "@/store/sellerStore";
+import {
+  City,
+  Area,
+  BrandType,
+  GenderType,
+  Pincode,
+  SelectOption,
+  Category,
+} from "@/types/SellerTypes";
 
-const Select = dynamic(() => import('react-select').then(mod => mod.default), {
-  ssr: false,
-});
+const Select = dynamic(
+  () => import("react-select").then((mod) => mod.default),
+  {
+    ssr: false,
+  }
+);
 
 // type SelectOption = { value: string; label: string };
 // type BrandType = { id: string; store_type: string };
@@ -22,8 +33,11 @@ const RequiredLabel: FC<{ children: React.ReactNode }> = ({ children }) => (
   </label>
 );
 
-export default function BusinessDetailsComponent({ onValidationChange }: { onValidationChange?: (isValid: boolean) => void }) {
-
+export default function BusinessDetailsComponent({
+  onValidationChange,
+}: {
+  onValidationChange?: (isValid: boolean) => void;
+}) {
   const {
     setBusinessDetailsValid,
     setBusinessDetailsData,
@@ -32,72 +46,96 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     sellerId,
     sellerName,
     sellerEmail,
-  setStoreNameString } = useSellerStore();
+    setStoreNameString,
+  } = useSellerStore();
   const [sameAsOwner, setSameAsOwner] = useState(true);
 
   const [brandTypes, setBrandTypes] = useState<BrandType[]>([]);
-  const [selectedBrandTypes, setSelectedBrandTypes] = useState<BrandType[]>(businessDetailsData?.brandTypes || []);
+  const [selectedBrandTypes, setSelectedBrandTypes] = useState<BrandType[]>(
+    businessDetailsData?.brandTypes || []
+  );
 
   const [genders, setGenders] = useState<GenderType[]>([]);
-  const [selectedGenderTypes, setSelectedGenderTypes] = useState<GenderType[]>(businessDetailsData?.genders || []);
+  const [selectedGenderTypes, setSelectedGenderTypes] = useState<GenderType[]>(
+    businessDetailsData?.genders || []
+  );
 
-  const [rentOutfits, setRentOutfits] = useState<string | null>(businessDetailsData?.rentOutfits || null);
+  const [rentOutfits, setRentOutfits] = useState<string | null>(
+    businessDetailsData?.rentOutfits || null
+  );
   console.log(businessDetailsData);
 
   const [cities, setCities] = useState<City[]>([]);
   const [cityOptions, setCityOptions] = useState<SelectOption[]>([]);
   const [selectedCity, setSelectedCity] = useState<City[]>([]);
-  const [selectedCityOption, setSelectedCityOption] = useState<SelectOption | null>(null);
+  const [selectedCityOption, setSelectedCityOption] =
+    useState<SelectOption | null>(null);
 
   const [areas, setAreas] = useState<Area[]>([]);
   const [areaOptions, setAreaOptions] = useState<SelectOption[]>([]);
   const [selectedArea, setSelectedArea] = useState<Area[]>([]);
-  const [selectedAreaOption, setSelectedAreaOption] = useState<SelectOption | null>(null);
+  const [selectedAreaOption, setSelectedAreaOption] =
+    useState<SelectOption | null>(null);
 
   const [pincodes, setPincodes] = useState<Pincode[]>([]);
   const [pincodeOptions, setPincodeOptions] = useState<SelectOption[]>([]);
   const [selectedPincode, setSelectedPincode] = useState<Pincode[]>([]);
-  const [selectedPincodeOption, setSelectedPincodeOption] = useState<SelectOption | null>(null);
+  const [selectedPincodeOption, setSelectedPincodeOption] =
+    useState<SelectOption | null>(null);
 
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<Category[]>(businessDetailsData?.categories || []);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>(
+    businessDetailsData?.categories || []
+  );
   const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
-  const [selectedCategoryOptions, setSelectedCategoryOptions] = useState<SelectOption[]>(
-    (businessDetailsData?.categories || []).map(cat => ({
+  const [selectedCategoryOptions, setSelectedCategoryOptions] = useState<
+    SelectOption[]
+  >(
+    (businessDetailsData?.categories || []).map((cat) => ({
       value: cat.category_id,
       label: cat.name,
     }))
   );
 
-  const [ownerName, setOwnerName] = useState(businessDetailsData?.ownerName || '');
-  const [ownerEmail, setOwnerEmail] = useState(businessDetailsData?.ownerEmail || '');
-  const [brandName, setBrandName] = useState(businessDetailsData?.brandName || '');
-  const [businessWpNum, setBusinessWpNum] = useState(businessDetailsData?.businessWpNum || '');
-  const [pinCode, setPinCode] = useState(businessDetailsData?.pinCode || '');
-  const [brandAddress, setBrandAddress] = useState(businessDetailsData?.brandAddress || '');
+  const [ownerName, setOwnerName] = useState(
+    businessDetailsData?.ownerName || ""
+  );
+  const [ownerEmail, setOwnerEmail] = useState(
+    businessDetailsData?.ownerEmail || ""
+  );
+  const [brandName, setBrandName] = useState(
+    businessDetailsData?.brandName || ""
+  );
+  const [businessWpNum, setBusinessWpNum] = useState(
+    businessDetailsData?.businessWpNum || ""
+  );
+  const [pinCode, setPinCode] = useState(businessDetailsData?.pinCode || "");
+  const [brandAddress, setBrandAddress] = useState(
+    businessDetailsData?.brandAddress || ""
+  );
   // const [storeLocation, setStoreLocation] = useState(businessDetailsData?.storeLocation || '');
   const hasHydrated = useRef(false);
 
   useEffect(() => {
     if (sameAsOwner) {
-      setBusinessWpNum(sellerNumber || '');
+      setBusinessWpNum(sellerNumber || "");
     }
   }, [sameAsOwner, sellerNumber]);
 
   useEffect(() => {
     if (businessDetailsData && !hasHydrated.current) {
-      setOwnerName(businessDetailsData.ownerName || '');
-      setOwnerEmail(businessDetailsData.ownerEmail || '');
-      setBrandName(businessDetailsData.brandName || '');
-      setBusinessWpNum(businessDetailsData.businessWpNum || '');
-      setPinCode(businessDetailsData.pinCode || '');
-      setBrandAddress(businessDetailsData.brandAddress || '');
+      setOwnerName(businessDetailsData.ownerName || "");
+      setOwnerEmail(businessDetailsData.ownerEmail || "");
+      setBrandName(businessDetailsData.brandName || "");
+      setBusinessWpNum(businessDetailsData.businessWpNum || "");
+      setPinCode(businessDetailsData.pinCode || "");
+      setBrandAddress(businessDetailsData.brandAddress || "");
 
       setSelectedBrandTypes(businessDetailsData.brandTypes || []);
       setSelectedCategories(businessDetailsData.categories || []);
 
       setSelectedCategoryOptions(
-        (businessDetailsData.categories || []).map(cat => ({
+        (businessDetailsData.categories || []).map((cat) => ({
           value: cat.category_id,
           label: cat.name,
         }))
@@ -112,17 +150,23 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     }
   }, [businessDetailsData]);
 
-
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [storeTypesRes, gendersRes, citiesRes, areasRes, pincodeRes, categoriesRes] = await Promise.all([
-          api.get('/stores/store_types'),
-          api.get('/genders/'),
-          api.get('/location/cities/'),
-          api.get('/location/areas/'),
-          api.get('/location/pincodes/'),
-          api.get('/categories/')
+        const [
+          storeTypesRes,
+          gendersRes,
+          citiesRes,
+          areasRes,
+          pincodeRes,
+          categoriesRes,
+        ] = await Promise.all([
+          api.get("/stores/store_types"),
+          api.get("/genders/"),
+          api.get("/location/cities/"),
+          api.get("/location/areas/"),
+          api.get("/location/pincodes/"),
+          api.get("/categories/"),
         ]);
 
         setBrandTypes(storeTypesRes.data);
@@ -131,14 +175,20 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
         setAreas(areasRes.data);
         setPincodes(pincodeRes.data);
         setCategories(categoriesRes.data);
-        setCategoryOptions(categoriesRes.data.map((cat: Category) => ({
-          value: cat.category_id,
-          label: cat.name
-        })));
-        setCityOptions(citiesRes.data.map((c: City) => ({ value: c.id, label: c.name })));
-        setAreaOptions(areasRes.data.map((a: Area) => ({ value: a.id, label: a.name })));
+        setCategoryOptions(
+          categoriesRes.data.map((cat: Category) => ({
+            value: cat.category_id,
+            label: cat.name,
+          }))
+        );
+        setCityOptions(
+          citiesRes.data.map((c: City) => ({ value: c.id, label: c.name }))
+        );
+        setAreaOptions(
+          areasRes.data.map((a: Area) => ({ value: a.id, label: a.name }))
+        );
       } catch (error) {
-        console.error('Error fetching initial data:', error);
+        console.error("Error fetching initial data:", error);
       }
     };
 
@@ -156,12 +206,15 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
       businessDetailsData.city?.length === 0 ||
       cities.length === 0 ||
       cityOptions.length === 0
-    ) return;
+    )
+      return;
 
     const cityFromStore = businessDetailsData.city[0];
     console.log(businessDetailsData);
-    const fullCity = cities.find(city => city.id === cityFromStore.id);
-    const cityOption = cityOptions.find(opt => opt.value === cityFromStore.id);
+    const fullCity = cities.find((city) => city.id === cityFromStore.id);
+    const cityOption = cityOptions.find(
+      (opt) => opt.value === cityFromStore.id
+    );
 
     if (fullCity) setSelectedCity([fullCity]);
 
@@ -180,8 +233,8 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
   useEffect(() => {
     if (selectedCityOption?.value) {
       const filteredAreas = areas
-        .filter(area => area.city_id === selectedCityOption.value)
-        .map(area => ({ value: area.id, label: area.name }));
+        .filter((area) => area.city_id === selectedCityOption.value)
+        .map((area) => ({ value: area.id, label: area.name }));
       setAreaOptions(filteredAreas);
     } else {
       setAreaOptions([]); // Reset if no city selected
@@ -190,7 +243,6 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     }
   }, [selectedCityOption, areas]);
 
-
   useEffect(() => {
     if (
       areaInitializedRef.current ||
@@ -198,12 +250,15 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
       businessDetailsData.area?.length === 0 ||
       areas.length === 0 ||
       areaOptions.length === 0
-    ) return;
+    )
+      return;
 
     const areaFromStore = businessDetailsData.area[0];
-    const fullArea = areas.find(area => area.id === areaFromStore.id);
-    const areaOption = areaOptions.find(opt => opt.value === areaFromStore.id);
-    console.log(areaOption)
+    const fullArea = areas.find((area) => area.id === areaFromStore.id);
+    const areaOption = areaOptions.find(
+      (opt) => opt.value === areaFromStore.id
+    );
+    console.log(areaOption);
     if (fullArea) setSelectedArea([fullArea]);
 
     if (areaOption) {
@@ -218,8 +273,6 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     areaInitializedRef.current = true;
   }, [businessDetailsData, areas, areaOptions]);
 
-
-
   useEffect(() => {
     if (
       pincodeInitializedRef.current ||
@@ -227,11 +280,14 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
       !businessDetailsData.pinCode ||
       pincodes.length === 0 ||
       pincodeOptions.length === 0
-    ) return;
+    )
+      return;
 
     const pincodeFromStore = businessDetailsData.pinCode[0];
-    const fullPincode = pincodes.find(p => p.id === pincodeFromStore.id);
-    const pincodeOption = pincodeOptions.find(opt => opt.value === pincodeFromStore.id);
+    const fullPincode = pincodes.find((p) => p.id === pincodeFromStore.id);
+    const pincodeOption = pincodeOptions.find(
+      (opt) => opt.value === pincodeFromStore.id
+    );
 
     if (fullPincode) setSelectedPincode([fullPincode]);
 
@@ -247,13 +303,11 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
     pincodeInitializedRef.current = true;
   }, [businessDetailsData, pincodes, pincodeOptions]);
 
-
-
   useEffect(() => {
     if (selectedCityOption?.value) {
       const filteredPincodes = pincodes
-        .filter(p => p.city_id === selectedCityOption.value)
-        .map(p => ({ value: p.id, label: p.code }));
+        .filter((p) => p.city_id === selectedCityOption.value)
+        .map((p) => ({ value: p.id, label: p.code }));
       setPincodeOptions(filteredPincodes);
     } else {
       setPincodeOptions([]);
@@ -272,14 +326,14 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
       selectedCity.length > 0 &&
       selectedPincode.length > 0 &&
       selectedCategoryOptions.length >= 1 &&
-    selectedCategoryOptions.length <= 3;
-      console.log(selectedCategoryOptions.length);
-      const categoriesForZustand = selectedCategoryOptions.map(opt => ({
-    category_id: opt.value,
-    name: opt.label,
-  }));
+      selectedCategoryOptions.length <= 3;
+    console.log(selectedCategoryOptions.length);
+    const categoriesForZustand = selectedCategoryOptions.map((opt) => ({
+      category_id: opt.value,
+      name: opt.label,
+    }));
 
-  setSelectedCategories(categoriesForZustand); 
+    setSelectedCategories(categoriesForZustand);
 
     setBusinessDetailsValid(Boolean(valid));
     onValidationChange?.(Boolean(valid));
@@ -303,64 +357,116 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
       setStoreNameString(brandName);
     }
   }, [
-    ownerName, ownerEmail, brandName,
-    selectedBrandTypes, selectedGenderTypes,
-    selectedCity, selectedArea,
-    selectedPincode, rentOutfits, brandAddress,
-    selectedCategoryOptions
+    ownerName,
+    ownerEmail,
+    brandName,
+    selectedBrandTypes,
+    selectedGenderTypes,
+    selectedCity,
+    selectedArea,
+    selectedPincode,
+    rentOutfits,
+    brandAddress,
+    selectedCategoryOptions,
   ]);
-
 
   console.log(businessDetailsData);
   const toggleSelection = <T extends { id: string }>(
-    item: T, current: T[], setCurrent: React.Dispatch<React.SetStateAction<T[]>>
+    item: T,
+    current: T[],
+    setCurrent: React.Dispatch<React.SetStateAction<T[]>>
   ) => {
-    const exists = current.some(t => t.id === item.id);
-    setCurrent(exists ? current.filter(t => t.id !== item.id) : [...current, item]);
+    const exists = current.some((t) => t.id === item.id);
+    setCurrent(
+      exists ? current.filter((t) => t.id !== item.id) : [...current, item]
+    );
   };
 
   return (
     <div className="space-y-8 rounded-md w-3xl">
       {/* Brand Owner Section */}
-      <Section title="Brand owner details" subtitle="This is for internal data, your customers won't see this.">
+      <Section
+        title="Brand owner details"
+        subtitle="This is for internal data, your customers won't see this."
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className='block text-sm font-medium mb-1'> Brand owner number</label>
+            <label className="block text-sm font-medium mb-1">
+              {" "}
+              Brand owner number
+            </label>
             <input
               type="text"
-              defaultValue={sellerNumber || ''}
-              className='w-full border border-gray-300 rounded px-3 py-2 text-gray bg-gray-100'
+              defaultValue={sellerNumber || ""}
+              className="w-full border border-gray-300 rounded px-3 py-2 text-gray bg-gray-100"
               disabled={!!sellerNumber}
             />
           </div>
 
           {/* <InputField label="Brand owner number" value={sellerNumber || ''} placeholder="+91-8949389493" /> */}
-          <InputField label="Email Address" value={ownerEmail} onChange={setOwnerEmail} required />
-          <InputField label="Brand owner name" value={ownerName} onChange={setOwnerName} required />
+          <InputField
+            label="Email Address"
+            value={ownerEmail}
+            onChange={setOwnerEmail}
+            required
+          />
+          <InputField
+            label="Brand owner name"
+            value={ownerName}
+            onChange={setOwnerName}
+            required
+          />
         </div>
       </Section>
 
       {/* Brand Details Section */}
-      <Section title="Brand details" subtitle="Customers will see these details on Attirelly">
-        <InputField label="Brand name" value={brandName} onChange={setBrandName} required />
+      <Section
+        title="Brand details"
+        subtitle="Customers will see these details on Attirelly"
+      >
+        <InputField
+          label="Brand name"
+          value={brandName}
+          onChange={setBrandName}
+          required
+        />
         <div className="space-y-1">
           <label className="text-sm">Business WhatsApp number</label>
           <input
-            type="text"
+            type="tel"
             disabled={sameAsOwner}
             value={businessWpNum}
-            onChange={(e) => setBusinessWpNum(e.target.value)}
-            // defaultValue={sellerNumber || ''}
+            onChange={(e) => {
+              const val = e.target.value;
+              // Allow only digits and max 10 characters
+              if (/^\d{0,10}$/.test(val)) {
+                setBusinessWpNum(val);
+              }
+            }}
+            maxLength={10}
+            inputMode="numeric"
+            pattern="\d{10}"
             className="w-full border rounded px-3 py-2"
-            placeholder="+91-8949389493"
+            placeholder="Enter 10-digit number"
           />
           <label className="text-sm flex items-center gap-2">
-            <input type="checkbox" checked={sameAsOwner} onChange={(e) => setSameAsOwner(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={sameAsOwner}
+              onChange={(e) => setSameAsOwner(e.target.checked)}
+            />
             Same as owner number
           </label>
         </div>
 
-        <ToggleChips label="Brand Type" items={brandTypes} selected={selectedBrandTypes} toggle={(item) => toggleSelection(item, selectedBrandTypes, setSelectedBrandTypes)} />
+        <ToggleChips
+          label="Brand Type"
+          items={brandTypes}
+          selected={selectedBrandTypes}
+          toggle={(item) =>
+            toggleSelection(item, selectedBrandTypes, setSelectedBrandTypes)
+          }
+        />
         <MultiSelectField
           label="Expertise in"
           options={categoryOptions}
@@ -368,7 +474,7 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
           onChange={(selectedOptions) => {
             setSelectedCategoryOptions(selectedOptions);
 
-            const selectedCats = selectedOptions.map(opt => ({
+            const selectedCats = selectedOptions.map((opt) => ({
               category_id: opt.value,
               name: opt.label,
             }));
@@ -376,28 +482,53 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
           }}
           isDisabled={false}
         />
-        <ToggleChips label="Genders Catered" items={genders} selected={selectedGenderTypes} toggle={(item) => toggleSelection(item, selectedGenderTypes, setSelectedGenderTypes)} />
+        <ToggleChips
+          label="Genders Catered"
+          items={genders}
+          selected={selectedGenderTypes}
+          toggle={(item) =>
+            toggleSelection(item, selectedGenderTypes, setSelectedGenderTypes)
+          }
+        />
 
         {/* <RadioGroup label="Do you rent outfits" options={['Yes', 'No']} selected={rentOutfits} onChange={setRentOutfits} /> */}
       </Section>
 
       {/* Brand Location Section */}
-      <Section title="Brand location" subtitle="Customers will see these details on Attirelly">
+      <Section
+        title="Brand location"
+        subtitle="Customers will see these details on Attirelly"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <SelectField label="City" options={cityOptions} value={selectedCityOption} onChange={(option) => {
-            setSelectedCityOption(option);
-            const found = cities.find(c => c.id === option?.value);
-            setSelectedCity(found ? [found] : []);
-          }} />
+          <SelectField
+            label="City"
+            options={cityOptions}
+            value={selectedCityOption}
+            onChange={(option) => {
+              setSelectedCityOption(option);
+              const found = cities.find((c) => c.id === option?.value);
+              setSelectedCity(found ? [found] : []);
+            }}
+          />
 
-          <InputField label="Brand address" value={brandAddress} onChange={setBrandAddress} placeholder='Enter your Google map store link' />
+          <InputField
+            label="Brand address"
+            value={brandAddress}
+            onChange={setBrandAddress}
+            placeholder="Enter your Google map store link"
+          />
 
-          <SelectField label="Area" options={areaOptions} value={selectedAreaOption} onChange={(option) => {
-            setSelectedAreaOption(option);
-            const found = areas.find(a => a.id === option?.value);
-            setSelectedArea(found ? [found] : []);
-          }}
-            isDisabled={!selectedCityOption} />
+          <SelectField
+            label="Area"
+            options={areaOptions}
+            value={selectedAreaOption}
+            onChange={(option) => {
+              setSelectedAreaOption(option);
+              const found = areas.find((a) => a.id === option?.value);
+              setSelectedArea(found ? [found] : []);
+            }}
+            isDisabled={!selectedCityOption}
+          />
 
           {/* <InputField label="Pin code" value={pinCode} onChange={setPinCode} required /> */}
 
@@ -407,9 +538,9 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
             value={selectedPincodeOption}
             onChange={(option) => {
               setSelectedPincodeOption(option);
-              const found = pincodes.find(p => p.id === option?.value);
+              const found = pincodes.find((p) => p.id === option?.value);
               setSelectedPincode(found ? [found] : []);
-              setPinCode(found?.id || '');
+              setPinCode(found?.id || "");
             }}
             isDisabled={!selectedCityOption}
           />
@@ -425,7 +556,11 @@ export default function BusinessDetailsComponent({ onValidationChange }: { onVal
 
 // Utility Components
 
-const Section: FC<{ title: string; subtitle: string; children: React.ReactNode }> = ({ title, subtitle, children }) => (
+const Section: FC<{
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+}> = ({ title, subtitle, children }) => (
   <div className="p-6 space-y-4 rounded-2xl shadow-sm bg-white">
     <h2 className="text-lg font-semibold mb-1">{title}</h2>
     <p className="text-sm text-gray-500 mb-4">{subtitle}</p>
@@ -441,15 +576,19 @@ const InputField: FC<{
   onChange?: (value: string) => void;
   required?: boolean;
   placeholder?: string;
-}> = ({ label, value = '', onChange, required, placeholder }) => (
+}> = ({ label, value = "", onChange, required, placeholder }) => (
   <div>
-    {required ? <RequiredLabel>{label}</RequiredLabel> : <label className="block text-sm font-medium mb-1">{label}</label>}
+    {required ? (
+      <RequiredLabel>{label}</RequiredLabel>
+    ) : (
+      <label className="block text-sm font-medium mb-1">{label}</label>
+    )}
     <input
       type="text"
       className="w-full border border-gray-300 rounded px-3 py-2"
       placeholder={placeholder}
       value={value}
-      onChange={e => onChange?.(e.target.value)}
+      onChange={(e) => onChange?.(e.target.value)}
     />
   </div>
 );
@@ -463,14 +602,16 @@ const ToggleChips: FC<{
   <div>
     <RequiredLabel>{label}</RequiredLabel>
     <div className="flex flex-wrap gap-2">
-      {items.map(item => {
+      {items.map((item) => {
         const text = item.store_type || item.gender_value;
-        const isSelected = selected.some(s => s.id === item.id);
+        const isSelected = selected.some((s) => s.id === item.id);
         return (
           <label
             key={item.id}
             // onClick={() => toggle(item)}
-            className={`px-3 py-2 border border-gray-500 rounded cursor-pointer ${isSelected ? 'bg-gray-100' : 'bg-white'}`}
+            className={`px-3 py-2 border border-gray-500 rounded cursor-pointer ${
+              isSelected ? "bg-gray-100" : "bg-white"
+            }`}
           >
             <input
               type="checkbox"
@@ -478,7 +619,14 @@ const ToggleChips: FC<{
               onChange={() => toggle(item)}
               className="accent-black"
             />
-            <span className={`text-md font-medium ${isSelected ? 'text-black' : 'text-gray-500'}`}>  {text}</span>
+            <span
+              className={`text-md font-medium ${
+                isSelected ? "text-black" : "text-gray-500"
+              }`}
+            >
+              {" "}
+              {text}
+            </span>
           </label>
         );
       })}
@@ -545,7 +693,6 @@ const MultiSelectField: FC<{
   </div>
 );
 
-
 const RadioGroup: FC<{
   label: string;
   options: string[];
@@ -555,8 +702,13 @@ const RadioGroup: FC<{
   <div>
     <label className="block text-sm font-medium mb-2">{label}</label>
     <div className="flex gap-4">
-      {options.map(opt => (
-        <label key={opt} className={`px-4 py-2 border border-gray-500 rounded text-gray-500 cursor-pointer ${selected === opt ? 'bg-gray-100' : 'bg-white'}`}>
+      {options.map((opt) => (
+        <label
+          key={opt}
+          className={`px-4 py-2 border border-gray-500 rounded text-gray-500 cursor-pointer ${
+            selected === opt ? "bg-gray-100" : "bg-white"
+          }`}
+        >
           <input
             type="radio"
             className="accent-black"
@@ -565,7 +717,14 @@ const RadioGroup: FC<{
             checked={selected === opt}
             onChange={() => onChange(opt)}
           />
-          <span className={`text-sm font-medium ${selected === opt ? 'text-black' : 'text-gray-500'}`}>  {opt}</span>
+          <span
+            className={`text-sm font-medium ${
+              selected === opt ? "text-black" : "text-gray-500"
+            }`}
+          >
+            {" "}
+            {opt}
+          </span>
         </label>
       ))}
     </div>

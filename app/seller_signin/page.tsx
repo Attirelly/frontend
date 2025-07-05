@@ -90,7 +90,7 @@ export default function SellerSignup() {
 
         try {
             await api.post('/otp/send_otp', null, {
-                params: { phone_number: '7015241757', otp_template: "UserLoginOTP" },
+                params: { phone_number: '9821205090', otp_template: "UserLoginOTP" },
             });
             toast.success("OTP resent successfully");
             setResendTimer(60); // Restart resend timer
@@ -109,7 +109,7 @@ export default function SellerSignup() {
             }
             // send api to verify otp 
             try {
-                await api.post('/otp/verify_otp', null, { params: { phone_number: '7015241757', otp: fullOtp } })
+                await api.post('/otp/verify_otp', null, { params: { phone_number: '9821205090', otp: fullOtp } })
                 try {
                     // here we will create jwt tokens
                     await api.post("/users/login", { contact_number: phone });
@@ -173,7 +173,7 @@ export default function SellerSignup() {
                 setSellerName(user_data.name);
                 setSellerEmail(user_data.email);
                 try {
-                    await api.post('/otp/send_otp', null, { params: { phone_number: '7015241757', otp_template: "UserLoginOTP" } })
+                    await api.post('/otp/send_otp', null, { params: { phone_number: '9821205090', otp_template: "UserLoginOTP" } })
                     setSendOTP(true);
                     alert(`OTP sent to ${phone}`);
                     setSellerNumber(phone);
