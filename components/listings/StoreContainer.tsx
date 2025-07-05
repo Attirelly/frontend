@@ -164,7 +164,7 @@ export default function StoreContainerPage() {
     });
   }, [page, totalPages, scrollMilestones]);
 
-  if (loading) {
+  if (loading && page === 0) {
     return (
       <div className="flex flex-col gap-4">
         {Array.from({ length: 3 }).map((_, index) => (
@@ -191,6 +191,9 @@ export default function StoreContainerPage() {
           id={store.id}
         />
       ))}
+      {hasMore && (
+      <div ref={loaderRef} className="h-10" />
+    )}
     </div>
   );
 }

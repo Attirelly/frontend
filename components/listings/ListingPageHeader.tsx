@@ -9,6 +9,7 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { rubik, manrope } from "@/font";
 import StoreSearchType from "./StoreSearchType";
 import { useRouter } from "next/navigation";
+import MenWomenNavbar from "./MenWomenNavbar";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -142,22 +143,18 @@ export default function ListingPageHeader() {
 
   return (
     <div>
-      <header className="bg-white shadow">
-        <div className="grid grid-cols-[1fr_2fr_1fr] items-center px-20 py-4">
+      <header className="bg-white shadow h-[70px]">
+        <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-20 h-full">
           <div className="flex justify-between items-center">
             <div className={`${rubik.className} text-[32px] font-bold`}>
               Attirelly
             </div>
-            <nav className="flex justify-center gap-8 py-2 text-base text-[#373737]">
-              <a className={manrope.className} style={{ fontWeight: 400 }}>
-                Men
-              </a>
-              <a className={manrope.className} style={{ fontWeight: 400 }}>
-                Women
-              </a>
-            </nav>
-          </div>
+            
 
+          </div>
+<div className="flex h-full items-center">
+             <MenWomenNavbar/>
+            </div>
           <div className="flex justify-center">
             <div className="flex border border-gray-300 rounded-full items-center gap-4 w-full max-w-[600px] px-4 relative">
               <div className="flex items-center gap-2 w-[250px] h-[24px]">
@@ -300,25 +297,28 @@ export default function ListingPageHeader() {
           </div>
 
           <div className="flex justify-center">
-            <div className="flex items-center justify-between gap-10 text-sm w-full max-w-[200px]">
+            <div className="flex items-center gap-6 text-sm w-full max-w-[200px]">
+              <img
+                src="/ListingPageHeader/shopping_cart_2.svg"
+                alt="Cart"
+                className="opacity-100 w-[32px] h-[32px]"
+              />
+              <div className="w-px h-10 bg-gray-300"></div>
               <div className="flex items-center gap-2">
+                <img
+                  src="/ListingPageHeader/user_logo.svg"
+                  alt="User"
+                  className="opacity-100"
+                />
                 <span
                   className={`${manrope.className}`}
                   style={{ fontWeight: 400 }}
                 >
                   Archit
                 </span>
-                <img
-                  src="/ListingPageHeader/user_logo.svg"
-                  alt="User"
-                  className="opacity-100"
-                />
+
               </div>
-              <img
-                src="/ListingPageHeader/shopping_cart.svg"
-                alt="Cart"
-                className="opacity-100 w-[32px] h-[32px]"
-              />
+
             </div>
           </div>
         </div>
