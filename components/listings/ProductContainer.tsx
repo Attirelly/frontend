@@ -235,6 +235,7 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
       );
 
       const data = res.data;
+      console.log("algolia_data",data);
       setResults(data.hits.length);
 
       const formattedProducts: ProductCardType[] = data.hits.map((item: any) => {

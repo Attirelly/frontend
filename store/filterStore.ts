@@ -148,8 +148,10 @@ function createFilterStore() {
 
     setFacets: (apiFacets) => {
       const currentFacets = get().facets;
-      const updatedFacets: Facets = { ...currentFacets };
 
+      const updatedFacets: Facets = { ...currentFacets };
+      console.log("apiFacets", apiFacets);
+      console.log("currentFacets", currentFacets);
       for (const [facetName, values] of Object.entries(apiFacets)) {
         if (!values || typeof values !== 'object') continue;
         const existing = currentFacets[facetName] || [];
