@@ -45,9 +45,9 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
       ) {
         setPriceRange(localPriceRange);
       }
-    }, 300); // 300ms delay
+    }, 100); // 100ms delay
 
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timeout);   
   }, [localPriceRange]);
 
   const handleSearchChange = (facetName: string, value: string) => {

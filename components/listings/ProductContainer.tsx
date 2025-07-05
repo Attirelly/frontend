@@ -306,7 +306,7 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
   useEffect(() => {
     setPage(0);
     fetchProducts(0);
-  }, [filters, query, selectedFilters, storeTypeString, priceRangeType, sortBy]);
+  }, [filters ,  query, selectedFilters, storeTypeString, priceRangeType, sortBy]);
 
   useEffect(() => {
     if (page !== 0) fetchProducts(page);
