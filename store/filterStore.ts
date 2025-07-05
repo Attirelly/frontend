@@ -123,7 +123,7 @@ type Facets = Record<string, FacetValue[]>;
 interface FilterState {
   results: number;
   setResults : (results : number) => void;
-  priceRange : [number, number];
+  priceRange : [number, number] ;
   setPriceRange : (range : [number, number]) => void;
   priceBounds: [number, number];
   setPriceBounds: (bounds: [number, number]) => void;
@@ -218,6 +218,5 @@ function createFilterStore() {
   }));
 }
 
-// 👇 Create two independent filter stores
 export const useFilterStore = createFilterStore();           // For store listing
 export const useProductFilterStore = createFilterStore();    // For product page

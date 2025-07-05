@@ -28,13 +28,13 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   const [openFacets, setOpenFacets] = useState<Record<string, boolean>>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([0, 0]);
+  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([0,0]);
 
   useEffect(() => {
     if (context === 'product' && priceBounds) {
       setLocalPriceRange(priceBounds);
     }
-  }, [context, priceBounds]);
+  }, [context,priceBounds]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -163,6 +163,10 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                           step={100}
                           min={priceBounds?.[0] || 0}
                           max={priceBounds?.[1] || 10000}
+                          // min={0}                          
+                          // max={10000}
+                          // min={0}
+                          // max={100000}
                           values={localPriceRange}
                           onChange={(values) => setLocalPriceRange([values[0], values[1]])}
                           renderTrack={({ props, children }) => (
