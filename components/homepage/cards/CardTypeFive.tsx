@@ -21,12 +21,12 @@ export default function CardTypeFive({
   return (
     <div className="flex flex-col  gap-2 w-56">
       {/* Image */}
-      <div className="relative w-full h-65">
+      <div className="relative w-full rounded-xl h-65">
         <Image
           src={imageUrl}
           alt="Card Type Two Image"
           fill
-          className="object-contain"
+          className="object-cover rounded-xl"
         />
       </div>
 
