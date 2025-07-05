@@ -64,7 +64,7 @@ export default function SectionTwoContainer() {
                 <button
                     onClick={handlePrev}
                     disabled={startIndex === 0}
-                    className="absolute z-10 left-0 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="absolute z-10 left-0 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
                 >
                     <Image
                         src="/Homepage/left_arrow.svg"
@@ -100,7 +100,7 @@ export default function SectionTwoContainer() {
                 <button
                     onClick={handleNext}
                     disabled={startIndex === maxIndex}
-                    className="absolute  right-0 translate-x-1/2 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center disabled:cursor-not-allowed"
+                    className="absolute  right-0 translate-x-1/2 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
                 >
                     <Image
                         src="/Homepage/right_arrow.svg"
