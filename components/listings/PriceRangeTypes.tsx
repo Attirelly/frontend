@@ -194,7 +194,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
             `}
             onClick={() => handleTabClick(range)}
           >
-            {icon && (
+            {/* {icon && (
               <Image
                 src={icon}
                 alt={range.label}
@@ -202,7 +202,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
                 height={20}
                 className="object-contain"
               />
-            )}
+            )} */}
             <div className="flex flex-col items-center">
               <span className="text-sm">{range.label.toUpperCase()}</span>
               <span className="text-xs text-[#8E8E8E] leading-none">{subtitle}</span>
