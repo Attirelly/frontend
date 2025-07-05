@@ -231,7 +231,7 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
     try {
       const filterParam = skipFilters ? "" : filters;
       const res = await api.get(
-        `/search/search_product?query=${storeId} ${query} ${storeTypeString || ""} ${priceRangeType?.label || ""}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&sort_by=${sortBy}`
+        `/search/search_product?query=${storeId} ${query} ${storeTypeString || ""}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&sort_by=${sortBy}`
       );
 
       const data = res.data;
