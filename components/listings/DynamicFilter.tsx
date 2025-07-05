@@ -28,7 +28,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   const [openFacets, setOpenFacets] = useState<Record<string, boolean>>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([0,10000]);
+  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([0,1]);
 
   useEffect(() => {
     if (context === 'product' && priceBounds) {
