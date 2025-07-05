@@ -106,8 +106,15 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { useEffect, useState } from "react";
 
 const STORE_TYPE_OPTIONS = [
-  { store_type: 'Retail Stores', id: 'e8742683-412c-4fb3-a1f1-5afba79981f8' }, // replace with actual ID
-  { store_type: 'Designer Labels', id: '943bec15-4210-40ad-bd88-322b3d354486' }, // replace with actual ID
+
+//   for local host 
+//   { store_type: 'Retail Stores', id: 'e8742683-412c-4fb3-a1f1-5afba79981f8' },
+//   { store_type: 'Designer Labels', id: '943bec15-4210-40ad-bd88-322b3d354486' }, 
+
+
+//  for testing on vercel
+   {store_type: 'Retail Brand', id: '8e8853ef-4c41-4c79-8e3c-654c35dce5a7'},
+    {store_type: 'Designer Label', id: '1626d56a-5750-455a-a681-004c8a978718'},  
 ];
 
 export default function StoreProfilePage() {
@@ -129,7 +136,7 @@ export default function StoreProfilePage() {
         <div className="mt-10">
           <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
-            defaultValue="Designer Labels"
+            defaultValue="Designer Label"
             context="product"
           />
         </div>
