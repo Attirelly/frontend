@@ -47,7 +47,7 @@ export default function StoreProfilePage() {
                 <DynamicFilter context="product" />
               </div>
 
-              <Catalogue />
+              <Catalogue storeId={storeId} />
             </div>
           </div>
         )}
