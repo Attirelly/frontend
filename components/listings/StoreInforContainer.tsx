@@ -6,7 +6,11 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { toast } from "sonner";
 import StoreInfoSkeleton from "./skeleton/store_desc/StoreInfoSkeleton";
 
-export default function StoreInfoContainer() {
+type StoreInfoContainerProps = {
+  storeId: string;
+};
+
+export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps) {
   const { setInstaMedia, setProfilePic } = useHeaderStore();
   const [store, setStore] = useState<StoreInfoType>();
   const [loading, setLoading] = useState(true); // ✅ Loading state
@@ -14,7 +18,7 @@ export default function StoreInfoContainer() {
   useEffect(() => {
     const fetchStore = async () => {
       try {
-        const storeRes = await api.get('/stores/446e5536-4531-4440-94d0-11438558baac');
+        const storeRes = await api.get(`/stores/${storeId}`);
         const storeData = storeRes.data;
 
         const storeFinal: StoreInfoType = {
