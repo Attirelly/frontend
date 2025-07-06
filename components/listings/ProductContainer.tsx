@@ -262,7 +262,7 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
           const max = Math.max(...priceKeys);
 
           if (priceBounds[0] > min || priceBounds[1] < max) {
-            setPriceBounds([min, max]);
+            setPriceBounds([Math.min(priceBounds[0], min), Math.max(priceBounds[1], max)]);
           }
           if (priceRange[0] === 0 && priceRange[1] === 0) {
             setPriceRange([min, max]);
