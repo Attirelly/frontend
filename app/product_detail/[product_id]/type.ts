@@ -38,6 +38,7 @@ export interface Variant {
   sku: string;
   price: number;
   mrp: number;
+  discount: number;
   shopify_id: string | null;
   color: Color;
   size: Size;

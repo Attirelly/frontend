@@ -139,7 +139,7 @@ export default function ProductDetail() {
     setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  if (!product || !selectedVariant || !selectedColor || !selectedSize) {
+  if (!product && !selectedVariant && !selectedColor && !selectedSize) {
     return <div className="p-4">Loading...</div>;
   }
 
@@ -251,7 +251,7 @@ export default function ProductDetail() {
                   ₹{selectedVariant.price}
                 </p>
                 <p className="text-[20px] font-semibold  text-[#00AA63] tracking-normal">
-                  15%
+                  ₹{selectedVariant.discount}% Off
                 </p>
               </div>
 
