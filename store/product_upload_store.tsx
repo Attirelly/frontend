@@ -217,8 +217,8 @@ export const useProductFormStore = create<ProductFormStore>()(
              return current_step;
           }
         } catch (error) {
-          console.error("Error in loading draft:", error);
-          toast.error("Failed to load draft.");
+          // console.error("Error in loading draft:", error);
+          // toast.error("Failed to load draft.");
         }
       },
       deleteDraft: async () => {
