@@ -58,6 +58,18 @@ export default function StoreTypeTabs({
                     value: t.id
                 }));
                 setTabs(options);
+
+                if (defaultValue) {
+                    const defaultOption = res.data.find((t: BrandType) => t.id === defaultValue);
+                    if (defaultOption) {
+                    const storeType: BrandType = {
+                        id: defaultOption.id,
+                        store_type: defaultOption.store_type,
+                    };
+                    setSelectedStoreType(storeType);
+                    setStoreType(storeType); // update Zustand
+                    }
+                }
             }
             catch (error) {
                 toast.error("Failed to fetch store types");
@@ -67,7 +79,7 @@ export default function StoreTypeTabs({
             }
         }
         fetchStoreTypes();
-    }, []);
+    }, [defaultValue, setStoreType]);
 
     if(loading){
         return <StoreTypeTabsSkeleton/>

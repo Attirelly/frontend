@@ -37,13 +37,15 @@ export default function StoreListingPage() {
   }
 };
 
+console.log(process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID);
+
   return (
     <div className="bg-[#FFFFFF]">
       <ListingPageHeader />
       <div className="mx-45 mt-8 gap-10 flex flex-col">
        {/* <h1 className="text-2xl font-bold text-gray-800">{getHeading()}</h1> */}
        <h1 className={`${manrope.className} text-4xl`} style={{fontWeight:500}}>{getHeading()}</h1>
-        <StoreTypeTabs />
+        <StoreTypeTabs defaultValue={process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID || ''}/>
         <div className="border-t border-gray-300"/>
         <div className="grid grid-cols-[1fr_3fr] gap-3">
           {/* <div className="self-start"> */}
