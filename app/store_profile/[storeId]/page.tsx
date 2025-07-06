@@ -8,11 +8,15 @@ import PostGalleryContainer from "@/components/listings/PostsContainer";
 import ListingFooter from "@/components/listings/ListingFooter";
 import Catalogue from "@/components/listings/Catalogue";
 import DynamicFilter from "@/components/listings/DynamicFilter";
-import InstagramFeed from "@/components/InstagramFeed";
+import { useParams } from "next/navigation";
+
 
 export default function StoreProfilePage() {
   const { query, city, storeType, viewType } = useHeaderStore();
   const [showFilters, setShowFilters] = useState(false);
+
+  const params = useParams();
+  const storeId = params?.storeId as string;
 
 
   return (
@@ -23,7 +27,7 @@ export default function StoreProfilePage() {
       {/* Centered content container */}
       <div className="flex flex-col items-center w-full">
         <div className="mt-8 w-full max-w-4xl px-4">
-          <StoreInfoContainer />
+          <StoreInfoContainer storeId = {storeId} />
           <hr className="border border-[#D9D9D9]" />
           <PostCatalogueButton />
         </div>

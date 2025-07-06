@@ -42,7 +42,7 @@ export default function ListingPageHeader() {
   const handleSearchQuerySuggestion = async () => {
     try {
       const response = await api.post("/search/search_suggestion", {
-        params: { query: tempQuery },
+        query: tempQuery
       });
 
       const data = response.data;
@@ -117,8 +117,8 @@ export default function ListingPageHeader() {
     router.push(`product_detail/${value}`)
   };
 
-  const handleStoreClick = () => {
-    router.push('/store_profile')
+  const handleStoreClick = (storeID :string) => {
+    router.push('/store_profile/'+storeID);
   };
 
   const cityOptions: SelectOption[] = [
@@ -271,7 +271,7 @@ export default function ListingPageHeader() {
                           <div
                             key={i}
                             className="flex items-center gap-3 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
-                            onClick={handleStoreClick}
+                            onClick={() => handleStoreClick(store.store_id)}
                           >
                             <img
                               src={store.profile_image || "/placeholder.png"}

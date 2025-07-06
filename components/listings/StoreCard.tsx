@@ -49,7 +49,7 @@ export default function StoreCard({
                 store_id: id
             }
         });
-        router.push('/store_profile');
+        router.push('/store_profile/'+id);
     }
 
     return (

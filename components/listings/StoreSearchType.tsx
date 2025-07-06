@@ -18,10 +18,19 @@ export default function StoreSearchType({
   visible: boolean;
   onClose: () => void;
 }) {
+  const router = useRouter();
+ 
   const containerRef = useRef<HTMLDivElement>(null);
   const [storeTypesList , setStoreTypesList] = useState<StoreType[]>([]) ; 
   const { setStoreType } = useHeaderStore();
-  const router = useRouter()
+
+  const handleSearchFocus = () => {
+    if (searchQuery.trim() === '') {
+      setShowSearchType(true);
+    }
+  };
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchType, setShowSearchType] = useState(false);
 
   const fetchStoreTypes = async () => {
     try {
