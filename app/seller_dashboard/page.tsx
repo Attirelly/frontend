@@ -55,7 +55,7 @@ export default function SellerDashboardPage() {
         console.log(sellerId)
         const response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } })
         const storeData = response.data;
-        console.log(storeData);
+        console.log("response" , storeData);
         const curr_section = storeData.curr_section;
         
 
@@ -69,7 +69,7 @@ export default function SellerDashboardPage() {
         setStoreNameString(storeData.store_name)
 
         const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id: storeData.store_id } });
-        console.log(priceRangeRes);
+        console.log("price range data",priceRangeRes);
         if (curr_section >= 1) {
           setBusinessDetailsData({
             ownerName: sellerName || '',
