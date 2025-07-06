@@ -65,7 +65,7 @@ export default function BulkUploadPage() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("store_id", storeId || "");
-    formData.append("brand_id", "37cdb2a5-4bd1-43e1-8af3-b001648b5da3");
+    formData.append("brand_id", "f1e55528-246f-4c88-bc78-11d7e746ef7f");
 
     try {
       const response = await api.post(
@@ -88,7 +88,7 @@ export default function BulkUploadPage() {
           base_url: shopify_url,
           store_id: storeId,
           store_name: storeName,
-          brand_id: "37cdb2a5-4bd1-43e1-8af3-b001648b5da3",
+          brand_id: "f1e55528-246f-4c88-bc78-11d7e746ef7f",
         },
       });
       if (response.data) setBatchId(response.data);
