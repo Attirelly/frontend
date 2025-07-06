@@ -16,7 +16,6 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 export default function ListingPageHeader() {
   const router = useRouter();
   const { setCity, setQuery, setStoreType, setSearchFocus, searchFocus } = useHeaderStore();
-  console.log(searchFocus);
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [tempQuery, setTempQuery] = useState<string>("");
@@ -31,7 +30,6 @@ export default function ListingPageHeader() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log('focused');
     if (e.key === "Enter") {
       e.preventDefault();
       setQuery(tempQuery);
@@ -59,6 +57,7 @@ export default function ListingPageHeader() {
 
   useEffect(() => {
     router.prefetch("/store_listing");
+    router.prefetch("/homepage");
   }, [router]);
 
   useEffect(() => {
@@ -74,7 +73,15 @@ export default function ListingPageHeader() {
   }, []);
 
   useEffect(() => {
-    if (selectedCity) setCity(selectedCity);
+    console.log(selectedCity);
+    if (selectedCity){
+      
+      setCity(selectedCity);
+    }
+    else{
+      setCity(null);
+    }
+     
   }, [selectedCity]);
 
   useEffect(() => {
@@ -148,7 +155,8 @@ export default function ListingPageHeader() {
       <header className="bg-white shadow h-[70px]">
         <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-20 h-full">
           <div className="flex justify-between items-center">
-            <div className={`${rubik.className} text-[32px] font-bold`}>
+            <div className={`${rubik.className} text-[32px] font-bold cursor-pointer`}
+            onClick={()=>router.push("/homepage")}>
               Attirelly
             </div>
             

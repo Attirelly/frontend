@@ -53,7 +53,7 @@ export default function StoreCard({
     }
 
     return (
-        <div className="relative border border-[#F1F1F1] rounded-xl p-4 flex gap-4 bg-[#FFFFFF] hover:[box-shadow:0px_4px_20px_rgba(0,0,0,0.15)] transition-all"
+        <div className="relative border border-[#F1F1F1] rounded-xl p-4 flex gap-4 bg-[#FFFFFF] hover:[box-shadow:0px_4px_20px_rgba(0,0,0,0.15)] transition-all cursor-pointer"
         onClick={handleCardClick}>
             {/* Store Image */}
             <div className="relative w-60 h-60 overflow-hidden flex-shrink-0">
