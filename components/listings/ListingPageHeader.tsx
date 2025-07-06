@@ -42,7 +42,7 @@ export default function ListingPageHeader() {
   const handleSearchQuerySuggestion = async () => {
     try {
       const response = await api.post("/search/search_suggestion", {
-        params: { query: tempQuery },
+        query: tempQuery
       });
 
       const data = response.data;
