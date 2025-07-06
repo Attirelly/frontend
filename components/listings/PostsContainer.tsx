@@ -4,7 +4,7 @@ import GridPostGallery from '@/components/listings/GridPostGallery';
 import { useHeaderStore } from '@/store/listing_header_store';
 import GridPostGallerySkeleton from './skeleton/store_desc/GridPostGallerySkeleton';
 import InstagramFeed from '../InstagramFeed';
-import { useEffect } from 'react';
+
 
 export default function PostGalleryContainer() {
 
