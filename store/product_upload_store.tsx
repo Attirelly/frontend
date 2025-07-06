@@ -192,7 +192,7 @@ export const useProductFormStore = create<ProductFormStore>()(
           });
 
           setTimeout(() => {
-            toast.success("Draft saved successfully!");
+            toast.success("Product details saved in draft!");
           }, 0);
         } catch (error) {
           console.log("Error in saving draft");
@@ -275,7 +275,7 @@ export const useProductFormStore = create<ProductFormStore>()(
             stepValidations: {},
           });
           // Toast or notification can be added here
-          toast.success("Product submitted successfully!");
+          toast.success("Product uploaded succesfully!");
 
           
         } catch (error) {

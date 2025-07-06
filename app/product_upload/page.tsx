@@ -133,7 +133,7 @@ function FormNavigation() {
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
           >
-            Submit Product
+            Upload
           </button>
         )}
       </div>

@@ -187,15 +187,19 @@ export default function SellerOnboardingPage() {
       />
       <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <ProfileSidebar selected={activeSection} onSelect={handleSidebarSelect} />
-        <div className="flex flex-col w-full max-w-2xl gap-6">
-          <div className="rounded-md bg-gray-100">{renderSection()}</div>
-          <NextPrevNavigation
+        {/* <div className="flex flex-col w-full max-w-2xl gap-6"> */}
+          <div className="rounded-md bg-gray-100">
+            {renderSection()}
+
+            <NextPrevNavigation
             onNext={goToNextSection}
             onBack={goToPreviousSection}
             isFirst={currentSectionIndex === 0}
             isLast={currentSectionIndex === sectionOrder.length - 1}
           />
-        </div>
+          </div>
+          
+        {/* </div> */}
       </div>
     </div>
     </ProtectedRoute>

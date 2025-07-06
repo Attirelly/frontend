@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSellerStore } from "@/store/sellerStore";
+import { toast } from "sonner";
 
 export default function SocialLinksComponent() {
   const { setSocialLinksData, setSocialLinksValid, socialLinksData } = useSellerStore();
@@ -46,6 +47,9 @@ export default function SocialLinksComponent() {
       let appId = process.env.NEXT_INSTAGRAM_APP_ID || "548897007892754";
       const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
       window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${instagramUrl}`;
+    }
+    else{
+      toast.error('Enter Valid Instagram Username');
     }
   };
 
@@ -113,7 +117,7 @@ export default function SocialLinksComponent() {
           <h3 className="text-xl font-semibold">Integrate with Instagram</h3>
           <p className="text-gray-500">Connect your Instagram, so Attirelly can engage</p>
           <button
-            className="bg-black text-white px-5 py-2 rounded-full"
+            className="bg-black text-white px-5 py-2 rounded-full cursor-pointer"
             onClick={handleInstagramConnect}
           >
             Integrate

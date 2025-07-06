@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useCurrentStep, useFormActions, useFormData } from "@/store/product_upload_store";
+import clsx from "clsx";
 
 export default function PricingAndAvailability() {
   // Get form data from Zustand store
@@ -14,6 +15,9 @@ export default function PricingAndAvailability() {
   const [rent, setRent] = useState<boolean>(pricing?.rent || false);
   const [price, setStoreListPrice] = useState(pricing?.price);
   const [discount, setDiscount] = useState(pricing?.discount);
+
+  const [showPriceError, setShowPriceError] = useState(false);
+  const [shakePrice, setShakePrice] = useState(false);
 
 
    useEffect(() => {
@@ -34,6 +38,19 @@ export default function PricingAndAvailability() {
     });
   }, [mrp, rent, price, discount,  updateFormData]);
 
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value === "" ? undefined : Number(e.target.value);
+    if (value === undefined || (mrp !== undefined && value <= mrp)) {
+      setStoreListPrice(value);
+      setShowPriceError(false);
+    } else {
+      // Show error and trigger shake animation
+      setShowPriceError(true);
+      setShakePrice(true);
+      setTimeout(() => setShakePrice(false), 500); // Reset shake after animation
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto bg-white  rounded-lg self-start">
       <h1 className="text-lg font-bold mb-2">Pricing and availability</h1>
@@ -52,7 +69,7 @@ export default function PricingAndAvailability() {
               </span>
             <input
               type="number"
-              value={mrp}
+              value={mrp ?? ""}
               onChange={(e) => setMRP(e.target.value === "" ? undefined : Number(e.target.value))}
               className="w-full  p-2"
               placeholder="1000"
@@ -95,19 +112,34 @@ export default function PricingAndAvailability() {
             <label className="block text-sm font-medium mb-1">
               Listing Price
             </label>
-            <div className="flex w-full border border-gray-300 rounded-md overflow-hidden">
+            <div
+              className={clsx(
+                "flex w-full border rounded-md overflow-hidden transition-all duration-150",
+                {
+                  "border-red-500": showPriceError,
+                  "animate-shake": shakePrice,
+                  "border-gray-300": !showPriceError,
+                }
+              )}
+            >
             <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">
                 Rs
               </span>
             <input
               type="number"
-              value={price}
-              onChange={(e) => setStoreListPrice(e.target.value === "" ? undefined : Number(e.target.value))}
-              className="w-full p-2"
+              value={price ?? ""}
+              onChange={handlePriceChange}
+              className={`w-full p-2 disabled:cursor-not-allowed disabled:bg-gray-100`}
               placeholder="1000"
+              disabled={mrp === undefined}
             />
           </div>
           </div>
+          {showPriceError && (
+            <p className="text-sm text-red-500">
+              Listing price cannot be greater than MRP.
+            </p>
+          )}
         </div>
         
         {/* Column 3 */}
@@ -134,6 +166,29 @@ export default function PricingAndAvailability() {
 
         
       </div>
+      <style jsx>{`
+        @keyframes shake {
+          0% {
+            transform: translateX(0px);
+          }
+          25% {
+            transform: translateX(-4px);
+          }
+          50% {
+            transform: translateX(4px);
+          }
+          75% {
+            transform: translateX(-4px);
+          }
+          100% {
+            transform: translateX(0px);
+          }
+        }
+
+        .animate-shake {
+          animation: shake 0.3s;
+        }
+      `}</style>
     </div>
   );
 }
