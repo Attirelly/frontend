@@ -545,7 +545,7 @@ export default function CategorySelector() {
                 setShowCategoryDropdown((prev) => ({ ...prev, level1: true }))
               }
               className="w-full border border-gray-300 rounded-md p-2"
-              placeholder="Search and select category"
+              placeholder="Main Category"
             />
             {showCategoryDropdown.level1 && (
               <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
@@ -579,7 +579,7 @@ export default function CategorySelector() {
                 value={getSelectedCategoryName(3)}
                 readOnly
                 className="w-full border border-gray-300 rounded-md p-2 bg-gray-50"
-                placeholder="Select level 2 first"
+                placeholder="Sub-category Level 3"
                 onClick={() => {
                   setShowCategoryDropdown((prev) => ({
                     ...prev,
@@ -617,7 +617,7 @@ export default function CategorySelector() {
                 value={getSelectedCategoryName(2)}
                 readOnly
                 className="w-full border border-gray-300 rounded-md p-2 bg-gray-50"
-                placeholder="Select level 1 first"
+                placeholder="Sub-category Level 2"
                 onClick={() => {
                   setShowCategoryDropdown((prev) => ({
                     ...prev,
@@ -652,7 +652,7 @@ export default function CategorySelector() {
                 value={getSelectedCategoryName(4)}
                 readOnly
                 className="w-full border border-gray-300 rounded-md p-2 bg-gray-50"
-                placeholder="Select level 3 first"
+                placeholder="Sub-category Level 4"
                 onClick={() => {
                   setShowCategoryDropdown((prev) => ({
                     ...prev,

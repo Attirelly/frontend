@@ -203,11 +203,11 @@ export default function ProductsPage({
       title: "Store Price",
       dataIndex: "price",
     },
-    {
-      title: "Available for Rent",
-      dataIndex: "rent",
-      render: (rent: boolean) => (rent === true ? "Yes" : "No"),
-    },
+    // {
+    //   title: "Available for Rent",
+    //   dataIndex: "rent",
+    //   render: (rent: boolean) => (rent === true ? "Yes" : "No"),
+    // },
     {
       title: "Source",
       dataIndex: "shopify_id",
@@ -252,7 +252,7 @@ export default function ProductsPage({
       (!filters.subCat3.length || filters.subCat3.includes(sub_Cat3)) &&
       (!filters.size.length || filters.size.includes(item.size)) &&
       (!filters.color.length || filters.color.includes(item.color)) &&
-      (filters.rentAvailable === null || filters.rentAvailable === item.rent) &&
+      // (filters.rentAvailable === null || filters.rentAvailable === item.rent) &&
       (!filters.status.length || filters.status.includes(item.status)) &&
       (!filters.productName.length ||
         filters.productName.includes(item.product_name)) &&

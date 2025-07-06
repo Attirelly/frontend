@@ -112,7 +112,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           ))}
         </Select> */}
 
-        <Select
+        {/* <Select
           placeholder="Available for Rent"
           allowClear
           onChange={(v) =>
@@ -125,7 +125,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         >
           <Option value={true}>Yes</Option>
           <Option value={false}>No</Option>
-        </Select>
+        </Select> */}
 
         <Select
           mode="multiple"

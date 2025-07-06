@@ -512,7 +512,7 @@ export default function BusinessDetailsComponent({
           />
 
           <InputField
-            label="Brand address"
+            label="Store Location URL"
             value={brandAddress}
             onChange={setBrandAddress}
             placeholder="Enter your Google map store link"
