@@ -7,6 +7,8 @@ type HeaderState = {
     setCity: (city: City|null) => void;
     query: string;
     setQuery: (query: string) => void;
+    searchFocus:boolean;
+    setSearchFocus: (search:boolean) => void;
     priceRangeType : PriceRangeType | null;
     setPriceRangeType : (priceRangeType : PriceRangeType | null) => void;
     storeType: BrandType | null;
@@ -31,6 +33,8 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setCity: (city) => set({ city }),
     query: '',
     setQuery: (query) => set({ query }),
+    searchFocus: false,
+    setSearchFocus: (search: boolean) => set({ searchFocus: search }),
     priceRangeType: null,
     setPriceRangeType: (priceRangeType) => set({ priceRangeType }),
     storeType: null,
