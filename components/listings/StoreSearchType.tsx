@@ -22,7 +22,7 @@ export default function StoreSearchType({
  
   const containerRef = useRef<HTMLDivElement>(null);
   const [storeTypesList , setStoreTypesList] = useState<StoreType[]>([]) ; 
-  const { setStoreType } = useHeaderStore();
+  const { setStoreType, searchFocus } = useHeaderStore();
 
   const handleSearchFocus = () => {
     if (searchQuery.trim() === '') {
@@ -70,27 +70,31 @@ export default function StoreSearchType({
 
 
   return (
-    <div
-      ref={containerRef}
-      className="absolute top-[70px] left-1/2 transform -translate-x-1/2 bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50"
-    >
-      <h1 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-        Explore Store Types
-      </h1>
+    <>
+      {searchFocus && (
+        <div
+          ref={containerRef}
+          className="absolute top-[70px] left-1/2 transform -translate-x-1/2 bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50"
+        >
+          <h1 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+            Explore Store Types
+          </h1>
 
-      <div className="grid grid-cols-2 gap-4">
-        {storeTypesList.map((type, idx) => (
-          <div
-            key={idx}
-            className="bg-[#F8F8F8] hover:bg-[#e7e7e7] py-3 px-4 rounded-2xl text-center text-gray-700 font-medium cursor-pointer transition-all"
-            onClick={() => {
-              handleSearchTypeClick(type);
-            }}
-          >
-            {type.store_type}
+          <div className="grid grid-cols-2 gap-4">
+            {storeTypesList.map((type, idx) => (
+              <div
+                key={idx}
+                className="bg-[#F8F8F8] hover:bg-[#e7e7e7] py-3 px-4 rounded-2xl text-center text-gray-700 font-medium cursor-pointer transition-all"
+                onClick={() => {
+                  handleSearchTypeClick(type);
+                }}
+              >
+                {type.store_type}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }

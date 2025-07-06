@@ -15,8 +15,8 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 
 export default function ListingPageHeader() {
   const router = useRouter();
-  const { setCity, setQuery, setStoreType } = useHeaderStore();
-
+  const { setCity, setQuery, setStoreType, setSearchFocus, searchFocus } = useHeaderStore();
+  console.log(searchFocus);
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [tempQuery, setTempQuery] = useState<string>("");
@@ -31,6 +31,7 @@ export default function ListingPageHeader() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log('focused');
     if (e.key === "Enter") {
       e.preventDefault();
       setQuery(tempQuery);
@@ -101,12 +102,13 @@ export default function ListingPageHeader() {
         !dropdownRef.current.contains(e.target as Node)
       ) {
         setShowDropdown(false);
-        setShowStoreType(false);
+        // setShowStoreType(false);
+        setSearchFocus(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setSearchFocus]);
 
   const handleSuggestionClick = (value: string) => {
     setQuery(value);
@@ -214,6 +216,8 @@ export default function ListingPageHeader() {
                     setTempQuery(e.target.value);
                   }}
                   onKeyDown={handleKeyDown}
+                  onFocus={()=>setSearchFocus(true)}
+                  
                 />
 
                 {showDropdown && (
