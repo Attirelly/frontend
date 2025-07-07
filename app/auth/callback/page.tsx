@@ -16,17 +16,16 @@ function CallbackHandler() {
   console.log("state", state);
 
   let instagramUrl = "";
-  let sellerId = "";
+  let storeId = "";
 
   try {
     const parsedState = JSON.parse(decodeURIComponent(state || ""));
     instagramUrl = parsedState.instagram_url;
-    sellerId = parsedState.seller_id;
+    storeId = parsedState.store_id;
   } catch (err) {
     console.error("Invalid state param:", err);
   }
 
-  console.log("kdnsvknsdgf", sellerId);
 
   useEffect(() => {
     const authenticate = async () => {
@@ -36,14 +35,14 @@ function CallbackHandler() {
           document.title,
           window.location.pathname
         );
-        console.log("seller id", sellerId);
+
 
         const response = await api.post(
           `${process.env.NEXT_PUBLIC_API_URL}/instagram/auth`,
           {
             code,
             instagram_url: instagramUrl,
-            seller_id: sellerId,
+            seller_id: storeId,
           },
           {
             headers: {

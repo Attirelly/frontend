@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { encode } from "punycode";
 
 export default function SocialLinksComponent() {
-  const { setSocialLinksData, setSocialLinksValid, socialLinksData , sellerId } =
+  const { setSocialLinksData, setSocialLinksValid, socialLinksData , storeId } =
     useSellerStore();
 
   const [instagramUsname, setInstagramUsname] = useState(
@@ -54,7 +54,7 @@ export default function SocialLinksComponent() {
       // encoding the state
       const stateData = {
         instagram_url: instagramUrl,
-        seller_id: sellerId,
+        store_id: storeId,
       };
 
       console.log("stateData", stateData);
