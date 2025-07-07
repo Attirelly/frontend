@@ -25,6 +25,7 @@ export default function StoreInfoPage({
     city,
     area
 }: StoreInfoType) {
+    console.log(imageUrl);
     const handleLocationRoute = () => {
        console.log(locationUrl);
        window.open(locationUrl, '_blank', 'noopener,noreferrer');

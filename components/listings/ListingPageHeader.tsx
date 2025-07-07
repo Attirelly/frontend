@@ -73,7 +73,6 @@ export default function ListingPageHeader() {
   }, []);
 
   useEffect(() => {
-    console.log(selectedCity);
     if (selectedCity){
       
       setCity(selectedCity);

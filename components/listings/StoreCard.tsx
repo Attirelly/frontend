@@ -6,7 +6,7 @@ import { manrope } from '@/font';
 import {useSellerStore} from '@/store/sellerStore'
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useFilterStore } from '@/store/filterStore';
+import { useFilterStore, useProductFilterStore } from '@/store/filterStore';
 
 type StoreCardProps = {
     imageUrl: string;
@@ -33,6 +33,7 @@ export default function StoreCard({
 }: StoreCardProps) {
 
     const {setStoreId} = useSellerStore();
+    const {setFacetInit} = useProductFilterStore();
     const router = useRouter();
 
     useEffect(() => {
@@ -49,6 +50,7 @@ export default function StoreCard({
                 store_id: id
             }
         });
+        setFacetInit(false);
         router.push('/store_profile/'+id);
     }
 
