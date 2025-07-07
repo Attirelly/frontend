@@ -8,27 +8,41 @@ import { api } from "@/lib/axios";
 import { useSellerStore } from "@/store/sellerStore";
 
 function CallbackHandler() {
-
-  const {sellerId} = useSellerStore();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const code = searchParams.get("code");
   const state = searchParams.get("state");
-  console.log('kdnsvknsdgf',sellerId);
+
+  let instagramUrl = "";
+  let sellerId = "";
+
+  try {
+    const parsedState = JSON.parse(decodeURIComponent(state || ""));
+    instagramUrl = parsedState.instagram_url;
+    sellerId = parsedState.seller_id;
+  } catch (err) {
+    console.error("Invalid state param:", err);
+  }
+
+  console.log("kdnsvknsdgf", sellerId);
 
   useEffect(() => {
     const authenticate = async () => {
       try {
-        window.history.replaceState({}, document.title, window.location.pathname);
-        console.log("seller id" , sellerId) ; 
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+        console.log("seller id", sellerId);
 
         const response = await api.post(
           `${process.env.NEXT_PUBLIC_API_URL}/instagram/auth`,
           {
             code,
-            instagram_url: state,
-            seller_id:sellerId
+            instagram_url: instagramUrl,
+            seller_id: sellerId,
           },
           {
             headers: {
@@ -39,12 +53,12 @@ function CallbackHandler() {
         );
 
         const { user_id } = response.data;
-        console.log(response)  ; 
+        console.log(response);
 
         router.push(`/seller_dashboard`);
       } catch (error: any) {
         console.error("Authentication error:", error);
-        router.push('/seller_dashboard')
+        router.push("/seller_dashboard");
         // router.push(`/?error=${encodeURIComponent(error.message)}`);
       }
     };
