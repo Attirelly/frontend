@@ -33,7 +33,6 @@
 //     return encodeURIComponent(JSON.stringify(filters));
 //   };
 
-
 //   const fetchProducts = async (currentPage: number) => {
 //     setLoading(true);
 //     const facetFilters = buildFacetFilters(selectedFilters);
@@ -51,7 +50,7 @@
 //         const originalPrice = item.mrp || item.price || 500;
 
 //         // if product listing page then desc = store name else desc = ''
-//         const desc = colCount === 4 ? item.store_name : ''; 
+//         const desc = colCount === 4 ? item.store_name : '';
 
 //         // Avoid division by zero
 //         const discount =
@@ -82,7 +81,7 @@
 //             const max = Math.max(...priceKeys);
 
 //             if(priceBounds[0] !== min || priceBounds[1] !== max){
-//             setPriceBounds([min, max]);   
+//             setPriceBounds([min, max]);
 //             }
 //             if(priceRange[0] === 0 && priceRange[1] === 0){
 //               setPriceRange([min, max]);
@@ -93,7 +92,7 @@
 //       // set facets only first time
 //       if (Object.keys(facets).length === 0) {
 //         setFacets(data.facets);
-        
+
 //       }
 
 //       if (currentPage === 0) {
@@ -127,7 +126,6 @@
 //     fetchProducts(0);
 //   }, [filters, query, selectedFilters, storeTypeString, priceRangeType, sortBy]);
 
-
 //   //   console.log(facets)
 
 //   useEffect(() => {
@@ -149,8 +147,6 @@
 //       if (currentRef) observer.unobserve(currentRef);
 //     };
 //   }, [loaderRef.current, hasMore, loading]);
-
-
 
 //   return (
 //     <>
@@ -174,23 +170,25 @@
 //   );
 // }
 
+"use client";
 
-'use client';
-
-import { useEffect, useRef, useState } from 'react';
-import { api } from '@/lib/axios';
-import ProductCard from './ProductCard';
-import { useProductFilterStore } from '@/store/filterStore';
-import { ProductCardType } from '@/types/ProductTypes';
-import { useHeaderStore } from '@/store/listing_header_store';
-import ProductGridSkeleton from './skeleton/catalogue/ProductGridSkeleton';
+import { useEffect, useRef, useState } from "react";
+import { api } from "@/lib/axios";
+import ProductCard from "./ProductCard";
+import { useProductFilterStore } from "@/store/filterStore";
+import { ProductCardType } from "@/types/ProductTypes";
+import { useHeaderStore } from "@/store/listing_header_store";
+import ProductGridSkeleton from "./skeleton/catalogue/ProductGridSkeleton";
 
 interface ProductContainerProps {
-  storeId?: string,
-  colCount?: number
+  storeId?: string;
+  colCount?: number;
 }
 
-export default function ProductContainer({ storeId = '', colCount = 3 }: ProductContainerProps) {
+export default function ProductContainer({
+  storeId = "",
+  colCount = 3,
+}: ProductContainerProps) {
   const {
     priceBounds,
     selectedFilters,
@@ -199,7 +197,7 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
     setPriceRange,
     priceRange,
     setPriceBounds,
-    setResults
+    setResults,
   } = useProductFilterStore();
 
   const { query, storeTypeString, priceRangeType, sortBy } = useHeaderStore();
@@ -210,7 +208,7 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement>(null);
-  const prevStoreTypeRef = useRef<string>('');
+  const prevStoreTypeRef = useRef<string>("");
   const [skipFilters, setSkipFilters] = useState(false);
 
   const buildFacetFilters = (facets: Record<string, string[]>): string => {
@@ -218,7 +216,18 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
     for (const key in facets) {
       if (facets[key].length > 0) {
         filters.push(
-          facets[key].map((value) => `${key === 'prices' ? 'variants.price' : key === 'size' ? 'variants.size_name' : key === 'colours' ? 'variants.color_name' : key}:${value}`)
+          facets[key].map(
+            (value) =>
+              `${
+                key === "prices"
+                  ? "variants.price"
+                  : key === "size"
+                  ? "variants.size_name"
+                  : key === "colours"
+                  ? "variants.color_name"
+                  : key
+              }:${value}`
+          )
         );
       }
     }
@@ -231,38 +240,50 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
     try {
       const filterParam = skipFilters ? "" : filters;
       const res = await api.get(
-        `/search/search_product?query=${storeId} ${query} ${storeTypeString || ""}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&sort_by=${sortBy}`
+        `/search/search_product?query=${storeId} ${query} ${
+          storeTypeString || ""
+        }&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&sort_by=${sortBy}`
       );
 
       const data = res.data;
-      console.log("algolia_data",data);
+      console.log("algolia_data", data);
       setResults(data.hits.length);
 
-      const formattedProducts: ProductCardType[] = data.hits.map((item: any) => {
-        const price = item.price || 500;
-        const originalPrice = item.mrp || item.price || 500;
-        const desc = colCount === 4 ? item.store_name : '';
-        const discount = originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
+      const formattedProducts: ProductCardType[] = data.hits.map(
+        (item: any) => {
+          const price = item.price || 500;
+          const originalPrice = item.mrp || item.price || 500;
+          const desc = colCount === 4 ? item.store_name : "";
+          const discount =
+            originalPrice > price
+              ? Math.round(((originalPrice - price) / originalPrice) * 100)
+              : 0;
 
-        return {
-          id: item.id,
-          imageUrl: item.image || [],
-          title: item.title || 'Untitled Product',
-          description: desc,
-          price,
-          originalPrice,
-          discountPercentage: discount.toString(),
-        };
-      });
+          return {
+            id: item.id,
+            imageUrl: item.image || [],
+            title: item.title || "Untitled Product",
+            description: desc,
+            price,
+            originalPrice,
+            discountPercentage: discount.toString(),
+          };
+        }
+      );
 
       if (data.facets?.prices) {
-        const priceKeys = Object.keys(data.facets.prices).map(Number).filter((n) => !isNaN(n));
+        const priceKeys = Object.keys(data.facets.prices)
+          .map(Number)
+          .filter((n) => !isNaN(n));
         if (priceKeys.length > 0) {
           const min = Math.min(...priceKeys);
           const max = Math.max(...priceKeys);
 
           if (priceBounds[0] > min || priceBounds[1] < max) {
-            setPriceBounds([min, max]);
+            setPriceBounds([
+              Math.min(priceBounds[0], min),
+              Math.max(priceBounds[1], max),
+            ]);
           }
           if (priceRange[0] === 0 && priceRange[1] === 0) {
             setPriceRange([min, max]);
@@ -285,15 +306,22 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
 
       if (skipFilters) setSkipFilters(false);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  // useEffect(() => {
+  //   const priceFilter = `price >= ${priceRange[0]} AND price <= ${priceRange[1]}`;
+  //   setFilters(priceFilter);
+  // }, [priceRange]);
   useEffect(() => {
-    const priceFilter = `price >= ${priceRange[0]} AND price <= ${priceRange[1]}`;
-    setFilters(priceFilter);
+    const [min, max] = priceRange;
+    const newFilter = `price >= ${min} AND price <= ${max}`;
+    if (filters !== newFilter) {
+      setFilters(newFilter);
+    }
   }, [priceRange]);
 
   useEffect(() => {
@@ -306,7 +334,13 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
   useEffect(() => {
     setPage(0);
     fetchProducts(0);
-  }, [filters ,  query, selectedFilters, storeTypeString, priceRangeType, sortBy]);
+  }, [
+    filters,
+    query,
+    selectedFilters,
+    storeTypeString,
+    sortBy,
+  ]);
 
   useEffect(() => {
     if (page !== 0) fetchProducts(page);
@@ -334,7 +368,11 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
         <ProductGridSkeleton />
       ) : (
         // <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${colCount} gap-4 p-2`}>
-        <div className={`grid grid-cols-1 sm:grid-cols-2 ${colCount === 4 ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-4 p-2`}>
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 ${
+            colCount === 4 ? "md:grid-cols-4" : "md:grid-cols-3"
+          } gap-4 p-2`}
+        >
           {products.map((product, index) => (
             <ProductCard key={`${product.id}`} {...product} />
           ))}
@@ -343,7 +381,9 @@ export default function ProductContainer({ storeId = '', colCount = 3 }: Product
       {hasMore && (
         <div ref={loaderRef} className="h-12 flex justify-center items-center">
           {loading && products.length > 0 ? (
-            <span className="text-gray-500 text-sm">Loading more products...</span>
+            <span className="text-gray-500 text-sm">
+              Loading more products...
+            </span>
           ) : null}
         </div>
       )}

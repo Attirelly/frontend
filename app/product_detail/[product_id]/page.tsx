@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 import {
-  CheckCircle,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -22,11 +21,7 @@ import ShowMoreProducts from "@/components/curations/ShowMoreProducts";
 import { roboto, manrope } from "@/font";
 import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 
-// interface PageProps {
-//   params: {
-//     product_id: string;
-//   };
-// }
+
 
 export default function ProductDetail() {
   const params = useParams();
@@ -119,6 +114,7 @@ export default function ProductDetail() {
   const colors =
     product?.variants
       .map((v) => v.color)
+      .filter((color): color is Color => color !== null && color !== undefined)
       .filter(
         (value, index, self) =>
           self.findIndex((v) => v.color_id === value.color_id) === index
@@ -127,6 +123,7 @@ export default function ProductDetail() {
   const sizes =
     product?.variants
       .map((v) => v.size)
+      .filter((size): size is Size => size !== null && size !== undefined)
       .filter(
         (value, index, self) =>
           self.findIndex((v) => v.size_id === value.size_id) === index
@@ -142,7 +139,7 @@ export default function ProductDetail() {
     setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  if (!product || !selectedVariant || !selectedColor || !selectedSize) {
+  if (!product && !selectedVariant && !selectedColor && !selectedSize) {
     return <div className="p-4">Loading...</div>;
   }
 
@@ -254,7 +251,7 @@ export default function ProductDetail() {
                   ₹{selectedVariant.price}
                 </p>
                 <p className="text-[20px] font-semibold  text-[#00AA63] tracking-normal">
-                  15%
+                  ₹{selectedVariant.discount}% Off
                 </p>
               </div>
 
