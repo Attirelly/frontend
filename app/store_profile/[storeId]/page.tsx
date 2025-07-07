@@ -14,14 +14,16 @@ import { useProductFilterStore } from "@/store/filterStore";
 
 export default function StoreProfilePage() {
   const { query, city, storeType, viewType } = useHeaderStore();
-  const {isFacetLoading, setFacets} = useProductFilterStore();
+  const {setFacetInit, setFacets, setPriceBounds, setPriceRange} = useProductFilterStore();
   const [showFilters, setShowFilters] = useState(false);
 
   const params = useParams();
   const storeId = params?.storeId as string;
 
   useEffect(() => {
-  setFacets({});
+  setFacetInit(false);
+  setPriceRange([0,0]);
+  setPriceBounds([0,0]);
 }, []);
 
 

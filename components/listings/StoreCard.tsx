@@ -50,7 +50,7 @@ export default function StoreCard({
                 store_id: id
             }
         });
-        setFacetInit(false);
+        // setFacetInit(false);
         router.push('/store_profile/'+id);
     }
 
