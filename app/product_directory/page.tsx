@@ -108,11 +108,11 @@ import { useEffect, useState } from "react";
 const STORE_TYPE_OPTIONS = [
 
 //   for local host 
-//   { store_type: 'Retail Stores', id: 'e8742683-412c-4fb3-a1f1-5afba79981f8' },
-//   { store_type: 'Designer Labels', id: '943bec15-4210-40ad-bd88-322b3d354486' }, 
+  // { store_type: 'Retail Stores', id: 'e8742683-412c-4fb3-a1f1-5afba79981f8' },
+  // { store_type: 'Designer Labels', id: '943bec15-4210-40ad-bd88-322b3d354486' }, 
 
 
-//  for testing on vercel
+//  for testing on vercel 
    {store_type: 'Retail Brand', id: '8e8853ef-4c41-4c79-8e3c-654c35dce5a7'},
    {store_type: 'Designer Label', id: '1626d56a-5750-455a-a681-004c8a978718'},  
 ];

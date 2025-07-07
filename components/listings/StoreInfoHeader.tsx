@@ -21,8 +21,14 @@ export default function StoreInfoPage({
     product_count,
     bio,
     storeTypes,
-    priceRanges
+    priceRanges,
+    city,
+    area
 }: StoreInfoType) {
+    const handleLocationRoute = () => {
+       console.log(locationUrl);
+       window.open(locationUrl, '_blank', 'noopener,noreferrer');
+    };
     return (
         <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 p-6">
             {/* Left: Circular Store Image */}
@@ -30,7 +36,6 @@ export default function StoreInfoPage({
                 <div className="flex flex-col items-center">
                     <div className="relative w-32 h-32">
                         <Image
-                            // src="/ListingPageHeader/store_profile_image.svg"
                             src={imageUrl}
                             alt={storeName}
                             fill
@@ -55,9 +60,11 @@ export default function StoreInfoPage({
                             alt="Location"
                             width={16}
                             height={16}
+                            className="cursor-pointer"
+                            onClick={handleLocationRoute}
                         />
                         <span className={`${manrope.className} text-sm`}
-                            style={{ fontWeight: 400 }}>system</span>
+                            style={{ fontWeight: 400 }}>{area}, {city}</span>
                     </div>
                 </div>
 

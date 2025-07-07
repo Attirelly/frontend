@@ -11,7 +11,7 @@ type StoreInfoContainerProps = {
 };
 
 export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps) {
-  const { setInstaMedia, setProfilePic } = useHeaderStore();
+  const { setInstaMedia, setProfilePic, setInstaMediaLoading } = useHeaderStore();
   const [store, setStore] = useState<StoreInfoType>();
   const [loading, setLoading] = useState(true); // ✅ Loading state
 
@@ -20,6 +20,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
       try {
         const storeRes = await api.get(`/stores/${storeId}`);
         const storeData = storeRes.data;
+        const sellerId = storeData.store_owner_id;
 
         const storeFinal: StoreInfoType = {
           id: storeData.store_id,
@@ -32,14 +33,15 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
           bio: "",
           storeTypes: storeData.store_types.map((item: any) => item.store_type),
           priceRanges: storeData.price_ranges.map((item: any) => item.label),
-          instagramFollowers: ""
-
+          instagramFollowers: "",
+          city: storeData.city.name,
+          area: storeData.area.name,
         };
         setStore(storeFinal);
-
-
-        
-        const instaRes = await api.get('instagram/seller/2ba895ad-55c5-4e81-a0aa-e0f43962a685/data');
+        console.log(storeFinal);
+        setInstaMediaLoading(true);
+        setInstaMedia([]);
+        const instaRes = await api.get(`instagram/seller/${sellerId}/data`);
         const instaData = instaRes.data;
         setInstaMedia(instaData.media);
         setProfilePic(instaData.profile_picture);
@@ -56,15 +58,20 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
           bio: instaData.biography,
           storeTypes: storeData.store_types.map((item: any) => item.store_type),
           priceRanges: storeData.price_ranges.map((item: any) => item.label),
-          instagramFollowers: instaData.followers_count
-
+          instagramFollowers: instaData.followers_count,
+          city: storeData.city.name,
+          area: storeData.area.name,
         };
         setStore(storeFinal2);
+        console.log(storeFinal2);
+
 
       } catch (error) {
-        toast.error('failed to fetch data');
+        // toast.error('failed to fetch data');
       } finally {
+        setInstaMediaLoading(false);
         setLoading(false);
+
       }
 
     };
@@ -87,6 +94,8 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
             storeTypes={store.storeTypes}
             instagramFollowers={store.instagramFollowers}
             storeName={store.storeName}
+            city={store.city}
+            area={store.area}
             key={store.id}
           />
         )

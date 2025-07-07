@@ -23,6 +23,8 @@ type HeaderState = {
     setViewType: (viewType: string) => void;
     instaMedia: instaMediaType[];
     setInstaMedia:(instaMedia: instaMediaType[]) => void;
+    instaMediaLoading:boolean;
+    setInstaMediaLoading: (instaMediaLoading:boolean) => void;
     profilePic: string;
     setProfilePic: (pic: string) => void;
 
@@ -49,6 +51,8 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setViewType: (viewType: string) => set({ viewType }),
     instaMedia: [],
     setInstaMedia: (instaMedia) => set({ instaMedia }),
+    instaMediaLoading: false,
+    setInstaMediaLoading: (instaMediaLoading: boolean) => set({ instaMediaLoading }),
     profilePic: '',
     setProfilePic: (pic: string) => set({ profilePic: pic }),
 }));

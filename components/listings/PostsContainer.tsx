@@ -8,12 +8,12 @@ import InstagramFeed from '../InstagramFeed';
 
 export default function PostGalleryContainer() {
 
-  const { instaMedia } = useHeaderStore();
-  const loading = !instaMedia;
+  const { instaMedia, instaMediaLoading } = useHeaderStore();
+  // const loading = !instaMedia;
 
   return (
     <div id="scrollable-container" className="h-[927px] overflow-y-auto scrollbar-none">
-      {loading ? (
+      {instaMediaLoading ? (
         <GridPostGallerySkeleton />
       ) : instaMedia?.length > 0 ? (
         <GridPostGallery posts={instaMedia} />

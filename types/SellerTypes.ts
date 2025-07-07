@@ -57,7 +57,9 @@ export interface StoreInfoType {
   product_count: string,
   bio: string,
   storeTypes: string[],
-  priceRanges: string[]
+  priceRanges: string[],
+  city:string,
+  area:string,
 }
 
 export interface instaMediaType {
