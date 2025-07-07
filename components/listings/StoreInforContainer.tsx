@@ -41,7 +41,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
         console.log(storeFinal);
         setInstaMediaLoading(true);
         setInstaMedia([]);
-        const instaRes = await api.get(`instagram/seller/${sellerId}/data`);
+        const instaRes = await api.get(`instagram/seller/${storeId}/data`);
         const instaData = instaRes.data;
         setInstaMedia(instaData.media);
         setProfilePic(instaData.profile_picture);
