@@ -10,6 +10,7 @@ import SectionTenContainer from "@/components/homepage/containers/SectionTenCont
 import SectionThreeContainer from "@/components/homepage/containers/SectionThreeContainer";
 import SectionTwelveContainer from "@/components/homepage/containers/SectionTwelveContainer";
 import SectionTwoContainer from "@/components/homepage/containers/SectionTwoContainer";
+import CurrentLocs from "@/components/homepage/CurrentLocs";
 import HeroSection from "@/components/homepage/HeroSection";
 import ScrollingTextBanner from "@/components/homepage/ScrollingTextBanner";
 import StoreTypeSelection from "@/components/homepage/StoreTypeSelection";
@@ -79,16 +80,10 @@ export default function HomePage() {
                 <SectionTwelveContainer />
 
             </div>
-
-
-
-
-
-
             <div className="mt-10">
              <ScrollingTextBanner/>
-
             </div>
+            <CurrentLocs/>
 
             <ListingFooter />
             
