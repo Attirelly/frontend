@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { useSellerStore } from "@/store/sellerStore";
 import { toast } from "sonner";
+import { encode } from "punycode";
 
 export default function SocialLinksComponent() {
-  const { setSocialLinksData, setSocialLinksValid, socialLinksData } = useSellerStore();
+  const { setSocialLinksData, setSocialLinksValid, socialLinksData , storeId } =
+    useSellerStore();
 
   const [instagramUsname, setInstagramUsname] = useState(
     socialLinksData?.instagramUsname || ""
@@ -21,9 +23,9 @@ export default function SocialLinksComponent() {
 
   const handleInstagramChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const username = e.target.value
-      .replace(/^@/, "")                      // Remove leading @
-      .replace(/[^a-zA-Z0-9._]/g, "")         // Allow only valid Instagram characters
-      .slice(0, 30);                          // Max length for Instagram
+      .replace(/^@/, "") // Remove leading @
+      .replace(/[^a-zA-Z0-9._]/g, "") // Allow only valid Instagram characters
+      .slice(0, 30); // Max length for Instagram
     setInstagramUsname(username);
     setInstagramUrl(`https://instagram.com/${username}`);
   };
@@ -45,11 +47,23 @@ export default function SocialLinksComponent() {
   const handleInstagramConnect = () => {
     if (validateInstagramUrl(instagramUrl)) {
       let appId = process.env.NEXT_INSTAGRAM_APP_ID || "548897007892754";
-      const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
-      window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${instagramUrl}`;
-    }
-    else{
-      toast.error('Enter Valid Instagram Username');
+      const redirectUri = encodeURIComponent(
+        `${window.location.origin}/auth/callback`
+      );
+
+      // encoding the state
+      const stateData = {
+        instagram_url: instagramUrl,
+        store_id: storeId,
+      };
+
+      console.log("stateData", stateData);
+
+      const encodedState = encodeURIComponent(JSON.stringify(stateData));
+
+      window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${encodedState}`;
+    } else {
+      toast.error("Enter Valid Instagram Username");
     }
   };
 
@@ -115,7 +129,9 @@ export default function SocialLinksComponent() {
       <div className="bg-white shadow-sm max-w-2xl space-y-6 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between">
         <div className="space-y-3 md:w-2/3">
           <h3 className="text-xl font-semibold">Integrate with Instagram</h3>
-          <p className="text-gray-500">Connect your Instagram, so Attirelly can engage</p>
+          <p className="text-gray-500">
+            Connect your Instagram, so Attirelly can engage
+          </p>
           <button
             className="bg-black text-white px-5 py-2 rounded-full cursor-pointer"
             onClick={handleInstagramConnect}
@@ -135,11 +151,11 @@ export default function SocialLinksComponent() {
   );
 }
 
-
-
-
-      {/* Shopify Integration */}
-      {/* <div className="bg-white shadow-sm max-w-2xl space-y-6 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between">
+{
+  /* Shopify Integration */
+}
+{
+  /* <div className="bg-white shadow-sm max-w-2xl space-y-6 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between">
         <div className="space-y-3 md:w-2/3">
           <h3 className="text-xl font-semibold">Integrate with Shopify</h3>
           <p className="text-gray-500">Connect your Shopify store, so Attirelly can engage</p>
@@ -152,4 +168,5 @@ export default function SocialLinksComponent() {
             className="w-15 h-15 rounded-2xl object-cover"
           />
         </div>
-      </div> */}
+      </div> */
+}
