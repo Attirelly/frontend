@@ -13,6 +13,7 @@ function CallbackHandler() {
 
   const code = searchParams.get("code");
   const state = searchParams.get("state");
+  console.log("state", state);
 
   let instagramUrl = "";
   let sellerId = "";
@@ -20,7 +21,7 @@ function CallbackHandler() {
   try {
     const parsedState = JSON.parse(decodeURIComponent(state || ""));
     instagramUrl = parsedState.instagram_url;
-    sellerId = parsedState.seller_id;
+    sellerId = parsedState.sellerId;
   } catch (err) {
     console.error("Invalid state param:", err);
   }
