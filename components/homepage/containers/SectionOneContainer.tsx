@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import CardTypeThree from '../cards/CardTypeThree';
 import { manrope } from '@/font';
+import { useRouter } from 'next/navigation';
 
 interface CardData {
     id: string;
@@ -32,6 +33,31 @@ export default function SectionTwoContainer() {
     const cardWidth = 232; // Width of each card
     const gap = 20; // Tailwind gap-5 = 1.25rem = 20px
     const maxIndex = cards.length - visibleCount;
+    const [viewAll, setViewAll] = useState('');
+    const router = useRouter();
+
+
+
+    useEffect(() => {
+        const fetchSegmentInfo = async () => {
+            try {
+                // API call to fetch segment information
+                const url = 'https://google.com/';
+                setViewAll(url);
+                router.prefetch(url);
+            }
+            catch (error) {
+                console.log('failed to fetch segment information');
+            }
+        }
+
+
+        fetchSegmentInfo();
+    }, [])
+
+    const handleViewAllClick = () => {
+        router.push(viewAll);
+    };
 
     const handleNext = () => {
         setStartIndex((prev) => Math.min(prev + 1, maxIndex));
@@ -47,7 +73,8 @@ export default function SectionTwoContainer() {
         <div className='w-[1242px]  mx-auto space-y-8'>
             <div className='flex justify-between'>
                 <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>NEW ARRIVALS</span>
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-2'
+                onClick={handleViewAllClick}>
                     <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
                     <Image
                         src="/Homepage/right_arrow.svg"

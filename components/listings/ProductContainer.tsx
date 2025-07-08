@@ -198,6 +198,8 @@ export default function ProductContainer({
     priceRange,
     setPriceBounds,
     setResults,
+    facetInit,
+    setFacetInit,
   } = useProductFilterStore();
 
   const { query, storeTypeString, priceRangeType, sortBy } = useHeaderStore();
@@ -238,6 +240,7 @@ export default function ProductContainer({
     setLoading(true);
     const facetFilters = buildFacetFilters(selectedFilters);
     try {
+      // setIsFacetLoading(true);
       const filterParam = skipFilters ? "" : filters;
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query} ${
@@ -290,10 +293,16 @@ export default function ProductContainer({
           }
         }
       }
-
-      if (Object.keys(facets).length === 0) {
+      console.log("my facets", Object.keys(facets));
+      console.log(facets);
+      // if (Object.keys(facets).length === 0) {
+      //   setFacets(data.facets);
+      // }
+      if (!facetInit) {
         setFacets(data.facets);
+        setFacetInit(true);
       }
+      // setIsFacetLoading(false);
 
       if (currentPage === 0) {
         setProducts(formattedProducts);

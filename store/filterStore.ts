@@ -127,6 +127,8 @@ interface FilterState {
   setPriceRange : (range : [number, number]) => void;
   priceBounds: [number, number];
   setPriceBounds: (bounds: [number, number]) => void;
+  facetInit: boolean;
+  setFacetInit: (loading: boolean) => void;
   facets: Facets;
   selectedFilters: Record<string, string[]>;
   setFacets: (apiFacets: Record<string, Record<string, number>>) => void;
@@ -143,6 +145,8 @@ function createFilterStore() {
     setPriceRange: (range: [number, number]) => set({ priceRange: range }),
     priceBounds: [0, 0],
     setPriceBounds: (bounds: [number, number]) => set({ priceBounds: bounds }),
+    facetInit: false,
+    setFacetInit: (loading: boolean) => set({ facetInit: loading }),
     facets: {},
     selectedFilters: {},
 

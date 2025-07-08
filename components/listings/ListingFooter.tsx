@@ -119,3 +119,21 @@ export default function ListingFooter() {
     </footer>
   );
 }
+
+
+// 'use client';
+
+// import React from 'react';
+// import Image from 'next/image';
+// import {roboto} from '@/font';
+
+// export default function ListingFooter() {
+//   return (
+//     <footer className="bg-[#F7F7F7] text-black px-8 md:px-20 pt-10 pb-6 text-sm">
+//       <div className={`${roboto.className} grid grid-cols-1 md:grid-cols-4 gap-10`}
+//       style={{fontWeight:400}}>
+        
+//       </div>
+//     </footer>
+//   );
+// }

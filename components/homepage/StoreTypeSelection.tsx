@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner";
 import { manrope } from "@/font";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const StoreTypeImage = [
     { name: 'Designer Labels', url: '/Homepage/designer_labels.svg' },
@@ -20,8 +21,12 @@ export default function StoreTypeSelection() {
     const { setStoreType, storeType } = useHeaderStore();
     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
     const [tabs, setTabs] = useState<SelectOption[]>([]);
-    const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
+    // const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
+    useEffect(() => {
+        router.prefetch('/store_listing')
+    })
     const handleTabClick = (value: SelectOption) => {
         const storeType: BrandType = {
             id: value.value,
@@ -33,8 +38,9 @@ export default function StoreTypeSelection() {
         //         "Store Type": value.label
         //     }
         // });
-        setSelectedStoreType(storeType);
+        // setSelectedStoreType(storeType);
         setStoreType(storeType);
+        router.push('/store_listing');
         // onChange(value);
     };
     // console.log(storeType);

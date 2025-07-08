@@ -35,6 +35,8 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
       setLocalPriceRange(priceBounds);
     }
   }, [context,priceBounds]);
+  
+  console.log("price bound, local, range", priceBounds, priceRange);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
