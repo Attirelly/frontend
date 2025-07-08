@@ -9,6 +9,7 @@ import InstagramFeed from '../InstagramFeed';
 export default function PostGalleryContainer() {
 
   const { instaMedia, instaMediaLoading, instaUsername } = useHeaderStore();
+  console.log(instaUsername);
   // const loading = !instaMedia;
 
   return (
