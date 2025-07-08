@@ -21,6 +21,8 @@ type HeaderState = {
     setDeliveryType : (delivery : string) => void;
     viewType: string;
     setViewType: (viewType: string) => void;
+    instaUsername : string;
+    setInstaUsername: (instaUsername:string)=>void;
     instaMedia: instaMediaType[];
     setInstaMedia:(instaMedia: instaMediaType[]) => void;
     instaMediaLoading:boolean;
@@ -49,6 +51,8 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setDeliveryType: (delivery: string) => set({ deliveryType: delivery }),
     viewType: 'Posts',
     setViewType: (viewType: string) => set({ viewType }),
+    instaUsername: '',
+    setInstaUsername: (instaUsername: string) => set({ instaUsername }),
     instaMedia: [],
     setInstaMedia: (instaMedia) => set({ instaMedia }),
     instaMediaLoading: false,

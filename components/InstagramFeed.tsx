@@ -15,7 +15,8 @@ const InstagramFeed: React.FC<InstagramFeedProps> = ({
 }) => {
 
   
-  const embedUrl = `https://www.instagram.com/${username}/embed`;
+  // const embedUrl = `https://www.instagram.com/${username}/embed`;
+  const embedUrl = `${username}/embed`;
 
   
 

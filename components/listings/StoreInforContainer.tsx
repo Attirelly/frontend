@@ -11,7 +11,7 @@ type StoreInfoContainerProps = {
 };
 
 export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps) {
-  const { setInstaMedia, setProfilePic, setInstaMediaLoading } = useHeaderStore();
+  const { setInstaMedia, setProfilePic, setInstaMediaLoading, setInstaUsername } = useHeaderStore();
   const [store, setStore] = useState<StoreInfoType>();
   const [loading, setLoading] = useState(true); // ✅ Loading state
 
@@ -20,7 +20,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
       try {
         const storeRes = await api.get(`/stores/${storeId}`);
         const storeData = storeRes.data;
-        const sellerId = storeData.store_owner_id;
+        setInstaUsername(storeData.instagram_link);
 
         const storeFinal: StoreInfoType = {
           id: storeData.store_id,
