@@ -2,10 +2,10 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 const res = [
-    {image:"/Homepage/homepage_image.svg"},
-    {image:"/Homepage/CardImage.svg"},
-    {image:"/Homepage/CardTypeFive.svg"},
-    {image:"/Homepage/CardTypeOne.svg"},
+    {image:"/Homepage/homepage_image.svg", url:"https://google.com/"},
+    {image:"/Homepage/CardImage.svg", url:"https://maps.app.goo.gl/yWzNswF8oSVXbLCSA"},
+    {image:"/Homepage/CardTypeFive.svg", url:"https://maps.app.goo.gl/mF7SE4ScTkoc7eYEA"},
+    {image:"/Homepage/CardTypeOne.svg", url:"https://maps.app.goo.gl/toHDxmqNqLffRFRH8"},
 ];
 export default function HeroSection() {
     const [currIndex, setCurrIndex] = useState(0);
@@ -17,6 +17,10 @@ export default function HeroSection() {
         }, 5000);
         return () => clearInterval(interval);
     }, []);
+
+    const handleClick = async (url) => {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
 
     const handleNext = () => {
   setCurrIndex((prev) => (prev + 1) % res.length);
@@ -44,7 +48,8 @@ export default function HeroSection() {
                 src={res[currIndex].image}
                 alt="Homepage Image"
                 fill
-                className="object-cover"
+                className="object-cover cursor-pointer"
+                onClick={() => handleClick(res[currIndex].url)}
             />
             
 
