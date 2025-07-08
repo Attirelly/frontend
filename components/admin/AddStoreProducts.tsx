@@ -41,6 +41,7 @@ export default function AddStoreProduct() {
   const [viewAllUrl, setViewAllUrl] = useState('');
   const [storesFromSection, setStoresFromSection] = useState<Store[]>([]);
   const router = useRouter();
+  console.log(productsByStore);
 
   useEffect(() => {
     if (!curation_id) return;
