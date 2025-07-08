@@ -15,9 +15,9 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 
 export default function ListingPageHeader() {
   const router = useRouter();
-  const { setCity, setQuery, setStoreType, setSearchFocus, searchFocus } = useHeaderStore();
+  const { city, setCity, setQuery, setStoreType, setSearchFocus, searchFocus } = useHeaderStore();
   const [cities, setCities] = useState<City[]>([]);
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [selectedCity, setSelectedCity] = useState<City | null>(city || null);
   const [tempQuery, setTempQuery] = useState<string>("");
 
   const [storeSuggestions, setStoreSuggestions] = useState<string[]>([]);
@@ -28,7 +28,7 @@ export default function ListingPageHeader() {
   const [showStoreType, setShowStoreType] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
+  console.log(city);
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
