@@ -1,5 +1,4 @@
 import ProductContainer from '@/components/listings/ProductContainer';
-import { useSellerStore } from '@/store/sellerStore';
 
 
 type StoreInfoContainerProps = {
