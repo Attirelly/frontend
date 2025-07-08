@@ -268,7 +268,7 @@ export default function AddStoreProduct() {
     (productsByStore[storeId] || []).map((product) => ({
       label: product.product_name,
       value: product.product_id,          // include SKU
-      image: product.images[0]?.image_url || 'https://picsum.photos/200',      // include product image URL
+      image: product.images ? product.images[0].image_url : 'https://picsum.photos/200',      // include product image URL
     }));
 
   return (
