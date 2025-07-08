@@ -90,6 +90,17 @@ export default function AddStoreProduct() {
 
   }, [curation_id]);
 
+   useEffect(() => {
+    api
+      .get('/stores/')
+      .then((response) => {
+        setStores(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching stores:', error);
+      });
+  }, []);
+
   useEffect(() => {
     if (curation_type === 'product') {
       const fetchProducts = async () => {
@@ -112,16 +123,7 @@ export default function AddStoreProduct() {
     }
   }, [curation_type]);
 
-  useEffect(() => {
-    api
-      .get('/stores/')
-      .then((response) => {
-        setStores(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching stores:', error);
-      });
-  }, []);
+ 
 
   const handleEdit = async () => {
     if (!curationName.trim() || !viewAllUrl.trim()) {
@@ -266,7 +268,7 @@ export default function AddStoreProduct() {
     (productsByStore[storeId] || []).map((product) => ({
       label: product.product_name,
       value: product.product_id,          // include SKU
-      image: product.images[0]?.image_url,      // include product image URL
+      image: product.images[0]?.image_url || 'https://picsum.photos/200',      // include product image URL
     }));
 
   return (
