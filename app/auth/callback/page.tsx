@@ -5,7 +5,6 @@ import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { api } from "@/lib/axios";
-import { useSellerStore } from "@/store/sellerStore";
 
 function CallbackHandler() {
   const router = useRouter();

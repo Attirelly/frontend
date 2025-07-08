@@ -50,6 +50,13 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     return () => clearTimeout(timeout);   
   }, [localPriceRange]);
 
+  useEffect(() => {
+    const defaultOpen: Record<string, boolean> = {};
+    Object.keys(facets).forEach((facetName) => {
+      defaultOpen[facetName] = true;
+    });
+    setOpenFacets(defaultOpen);
+  }, [facets]);
   const handleSearchChange = (facetName: string, value: string) => {
     setSearchTerms((prev) => ({
       ...prev,
@@ -70,13 +77,6 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
 
-  useEffect(() => {
-    const defaultOpen: Record<string, boolean> = {};
-    Object.keys(facets).forEach((facetName) => {
-      defaultOpen[facetName] = true;
-    });
-    setOpenFacets(defaultOpen);
-  }, [facets]);
 
   const handleResetFilters = () => {
     resetFilters();
