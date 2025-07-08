@@ -18,7 +18,7 @@ export default function HeroSection() {
         return () => clearInterval(interval);
     }, []);
 
-    const handleClick = async (url) => {
+    const handleClick = async (url : string) => {
         window.open(url, '_blank', 'noopener,noreferrer');
     };
 

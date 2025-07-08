@@ -37,7 +37,7 @@ export default function StoreListingPage() {
   }
 };
 
-console.log(process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID);
+console.log(storeType);
 
   return (
     <div className="bg-[#FFFFFF]">
