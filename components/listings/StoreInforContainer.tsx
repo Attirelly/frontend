@@ -24,7 +24,6 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
 
         const storeFinal: StoreInfoType = {
           id: storeData.store_id,
-          // imageUrl: storeData.profile_image,
           imageUrl: storeData.profile_image,
           locationUrl: storeData.store_address,
           storeName: storeData.store_name,
