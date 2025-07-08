@@ -112,7 +112,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   return (
     <div className="sticky top-2 z-10">
       <div
-        className={`${manrope.className} h-[calc(100vh-5rem)] overflow-y-auto max-w-xs p-4 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 relative`}
+        className={`${manrope.className} h-fit max-w-xs p-4 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 relative`}
         style={{ fontWeight: 500 }}
       >
         <div className="flex items-center justify-between mb-3">
