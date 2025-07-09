@@ -16,6 +16,7 @@ import { api } from '@/lib/axios';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { logout } from '@/utils/logout';
 import { useUpdateStore } from '@/utils/handleUpdate';
+import { useParams, useSearchParams } from "next/navigation";
 // import Toast from '@/components/ui/Toast';
 
 import ProductUploadPage from '../product_upload/page';
@@ -44,17 +45,40 @@ export default function SellerDashboardPage() {
     setSocialLinksData,
     setStorePhotosData,
     setQrId,
-    setFurthestStep
+    setFurthestStep,
+    setSellerEmail,
+    setSellerName,
+    setSellerNumber
   } = useSellerStore();
   const [activeSection, setActiveSection] = useState('');
+  const searchParams = useSearchParams();
+  const storeId = searchParams.get('storeId');
+  console.log(storeId)
 
   useEffect(() => {
-    if (!sellerId) return;
     const fetchInitialData = async () => {
       try {
         console.log(sellerId)
-        const response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } })
-        const storeData = response.data;
+        let response;
+        let fetchedSellerName;
+        let fetchedSellerEmail;
+        if(sellerId){
+          response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } })
+        }
+        else if(storeId){
+          response = await api.get(`stores/${storeId}`);
+          const store_owner_id = response.data.store_owner_id;
+          const resSeller = await api.get(`/users/user`, {params: {user_id: store_owner_id}});
+          const resData = resSeller.data;
+          console.log(resData);
+          setSellerEmail(resData.email);
+          setSellerName(resData.name);
+          setSellerNumber(resData.contact_number);
+          fetchedSellerEmail = resData.email;
+          fetchedSellerName = resData.name;
+        }
+        
+        const storeData = response?.data;
         console.log("response" , storeData);
         const curr_section = storeData.curr_section;
         
@@ -72,8 +96,8 @@ export default function SellerDashboardPage() {
         console.log("price range data",priceRangeRes);
         if (curr_section >= 1) {
           setBusinessDetailsData({
-            ownerName: sellerName || '',
-            ownerEmail: sellerEmail || '',
+            ownerName: sellerName || fetchedSellerName || '',
+            ownerEmail: sellerEmail || fetchedSellerEmail || '',
             brandName: storeData.store_name || '',
             businessWpNum: storeData.whatsapp_number || '',
             brandTypes: storeData.store_types || [],
@@ -131,7 +155,7 @@ export default function SellerDashboardPage() {
       }
     };
     fetchInitialData();
-  }, [sellerId]);
+  }, [sellerId, storeId]);
 
   const renderSection = () => {
     switch (activeSection) {
@@ -174,7 +198,7 @@ export default function SellerDashboardPage() {
   }
 
   return (
-    <ProtectedRoute role="admin">
+    <ProtectedRoute role={["admin","super_admin"]}>
       <div className='min-h-screen bg-gray-100'>
         <Header
           title='Attirelly'

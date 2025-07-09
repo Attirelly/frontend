@@ -932,6 +932,14 @@ export default function Home() {
     return sortConfig.direction === 'ascending' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />;
   };
 
+  // const handleClickView = (id: string) => {
+  //     console.log(id);
+  // };
+
+  // const handleLocationRoute = () => {
+  //      console.log(locationUrl);
+  //      window.open(locationUrl, '_blank', 'noopener,noreferrer');
+  //   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="w-full max-w-7xl mx-auto p-6">
@@ -1244,8 +1252,11 @@ export default function Home() {
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <Link href={`/store/${seller.id}`} target="blank" rel="noopener noreferrer">
-                                <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                              {/* <Link href={`/seller_dashboard/${seller.id}`} target="blank" rel="noopener noreferrer"> */}
+                              <Link href={`/seller_dashboard?storeId=${encodeURIComponent(seller.id ?? "")}`} target="blank" rel="noopener noreferrer">
+                                <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                // onClick={() => handleClickView(seller.id)}
+                                >
                                   <Eye className="w-4 h-4 mr-1" />
                                   View
                                 </button>
