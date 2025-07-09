@@ -31,8 +31,16 @@ export default function StoreContainerPage() {
         filters.push(facets[key].map((value) => `${key}:${value}`));
       }
     }
+    console.log("filtersfilters", filters);
     return encodeURIComponent(JSON.stringify(filters));
   };
+
+  // const buildCityStoreTypeFacets = () => {
+  //   const filters: string[][] = [];
+  //   if(!city){
+  //     filters.push()
+  //   }
+  // }
 
   const fetchStores = async (currentPage: number) => {
     setLoading(true);
