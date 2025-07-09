@@ -147,10 +147,9 @@ export const useProductFormStore = create<ProductFormStore>()(
         console.log(useSellerStore.getState().storeNameString);
         const apiPayload = transformPayload(
           formData,
-          // "d013b10b-af22-407d-aa32-eec4d6e1bb50",
           storeId,
           storeName
-          // "Aman G"
+          
         );
         try {
           await api.put(`/products/${formData.product_id}`, apiPayload);
@@ -254,13 +253,7 @@ export const useProductFormStore = create<ProductFormStore>()(
         const { formData } = get();
         const storeId = useSellerStore.getState().storeId;
         const storeName = useSellerStore.getState().storeNameString || "Default Store";
-        const apiPayload = transformPayload(
-          formData,
-          // "d013b10b-af22-407d-aa32-eec4d6e1bb50",
-          storeId,
-          storeName
-          // "Aman G"
-        );
+        const apiPayload = transformPayload( formData,storeId,storeName);
         console.log("apiPayload", apiPayload);
         try {
           const response = await api.post("/products/", apiPayload);
