@@ -126,6 +126,16 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
             />
           </button>
         </div>
+
+        <div className="flex items-center justify-between mb-3">
+              <h1 className={`${playfair_display.className}`}>Filters</h1>
+              <button
+          onClick={() => handleResetFilters()}
+          className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+        >
+          Reset Filters
+        </button>
+        </div>
         <hr className="my-4 border-[#D9D9D9]" />
 
         {Object.entries(facets).map(([facetName, values]) => {
@@ -251,12 +261,12 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           );
         })}
 
-        <button
+        {/* <button
           onClick={() => handleResetFilters()}
           className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
         >
           Reset Filters
-        </button>
+        </button> */}
       </div>
     </div>
   );
