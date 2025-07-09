@@ -125,8 +125,8 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
             />
           </button>
         </div>
-
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col">
+<div className="flex items-center justify-between mb-3">
               <h1 className={`${playfair_display.className}`}>Filters</h1>
               <button
           onClick={() => handleResetFilters()}
@@ -135,6 +135,26 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           Reset Filters
         </button>
         </div>
+        <div className="flex flex-wrap gap-2 max-w-xs">
+  {Object.entries(selectedFilters).map(([key, values]) =>
+    values.map((value) => (
+      <div
+        key={`${key}-${value}`}
+        className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-sm text-gray-800 rounded-full"
+      >
+        <span>{value}</span>
+        <button
+          onClick={() => toggleFilter(key, value)}
+          className="text-gray-500 hover:text-red-500"
+        >
+          ×
+        </button>
+      </div>
+    ))
+  )}
+</div>
+        </div>
+        
         <hr className="my-4 border-[#D9D9D9]" />
 
         {Object.entries(facets).map(([facetName, values]) => {
