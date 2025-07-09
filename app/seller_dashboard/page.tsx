@@ -1,26 +1,26 @@
-'use client';
-import { useEffect, useState } from 'react';
-import DashboardSidebar from '@/components/Seller/DashboardSidebar';
-import SocialLinksComponent from '@/components/Seller/Sections/SocialLinks';
-import BusinessDetailsComponent from '@/components/Seller/Sections/BusinessDetails';
-import PriceFiltersComponent from '@/components/Seller/Sections/PriceFilters';
-import WhereToSellComponent from '@/components/Seller/Sections/WhereToSell';
-import StorePhotosComponent from '@/components/Seller/Sections/StorePhotos';
-import QrCodeGeneration from '@/components/Seller/Sections/QrGeneration';
-import ViewAllProducts from '@/components/Seller/Sections/ViewAllProducts'
-import BulkUploadPage from '@/components/Seller/Sections/BulkUploadProducts';
-import UpdateButton from '@/components/Seller/UpdateButton';
-import Header from '@/components/Header';
-import { useSellerStore } from '@/store/sellerStore'
-import { api } from '@/lib/axios';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import { logout } from '@/utils/logout';
-import { useUpdateStore } from '@/utils/handleUpdate';
+"use client";
+import { useEffect, useState } from "react";
+import DashboardSidebar from "@/components/Seller/DashboardSidebar";
+import SocialLinksComponent from "@/components/Seller/Sections/SocialLinks";
+import BusinessDetailsComponent from "@/components/Seller/Sections/BusinessDetails";
+import PriceFiltersComponent from "@/components/Seller/Sections/PriceFilters";
+import WhereToSellComponent from "@/components/Seller/Sections/WhereToSell";
+import StorePhotosComponent from "@/components/Seller/Sections/StorePhotos";
+import QrCodeGeneration from "@/components/Seller/Sections/QrGeneration";
+import ViewAllProducts from "@/components/Seller/Sections/ViewAllProducts";
+import BulkUploadPage from "@/components/Seller/Sections/BulkUploadProducts";
+import UpdateButton from "@/components/Seller/UpdateButton";
+import Header from "@/components/Header";
+import { useSellerStore } from "@/store/sellerStore";
+import { api } from "@/lib/axios";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { logout } from "@/utils/logout";
+import { useUpdateStore } from "@/utils/handleUpdate";
 // import Toast from '@/components/ui/Toast';
 
-import ProductUploadPage from '../product_upload/page';
-import { toast } from 'sonner';
-import { City, Area, Pincode } from '@/types/SellerTypes';
+import ProductUploadPage from "../product_upload/page";
+import { toast } from "sonner";
+import { City, Area, Pincode } from "@/types/SellerTypes";
 
 // type City = { id: string; name: string; state_id: string };
 
@@ -44,49 +44,67 @@ export default function SellerDashboardPage() {
     setSocialLinksData,
     setStorePhotosData,
     setQrId,
-    setFurthestStep
+    setFurthestStep,
   } = useSellerStore();
-  const [activeSection, setActiveSection] = useState('');
+  const [activeSection, setActiveSection] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const flag = localStorage.getItem("instagram_connected");
+      if (flag === "true") {
+        toast.success("Instagram Connected Successfully!");
+        localStorage.removeItem("instagram_connected");
+      }
+      else if (flag === "false") {
+        toast.error("Instagram Connection Failed!");
+        localStorage.removeItem("instagram_connected");
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!sellerId) return;
     const fetchInitialData = async () => {
       try {
-        console.log(sellerId)
-        const response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } })
+        console.log(sellerId);
+        const response = await api.get("/stores/store_by_owner", {
+          params: { store_owner_id: sellerId },
+        });
         const storeData = response.data;
-        console.log("response" , storeData);
+        console.log("response", storeData);
         const curr_section = storeData.curr_section;
-        
 
         const cityData: City[] = storeData.city ? [storeData.city] : [];
         const areaData: Area[] = storeData.area ? [storeData.area] : [];
-        const pincodeData: Pincode[] = storeData.pincode ? [storeData.pincode] : [];
+        const pincodeData: Pincode[] = storeData.pincode
+          ? [storeData.pincode]
+          : [];
 
         setStoreId(storeData.store_id);
         setQrId(storeData.qr_id);
         setFurthestStep(curr_section);
-        setStoreNameString(storeData.store_name)
+        setStoreNameString(storeData.store_name);
 
-        const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id: storeData.store_id } });
-        console.log("price range data",priceRangeRes);
+        const priceRangeRes = await api.get("stores/store_type_price_ranges", {
+          params: { store_id: storeData.store_id },
+        });
+        console.log("price range data", priceRangeRes);
         if (curr_section >= 1) {
           setBusinessDetailsData({
-            ownerName: sellerName || '',
-            ownerEmail: sellerEmail || '',
-            brandName: storeData.store_name || '',
-            businessWpNum: storeData.whatsapp_number || '',
+            ownerName: sellerName || "",
+            ownerEmail: sellerEmail || "",
+            brandName: storeData.store_name || "",
+            businessWpNum: storeData.whatsapp_number || "",
             brandTypes: storeData.store_types || [],
             categories: storeData.categories || [],
             genders: storeData.genders || [],
-            rentOutfits: storeData.rental === true ? 'Yes' : 'No',
+            rentOutfits: storeData.rental === true ? "Yes" : "No",
             city: cityData || [],
             area: areaData || [],
             pinCode: pincodeData || [],
-            brandAddress: storeData.store_address || ''
+            brandAddress: storeData.store_address || "",
           });
         }
-
 
         // setBusinessDetailsValid(true);
         if (curr_section >= 2) {
@@ -95,39 +113,41 @@ export default function SellerDashboardPage() {
             avgPriceMax: storeData.average_price_max || null,
             priceRanges: priceRangeRes.data || [],
             priceRangesStr: priceRangeRes?.data.map((item) => ({
-                "id" : item.price_range_id,
-                "label" : item.price_range
-            }))
+              id: item.price_range_id,
+              label: item.price_range,
+            })),
           });
         }
 
         if (curr_section >= 3) {
           setWhereToSellData({
             isOnline: storeData.is_online === true ? true : false,
-            isBoth: storeData.is_both === true? true : false
+            isBoth: storeData.is_both === true ? true : false,
           });
         }
 
         if (curr_section >= 4) {
           setSocialLinksData({
-            instagramUsname: storeData.instagram_link ? new URL(storeData.instagram_link).pathname.split('/').filter(Boolean)[0] : null,
-            instagramUrl: storeData.instagram_link || '',
-            facebookUrl: storeData.facebook_link || '',
-            websiteUrl: storeData.shopify_url || ''
+            instagramUsname: storeData.instagram_link
+              ? new URL(storeData.instagram_link).pathname
+                  .split("/")
+                  .filter(Boolean)[0]
+              : null,
+            instagramUrl: storeData.instagram_link || "",
+            facebookUrl: storeData.facebook_link || "",
+            websiteUrl: storeData.shopify_url || "",
           });
         }
 
         if (curr_section >= 5) {
           setStorePhotosData({
-            profileUrl: storeData.profile_image || '',
-            bannerUrl: storeData.listing_page_image || ''
+            profileUrl: storeData.profile_image || "",
+            bannerUrl: storeData.listing_page_image || "",
           });
         }
-
-
       } catch (error) {
-        console.error('Error fetching initial data:', error);
-        alert('error fetching data, signin again');
+        console.error("Error fetching initial data:", error);
+        alert("error fetching data, signin again");
       }
     };
     fetchInitialData();
@@ -135,23 +155,23 @@ export default function SellerDashboardPage() {
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'brand':
+      case "brand":
         return <BusinessDetailsComponent />;
-      case 'social':
+      case "social":
         return <SocialLinksComponent />;
-      case 'price':
+      case "price":
         return <PriceFiltersComponent />;
-      case 'market':
+      case "market":
         return <WhereToSellComponent />;
-      case 'photos':
+      case "photos":
         return <StorePhotosComponent />;
-      case 'qr_code':
+      case "qr_code":
         return <QrCodeGeneration />;
-      case 'all_products':
+      case "all_products":
         return <ViewAllProducts />;
-      case 'bulk_products':
+      case "bulk_products":
         return <BulkUploadPage />;
-      case 'one_product':
+      case "one_product":
         return <ProductUploadPage />;
       default:
         return null;
@@ -159,46 +179,53 @@ export default function SellerDashboardPage() {
   };
 
   const handleUpdateClick = async () => {
-    console.log("activesession" , activeSection);
+    console.log("activesession", activeSection);
     const res = await handleUpdate(activeSection, false);
     if (res) {
       // setToastMessage("Store updated!");
       // setToastType("success");
-      toast.success("Store Updated!")
-    }
-    else {
+      toast.success("Store Updated!");
+    } else {
       // setToastMessage("Store not updated!");
       // setToastType("error");
       toast.error("Store not updated!");
     }
-  }
+  };
 
   return (
     <ProtectedRoute role="admin">
-      <div className='min-h-screen bg-gray-100'>
+      <div className="min-h-screen bg-gray-100">
         <Header
-          title='Attirelly'
+          title="Attirelly"
           actions={
-            <button className='bg-white text-black rounded-2xl shadow-md p-2 cursor-pointer border transition hover:bg-gray-200'
-              onClick={() => logout("/seller_signin")}>Log Out</button>
-          } />
+            <button
+              className="bg-white text-black rounded-2xl shadow-md p-2 cursor-pointer border transition hover:bg-gray-200"
+              onClick={() => logout("/seller_signin")}
+            >
+              Log Out
+            </button>
+          }
+        />
         <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
-          <DashboardSidebar selected={activeSection} onSelect={setActiveSection} />
+          <DashboardSidebar
+            selected={activeSection}
+            onSelect={setActiveSection}
+          />
           <div className="flex flex-col w-full md-w-2xl gap-6">
-            <div className=" mt-[60px] rounded-md bg-gray-100">{renderSection()}</div>
-            {['brand', 'price', 'market', 'social', 'photos'].includes(activeSection) && (
+            <div className=" mt-[60px] rounded-md bg-gray-100">
+              {renderSection()}
+            </div>
+            {["brand", "price", "market", "social", "photos"].includes(
+              activeSection
+            ) && (
               <UpdateButton
                 onClick={handleUpdateClick}
-
                 disabled={false} // Replace with logic to enable/disable based on validation
               />
             )}
           </div>
-
         </div>
       </div>
     </ProtectedRoute>
-
-
-  )
+  );
 }
