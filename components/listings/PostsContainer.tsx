@@ -8,7 +8,8 @@ import InstagramFeed from '../InstagramFeed';
 
 export default function PostGalleryContainer() {
 
-  const { instaMedia, instaMediaLoading } = useHeaderStore();
+  const { instaMedia, instaMediaLoading, instaUsername } = useHeaderStore();
+  console.log(instaUsername);
   // const loading = !instaMedia;
 
   return (
@@ -18,7 +19,7 @@ export default function PostGalleryContainer() {
       ) : instaMedia?.length > 0 ? (
         <GridPostGallery posts={instaMedia} />
       ) : (
-        <InstagramFeed username='therock' />
+        <InstagramFeed username={instaUsername} />
       )}
     </div>
   );

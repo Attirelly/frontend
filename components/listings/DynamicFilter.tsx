@@ -36,7 +36,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     }
   }, [context,priceBounds]);
   
-  console.log("price bound, local, range", priceBounds, priceRange);
+  console.log("selectedFilters", selectedFilters);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -108,11 +108,10 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
       </div>
     );
   }
-  console.log("priceBounds", priceBounds);  
   return (
     <div className="sticky top-2 z-10">
       <div
-        className={`${manrope.className} h-[calc(100vh-5rem)] overflow-y-auto max-w-xs p-4 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 relative`}
+        className={`${manrope.className} h-fit max-w-xs p-4 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 relative`}
         style={{ fontWeight: 500 }}
       >
         <div className="flex items-center justify-between mb-3">
@@ -126,6 +125,36 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
             />
           </button>
         </div>
+        <div className="flex flex-col">
+<div className="flex items-center justify-between mb-3">
+              <h1 className={`${playfair_display.className}`}>Filters</h1>
+              <button
+          onClick={() => handleResetFilters()}
+          className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+        >
+          Reset Filters
+        </button>
+        </div>
+        <div className="flex flex-wrap gap-2 max-w-xs">
+  {Object.entries(selectedFilters).map(([key, values]) =>
+    values.map((value) => (
+      <div
+        key={`${key}-${value}`}
+        className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-sm text-gray-800 rounded-full"
+      >
+        <span>{value}</span>
+        <button
+          onClick={() => toggleFilter(key, value)}
+          className="text-gray-500 hover:text-red-500"
+        >
+          ×
+        </button>
+      </div>
+    ))
+  )}
+</div>
+        </div>
+        
         <hr className="my-4 border-[#D9D9D9]" />
 
         {Object.entries(facets).map(([facetName, values]) => {
@@ -251,12 +280,12 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           );
         })}
 
-        <button
+        {/* <button
           onClick={() => handleResetFilters()}
           className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
         >
           Reset Filters
-        </button>
+        </button> */}
       </div>
     </div>
   );

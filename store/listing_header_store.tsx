@@ -1,6 +1,13 @@
 import { create } from 'zustand'
 import { City, BrandType, instaMediaType, PriceRangeType } from '@/types/SellerTypes'
 
+// Replace with actual Ludhiana city object from your database
+const defaultCity: City = {
+  id: '2a3a78c1-2405-4ddf-b0a2-96e742e7b576',  // Use actual ID from your DB
+  name: 'Ludhiana',
+  state_id: "25234602-2c6e-4600-89d3-460bc2559a1d",
+  // Add any other fields your `City` type requires
+};
 
 type HeaderState = {
     city: City|null;
@@ -21,6 +28,8 @@ type HeaderState = {
     setDeliveryType : (delivery : string) => void;
     viewType: string;
     setViewType: (viewType: string) => void;
+    instaUsername : string;
+    setInstaUsername: (instaUsername:string)=>void;
     instaMedia: instaMediaType[];
     setInstaMedia:(instaMedia: instaMediaType[]) => void;
     instaMediaLoading:boolean;
@@ -31,7 +40,7 @@ type HeaderState = {
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
-    city: null,
+    city: defaultCity,
     setCity: (city) => set({ city }),
     query: '',
     setQuery: (query) => set({ query }),
@@ -49,6 +58,8 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setDeliveryType: (delivery: string) => set({ deliveryType: delivery }),
     viewType: 'Posts',
     setViewType: (viewType: string) => set({ viewType }),
+    instaUsername: '',
+    setInstaUsername: (instaUsername: string) => set({ instaUsername }),
     instaMedia: [],
     setInstaMedia: (instaMedia) => set({ instaMedia }),
     instaMediaLoading: false,
