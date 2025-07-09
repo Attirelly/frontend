@@ -36,7 +36,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     }
   }, [context,priceBounds]);
   
-  console.log("price bound, local, range", priceBounds, priceRange);
+  console.log("selectedFilters", selectedFilters);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -108,7 +108,6 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
       </div>
     );
   }
-  console.log("priceBounds", priceBounds);  
   return (
     <div className="sticky top-2 z-10">
       <div
