@@ -15,7 +15,7 @@ import {
   useStepValidations,
 } from "@/store/product_upload_store";
 import { useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams} from "next/navigation";
 import { api } from "@/lib/axios";
 import { convertToFormData } from "@/utils/convert";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -72,7 +72,7 @@ export default function ProductUpdatePage() {
     fetchAndPrefill();
   }, [product_id, setLoading, updateFormData]);
 
-  console.log(variants, sizes, colors);
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4">

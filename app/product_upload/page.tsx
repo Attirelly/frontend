@@ -9,7 +9,6 @@ import ProductUploadSideBar from "@/components/ProductUploadSection/ProductUploa
 import {
   useCurrentStep,
   useFormActions,
-  useFormData,
   useIsLoading,
   useStepValidations,
 } from "@/store/product_upload_store";

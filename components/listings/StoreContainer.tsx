@@ -24,25 +24,68 @@ export default function StoreContainerPage() {
 
   const [scrollMilestones, setScrollMilestones] = useState<number[]>([]);
 
-  const buildFacetFilters = (facets: Record<string, string[]>): string => {
-    const filters: string[][] = [];
-    for (const key in facets) {
-      if (facets[key].length > 0) {
-        filters.push(facets[key].map((value) => `${key}:${value}`));
-      }
+  // const buildFacetFilters = (facets: Record<string, string[]>): string => {
+  //   const filters: string[][] = [];
+  //   for (const key in facets) {
+  //     if (facets[key].length > 0) {
+  //       filters.push(facets[key].map((value) => `${key}:${value}`));
+  //     }
+  //   }
+  //   console.log("filtersfilters", filters);
+  //   return encodeURIComponent(JSON.stringify(filters));
+  // };
+
+  // const buildCityStoreTypeFacets = () => {
+  //   const filters: string[][] = [];
+  //   if(city){
+  //     filters.push([`city:${city.name}`]);
+  //   }
+  //   if(storeType){
+  //     filters.push([`store_types:${storeType.store_type}`]);
+  //   }
+  //   return encodeURIComponent(JSON.stringify(filters));
+  // }
+
+  const buildFacetFilters = (
+  facets: Record<string, string[]>,
+  city?: City | null,
+  storeType?: BrandType | null
+): string => {
+  const filters: string[][] = [];
+
+  // selected filters (e.g. gender, price range, category)
+  for (const key in facets) {
+    if (facets[key].length > 0) {
+      filters.push(facets[key].map((value) => `${key}:${value}`));
     }
-    return encodeURIComponent(JSON.stringify(filters));
-  };
+  }
+
+  // city facet
+  if (city) {
+    filters.push([`city:${city.name}`]);
+  }
+
+  // storeType facet
+  if (storeType) {
+    filters.push([`store_types:${storeType.store_type}`]);
+  }
+
+  console.log("facetFilters =>", filters);
+  return encodeURIComponent(JSON.stringify(filters));
+};
 
   const fetchStores = async (currentPage: number) => {
     setLoading(true);
-    const facetFilters = buildFacetFilters(selectedFilters);
-    console.log("filters", filters);
+    const facetFilters = buildFacetFilters(selectedFilters, city, storeType);
+    console.log("filters", facetFilters, selectedFilters);
     // const fi = "is_both:'true'";
+    // const res = await api.get(
+    //   `/search/search_store?query=${query} ${storeType?.store_type || ""} ${
+    //     city?.name || ""
+    //   }&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
+    // );
     const res = await api.get(
-      `/search/search_store?query=${query} ${storeType?.store_type || ""} ${
-        city?.name || ""
-      }&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
+      `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
     );
     console.log("facet Filters", selectedFilters);
     event({

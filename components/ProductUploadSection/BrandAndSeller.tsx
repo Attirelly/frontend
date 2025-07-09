@@ -37,6 +37,18 @@ export default function BrandAndSeller() {
     brand: keyDetails?.brand || { brand_id: "", name: "", logo_url: "" },
   }));
 
+//  currently hardcoded brand
+  useEffect(() => {
+  setFormState((prev) => ({
+    ...prev,
+    brand: {
+      brand_id: "f1e55528-246f-4c88-bc78-11d7e746ef7f",
+      name: "Attirelly",
+      logo_url: "",
+    },
+  }));
+}, []);
+
   // Initialize brand search from keyDetails
   useEffect(() => {
     setBrandSearch(keyDetails?.brand?.name || "");
@@ -158,7 +170,7 @@ export default function BrandAndSeller() {
           </div>
 
           {/* Column 2 */}
-          <div className="flex flex-col gap-4">
+          {/* <div className="flex flex-col gap-4">
             <div className="brand-dropdown-container relative">
               <label className="block text-sm font-medium mb-1">Brand</label>
               <input
@@ -208,7 +220,7 @@ export default function BrandAndSeller() {
                 </div>
               )}
             </div>
-          </div>
+          </div> */}
 
           {/* Product Description */}
           <div className="md:col-span-2">

@@ -53,9 +53,11 @@ function CallbackHandler() {
 
         const { user_id } = response.data;
         console.log(response);
+        localStorage.setItem("instagram_connected", "true");
 
         router.push(`/seller_dashboard`);
       } catch (error: any) {
+        localStorage.setItem("instagram_connected", "false");
         console.error("Authentication error:", error);
         router.push("/seller_dashboard");
         // router.push(`/?error=${encodeURIComponent(error.message)}`);
@@ -65,7 +67,9 @@ function CallbackHandler() {
     if (code && state) {
       authenticate();
     } else {
-      router.push("/");
+      localStorage.setItem("instagram_connected", "false");
+      router.push("/seller_dashboard");
+      
     }
   }, [code, state, router]);
 

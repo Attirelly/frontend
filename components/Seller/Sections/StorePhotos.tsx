@@ -1,6 +1,5 @@
-"use client";
-
-import React, { useRef, useState, useEffect } from "react";
+"use client"
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useSellerStore } from "@/store/sellerStore";
 import axios from "axios";
 import { api } from "@/lib/axios";
@@ -44,17 +43,20 @@ export default function PhotosPage() {
 
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.target as HTMLImageElement;
-    setImageSize({
-      width: img.naturalWidth,
-      height: img.naturalHeight
-    });
+    setImageSize({ width: img.naturalWidth, height: img.naturalHeight });
   };
+
+  const imageSrc = useMemo(() => (croppingImage ? URL.createObjectURL(croppingImage) : ""), [croppingImage]);
+
+  useEffect(() => {
+    return () => {
+      if (imageSrc) URL.revokeObjectURL(imageSrc);
+    };
+  }, [imageSrc]);
 
   async function deleteImageFromS3(imageUrl: string) {
     try {
-      await api.delete(`/products/delete_image`, {
-        data: { file_url: imageUrl },
-      });
+      await api.delete(`/products/delete_image`, { data: { file_url: imageUrl } });
     } catch (error) {
       console.error("Error deleting image from S3:", error);
     }
@@ -74,14 +76,10 @@ export default function PhotosPage() {
   const uploadToS3 = async (file: File, type: "profile" | "banner"): Promise<string | null> => {
     try {
       type === "profile" ? setProfileUploading(true) : setBannerUploading(true);
-      const response = await api.post<UploadResponse>("/stores/upload", {
-        file_name: file.name,
-      });
+      const response = await api.post<UploadResponse>("/stores/upload", { file_name: file.name });
       const { upload_url, file_url } = response.data;
       await axios.put(upload_url, file, {
-        headers: {
-          "Content-Type": file.type || "application/octet-stream",
-        },
+        headers: { "Content-Type": file.type || "application/octet-stream" },
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -102,57 +100,46 @@ export default function PhotosPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check minimum size for profile images
-    if (type === "profile") {
-      const img = new Image();
-      img.onload = () => {
-        if (img.width < 500 || img.height < 500) {
-          alert("Profile image must be at least 500×500 pixels");
-          return;
-        }
-        setCropType(type);
-        setCroppingImage(file);
-      };
-      img.src = URL.createObjectURL(file);
-    } else {
+    const img = new Image();
+    img.onload = () => {
+      if (type === "profile" && (img.width < 500 || img.height < 500)) {
+        alert("Profile image must be at least 500×500 pixels");
+        return;
+      }
       setCropType(type);
       setCroppingImage(file);
-    }
+    };
+    img.src = URL.createObjectURL(file);
   };
 
   useEffect(() => {
-    if (profileUrl && bannerUrl) {
+    const bothPresent = profileUrl.trim() !== "" && bannerUrl.trim() !== "";
+    if (bothPresent) {
       setStorePhotosValid(true);
-      setStorePhotosData({ profileUrl, bannerUrl });
+      setStorePhotosData((prev) => ({ ...prev, profileUrl, bannerUrl }));
     }
-  }, [profileUrl, bannerUrl, setStorePhotosData, setStorePhotosValid]);
+  }, [profileUrl, bannerUrl]);
 
-  // Calculate modal size based on image dimensions
   const getModalSize = () => {
     if (!imageSize.width || !imageSize.height) return { width: 500, height: 500 };
-    
-    const maxWidth = cropType === "banner" ? 575 : 500;
-    const maxHeight = 500;
-    
+    const maxWidth = cropType === "banner" ? 675 : 600;
+    const maxHeight = 600;
     let width = imageSize.width;
     let height = imageSize.height;
-    
-    // Scale down if necessary
+
     if (width > maxWidth) {
       const ratio = maxWidth / width;
       width = maxWidth;
       height = height * ratio;
     }
-    
     if (height > maxHeight) {
       const ratio = maxHeight / height;
       height = maxHeight;
       width = width * ratio;
     }
-    
     return {
-      width: Math.max(width, 300),
-      height: Math.max(height, 300)
+      width: Math.max(width, 500),
+      height: Math.max(height, 500)
     };
   };
 
@@ -178,18 +165,13 @@ export default function PhotosPage() {
             flexDirection: "column",
             alignItems: "center",
           },
-          overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 1000,
-          },
+          overlay: { backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 1000 },
         }}
       >
         {croppingImage && (
-          <div
-            className="relative w-full h-full"
-          >
+          <div className="relative w-full h-full">
             <Cropper
-              image={URL.createObjectURL(croppingImage)}
+              image={imageSrc}
               crop={crop}
               zoom={zoom}
               aspect={cropType === "banner" ? 1.15 : 1}
@@ -197,26 +179,24 @@ export default function PhotosPage() {
               onZoomChange={setZoom}
               onCropComplete={handleCropComplete}
               onMediaLoaded={handleImageLoad}
-              cropShape={cropType === "profile" ? "round" : "rect"}
+              cropShape={"rect"}
               minZoom={0.5}
               maxZoom={3}
-              initialCroppedAreaPixels={
-                cropType === "profile" ? {
-                  width: 500,
-                  height: 500,
-                  x: 0,
-                  y: 0
-                } : undefined
-              }
+            />
+            <input
+              type="range"
+              min={0.5}
+              max={3}
+              step={0.1}
+              value={zoom}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10"
             />
             <button
               onClick={async () => {
                 if (!croppedAreaPixels || !croppingImage || !cropType) return;
-                const croppedBlob = await getCroppedImg(
-                  URL.createObjectURL(croppingImage),
-                  croppedAreaPixels,
-                  0.9
-                );
+                const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels, 0.9);
+                if (!croppedBlob) return alert("Failed to crop image");
                 const uploadedUrl = await uploadToS3(
                   new File([croppedBlob], croppingImage.name, {
                     type: croppingImage.type,
@@ -235,7 +215,7 @@ export default function PhotosPage() {
           </div>
         )}
       </Modal>
-
+      {/* Upload preview section remains unchanged */}
       {/* ... rest of your component remains the same ... */}
             <div>
         <h1 className="text-lg font-semibold">Photos</h1>

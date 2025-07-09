@@ -253,7 +253,8 @@ export default function SellerSignup() {
                         {/* Submit button */}
                         <button
                             type="submit"
-                            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+                            className="cursor-pointer w-full bg-black text-white py-2 rounded hover:bg-gray-800  hover:shadow-md active:scale-[0.98] transition-all duration-200"
+                           
                         >
                             Send OTP
                         </button>
