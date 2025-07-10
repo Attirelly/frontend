@@ -940,7 +940,7 @@ export default function Home() {
   //      console.log(locationUrl);
   //      window.open(locationUrl, '_blank', 'noopener,noreferrer');
   //   };
-  console.log("bas teri bas teri", facets);
+  console.log("bas teri bas teri", selectedFacets, selectedFilters);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="w-full max-w-7xl mx-auto p-6">
@@ -1024,7 +1024,7 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap gap-2 max-w-xs">
-                {Object.keys(facets).map(([key, value]) =>
+                {Object.keys(selectedFacets).map(([key, value]) =>
                   // values.map((value) => 
                     {
                     console.log("facets",facets);
