@@ -1024,7 +1024,11 @@ export default function Home() {
 
               <div className="flex flex-wrap gap-2 max-w-xs">
                 {Object.entries(facets).map(([key, values]) =>
-                  values.map((value) => (
+                  values.map((value) => {
+                    console.log("facets",facets);
+                    console.log("values",values);
+                    console.log("value",value);
+                    return(
                     <div
                       key={`${key}-${value}`}
                       className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-sm text-gray-800 rounded-full"
@@ -1037,7 +1041,8 @@ export default function Home() {
                         ×
                       </button>
                     </div>
-                  ))
+                  )
+                  })
                 )}
               </div>
 
