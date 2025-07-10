@@ -15,15 +15,17 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 
 export default function ListingPageHeader() {
   const router = useRouter();
-  const { city, setCity, setQuery, setStoreType, setSearchFocus, searchFocus } = useHeaderStore();
+  const { city, setCity, query, setQuery, setStoreType, setSearchFocus, searchFocus } =
+    useHeaderStore();
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(city || null);
-  const [tempQuery, setTempQuery] = useState<string>("");
+  const [tempQuery, setTempQuery] = useState<string>(query || "");
 
   const [storeSuggestions, setStoreSuggestions] = useState<string[]>([]);
   const [productSuggestions, setProductSuggestions] = useState<string[]>([]);
   const [stores, setStores] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showStoreType, setShowStoreType] = useState(false);
 
@@ -35,18 +37,21 @@ export default function ListingPageHeader() {
       setQuery(tempQuery);
       setShowDropdown(false);
       setShowStoreType(false);
+      router.push("/product_directory?search=" + encodeURIComponent(tempQuery));
     }
   };
 
   const handleSearchQuerySuggestion = async () => {
     try {
       const response = await api.post("/search/search_suggestion", {
-        query: tempQuery
+        query: tempQuery,
       });
 
       const data = response.data;
+      console.log("stores", data.stores);
       setStoreSuggestions(data.store_search_suggestion || []);
       setProductSuggestions(data.product_search_suggestion || []);
+      setCategories(data.categories || []);
       setStores(data.stores || []);
       setProducts(data.products || []);
       setShowDropdown(true);
@@ -57,6 +62,7 @@ export default function ListingPageHeader() {
 
   useEffect(() => {
     router.prefetch("/store_listing");
+    router.prefetch("/product_directory");
     router.prefetch("/homepage");
   }, [router]);
 
@@ -73,14 +79,11 @@ export default function ListingPageHeader() {
   }, []);
 
   useEffect(() => {
-    if (selectedCity){
-      
+    if (selectedCity) {
       setCity(selectedCity);
-    }
-    else{
+    } else {
       setCity(null);
     }
-     
   }, [selectedCity]);
 
   useEffect(() => {
@@ -118,15 +121,18 @@ export default function ListingPageHeader() {
 
   const handleSuggestionClick = (value: string) => {
     setQuery(value);
-    router.push("/store_listing");
+    router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
+  const handleCategoryClick = (category: string) => {
+    router.push(`/product_directory?category=${encodeURIComponent(category)}`);
+  };
   const handleProductClick = (value: string) => {
-    router.push(`product_detail/${value}`)
+    router.push(`product_detail/${value}`);
   };
 
-  const handleStoreClick = (storeID :string) => {
-    router.push('/store_profile/'+storeID);
+  const handleStoreClick = (storeID: string) => {
+    router.push("/store_profile/" + storeID);
   };
 
   const cityOptions: SelectOption[] = [
@@ -142,28 +148,47 @@ export default function ListingPageHeader() {
   const selectedOption: SelectOption =
     selectedCity != null
       ? {
-        value: selectedCity.id,
-        label: selectedCity.name,
-        name: selectedCity.name,
-        country: "India",
-      }
+          value: selectedCity.id,
+          label: selectedCity.name,
+          name: selectedCity.name,
+          country: "India",
+        }
       : cityOptions[0];
+
+  function highlightMatch(text: string, query: string) {
+    if (!query) return text;
+
+    const index = text.toLowerCase().indexOf(query.toLowerCase());
+    if (index === -1) return text;
+
+    return (
+      <>
+        {text.slice(0, index)}
+        <span className="font-semibold text-black">
+          {text.slice(index, index + query.length)}
+        </span>
+        <span className="text-gray-400">
+          {text.slice(index + query.length)}
+        </span>
+      </>
+    );
+  }
 
   return (
     <div>
       <header className="bg-white shadow h-[70px]">
         <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-20 h-full">
           <div className="flex justify-between items-center">
-            <div className={`${rubik.className} text-[32px] font-bold cursor-pointer`}
-            onClick={()=>router.push("/homepage")}>
+            <div
+              className={`${rubik.className} text-[32px] font-bold cursor-pointer`}
+              onClick={() => router.push("/homepage")}
+            >
               Attirelly
             </div>
-            
-
           </div>
-<div className="flex h-full items-center">
-             <MenWomenNavbar/>
-            </div>
+          <div className="flex h-full items-center">
+            <MenWomenNavbar />
+          </div>
           <div className="flex justify-center">
             <div className="flex border border-gray-300 rounded-full items-center gap-4 w-full max-w-[600px] px-4 relative">
               <div className="flex items-center gap-2 w-[250px] h-[24px]">
@@ -223,35 +248,60 @@ export default function ListingPageHeader() {
                     setTempQuery(e.target.value);
                   }}
                   onKeyDown={handleKeyDown}
-                  onFocus={()=>setSearchFocus(true)}
-                  
+                  onFocus={() => setSearchFocus(true)}
                 />
 
                 {showDropdown && (
                   <div className="absolute top-10 mt-2 bg-white rounded-md shadow-lg max-h-[480px] overflow-y-auto z-50 max-w-[500px] w-full">
-                    {(storeSuggestions.length > 0 ||
-                      productSuggestions.length > 0) && (
-                        <div className="px-4 py-3">
-                          <div className="text-gray-500 text-sm mb-2">
-                            SUGGESTIONS
+                    <div className="flex flex-col gap-1">
+                      {[...storeSuggestions, ...productSuggestions].map(
+                        (suggestion, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center gap-3 py-3 px-4 rounded-md hover:bg-gray-100 cursor-pointer"
+                            onClick={() => handleSuggestionClick(suggestion)}
+                          >
+                            <img
+                              src="/search.png"
+                              alt="search"
+                              className="w-4 h-4 opacity-80"
+                            />
+                            <span className="text-sm">
+                              {highlightMatch(suggestion, tempQuery)}
+                            </span>
                           </div>
-                          <div className="flex gap-2 flex-wrap">
-                            {[...storeSuggestions, ...productSuggestions].map(
-                              (suggestion, i) => (
-                                <button
-                                  key={i}
-                                  className="text-sm bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200"
-                                  onClick={() => handleSuggestionClick(suggestion)}
-                                >
-                                  {suggestion}
-                                </button>
-                              )
-                            )}
-                          </div>
-                        </div>
+                        )
                       )}
+                    </div>
 
-                    {products.length > 0 && (
+                    {/* categories */}
+                    {categories.length > 0 && (
+                      <div className="px-4 py-3">
+                        <div className="text-gray-500 text-sm mb-2">
+                          CATEGORIES
+                        </div>
+                        <div className="flex gap-2 flex-wrap">
+                          {categories.map((cat, i) => (
+                            <button
+                              key={i}
+                              className={
+                                "flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all bg-gray-100 hover:bg-gray-200"
+                              }
+                              onClick={() =>
+                                handleCategoryClick(cat.subcategory3)
+                              }
+                            >
+                              {cat?.subcategory3}
+                              <span className="text-lg">↗</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* products and stores */}
+
+                    {/* {products.length > 0 && (
                       <div className="px-4 py-3">
                         <div className="text-gray-500 text-sm mb-2">
                           PRODUCTS
@@ -260,7 +310,9 @@ export default function ListingPageHeader() {
                           <div
                             key={i}
                             className="flex items-center gap-3 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
-                            onClick={() => handleProductClick(product.product_id)}
+                            onClick={() =>
+                              handleProductClick(product.product_id)
+                            }
                           >
                             <img
                               src={product.image || "/placeholder.png"}
@@ -273,7 +325,7 @@ export default function ListingPageHeader() {
                           </div>
                         ))}
                       </div>
-                    )}
+                    )} */}
 
                     {stores.length > 0 && (
                       <div className="p-4">
@@ -285,7 +337,7 @@ export default function ListingPageHeader() {
                             onClick={() => handleStoreClick(store.store_id)}
                           >
                             <img
-                              src={store.profile_image || "/placeholder.png"}
+                              src={store.profile_image || "/globe.svg"}
                               alt={store.store_name}
                               className="w-10 h-10 rounded-md object-cover bg-gray-200"
                             />
@@ -327,9 +379,7 @@ export default function ListingPageHeader() {
                 >
                   Archit
                 </span>
-
               </div>
-
             </div>
           </div>
         </div>
@@ -342,5 +392,3 @@ export default function ListingPageHeader() {
     </div>
   );
 }
-
-
