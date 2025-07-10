@@ -748,7 +748,7 @@ export default function Home() {
           store_types: hit.store_types || [],
           genders: hit.genders || [],
           curr_section: hit.curr_section || 0,
-          created_at: hit.created_at? new Date(hit.created_at) :  undefined,
+          created_at: hit.created_at ? new Date(hit.created_at) : undefined,
           outfits: hit.outfits || [],
           status: hit.active,
         }));
@@ -1020,6 +1020,25 @@ export default function Home() {
                 >
                   {showFilters ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                 </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2 max-w-xs">
+                {Object.entries(facets).map(([key, values]) =>
+                  values.map((value) => (
+                    <div
+                      key={`${key}-${value}`}
+                      className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-sm text-gray-800 rounded-full"
+                    >
+                      <span>{value}</span>
+                      <button
+                        onClick={() => handleFacetChange(key, value.toLocaleString())}
+                        className="text-gray-500 hover:text-red-500"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))
+                )}
               </div>
 
               {showFilters && Object.keys(facets).map((facet) => (
