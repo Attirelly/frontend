@@ -940,7 +940,7 @@ export default function Home() {
   //      console.log(locationUrl);
   //      window.open(locationUrl, '_blank', 'noopener,noreferrer');
   //   };
-  console.log("bas teri bas teri", selectedFacets, selectedFilters);
+  console.log("bas teri bas teri", selectedFacets, selectedFilters, facets);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="w-full max-w-7xl mx-auto p-6">
