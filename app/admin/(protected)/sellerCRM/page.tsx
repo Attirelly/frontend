@@ -1024,28 +1024,28 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap gap-2 max-w-xs">
-                {Object.keys(selectedFacets).map(([key, value]) =>
-                  // values.map((value) => 
-                    {
-                    console.log("facets",facets);
-                    console.log("values",value);
-                    console.log("value",value);
-                    return(
-                    <div
-                      key={`${key}-${value}`}
-                      className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-sm text-gray-800 rounded-full"
-                    >
-                      <span>{value}</span>
-                      <button
-                        onClick={() => handleFacetChange(key, value)}
-                        className="text-gray-500 hover:text-red-500"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  )
-                  })
-                }
+                {Object.keys(selectedFacets).length > 0 && (
+                  <div className="mb-6 flex flex-wrap gap-2">
+                    {Object.entries(selectedFacets).flatMap(([facet, values]) =>
+                      values.map((value) => (
+                        <div
+                          key={`${facet}-${value}`}
+                          className="flex items-center text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
+                        >
+                          <span className="capitalize mr-1">
+                            {facet.replace('_', ' ')}: {value}
+                          </span>
+                          <button
+                            onClick={() => handleFacetChange(facet, value)}
+                            className="ml-1 text-blue-500 hover:text-blue-700 focus:outline-none"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
               </div>
 
               {showFilters && Object.keys(facets).map((facet) => (
