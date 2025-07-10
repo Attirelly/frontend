@@ -1044,7 +1044,7 @@ export default function Home() {
                     </div>
                   )
                   })
-                )}
+                }
               </div>
 
               {showFilters && Object.keys(facets).map((facet) => (
