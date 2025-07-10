@@ -1023,10 +1023,11 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap gap-2 max-w-xs">
-                {Object.entries(facets).map(([key, values]) =>
-                  values.map((value) => {
+                {Object.keys(facets).map(([key, value]) =>
+                  // values.map((value) => 
+                    {
                     console.log("facets",facets);
-                    console.log("values",values);
+                    console.log("values",value);
                     console.log("value",value);
                     return(
                     <div
@@ -1035,7 +1036,7 @@ export default function Home() {
                     >
                       <span>{value}</span>
                       <button
-                        onClick={() => handleFacetChange(key, value.toLocaleString())}
+                        onClick={() => handleFacetChange(key, value)}
                         className="text-gray-500 hover:text-red-500"
                       >
                         ×
