@@ -6,9 +6,10 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios';
 
+type RoleType = 'admin' | 'user' | 'super_admin';
 type Props = {
-  role?: 'admin' | 'user' | 'super_admin'; // optional prop to check role
-  children: React.ReactNode;   // components inside this wrapper
+  role?: RoleType | RoleType[]; // single or multiple allowed roles
+  children: React.ReactNode;
 };
 
 export default function ProtectedRoute({ role, children }: Props) {
@@ -34,23 +35,48 @@ export default function ProtectedRoute({ role, children }: Props) {
           setSellerEmail(user.email);
         }
         setUser(user);
-        console.log(user);
+        console.log('Authenticated user:',user);
 
-        if (role && user.role !== role) {
-          // router.replace('/unauthorized');
-          alert("Unauthorized");
-           router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
-        } else {
-          setIsReady(true);
+      //   if (role && user.role !== role) {
+      //     // router.replace('/unauthorized');
+      //     alert("Unauthorized");
+      //      router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
+      //   } else {
+      //     setIsReady(true);
+      //   }
+      // } catch (err) {
+      //   // Not authenticated or token invalid
+      //   router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
+      // }
+      if (role) {
+          const allowedRoles = Array.isArray(role) ? role : [role];
+          if (!allowedRoles.includes(user.role)) {
+            alert('Unauthorized access');
+            const fallback = {
+              admin: '/seller_signin',
+              user: '/customer_signin',
+              super_admin: '/admin/login'
+            }[user.role as RoleType] || '/';
+            router.replace(fallback);
+            return;
+          }
         }
+
+        // Mark as ready if no role restriction or valid role
+        setIsReady(true);
+
       } catch (err) {
-        // Not authenticated or token invalid
-        router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
+        const fallback = {
+          admin: '/seller_signin',
+          user: '/customer_signin',
+          super_admin: '/admin/login'
+        }[(role && typeof role === 'string') ? role : 'user'] || '/';
+        router.replace(fallback);
       }
     };
 
     verifyUser();
-  }, [router, role]);
+  }, []);
 
   if(!isReady){
     return <LoadingSpinner />;

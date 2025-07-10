@@ -748,7 +748,7 @@ export default function Home() {
           store_types: hit.store_types || [],
           genders: hit.genders || [],
           curr_section: hit.curr_section || 0,
-          created_at: hit.created_at? new Date(hit.created_at) :  undefined,
+          created_at: hit.created_at ? new Date(hit.created_at) : undefined,
           outfits: hit.outfits || [],
           status: hit.active,
         }));
@@ -932,6 +932,15 @@ export default function Home() {
     return sortConfig.direction === 'ascending' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />;
   };
 
+  // const handleClickView = (id: string) => {
+  //     console.log(id);
+  // };
+
+  // const handleLocationRoute = () => {
+  //      console.log(locationUrl);
+  //      window.open(locationUrl, '_blank', 'noopener,noreferrer');
+  //   };
+  console.log("bas teri bas teri", selectedFacets);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="w-full max-w-7xl mx-auto p-6">
@@ -1012,6 +1021,31 @@ export default function Home() {
                 >
                   {showFilters ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                 </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2 max-w-xs">
+                {Object.keys(selectedFacets).length > 0 && (
+                  <div className="mb-6 flex flex-wrap gap-2">
+                    {Object.entries(selectedFacets).flatMap(([facet, values]) =>
+                      values.map((value) => (
+                        <div
+                          key={`${facet}-${value}`}
+                          className="flex items-center text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
+                        >
+                          <span className="capitalize mr-1">
+                            {facet.replace('_', ' ')}: {value}
+                          </span>
+                          <button
+                            onClick={() => handleFacetChange(facet, value)}
+                            className="ml-1 text-blue-500 hover:text-blue-700 focus:outline-none"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
               </div>
 
               {showFilters && Object.keys(facets).map((facet) => (
@@ -1244,8 +1278,11 @@ export default function Home() {
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <Link href={`/store/${seller.id}`} target="blank" rel="noopener noreferrer">
-                                <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                              {/* <Link href={`/seller_dashboard/${seller.id}`} target="blank" rel="noopener noreferrer"> */}
+                              <Link href={`/seller_dashboard?storeId=${encodeURIComponent(seller.id ?? "")}`} target="blank" rel="noopener noreferrer">
+                                <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                // onClick={() => handleClickView(seller.id)}
+                                >
                                   <Eye className="w-4 h-4 mr-1" />
                                   View
                                 </button>
