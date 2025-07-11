@@ -787,7 +787,7 @@ export default function Home() {
         );
   
         const data = res.data;
-        console.log("algolia", data);
+        console.log("algoliaa", data);
         setTotalItems(data.total_hits);
         setTotalPages(data.total_pages);
         const sellers: Seller[] = data.hits.map((hit: any) => ({
