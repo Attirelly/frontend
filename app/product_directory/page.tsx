@@ -187,8 +187,6 @@ export default function ProductDirectoryPage({
 }) {
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Product Directory</h1>
-
       {/* Pass params as props */}
       <ProductListPage searchParams = {searchParams}/>
       {/* <StoreProfilePageClient searchParams={searchParams} /> */}
