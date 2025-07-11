@@ -40,7 +40,7 @@ export default function StoreListingPage() {
   }
 };
 
-console.log("dikkat ki baat hai", storeType, process.env.NEXT_PUBLIC_RETAIL_STORES_ID);
+console.log("dikkat ki baat hai lol", storeType, process.env.NEXT_PUBLIC_RETAIL_STORES_ID);
 
   return (
     <div className="bg-[#FFFFFF]">
