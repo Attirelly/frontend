@@ -290,7 +290,7 @@ export default function ProductDetail() {
                       ₹{selectedVariant?.mrp}
                     </p>
                     <p className="text-[20px] font-semibold text-[#00AA63] tracking-normal">
-                      ₹{selectedVariant?.discount}% Off
+                      {selectedVariant?.discount}% Off
                     </p>
                   </>
                 )}
