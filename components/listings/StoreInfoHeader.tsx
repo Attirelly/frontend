@@ -55,14 +55,13 @@ export default function StoreInfoPage({
                     </div>
 
                     {/* Location */}
-                    <div className="flex items-center gap-2 mt-6">
+                    <div className="flex items-center gap-2 mt-6 cursor-pointer"
+                    onClick={handleLocationRoute}>
                         <Image
                             src="/ListingPageHeader/location_pin_black.svg"
                             alt="Location"
                             width={16}
                             height={16}
-                            className="cursor-pointer"
-                            onClick={handleLocationRoute}
                         />
                         <span className={`${manrope.className} text-sm`}
                             style={{ fontWeight: 400 }}>{area}, {city}</span>
@@ -74,10 +73,10 @@ export default function StoreInfoPage({
             {/* Right: Store Info (expand as needed) */}
             <div className={`${roboto.className} flex flex-col`}
             >
-                <div className="flex justify-between">
-                    <h2 className="text-xl mb-2"
+                <div className="flex justify-between items-start flex-wrap">
+                    <h2 className="text-xl mb-2 max-w-[60%]"
                         style={{ fontWeight: 500 }}>{storeName}</h2>
-                    <div className="flex gap-2.5">
+                    <div className="flex gap-2.5 flex-shrink-0">
                         <button className="flex border rounded-full items-center justify-center px-4">
                             <Image
                                 src="/ListingPageHeader/phone.svg"
@@ -101,16 +100,22 @@ export default function StoreInfoPage({
 
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-6">
-                        <div className="flex gap-14">
-                            {post_count?.length === 0 ? <div></div> : <div className="flex flex-col">
+                        <div className="flex gap-12">
+                            {post_count?.length === 0 ? <div></div> : <div className="flex gap-1">
                                 <h2 style={{ fontWeight: 700 }}>{post_count}</h2>
                                 <span style={{ fontWeight: 400 }}>Posts</span>
                             </div>}
-                            {instagramFollowers?.length === 0 ? <div></div> : <div className="flex flex-col">
+                            {instagramFollowers?.length === 0 ? <div></div> : <div className="flex gap-1">
+                                <Image
+                                    src='/OnboardingSections/instagram.svg'
+                                    alt='Instagram'
+                                    width={20}
+                                    height={20}
+                                />
                                 <h2 style={{ fontWeight: 700 }}>{instagramFollowers}</h2>
                                 <span style={{ fontWeight: 400 }}>Followers</span>
                             </div>}
-                            {product_count?.length === 0 ? <div></div> :<div className="flex flex-col">
+                            {product_count?.length === 0 ? <div></div> :<div className="flex gap-1">
                                 <h2 style={{ fontWeight: 700 }}>{product_count}</h2>
                                 <span style={{ fontWeight: 400 }}>Products</span>
                             </div>}
