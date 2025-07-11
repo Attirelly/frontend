@@ -478,7 +478,7 @@ export default function ProductDetail() {
           <span
             className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
             style={{ fontWeight: 500 }}
-            onClick={() => {router.push('/store_profile'+storeBasicInfo?.store_id)}}
+            onClick={() => {router.push('/store_profile/'+product?.store_id)}}
           >
             View All
           </span>
