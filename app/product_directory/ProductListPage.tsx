@@ -49,7 +49,7 @@ export default function ProductListPage({
         <div className="mt-10">
           <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
-            defaultValue="Designer Label"
+            defaultValue="Retail Brand"
             context="product"
           />
         </div>
