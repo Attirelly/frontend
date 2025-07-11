@@ -9,6 +9,8 @@ const defaultCity: City = {
   // Add any other fields your `City` type requires
 };
 
+
+
 type HeaderState = {
     city: City|null;
     setCity: (city: City|null) => void;
