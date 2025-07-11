@@ -15,7 +15,7 @@ import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import ListingFooter from "@/components/listings/ListingFooter";
 import { api } from "@/lib/axios";
 import { Brand, Color, Product, Size, Variant } from "./type";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 // import { useSellerStore } from "@/store/sellerStore";
 import ShowMoreProducts from "@/components/curations/ShowMoreProducts";
 import { roboto, manrope } from "@/font";
@@ -24,6 +24,7 @@ import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 export default function ProductDetail() {
   const params = useParams();
   const product_id = params?.product_id as string;
+  const router = useRouter()
 
   // const { setStoreId } = useSellerStore();
   const [signIn, setSignIn] = useState(false);
@@ -477,7 +478,7 @@ export default function ProductDetail() {
           <span
             className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
             style={{ fontWeight: 500 }}
-            onClick={() => console.log("tmkc")}
+            onClick={() => {router.push('/store_profile'+storeBasicInfo?.store_id)}}
           >
             View All
           </span>
