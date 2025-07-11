@@ -3,13 +3,10 @@ import DynamicFilter from "@/components/listings/DynamicFilter";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import TwoOptionToggle from "@/components/listings/OnlineOffline";
 
-import StoreCard from "@/components/listings/StoreCard";
 import StoreContainerPage from "@/components/listings/StoreContainer";
 import StoreTypeTabs from "@/components/listings/StoreTypes";
-import { api } from "@/lib/axios";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import {manrope} from "@/font";
 
 export default function StoreListingPage() {
@@ -18,17 +15,23 @@ export default function StoreListingPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const getHeading = () => {
-  if (storeType && query && city) {
-    return `Showing ${storeType.store_type} for ${query} in ${city.name}`;
-  } else if (storeType && query) {
-    return `Showing ${storeType.store_type} for ${query}`;
-  } else if (storeType && city) {
-    return `Showing ${storeType.store_type} in ${city.name}`;
-  } else if (query && city) {
+  // if (storeType && query && city) {
+  //   return `Showing ${storeType.store_type} for ${query} in ${city.name}`;
+  // } 
+  // else if (storeType && query) {
+  //   return `Showing ${storeType.store_type} for ${query}`;
+  // } 
+  // else if (storeType && city) {
+  //   return `Showing ${storeType.store_type} in ${city.name}`;
+  // } 
+  // else 
+  if (query && city) {
     return `Showing stores for ${query} in ${city.name}`;
-  } else if (storeType) {
-    return `Showing ${storeType.store_type}`;
-  } else if (query) {
+  } 
+  // else if (storeType) {
+  //   return `Showing ${storeType.store_type}`;
+  // } 
+  else if (query) {
     return `Showing stores for ${query}`;
   } else if (city) {
     return `Showing stores in ${city.name}`;
@@ -45,7 +48,8 @@ console.log(storeType);
       <div className="mx-45 mt-8 gap-10 flex flex-col">
        {/* <h1 className="text-2xl font-bold text-gray-800">{getHeading()}</h1> */}
        <h1 className={`${manrope.className} text-4xl`} style={{fontWeight:500}}>{getHeading()}</h1>
-        <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID || ''}/>
+        {/* <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID || ''}/> */}
+        <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_STORES_ID || ''}/>
         <div className="border-t border-gray-300"/>
         <div className="grid grid-cols-[1fr_3fr] gap-3">
           {/* <div className="self-start"> */}

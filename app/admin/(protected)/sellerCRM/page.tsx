@@ -620,6 +620,8 @@ import { Search, Upload, Download, Users, Filter, ChevronDown, ChevronUp, Eye, C
 import { api } from "@/lib/axios";
 import Link from "next/link";
 import { toast } from "sonner";
+import SortBySellerCRM from "@/components/admin/SortBySellerCRM";
+import { useAdminStore } from "@/store/admin_store";
 
 type Seller = {
   id?: string;
@@ -660,9 +662,11 @@ type QueryParams = {
   filters?: {
     [key: string]: string[];
   };
+  sort_by:string
 };
 
 export default function Home() {
+  const { sortBy } = useAdminStore();
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
   
@@ -783,7 +787,7 @@ export default function Home() {
         const res = await api.get(
           `/search/search_store?query=${params.query || ""}&page=${
             (params.page || 1) - 1
-          }&limit=${params.limit || 10}&facetFilters=${algoia_facets}`
+          }&limit=${params.limit || 10}&facetFilters=${algoia_facets}&sort_by=${params.sort_by}`
         );
   
         const data = res.data;
@@ -876,8 +880,9 @@ export default function Home() {
       sortField: sortConfig?.key,
       sortDirection: sortConfig?.direction === "ascending" ? "asc" : "desc",
       filters: selectedFacets,
+      sort_by: sortBy,
     });
-  }, [debouncedSearch, currentPage, itemsPerPage, sortConfig, selectedFacets]);
+  }, [debouncedSearch, currentPage, itemsPerPage, sortConfig, selectedFacets, sortBy]);
 
   // Handle search
   const handleSearch = (query: string) => {
@@ -1221,6 +1226,7 @@ export default function Home() {
                     <option value="50">50 per page</option>
                   </select>
                 </div>
+                <SortBySellerCRM/>
               </div>
 
               {/* Table */}
