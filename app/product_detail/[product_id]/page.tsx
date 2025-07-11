@@ -57,36 +57,6 @@ export default function ProductDetail() {
   };
 
   useEffect(() => {
-    async function fetchStoreBasicInfo() {
-      try {
-        const response = await api.get(
-          `/stores/store_basic?store_id=${product?.store_id}`
-        );
-        setStoreBasicInfo(response.data);
-      } catch (error) {
-        console.error("Failed to fetch store basic info", error);
-      }
-    }
-
-    if (product?.store_id) {
-      fetchStoreBasicInfo();
-    }
-  }, [product?.store_id]);
-
-  const sendToWhatsApp = async () => {
-    setSignIn(true);
-    try {
-      const phoneNumber = storeBasicInfo?.whatsapp_number; // Replace with your WhatsApp number
-      const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
-      const encodedMessage = encodeURIComponent(message);
-      const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-      console.log(url);
-      window.open(url, "_blank");
-    } catch (error) {
-      console.error("Failed to fetch product details", error);
-    }
-  };
-  useEffect(() => {
     async function fetchProductDetails() {
       try {
         const response = await api.get(`/products/${product_id}`);
@@ -106,6 +76,41 @@ export default function ProductDetail() {
 
     fetchProductDetails();
   }, [product_id]);
+
+  useEffect(() => {
+    async function fetchStoreBasicInfo() {
+      try {
+        const response = await api.get(
+          `/stores/store_basic?store_id=${product?.store_id}`
+        );
+          console.log("hihi huhu", response.data);
+        setStoreBasicInfo(response.data);
+      } catch (error) {
+        console.error("Failed to fetch store basic info", error);
+      }
+    }
+
+    if (product?.store_id) {
+      fetchStoreBasicInfo();
+    }
+  }, [product]);
+
+  console.log("system hi system", storeBasicInfo);
+
+  const sendToWhatsApp = async () => {
+    setSignIn(true);
+    try {
+      const phoneNumber = storeBasicInfo?.whatsapp_number; // Replace with your WhatsApp number
+      const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
+      const encodedMessage = encodeURIComponent(message);
+      const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+      console.log(url);
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error("Failed to fetch product details", error);
+    }
+  };
+  
 
   const updateVariantBySelection = (color: Color | null, size: Size | null) => {
     if (!color || !size || !product) return;
@@ -251,10 +256,10 @@ export default function ProductDetail() {
                 </div>
               )}
               <p className="text-[32px] font-medium leading-9.5 tracking-normal">
-                By {storeBasicInfo.store_name}
+                By {storeBasicInfo?.store_name}
               </p>
               <h1 className="text-2xl text-[#7D7D7D] font-medium tracking-tighter mt-2">
-                {product.title}
+                {product?.title || ''}
               </h1>
 
               <div className="flex items-center gap-4 mt-4">
@@ -365,7 +370,7 @@ export default function ProductDetail() {
                 {!isProductDetailCollapse && (
                   <div>
                     <ul className="grid grid-cols-2 gap-4">
-                      {product.attributes.map((item, idx) => (
+                      {product?.attributes.map((item, idx) => (
                         <li key={idx} className="flex flex-col">
                           <div className="text-sm font-40 text-[#766874]">
                             {item.name}
@@ -414,7 +419,7 @@ export default function ProductDetail() {
 
                 {!isProductDescriptionCollapse && (
                   <div>
-                    <div>{product.description}</div>
+                    <div>{product?.description}</div>
                   </div>
                 )}
               </div>
@@ -443,7 +448,8 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-      <div className="w-300 flex flex-col mx-auto">
+      {product && (
+<div className="w-300 flex flex-col mx-auto">
         <hr
           className="border-t border-transparent"
           style={{
@@ -452,9 +458,10 @@ export default function ProductDetail() {
             borderImageSlice: 1,
           }}
         />
+        
         <div className={`${roboto.className} flex mt-16 justify-between`}>
           <span className="text-3xl" style={{ fontWeight: 600 }}>
-            More from {product.title}
+            More from {storeBasicInfo?.store_name}
           </span>
           <span
             className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
@@ -466,10 +473,12 @@ export default function ProductDetail() {
         </div>
 
         <div className="relative mt-6">
-          <ShowMoreProducts store_id={product.store_id} limit={5} />
+          <ShowMoreProducts store_id={product?.store_id} limit={5} />
           <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
         </div>
       </div>
+      )}
+      
 
       <div className="mt-10">
         <ListingFooter />
