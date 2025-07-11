@@ -615,10 +615,11 @@
 
 
 "use client";
-import { useState, useEffect, useMemo, ChangeEvent } from "react";
+import { useState, useEffect, useMemo, ChangeEvent, useRef } from "react";
 import { Search, Upload, Download, Users, Filter, ChevronDown, ChevronUp, Eye, Check, X } from "lucide-react";
 import { api } from "@/lib/axios";
 import Link from "next/link";
+import { toast } from "sonner";
 
 type Seller = {
   id?: string;
@@ -649,9 +650,22 @@ type SortConfig = {
 
 type FacetEntry = [string, number];
 type Facets = { [key: string]: FacetEntry[] };
+
+type QueryParams = {
+  query?: string;
+  page?: number;
+  limit?: number;
+  sortField?: string;
+  sortDirection?: "asc" | "desc";
+  filters?: {
+    [key: string]: string[];
+  };
+};
+
 export default function Home() {
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
+  
   const [search, setSearch] = useState("");
   const [selectedFacets, setSelectedFacets] = useState<{
     [key: string]: string[];
@@ -661,10 +675,27 @@ export default function Home() {
   const [selectedSellerIds, setSelectedSellerIds] = useState<string[]>([]);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
+  const [totalItems, setTotalItems] = useState(0);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const buildFacetFilters = (facets: Record<string, string[]>): string => {
+    const filters: string[][] = [];
+
+    for (const key in facets) {
+      if (facets[key].length > 0) {
+        filters.push(facets[key].map((value) => `${key}:${value}`));
+      }
+    }
+
+    console.log(filters);
+    const encoded = encodeURIComponent(JSON.stringify(filters));
+    return encoded;
+  };
 
   const isSelected = (id: string) => selectedSellerIds.includes(id);
 
@@ -727,17 +758,38 @@ export default function Home() {
     }
   };
 
-  // Fetch sellers data
-  useEffect(() => {
-    const fetchSellers = async (query: string) => {
+  // Fetch sellers data with pagination and filters
+   const fetchSellers = async (params: QueryParams) => {
       setLoading(true);
       try {
-        const res = await api.get(
-          `/search/search_store?query=${query}&facets=city&facets=area&facets=store_types&facets=outfits&facets=genders&facets=price_ranges&facets=age_groups&facets=rental`
+        // Convert filters to query string
+        const filterParams = Object.entries(params.filters || {}).map(
+          ([key, values]) =>
+            values
+              .map((value) => `filters[${key}]=${encodeURIComponent(value)}`)
+              .flat()
+              .join("&")
         );
+  
+        const sortParams = params.sortField
+          ? `&sortField=${params.sortField}&sortDirection=${
+              params.sortDirection || "asc"
+            }`
+          : "";
+  
+        const algoia_facets = buildFacetFilters(selectedFacets);
+        console.log("facets", algoia_facets);
+  
+        const res = await api.get(
+          `/search/search_store?query=${params.query || ""}&page=${
+            (params.page || 1) - 1
+          }&limit=${params.limit || 10}&facetFilters=${algoia_facets}`
+        );
+  
         const data = res.data;
-        console.log(data)
-
+        console.log("algolia", data);
+        setTotalItems(data.total_hits);
+        setTotalPages(data.total_pages);
         const sellers: Seller[] = data.hits.map((hit: any) => ({
           id: hit.id,
           name: hit.store_name,
@@ -752,10 +804,10 @@ export default function Home() {
           outfits: hit.outfits || [],
           status: hit.active,
         }));
-
+  
         setSellers(sellers);
-        setFilteredSellers(sellers);
-
+        setTotalItems(data.total || data.hits.length);
+        console.log("algolia", data);
         const newFacets: Facets = {
           area: Object.entries(data.facets?.area || {}),
           city: Object.entries(data.facets?.city || {}),
@@ -763,7 +815,7 @@ export default function Home() {
           genders: Object.entries(data.facets?.genders || {}),
           outfits: Object.entries(data.facets?.outfits || {}),
         };
-
+  
         setFacets(newFacets);
       } catch (error) {
         console.error("Failed to fetch sellers:", error);
@@ -772,8 +824,60 @@ export default function Home() {
       }
     };
 
-    fetchSellers(debouncedSearch);
-  }, [debouncedSearch]);
+  // Fetch sellers data
+  useEffect(() => {
+    // const fetchSellers = async (query: string) => {
+    //   setLoading(true);
+    //   try {
+    //     const res = await api.get(
+    //       `/search/search_store?query=${query}&page=${currentPage - 1}&limit=${itemsPerPage}&facets=city&facets=area&facets=store_types&facets=outfits&facets=genders&facets=price_ranges&facets=age_groups&facets=rental`
+    //     );
+    //     const data = res.data;
+    //     console.log(data)
+
+    //     const sellers: Seller[] = data.hits.map((hit: any) => ({
+    //       id: hit.id,
+    //       name: hit.store_name,
+    //       email: hit.registered_email,
+    //       area: hit.area,
+    //       address: hit.address,
+    //       city: hit.city,
+    //       store_types: hit.store_types || [],
+    //       genders: hit.genders || [],
+    //       curr_section: hit.curr_section || 0,
+    //       created_at: hit.created_at ? new Date(hit.created_at) : undefined,
+    //       outfits: hit.outfits || [],
+    //       status: hit.active,
+    //     }));
+
+    //     setSellers(sellers);
+    //     setFilteredSellers(sellers);
+
+    //     const newFacets: Facets = {
+    //       area: Object.entries(data.facets?.area || {}),
+    //       city: Object.entries(data.facets?.city || {}),
+    //       store_types: Object.entries(data.facets?.store_types || {}),
+    //       genders: Object.entries(data.facets?.genders || {}),
+    //       outfits: Object.entries(data.facets?.outfits || {}),
+    //     };
+
+    //     setFacets(newFacets);
+    //   } catch (error) {
+    //     console.error("Failed to fetch sellers:", error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+
+    fetchSellers({
+      query: debouncedSearch,
+      page: currentPage,
+      limit: itemsPerPage,
+      sortField: sortConfig?.key,
+      sortDirection: sortConfig?.direction === "ascending" ? "asc" : "desc",
+      filters: selectedFacets,
+    });
+  }, [debouncedSearch, currentPage, itemsPerPage, sortConfig, selectedFacets]);
 
   // Handle search
   const handleSearch = (query: string) => {
@@ -822,7 +926,10 @@ export default function Home() {
   // Handle CSV upload
   const handleUploadCSV = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      toast.error("Please select a CSV file");
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = function (event) {
@@ -917,13 +1024,13 @@ export default function Home() {
   }, [filteredSellers, sortConfig]);
 
   // Pagination logic
-  const totalItems = sortedSellers.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedSellers.slice(indexOfFirstItem, indexOfLastItem);
+  // const totalItems = sortedSellers.length;
+  // const totalPages = Math.ceil(totalItems / itemsPerPage);
+  // const indexOfLastItem = currentPage * itemsPerPage;
+  // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // const currentItems = sortedSellers.slice(indexOfFirstItem, indexOfLastItem);
 
-  console.log(currentItems)
+  // console.log(currentItems)
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   // Get sort direction indicator
@@ -1096,7 +1203,9 @@ export default function Home() {
               <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-600">
-                    Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalItems)} of {totalItems} sellers
+                    Showing {(currentPage - 1) * itemsPerPage + 1}-
+                    {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
+                    {totalItems} sellers
                   </span>
                   <select
                     value={itemsPerPage}
@@ -1130,13 +1239,15 @@ export default function Home() {
                             onChange={(e) =>
                               setSelectedSellerIds(
                                 e.target.checked
-                                  ? currentItems.map((s) => s.id!).filter(Boolean)
+                                  ? sellers.map((s) => s.id!).filter(Boolean)
                                   : []
                               )
                             }
                             checked={
                               selectedSellerIds.length > 0 &&
-                              currentItems.every((seller) => selectedSellerIds.includes(seller.id!))
+                              sellers.every((seller) =>
+                                selectedSellerIds.includes(seller.id!)
+                              )
                             }
                             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                           />
@@ -1198,7 +1309,7 @@ export default function Home() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {currentItems.length === 0 ? (
+                      {sellers.length === 0 ? (
                         <tr>
                           <td colSpan={10} className="px-6 py-12 text-center text-gray-500">
                             <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
@@ -1207,7 +1318,7 @@ export default function Home() {
                           </td>
                         </tr>
                       ) : (
-                        currentItems.map((seller) => (
+                        sellers.map((seller) => (
                           <tr key={seller.id} className="hover:bg-gray-50 transition-colors">
                             <td className="px-6 py-4">
                               <input
