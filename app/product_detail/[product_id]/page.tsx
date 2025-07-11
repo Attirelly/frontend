@@ -110,12 +110,28 @@ export default function ProductDetail() {
   }, [product_id]);
 
   const updateVariantBySelection = (color: Color | null, size: Size | null) => {
-    if (!color || !size || !product) return;
-
-    const matched = product.variants.find(
-      (v) =>
-        v.color.color_id === color.color_id && v.size.size_id === size.size_id
-    );
+    if (!product) return;
+    if(!color && !size) return ; 
+    let matched  ; 
+    if(color &&  size ){
+      matched = product.variants.find(
+        (v) =>
+          v.color.color_id === color.color_id && v.size.size_id === size.size_id
+      );
+    }
+    else if(color){
+      matched = product.variants.find(
+        (v) =>
+          v.color.color_id === color?.color_id 
+      );
+    }
+    else{
+      matched = product.variants.find(
+        (v) =>
+          v.size.size_id === size?.size_id 
+      );
+    }
+    
 
     if (matched) {
       setSelectedVariant(matched);
@@ -153,7 +169,7 @@ export default function ProductDetail() {
     setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  if (!product && !selectedVariant && !selectedColor && !selectedSize) {
+  if (!product) {
     return <div className="p-4">Loading...</div>;
   }
 
@@ -341,7 +357,7 @@ export default function ProductDetail() {
 
               {/* WhatsApp Button */}
               <button
-                className="w-full h-15 p-5 bg-[#00AA63] text-white flex items-center justify-center gap-6 rounded text-2xl hover:bg-green-700 transition"
+                className="w-full mt-5 h-15 p-5 bg-[#00AA63] text-white flex items-center justify-center gap-6 rounded text-2xl hover:bg-green-700 transition"
                 onClick={sendToWhatsApp}
               >
                 <FaWhatsapp size={36} />
