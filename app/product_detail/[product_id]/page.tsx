@@ -281,57 +281,61 @@ export default function ProductDetail() {
 
               {/* size collection */}
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xl font-medium">
-                    <span className="text-[#7D7D7D]">Size:</span>{" "}
-                    <span>{selectedSize.size_name}</span>
-                  </p>
-                  <button className="text-lg text-[#7D7D7D] underline">
-                    View Size Chart
-                  </button>
-                </div>
-                <div className="flex gap-3 flex-wrap mt-5">
-                  {sizes.map((size) => (
-                    <button
-                      key={size.size_id}
-                      onClick={() =>
-                        updateVariantBySelection(selectedColor, size)
-                      }
-                      className={`border rounded-sm w-19 h-10 ${
-                        selectedSize.size_id === size.size_id
-                          ? "border-black font-semibold bg-[#EBEBEB]"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {size.size_name}
+              {sizes.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xl font-medium">
+                      <span className="text-[#7D7D7D]">Size:</span>{" "}
+                      <span>{selectedSize?.size_name}</span>
+                    </p>
+                    <button className="text-lg text-[#7D7D7D] underline">
+                      View Size Chart
                     </button>
-                  ))}
+                  </div>
+                  <div className="flex gap-3 flex-wrap mt-5">
+                    {sizes.map((size) => (
+                      <button
+                        key={size.size_id}
+                        onClick={() =>
+                          updateVariantBySelection(selectedColor, size)
+                        }
+                        className={`border rounded-sm w-19 h-10 ${
+                          selectedSize?.size_id === size.size_id
+                            ? "border-black font-semibold bg-[#EBEBEB]"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        {size.size_name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Color selection */}
-              <div className="mt-5 mb-5">
-                <p className="text-lg font-medium">
-                  <span className="text-[#7D7D7D]">Available Color: </span>
-                </p>
-                <div className="flex gap-3 mt-5">
-                  {colors.map((color) => (
-                    <button
-                      key={color.color_id}
-                      className={`w-19 h-10 rounded-lg border-0.25  ${
-                        selectedColor.color_id === color.color_id
-                          ? "border-black"
-                          : "border-gray-300"
-                      }`}
-                      style={{ backgroundColor: color.hex_code || "#ccc" }}
-                      onClick={() =>
-                        updateVariantBySelection(color, selectedSize)
-                      }
-                    />
-                  ))}
+              {colors.length > 0 && (
+                <div className="mt-5 mb-5">
+                  <p className="text-lg font-medium">
+                    <span className="text-[#7D7D7D]">Available Color: </span>
+                  </p>
+                  <div className="flex gap-3 mt-5">
+                    {colors.map((color) => (
+                      <button
+                        key={color.color_id}
+                        className={`w-19 h-10 rounded-lg border-0.25  ${
+                          selectedColor?.color_id === color.color_id
+                            ? "border-black"
+                            : "border-gray-300"
+                        }`}
+                        style={{ backgroundColor: color.hex_code || "#ccc" }}
+                        onClick={() =>
+                          updateVariantBySelection(color, selectedSize)
+                        }
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* WhatsApp Button */}
               <button
