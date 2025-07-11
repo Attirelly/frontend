@@ -178,6 +178,7 @@
 
 // app/product_directory/page.tsx
 
+import { Suspense } from "react";
 import ProductListPage from "./ProductListPage";
 
 export default function ProductDirectoryPage({
@@ -185,11 +186,13 @@ export default function ProductDirectoryPage({
 }: {
   searchParams: { category?: string; search?: string };
 }) {
+  console.log("Search Params",searchParams);
   return (
-    <div>
-      {/* Pass params as props */}
-      <ProductListPage searchParams = {searchParams}/>
-      {/* <StoreProfilePageClient searchParams={searchParams} /> */}
-    </div>
+<Suspense>
+< ProductListPage/>
+</Suspense>
+      
+
+    
   );
 }

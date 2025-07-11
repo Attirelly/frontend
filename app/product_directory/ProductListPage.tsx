@@ -23,14 +23,31 @@ const STORE_TYPE_OPTIONS = [
   { store_type: "Designer Label", id: "1626d56a-5750-455a-a681-004c8a978718" },
 ];
 
-export default function ProductListPage({
-  searchParams,
-}: {
-  searchParams: { category?: string; search?: string };
-}) {
-  const { query, city, storeType, viewType } = useHeaderStore();
-  const { results } = useProductFilterStore();
+export default function ProductListPage(
+//   {
+//   searchParams,
+// }: {
+//   searchParams: { category?: string; search?: string };
+// }
+) {
+  const searchParams = useSearchParams();
+  const category = searchParams.get('category');
+  const search = searchParams.get('search');
+  const {setQuery, query, city, storeType, viewType } = useHeaderStore();
+  const { results, setCategory } = useProductFilterStore();
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    console.log(category, search);
+    if(category){
+      setCategory(category);
+    }
+    if(search){
+      setQuery(search);
+    }
+
+  },[category, search])
+  
   
 
   return (

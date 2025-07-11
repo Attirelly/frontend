@@ -200,6 +200,7 @@ export default function ProductContainer({
     setResults,
     facetInit,
     setFacetInit,
+    category
   } = useProductFilterStore();
 
   const { query, storeTypeString, priceRangeType, sortBy } = useHeaderStore();
@@ -213,7 +214,12 @@ export default function ProductContainer({
   const prevStoreTypeRef = useRef<string>("");
   const [skipFilters, setSkipFilters] = useState(false);
 
-  const buildFacetFilters = (facets: Record<string, string[]>): string => {
+  const buildFacetFilters = (
+    facets: Record<string, string[]>,
+    category? : string,
+    storeTypeString? : string,
+
+  ): string => {
     const filters: string[][] = [];
     for (const key in facets) {
       if (facets[key].length > 0) {
@@ -233,19 +239,26 @@ export default function ProductContainer({
         );
       }
     }
+    if(category){
+      filters.push([`categories:${category}`])
+    }
+    if(storeTypeString){
+      filters.push([`store_types:${storeTypeString}`])
+    }
+    
     return encodeURIComponent(JSON.stringify(filters));
   };
+  console.log(category);
 
   const fetchProducts = async (currentPage: number) => {
     setLoading(true);
-    const facetFilters = buildFacetFilters(selectedFilters);
+    const facetFilters = buildFacetFilters(selectedFilters, category, storeTypeString);
+    console.log(facetFilters);
     try {
       // setIsFacetLoading(true);
       const filterParam = skipFilters ? "" : filters;
       const res = await api.get(
-        `/search/search_product?query=${storeId} ${query} ${
-          storeTypeString || ""
-        }&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&sort_by=${sortBy}`
+        `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&sort_by=${sortBy}`
       );
 
       const data = res.data;
@@ -293,8 +306,6 @@ export default function ProductContainer({
           }
         }
       }
-      console.log("my facets", Object.keys(facets));
-      console.log(facets);
       // if (Object.keys(facets).length === 0) {
       //   setFacets(data.facets);
       // }
@@ -349,6 +360,7 @@ export default function ProductContainer({
     selectedFilters,
     storeTypeString,
     sortBy,
+    category
   ]);
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import { api } from "@/lib/axios";
 import StoreCard from "./StoreCard";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { useEffect, useRef, useState } from "react";
-import { StoreCardType } from "@/types/SellerTypes";
+import { BrandType, City, StoreCardType } from "@/types/SellerTypes";
 import { useFilterStore } from "@/store/filterStore";
 import { event } from "@/lib/gtag";
 import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";

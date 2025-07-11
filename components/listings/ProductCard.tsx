@@ -89,10 +89,18 @@ export default function ProductCard({
           </p>
           <div className="flex items-center gap-2 text-[14px] font-medium">
             <span className="text-lg">₹{price.toLocaleString()}</span>
-            <span className="line-through text-gray-400 text-[15px]">
+            {price !== originalPrice && (
+
+<span className="line-through text-gray-400 text-[15px]">
               ₹{originalPrice.toLocaleString()}
             </span>
-            <span className="text-green-600">{discountPercentage}% OFF</span>
+            )}
+            {price !== originalPrice && (
+<span className="text-green-600">{discountPercentage}% OFF</span>
+            )}
+            
+            
+            
           </div>
         </div>
       </div>
