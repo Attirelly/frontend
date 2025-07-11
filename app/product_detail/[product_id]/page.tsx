@@ -62,6 +62,8 @@ export default function ProductDetail() {
         const response = await api.get(
           `/stores/store_basic?store_id=${product?.store_id}`
         );
+
+        console.log(response.data)
         setStoreBasicInfo(response.data);
       } catch (error) {
         console.error("Failed to fetch store basic info", error);
@@ -251,10 +253,10 @@ export default function ProductDetail() {
                 </div>
               )}
               <p className="text-[32px] font-medium leading-9.5 tracking-normal">
-                By {storeBasicInfo.store_name}
+                By {storeBasicInfo?.store_name}
               </p>
               <h1 className="text-2xl text-[#7D7D7D] font-medium tracking-tighter mt-2">
-                {product.title}
+                {product?.title}
               </h1>
 
               <div className="flex items-center gap-4 mt-4">
@@ -365,7 +367,7 @@ export default function ProductDetail() {
                 {!isProductDetailCollapse && (
                   <div>
                     <ul className="grid grid-cols-2 gap-4">
-                      {product.attributes.map((item, idx) => (
+                      {product?.attributes.map((item, idx) => (
                         <li key={idx} className="flex flex-col">
                           <div className="text-sm font-40 text-[#766874]">
                             {item.name}
@@ -414,7 +416,7 @@ export default function ProductDetail() {
 
                 {!isProductDescriptionCollapse && (
                   <div>
-                    <div>{product.description}</div>
+                    <div>{product?.description}</div>
                   </div>
                 )}
               </div>
@@ -454,7 +456,7 @@ export default function ProductDetail() {
         />
         <div className={`${roboto.className} flex mt-16 justify-between`}>
           <span className="text-3xl" style={{ fontWeight: 600 }}>
-            More from {product.title}
+            More from {product?.title}
           </span>
           <span
             className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
