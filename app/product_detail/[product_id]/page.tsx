@@ -15,7 +15,7 @@ import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import ListingFooter from "@/components/listings/ListingFooter";
 import { api } from "@/lib/axios";
 import { Brand, Color, Product, Size, Variant } from "./type";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 // import { useSellerStore } from "@/store/sellerStore";
 import ShowMoreProducts from "@/components/curations/ShowMoreProducts";
 import { roboto, manrope } from "@/font";
@@ -24,6 +24,7 @@ import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 export default function ProductDetail() {
   const params = useParams();
   const product_id = params?.product_id as string;
+  const router = useRouter()
 
   // const { setStoreId } = useSellerStore();
   const [signIn, setSignIn] = useState(false);
@@ -113,12 +114,28 @@ export default function ProductDetail() {
   
 
   const updateVariantBySelection = (color: Color | null, size: Size | null) => {
-    if (!color || !size || !product) return;
-
-    const matched = product.variants.find(
-      (v) =>
-        v.color.color_id === color.color_id && v.size.size_id === size.size_id
-    );
+    if (!product) return;
+    if(!color && !size) return ; 
+    let matched  ; 
+    if(color &&  size ){
+      matched = product.variants.find(
+        (v) =>
+          v.color.color_id === color.color_id && v.size.size_id === size.size_id
+      );
+    }
+    else if(color){
+      matched = product.variants.find(
+        (v) =>
+          v.color.color_id === color?.color_id 
+      );
+    }
+    else{
+      matched = product.variants.find(
+        (v) =>
+          v.size.size_id === size?.size_id 
+      );
+    }
+    
 
     if (matched) {
       setSelectedVariant(matched);
@@ -156,7 +173,7 @@ export default function ProductDetail() {
     setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  if (!product && !selectedVariant && !selectedColor && !selectedSize) {
+  if (!product) {
     return <div className="p-4">Loading...</div>;
   }
 
@@ -257,6 +274,7 @@ export default function ProductDetail() {
               )}
               <p className="text-[32px] font-medium leading-9.5 tracking-normal">
                 By {storeBasicInfo?.store_name}
+                By {storeBasicInfo?.store_name}
               </p>
               <h1 className="text-2xl text-[#7D7D7D] font-medium tracking-tighter mt-2">
                 {product?.title || ''}
@@ -344,7 +362,7 @@ export default function ProductDetail() {
 
               {/* WhatsApp Button */}
               <button
-                className="w-full h-15 p-5 bg-[#00AA63] text-white flex items-center justify-center gap-6 rounded text-2xl hover:bg-green-700 transition"
+                className="w-full mt-5 h-15 p-5 bg-[#00AA63] text-white flex items-center justify-center gap-6 rounded text-2xl hover:bg-green-700 transition"
                 onClick={sendToWhatsApp}
               >
                 <FaWhatsapp size={36} />
@@ -466,7 +484,7 @@ export default function ProductDetail() {
           <span
             className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
             style={{ fontWeight: 500 }}
-            onClick={() => console.log("tmkc")}
+            onClick={() => {router.push('/store_profile/'+product?.store_id)}}
           >
             View All
           </span>
