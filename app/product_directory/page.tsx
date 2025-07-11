@@ -103,6 +103,7 @@ import StoreTypeButtons from "@/components/listings/StoreTypeButtons";
 import { manrope } from "@/font";
 import { useProductFilterStore } from "@/store/filterStore";
 import { useHeaderStore } from "@/store/listing_header_store";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const STORE_TYPE_OPTIONS = [
@@ -118,9 +119,12 @@ const STORE_TYPE_OPTIONS = [
 ];
 
 export default function StoreProfilePage() {
-  const { query, city, storeType, viewType } = useHeaderStore();
+  const { query, city, storeType, viewType  } = useHeaderStore();
   const { results } = useProductFilterStore();
   const [showFilters, setShowFilters] = useState(false);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
+  const category = searchParams.get('category') || '';
 
 
   return (
