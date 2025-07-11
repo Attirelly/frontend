@@ -15,13 +15,11 @@ import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import ListingFooter from "@/components/listings/ListingFooter";
 import { api } from "@/lib/axios";
 import { Brand, Color, Product, Size, Variant } from "./type";
-import { useParams } from 'next/navigation';
+import { useParams } from "next/navigation";
 // import { useSellerStore } from "@/store/sellerStore";
 import ShowMoreProducts from "@/components/curations/ShowMoreProducts";
 import { roboto, manrope } from "@/font";
 import CustomerSignIn from "@/components/Customer/CustomerSignIn";
-
-
 
 export default function ProductDetail() {
   const params = useParams();
@@ -34,6 +32,7 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [storeBasicInfo, setStoreBasicInfo] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
   );
@@ -57,14 +56,27 @@ export default function ProductDetail() {
     setLensPosition(null);
   };
 
+  useEffect(() => {
+    async function fetchStoreBasicInfo() {
+      try {
+        const response = await api.get(
+          `/stores/store_basic?store_id=${product?.store_id}`
+        );
+        setStoreBasicInfo(response.data);
+      } catch (error) {
+        console.error("Failed to fetch store basic info", error);
+      }
+    }
+
+    if (product?.store_id) {
+      fetchStoreBasicInfo();
+    }
+  }, [product?.store_id]);
+
   const sendToWhatsApp = async () => {
     setSignIn(true);
     try {
-      const response = await api.get(
-        `/stores/store_basic?store_id=${product?.store_id}`
-      );
-      const data = response.data;
-      const phoneNumber = data.whatsapp_number; // Replace with your WhatsApp number
+      const phoneNumber = storeBasicInfo?.whatsapp_number; // Replace with your WhatsApp number
       const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
       const encodedMessage = encodeURIComponent(message);
       const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
@@ -79,7 +91,7 @@ export default function ProductDetail() {
       try {
         const response = await api.get(`/products/${product_id}`);
         const data: Product = response.data;
-        console.log(data)
+        console.log(data);
         setProduct(data);
         // setStoreId(data.store_id);
         const defaultVariant = data.variants[0];
@@ -194,8 +206,9 @@ export default function ProductDetail() {
                   {images.map((src, idx) => (
                     <div
                       key={idx}
-                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${idx === activeIndex ? "border-black" : "border-gray-300"
-                        }`}
+                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${
+                        idx === activeIndex ? "border-black" : "border-gray-300"
+                      }`}
                       onClick={() => setActiveIndex(idx)}
                     >
                       <Image
@@ -230,84 +243,99 @@ export default function ProductDetail() {
                       backgroundImage: `url(${images[activeIndex]})`,
                       backgroundRepeat: "no-repeat",
                       backgroundSize: `${600 * 2}px ${600 * 2}px`,
-                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${lensPosition.y * 2 - 150
-                        }px`,
+                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${
+                        lensPosition.y * 2 - 150
+                      }px`,
                     }}
                   />
                 </div>
               )}
               <p className="text-[32px] font-medium leading-9.5 tracking-normal">
-                By {product.brands.name}
+                By {storeBasicInfo.store_name}
               </p>
               <h1 className="text-2xl text-[#7D7D7D] font-medium tracking-tighter mt-2">
                 {product.title}
               </h1>
 
               <div className="flex items-center gap-4 mt-4">
-                <p className="text-[27px] font-medium">
-                  ₹{selectedVariant.mrp}
-                </p>
-                <p className="text-[22px] line-through text-gray-400  #00AA63">
-                  ₹{selectedVariant.price}
-                </p>
-                <p className="text-[20px] font-semibold  text-[#00AA63] tracking-normal">
-                  ₹{selectedVariant.discount}% Off
-                </p>
+                {selectedVariant?.mrp === selectedVariant?.price ? (
+                  <p className="text-[27px] font-medium">
+                    ₹{selectedVariant?.mrp}
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-[27px] font-medium">
+                      ₹{selectedVariant?.price}
+                    </p>
+                    <p className="text-[22px] line-through text-gray-400">
+                      ₹{selectedVariant?.mrp}
+                    </p>
+                    <p className="text-[20px] font-semibold text-[#00AA63] tracking-normal">
+                      ₹{selectedVariant?.discount}% Off
+                    </p>
+                  </>
+                )}
               </div>
 
               <hr className="border-t border-dashed border-[#A3A3A3] border-[0.5]px mt-7.5 mb-7.5 " />
 
               {/* size collection */}
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xl font-medium">
-                    <span className="text-[#7D7D7D]">Size:</span>{" "}
-                    <span>{selectedSize.size_name}</span>
-                  </p>
-                  <button className="text-lg text-[#7D7D7D] underline">
-                    View Size Chart
-                  </button>
-                </div>
-                <div className="flex gap-3 flex-wrap mt-5">
-                  {sizes.map((size) => (
-                    <button
-                      key={size.size_id}
-                      onClick={() =>
-                        updateVariantBySelection(selectedColor, size)
-                      }
-                      className={`border rounded-sm w-19 h-10 ${selectedSize.size_id === size.size_id
-                        ? "border-black font-semibold bg-[#EBEBEB]"
-                        : "border-gray-300"
-                        }`}
-                    >
-                      {size.size_name}
+              {sizes.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xl font-medium">
+                      <span className="text-[#7D7D7D]">Size:</span>{" "}
+                      <span>{selectedSize?.size_name}</span>
+                    </p>
+                    <button className="text-lg text-[#7D7D7D] underline">
+                      View Size Chart
                     </button>
-                  ))}
+                  </div>
+                  <div className="flex gap-3 flex-wrap mt-5">
+                    {sizes.map((size) => (
+                      <button
+                        key={size.size_id}
+                        onClick={() =>
+                          updateVariantBySelection(selectedColor, size)
+                        }
+                        className={`border rounded-sm w-19 h-10 ${
+                          selectedSize?.size_id === size.size_id
+                            ? "border-black font-semibold bg-[#EBEBEB]"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        {size.size_name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Color selection */}
-              <div className="mt-5 mb-5">
-                <p className="text-lg font-medium">
-                  <span className="text-[#7D7D7D]">Available Color: </span>
-                </p>
-                <div className="flex gap-3 mt-5">
-                  {colors.map((color) => (
-                    <button
-                      key={color.color_id}
-                      className={`w-19 h-10 rounded-lg border-0.25  ${selectedColor.color_id === color.color_id
-                        ? "border-black"
-                        : "border-gray-300"
+              {colors.length > 0 && (
+                <div className="mt-5 mb-5">
+                  <p className="text-lg font-medium">
+                    <span className="text-[#7D7D7D]">Available Color: </span>
+                  </p>
+                  <div className="flex gap-3 mt-5">
+                    {colors.map((color) => (
+                      <button
+                        key={color.color_id}
+                        className={`w-19 h-10 rounded-lg border-0.25  ${
+                          selectedColor?.color_id === color.color_id
+                            ? "border-black"
+                            : "border-gray-300"
                         }`}
-                      style={{ backgroundColor: color.hex_code || "#ccc" }}
-                      onClick={() =>
-                        updateVariantBySelection(color, selectedSize)
-                      }
-                    />
-                  ))}
+                        style={{ backgroundColor: color.hex_code || "#ccc" }}
+                        onClick={() =>
+                          updateVariantBySelection(color, selectedSize)
+                        }
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* WhatsApp Button */}
               <button
@@ -416,20 +444,26 @@ export default function ProductDetail() {
         </div>
       </div>
       <div className="w-300 flex flex-col mx-auto">
-        <hr className="border-t border-transparent"
+        <hr
+          className="border-t border-transparent"
           style={{
-            borderImage: 'repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)',
+            borderImage:
+              "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
             borderImageSlice: 1,
           }}
         />
         <div className={`${roboto.className} flex mt-16 justify-between`}>
-          <span className="text-3xl"
-            style={{ fontWeight: 600 }}>More from {product.title}</span>
-          <span className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
+          <span className="text-3xl" style={{ fontWeight: 600 }}>
+            More from {product.title}
+          </span>
+          <span
+            className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
             style={{ fontWeight: 500 }}
-            onClick={() => console.log('tmkc')}>View All</span>
+            onClick={() => console.log("tmkc")}
+          >
+            View All
+          </span>
         </div>
-
 
         <div className="relative mt-6">
           <ShowMoreProducts store_id={product.store_id} limit={5} />
@@ -437,13 +471,10 @@ export default function ProductDetail() {
         </div>
       </div>
 
-
       <div className="mt-10">
         <ListingFooter />
       </div>
-      {signIn && (
-        <CustomerSignIn onClose={() => setSignIn(false)} />
-      )}
+      {signIn && <CustomerSignIn onClose={() => setSignIn(false)} />}
     </div>
   );
 }
