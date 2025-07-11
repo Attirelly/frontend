@@ -88,8 +88,8 @@ export default function StoreCard({
             <div className={`${manrope.className} flex flex-col justify-between w-full`}
             style={{fontWeight:400}}>
                 <div>
-                    <div className='flex justify-between items-start'>
-                        <h3 className='text-2xl text-black'
+                    <div className='flex justify-between items-start flex-wrap'>
+                        <h3 className='text-2xl text-black max-w-[80%]'
                         style={{fontWeight:500}}>{storeName}</h3>
                         {/* Instagram Followers */}
                         {instagramFollowers && (
