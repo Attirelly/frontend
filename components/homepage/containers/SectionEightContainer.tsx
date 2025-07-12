@@ -37,7 +37,7 @@ export default function SectionEightContainer() {
         console.log(storeData);
         const formattedStores : CardData[] = storeData.map((store) => ({
             id: store.store_id,
-            imageUrl: store.listing_page_image,
+            imageUrl: store.profile_image,
             title: store.store_name,
             description: `${store.area.name}, ${store.city.name}`,
         }));
