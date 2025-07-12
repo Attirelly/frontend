@@ -6,8 +6,13 @@ import { event } from '@/lib/gtag';
 import { manrope } from '@/font';
 import Image from 'next/image';
 
-export default function PostCatalogueButton() {
-  const [selected, setSelected] = useState<'Posts' | 'Catalogue'>('Posts');
+type PostCatalogueButtonProps = {
+  defaultValue? : string
+}
+
+export default function PostCatalogueButton({defaultValue = 'Posts'} : PostCatalogueButtonProps) {
+  // const [selected, setSelected] = useState<'Posts' | 'Catalogue'>('Posts');
+  const [selected, setSelected] = useState(defaultValue);
   const { setViewType } = useHeaderStore();
 
   useEffect(() => {

@@ -42,7 +42,7 @@ type HeaderState = {
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
-    city: defaultCity,
+    city: null,
     setCity: (city) => set({ city }),
     query: '',
     setQuery: (query) => set({ query }),
