@@ -3,6 +3,8 @@
 import { manrope } from '@/font';
 import Image from 'next/image';
 import CardTwoType from '../cards/CardTypeTwo';
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/axios';
 
 interface CardData {
   id: string;
@@ -23,7 +25,30 @@ const cards: CardData[] = [
   { id: '8', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
 ];
 
+const SECTION_NUMBER = 8
+
 export default function SectionEightContainer() {
+  const [stores, setStores] = useState<CardData[]>([]);
+  useEffect(() => {
+    const fetchStoresBySection = async () => {
+      try{
+        const res = await api.get(`homepage/stores_by_section_number/${SECTION_NUMBER}`);
+        const storeData = res.data;
+        console.log(storeData);
+        const formattedStores : CardData[] = storeData.map((store) => ({
+            id: store.store_id,
+            imageUrl: store.listing_page_image,
+            title: store.store_name,
+            description: `${store.area.name}, ${store.city.name}`,
+        }));
+        setStores(formattedStores);
+
+      }catch(error){
+
+      }
+    }
+   fetchStoresBySection()
+  }, []);
   return (
     <div className='w-[1242px] mx-auto space-y-8'>
       <div className='flex justify-between'>
@@ -42,10 +67,10 @@ export default function SectionEightContainer() {
 
            <div className='flex flex-col'>
 <div className="grid grid-cols-4 gap-x-10 gap-y-6">
-      {cards.map((card) => (
+      {stores.map((card) => (
         <CardTwoType
           key={card.id}
-          imageUrl={card.imageUrl}
+          imageUrl={card.imageUrl === 'string' ? '/Homepage/CardImage.svg' : card.imageUrl}
           title={card.title}
           description={card.description || ''}
         />

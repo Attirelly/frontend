@@ -47,6 +47,7 @@ export default function StoreSearchType({
   },[])
 
   useEffect(() => {
+    console.log('system');
     const handleClickOutside = (event: MouseEvent) => {
       if (
         containerRef.current &&
@@ -64,6 +65,7 @@ export default function StoreSearchType({
 
   const handleSearchTypeClick = (type: StoreType) => {
     // Handle the search type click logic here
+    console.log("clicked");
     setStoreType({id: type.id, store_type: type.store_type});
     router.push('/store_listing');
   };

@@ -115,23 +115,27 @@ export default function ListingPageHeader() {
         setSearchFocus(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, [setSearchFocus]);
 
   const handleSuggestionClick = (value: string) => {
     setQuery(value);
+    setSearchFocus(false);
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
   const handleCategoryClick = (category: string) => {
+    setSearchFocus(false);
     router.push(`/product_directory?category=${encodeURIComponent(category)}`);
   };
   const handleProductClick = (value: string) => {
+    setSearchFocus(false);
     router.push(`product_detail/${value}`);
   };
 
   const handleStoreClick = (storeID: string) => {
+    setSearchFocus(false);
     router.push("/store_profile/" + storeID);
   };
 
@@ -241,7 +245,7 @@ export default function ListingPageHeader() {
                 <input
                   type="text"
                   placeholder="Find your style..."
-                  className={`${manrope.className} w-[118px] h-[22px] text-[16px] focus:outline-none`}
+                  className={`${manrope.className} w-full h-[22px] text-[16px] focus:outline-none`}
                   style={{ fontWeight: 400 }}
                   value={tempQuery}
                   onChange={(e) => {
