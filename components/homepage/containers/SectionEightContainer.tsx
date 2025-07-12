@@ -81,12 +81,18 @@ export default function SectionEightContainer() {
       <div className='flex flex-col'>
         <div className="grid grid-cols-4 gap-x-10 gap-y-6">
           {stores.map((card) => (
-            <CardTwoType
-              key={card.id}
-              imageUrl={card.imageUrl === 'string' ? '/Homepage/CardImage.svg' : card.imageUrl}
-              title={card.title}
-              description={card.description || ''}
-            />
+            <a 
+            href={`/store_profile/${card.id}`}
+            target="_blank"
+            rel="noopener noreferrer">
+              <CardTwoType
+                key={card.id}
+                imageUrl={card.imageUrl === 'string' ? '/Homepage/CardImage.svg' : card.imageUrl}
+                title={card.title}
+                description={card.description || ''}
+              />
+            </a>
+
           ))}
         </div>
       </div>
