@@ -35,6 +35,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
           instagramFollowers: "",
           city: storeData.city.name,
           area: storeData.area.name,
+          phone_number: storeData.whatsapp_number,
         };
         setStore(storeFinal);
         console.log(storeFinal);
@@ -60,6 +61,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
           instagramFollowers: instaData.followers_count,
           city: storeData.city.name,
           area: storeData.area.name,
+          phone_number: storeData.whatsapp_number,
         };
         setStore(storeFinal2);
         console.log(storeFinal2);
@@ -95,6 +97,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
             storeName={store.storeName}
             city={store.city}
             area={store.area}
+            phone_number={store.phone_number}
             key={store.id}
           />
         )

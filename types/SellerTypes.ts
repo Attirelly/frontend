@@ -60,6 +60,7 @@ export interface StoreInfoType {
   priceRanges: string[],
   city:string,
   area:string,
+  phone_number: string
 }
 
 export interface instaMediaType {

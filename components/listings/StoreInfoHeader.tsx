@@ -3,6 +3,7 @@ import { StoreInfoType } from "@/types/SellerTypes";
 import { manrope, roboto } from "@/font";
 import { useState } from "react";
 import CustomerSignIn from "../Customer/CustomerSignIn";
+import { toast } from "sonner";
 
 const StoreTypeImage = [
     { name: "Designer Labels", url: "/ListingPageHeader/designer_labels.svg" },
@@ -23,13 +24,32 @@ export default function StoreInfoPage({
     storeTypes,
     priceRanges,
     city,
-    area
+    area,
+    phone_number
 }: StoreInfoType) {
-    console.log(imageUrl);
+    const [copied, setCopied] = useState(false);
     const handleLocationRoute = () => {
-       console.log(locationUrl);
-       window.open(locationUrl, '_blank', 'noopener,noreferrer');
+        console.log(locationUrl);
+        window.open(locationUrl, '_blank', 'noopener,noreferrer');
     };
+
+    const handlePhoneClick = () => {
+        console.log(phone_number);
+        window.open(`tel:${phone_number}`, '_blank', 'noopener,noreferrer');
+    };
+
+    const handleCopyUrl = async () => {
+    try {
+      const currentUrl = window.location.href;
+      await navigator.clipboard.writeText(currentUrl);
+      setCopied(true);
+      toast.success('Store Link copied to clipboard');
+      // Optionally reset after a delay
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
     return (
         <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 p-6">
             {/* Left: Circular Store Image */}
@@ -77,7 +97,8 @@ export default function StoreInfoPage({
                     <h2 className="text-xl mb-2 max-w-[60%]"
                         style={{ fontWeight: 500 }}>{storeName}</h2>
                     <div className="flex gap-2.5 flex-shrink-0">
-                        <button className="flex border rounded-full items-center justify-center px-4">
+                        <button className="flex border rounded-full items-center justify-center px-4"
+                        onClick={handlePhoneClick}>
                             <Image
                                 src="/ListingPageHeader/phone.svg"
                                 alt="call"
@@ -85,7 +106,8 @@ export default function StoreInfoPage({
                                 height={18}
                             />
                         </button>
-                        <button className="flex border rounded-full items-center justify-center gap-2 px-4">
+                        <button className="flex border rounded-full items-center justify-center gap-2 px-4"
+                        onClick={handleCopyUrl}>
                             <span style={{ fontWeight: 400 }}>Share</span>
                             <Image
                                 src="/ListingPageHeader/share.svg"
