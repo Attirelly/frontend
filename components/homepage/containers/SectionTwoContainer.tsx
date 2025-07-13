@@ -62,7 +62,7 @@ export default function SectionTwoContainer() {
   return (
     <div className='w-[1242px] mx-auto space-y-8'>
       <div className='flex justify-between'>
-        <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>NEW SUITS</span>
+        <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
         <a
           href={viewAll}
           target="_blank"
@@ -81,7 +81,7 @@ export default function SectionTwoContainer() {
 
       <div className='flex flex-col'>
         <div className="grid grid-cols-4 gap-x-10 gap-y-6">
-          {cards.map((card) => (
+          {products.map((card) => (
             <a
               href={`/product_detail/${card.id}`}
               target="_blank"

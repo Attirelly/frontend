@@ -68,7 +68,7 @@ export default function SectionThreeContainer() {
   return (
     <div className="w-fit mx-auto space-y-8">
       <div className='flex justify-between'>
-        <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>NEW ARRIVALS</span>
+        <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
         <a
           href={viewAll}
           target="_blank"
@@ -86,21 +86,21 @@ export default function SectionThreeContainer() {
       </div>
       <div className="flex gap-[23px] justify-center">
 
-        {cards.map((card) => (
+        {products.map((card) => (
           <a
-          href={`/product_detail/${card.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            href={`/product_detail/${card.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-<CardTypeFive
-            imageUrl={card.imageUrl}
-            title={card.title}
-            description={card.description || ""}
-            price={card.price}
-            mrp={card.mrp}
-            discount={card.discount} />
+            <CardTypeFive
+              imageUrl={card.imageUrl}
+              title={card.title}
+              description={card.description || ""}
+              price={card.price}
+              mrp={card.mrp}
+              discount={card.discount} />
           </a>
-          
+
         ))}
 
       </div>
