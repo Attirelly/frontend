@@ -81,8 +81,8 @@ export default function CardStack() {
     const centerOffset = centerIndex - start;
 
     return (
-        <div className='flex flex-col gap-8 items-center'>
-            <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
+        // <div className='flex flex-col gap-8 items-center'>
+        //     <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
             <div className="relative w-full flex items-center justify-center px-20">
                 {/* Left Arrow */}
                 <button
@@ -157,7 +157,7 @@ export default function CardStack() {
                     />
                 </button>
             </div>
-        </div>
+        // </div>
 
     );
 }
