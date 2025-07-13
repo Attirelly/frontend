@@ -30,7 +30,7 @@ const cards: CardData[] = [
 
 const SECTION_NUMBER = 5;
 
-export default function SectionTwoContainer() {
+export default function SectionFiveContainer() {
     const [startIndex, setStartIndex] = useState(0);
     const visibleCount = 5;
     const cardWidth = 232; // Width of each card
