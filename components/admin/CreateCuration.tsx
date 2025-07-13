@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { api } from '@/lib/axios';
 
+const TOTAL_SEGMENTS = 12;
+
 export default function CreateCurationPage() {
   const router = useRouter();
   const [curationType, setCurationType] = useState('');
@@ -21,11 +23,11 @@ export default function CreateCurationPage() {
   useEffect(() => {
     async function fetchUsedSegments() {
       try {
-        const response = await api.get('/homepage/used_section'); // Replace with actual URL
+        const response = await api.get('/homepage/used_section'); 
         const usedSegments: number[] = response.data;
 
-        // Filter available numbers from 1 to 9
-        const allSegments = Array.from({ length: 9 }, (_, i) => i + 1);
+        // Filter available numbers from 1 to 12
+        const allSegments = Array.from({ length: TOTAL_SEGMENTS }, (_, i) => i + 1);
         const filteredSegments = allSegments.filter(num => !usedSegments.includes(num));
         setAvailableSegments(filteredSegments);
       } catch (error) {

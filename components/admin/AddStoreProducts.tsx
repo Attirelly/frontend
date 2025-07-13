@@ -23,6 +23,8 @@ interface Product {
   images: Image[];
 }
 
+const TOTAL_INPUTS = 10;
+
 export default function AddStoreProduct() {
   const searchParams = useSearchParams();
   const curation_type = searchParams.get('curation_type');
@@ -31,7 +33,7 @@ export default function AddStoreProduct() {
   const curation_name = searchParams.get('curation_name');
   const curation_url = searchParams.get('curation_url');
 
-  const rows = Array.from({ length: 9 });
+  const rows = Array.from({ length: TOTAL_INPUTS });
   const [stores, setStores] = useState<Store[]>([]);
   const [storeSelections, setStoreSelections] = useState<string[]>(Array(9).fill(''));
   const [products, setProducts] = useState<Product[]>([]);
