@@ -30,6 +30,7 @@ const SECTION_NUMBER = 8
 export default function SectionEightContainer() {
   const [stores, setStores] = useState<CardData[]>([]);
   const [viewAll, setViewAll] = useState('');
+  const [name, setName] = useState('');
   useEffect(() => {
     const fetchStoresBySection = async () => {
       try {
@@ -47,6 +48,7 @@ export default function SectionEightContainer() {
         const resSection = await api.get(`/homepage/get_section_by_number/${SECTION_NUMBER}`);
         const sectionData = resSection.data;
         setViewAll(sectionData.section_url);
+        setName(sectionData.section_name);
 
       } catch (error) {
 
@@ -57,7 +59,7 @@ export default function SectionEightContainer() {
   return (
     <div className='w-[1242px] mx-auto space-y-8'>
       <div className='flex justify-between'>
-        <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>STORES IN MOHALI</span>
+        <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
         <div className='flex items-center gap-2'>
           <a
             href={viewAll}
