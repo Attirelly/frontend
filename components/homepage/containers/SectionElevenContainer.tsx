@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import CardTypeThree from '../cards/CardTypeThree';
 import { manrope } from '@/font';
 import CardTypeFour from '../cards/CardTypeFour';
+import { api } from '@/lib/axios';
 
 interface CardData {
   id: string;
@@ -27,12 +27,44 @@ const cards: CardData[] = [
   { id: '10', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
 ];
 
+const SECTION_NUMBER = 11;
+
 export default function SectionElevenContainer() {
   const [startIndex, setStartIndex] = useState(0);
   const visibleCount = 6;
   const cardWidth = 184; // Width of each card
   const gap = 20; // Tailwind gap-5 = 1.25rem = 20px
   const maxIndex = cards.length - visibleCount;
+
+  const [stores, setStores] = useState<CardData[]>([]);
+  const [viewAll, setViewAll] = useState('');
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    const fetchStoresBySection = async () => {
+      try {
+        const res = await api.get(`homepage/stores_by_section_number/${SECTION_NUMBER}`);
+        const storeData = res.data;
+        console.log(storeData);
+        const formattedStores: CardData[] = storeData.map((store) => ({
+          id: store.store_id,
+          imageUrl: store.profile_image,
+          title: store.store_name,
+          description: `${store.area.name}, ${store.city.name}`,
+        }));
+        setStores(formattedStores);
+
+        const resSection = await api.get(`/homepage/get_section_by_number/${SECTION_NUMBER}`);
+        const sectionData = resSection.data;
+        setViewAll(sectionData.section_url);
+        setName(sectionData.section_name);
+
+      } catch (error) {
+
+      }
+    }
+    fetchStoresBySection()
+  }, []);
 
   const handleNext = () => {
     setStartIndex((prev) => Math.min(prev + 1, maxIndex));
@@ -47,8 +79,12 @@ export default function SectionElevenContainer() {
   return (
     <div className='w-[1242px]  mx-auto space-y-8'>
       <div className='flex justify-between'>
-        <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>NEW ARRIVALS</span>
-        <div className='flex items-center gap-2'>
+        <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
+        <a
+          href={viewAll}
+          target="_blank"
+          rel="noopener noreferrer"
+          className='flex items-center gap-2'>
           <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
           <Image
             src="/Homepage/right_arrow.svg"
@@ -56,7 +92,7 @@ export default function SectionElevenContainer() {
             width={5}
             height={5} />
 
-        </div>
+        </a>
 
       </div>
 
@@ -82,17 +118,24 @@ export default function SectionElevenContainer() {
               transform: `translateX(-${translateX}px)`,
             }}
           >
-            {cards.map((card) => (
+            {stores.map((card) => (
               <div
                 key={card.id}
                 style={{ minWidth: `${cardWidth}px` }}
                 onClick={() => console.log(card.id)}
               >
-                <CardTypeFour
-                  imageUrl={card.imageUrl}
-                  title={card.title}
-                  description={card.description || ''}
-                />
+                <a
+                  href={`/store_profile/${card.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer">
+
+                  <CardTypeFour
+                    imageUrl={card.imageUrl}
+                    title={card.title}
+                    description={card.description || ''}
+                  />
+                </a>
+
               </div>
             ))}
           </div>

@@ -124,11 +124,18 @@ export default function SectionTwelveContainer() {
                 style={{ minWidth: `${cardWidth}px` }}
                 onClick={() => console.log(card.id)}
               >
-                <CardTypeFour
-                  imageUrl={card.imageUrl}
-                  title={card.title}
-                  description={card.description || ''}
-                />
+                <a
+                  href={`/store_profile/${card.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer">
+
+                  <CardTypeFour
+                    imageUrl={card.imageUrl}
+                    title={card.title}
+                    description={card.description || ''}
+                  />
+                </a>
+
               </div>
             ))}
           </div>
