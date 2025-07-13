@@ -60,33 +60,35 @@ export default function SectionEightContainer() {
     <div className='w-[1242px] mx-auto space-y-8'>
       <div className='flex justify-between'>
         <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
-        <div className='flex items-center gap-2'>
-          <a
-            href={viewAll}
-            target="_blank"
-            rel="noopener noreferrer"
+        <a
+          href={viewAll}
+          target="_blank"
+          rel="noopener noreferrer"
+          className='flex items-center gap-2'>
+          <span
+
             className={`${manrope.className} text-base text-[#242424]`}
             style={{ fontWeight: 400 }}
           >
             View All
-          </a>
+          </span>
           <Image
             src="/Homepage/view_all_arrow.svg"
             alt="View All"
             width={12}
             height={16} />
 
-        </div>
+        </a>
 
       </div>
 
       <div className='flex flex-col'>
         <div className="grid grid-cols-4 gap-x-10 gap-y-6">
           {stores.map((card) => (
-            <a 
-            href={`/store_profile/${card.id}`}
-            target="_blank"
-            rel="noopener noreferrer">
+            <a
+              href={`/store_profile/${card.id}`}
+              target="_blank"
+              rel="noopener noreferrer">
               <CardTwoType
                 key={card.id}
                 imageUrl={card.imageUrl === 'string' ? '/Homepage/CardImage.svg' : card.imageUrl}
