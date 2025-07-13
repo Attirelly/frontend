@@ -44,15 +44,20 @@ export default function CardTypeFive({
         </span>
         <div className="flex gap-1 items-center">
           <span className="text-base">₹{price.toLocaleString()}</span>
-          <span className="line-through text-gray-400 text-xs">
-            ₹{mrp.toLocaleString()}
-          </span>
-          <span
-            className="text-green-600 text-[11px]"
-            style={{ fontWeight: 600 }}
-          >
-            {discount}% OFF
-          </span>
+          {price !== mrp && (
+            <span className="line-through text-gray-400 text-xs">
+              ₹{mrp.toLocaleString()}
+            </span>
+          )}
+          {price !== mrp && (
+            <span
+              className="text-green-600 text-[11px]"
+              style={{ fontWeight: 600 }}
+            >
+              {discount}% OFF
+            </span>
+          )}
+
         </div>
       </div>
     </div>

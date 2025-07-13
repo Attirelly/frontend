@@ -42,7 +42,11 @@ export default function SectionThreeContainer() {
           id: p.product_id,
           imageUrl: p.images[0].image_url || '/Homepage/CardTypeOne.svg',
           title: p.product_name,
-          description: `${p.stores.area.name}, ${p.stores.city.name}`,
+          // description: `${p.stores.area.name}, ${p.stores.city.name}`,
+          description: p.stores.store_name,
+          price: p.variants[0].price,
+          mrp: p.variants[0].mrp,
+          discount: p.variants[0].discount,
         }));
         setProducts(formattedProducts);
 
@@ -65,7 +69,11 @@ export default function SectionThreeContainer() {
     <div className="w-fit mx-auto space-y-8">
       <div className='flex justify-between'>
         <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>NEW ARRIVALS</span>
-        <div className='flex items-center gap-2'>
+        <a
+          href={viewAll}
+          target="_blank"
+          rel="noopener noreferrer"
+          className='flex items-center gap-2'>
           <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
           <Image
             src="/Homepage/right_arrow.svg"
@@ -73,19 +81,26 @@ export default function SectionThreeContainer() {
             width={5}
             height={5} />
 
-        </div>
+        </a>
 
       </div>
       <div className="flex gap-[23px] justify-center">
 
         {cards.map((card) => (
-          <CardTypeFive
+          <a
+          href={`/product_detail/${card.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+          >
+<CardTypeFive
             imageUrl={card.imageUrl}
-            title="Embroidary Kurta"
-            description="The new men's collection, 100% Jaipuri cotton"
-            price={50000}
-            mrp={65000}
-            discount={15} />
+            title={card.title}
+            description={card.description || ""}
+            price={card.price}
+            mrp={card.mrp}
+            discount={card.discount} />
+          </a>
+          
         ))}
 
       </div>
