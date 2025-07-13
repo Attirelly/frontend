@@ -274,7 +274,6 @@ export default function ProductDetail() {
               )}
               <p className="text-[32px] font-medium leading-9.5 tracking-normal">
                 By {storeBasicInfo?.store_name}
-                By {storeBasicInfo?.store_name}
               </p>
               <h1 className="text-2xl text-[#7D7D7D] font-medium tracking-tighter mt-2">
                 {product?.title || ''}
