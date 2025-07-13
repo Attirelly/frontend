@@ -65,6 +65,7 @@ export default function SectionThreeContainer() {
 
     fetchSegmentInfo();
   }, []);
+  console.log("products", products);
   return (
     <div className="w-fit mx-auto space-y-8">
       <div className='flex justify-between'>
