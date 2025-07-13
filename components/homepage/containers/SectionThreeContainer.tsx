@@ -1,6 +1,8 @@
 import { manrope } from "@/font";
 import CardTypeFive from "../cards/CardTypeFive";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/axios";
 
 interface CardData {
   id: string;
@@ -21,7 +23,43 @@ const cards: CardData[] = [
   { id: '5', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana', price: 5000, mrp: 6000, discount: 15 },
 ];
 
+const SECTION_NUMBER = 3;
+
 export default function SectionThreeContainer() {
+  const [viewAll, setViewAll] = useState('');
+  const [name, setName] = useState('');
+  const [products, setProducts] = useState<CardData[]>([]);
+
+  useEffect(() => {
+    const fetchSegmentInfo = async () => {
+      try {
+
+        const res = await api.get(`homepage/get_products_by_section_number/${SECTION_NUMBER}`);
+        const productData = res.data;
+        console.log(productData);
+        const formattedProducts: CardData[] = productData.map((p) => ({
+          id: p.product_id,
+          imageUrl: p.images[0].image_url || '/Homepage/CardTypeOne.svg',
+          title: p.product_name,
+          description: `${p.stores.area.name}, ${p.stores.city.name}`,
+        }));
+        setProducts(formattedProducts);
+
+        const resSection = await api.get(`/homepage/get_section_by_number/${SECTION_NUMBER}`);
+        const sectionData = resSection.data;
+        setViewAll(sectionData.section_url);
+        setName(sectionData.section_name);
+
+
+      }
+      catch (error) {
+        console.log('failed to fetch segment information');
+      }
+    }
+
+
+    fetchSegmentInfo();
+  }, []);
   return (
     <div className="w-fit mx-auto space-y-8">
       <div className='flex justify-between'>
