@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import CardTypeOne from '../cards/CardTypeOne';
+import { api } from '@/lib/axios';
+import { manrope } from '@/font';
 
 interface CardData {
     id: string;
     imageUrl: string;
-    discountText: string;
+    discountText?: string;
     title: string;
     description?: string;
 }
@@ -25,8 +27,45 @@ const cards: CardData[] = [
     { id: '10', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
 ];
 
+const SECTION_NUMBER = 4;
+
 export default function CardStack() {
     const [centerIndex, setCenterIndex] = useState(2); // Start with third card centered
+    const [viewAll, setViewAll] = useState('');
+    const [name, setName] = useState('');
+    const [products, setProducts] = useState<CardData[]>([]);
+
+    useEffect(() => {
+        const fetchSegmentInfo = async () => {
+            try {
+
+                const res = await api.get(`homepage/get_products_by_section_number/${SECTION_NUMBER}`);
+                const productData = res.data;
+                console.log(productData);
+                const formattedProducts: CardData[] = productData.map((p) => ({
+                    id: p.product_id,
+                    imageUrl: p.images[0].image_url || '/Homepage/CardTypeOne.svg',
+                    title: p.product_name,
+                    description: `${p.stores.area.name}, ${p.stores.city.name}`,
+                }));
+                setProducts(formattedProducts);
+
+                const resSection = await api.get(`/homepage/get_section_by_number/${SECTION_NUMBER}`);
+                const sectionData = resSection.data;
+                setViewAll(sectionData.section_url);
+                setName(sectionData.section_name);
+
+
+            }
+            catch (error) {
+                console.log('failed to fetch segment information');
+            }
+        }
+
+
+        fetchSegmentInfo();
+    }, [])
+
 
     const handleNext = () => {
         setCenterIndex((prev) => Math.min(prev + 1, cards.length - 1));
@@ -42,74 +81,84 @@ export default function CardStack() {
     const centerOffset = centerIndex - start;
 
     return (
-        <div className="relative w-full flex items-center justify-center px-20">
-            {/* Left Arrow */}
-            <button
-                onClick={handlePrev}
-                disabled={centerIndex === 0}
-                className="absolute left-4 z-30 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                <Image
-                    src="/Homepage/left_arrow.svg"
-                    alt="Left arrow"
-                    width={7}
-                    height={7}
-                />
-            </button>
+        <div className='flex flex-col gap-8'>
+            <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
+            <div className="relative w-full flex items-center justify-center px-20">
+                {/* Left Arrow */}
+                <button
+                    onClick={handlePrev}
+                    disabled={centerIndex === 0}
+                    className="absolute left-4 z-30 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <Image
+                        src="/Homepage/left_arrow.svg"
+                        alt="Left arrow"
+                        width={7}
+                        height={7}
+                    />
+                </button>
 
 
-            {/* Card Stack */}
-            <div className="relative flex items-center justify-center w-full h-[588px]">
-                {visibleCards.map((card, i) => {
-                    const offset = i - centerOffset;
-                    const zIndex = 10 - Math.abs(offset);
-                    const cardWidth = 392;
-                    const overlap = cardWidth * 0.3;
-                    const translateX = offset * overlap;
-                    const scale = offset === 0 ? 1 : 0.9;
+                {/* Card Stack */}
+                <div className="relative flex items-center justify-center w-full h-[588px]">
+                    {products.map((card, i) => {
+                        const offset = i - centerOffset;
+                        const zIndex = 10 - Math.abs(offset);
+                        const cardWidth = 392;
+                        const overlap = cardWidth * 0.3;
+                        const translateX = offset * overlap;
+                        const scale = offset === 0 ? 1 : 0.9;
 
-                    // Height tiers based on offset
-                    let heightClass = 'h-full'; // center
-                    if (Math.abs(offset) === 1) heightClass = 'h-[588px]';
-                    if (Math.abs(offset) === 2) heightClass = 'h-[530px]';
+                        // Height tiers based on offset
+                        let heightClass = 'h-full'; // center
+                        if (Math.abs(offset) === 1) heightClass = 'h-[588px]';
+                        if (Math.abs(offset) === 2) heightClass = 'h-[530px]';
 
-                    return (
-                        <div
-                            key={card.id}
-                            className={`absolute w-[392px] ${heightClass}`}
-                            style={{
-                                transform: `translateX(${translateX}px) scale(${scale})`,
-                                zIndex,
-                                transition: 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), height 600ms ease',
-                                willChange: 'transform, height',
-                            }}
-                            onClick={() => console.log(`Clicked card ${card.id}`)}
-                        >
-                            <CardTypeOne
-                                imageUrl={card.imageUrl}
-                                discountText={card.discountText}
-                                title={card.title}
-                                description={card.description}
-                            />
-                        </div>
-                    );
-                })}
+                        return (
+                            <div
+                                key={card.id}
+                                className={`absolute w-[392px] ${heightClass}`}
+                                style={{
+                                    transform: `translateX(${translateX}px) scale(${scale})`,
+                                    zIndex,
+                                    transition: 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), height 600ms ease',
+                                    willChange: 'transform, height',
+                                }}
+                            >
+                                <a
+                                    href={`/product_detail/${card.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <CardTypeOne
+                                        imageUrl={card.imageUrl}
+                                        discountText={card.discountText || ""}
+                                        title={card.title}
+                                        description={card.description}
+                                    />
+                                </a>
+
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Right Arrow */}
+                <button
+                    onClick={handleNext}
+                    disabled={centerIndex === cards.length - 1}
+                    className="absolute right-4 z-30 bg-[#D9D9D9] shadow-md rounded-full p-2 w-10 h-10 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <Image
+                        src="/Homepage/right_arrow.svg"
+                        alt="Left arrow"
+                        width={7}
+                        height={7}
+                    />
+                </button>
             </div>
-
-            {/* Right Arrow */}
-            <button
-                onClick={handleNext}
-                disabled={centerIndex === cards.length - 1}
-                className="absolute right-4 z-30 bg-[#D9D9D9] shadow-md rounded-full p-2 w-10 h-10 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                <Image
-                    src="/Homepage/right_arrow.svg"
-                    alt="Left arrow"
-                    width={7}
-                    height={7}
-                />
-            </button>
         </div>
+
     );
 }
 
