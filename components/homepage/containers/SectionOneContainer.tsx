@@ -5,6 +5,7 @@ import Image from 'next/image';
 import CardTypeThree from '../cards/CardTypeThree';
 import { manrope } from '@/font';
 import { useRouter } from 'next/navigation';
+import { api } from '@/lib/axios';
 
 interface CardData {
     id: string;
@@ -27,6 +28,8 @@ const cards: CardData[] = [
     { id: '10', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
 ];
 
+const SECTION_NUMBER = 1;
+
 export default function SectionTwoContainer() {
     const [startIndex, setStartIndex] = useState(0);
     const visibleCount = 5;
@@ -34,6 +37,8 @@ export default function SectionTwoContainer() {
     const gap = 20; // Tailwind gap-5 = 1.25rem = 20px
     const maxIndex = cards.length - visibleCount;
     const [viewAll, setViewAll] = useState('');
+    const [name, setName] = useState('');
+    const [products, setProducts] = useState<CardData[]>([]);
     const router = useRouter();
 
 
@@ -41,10 +46,24 @@ export default function SectionTwoContainer() {
     useEffect(() => {
         const fetchSegmentInfo = async () => {
             try {
-                // API call to fetch segment information
-                const url = 'https://google.com/';
-                setViewAll(url);
-                router.prefetch(url);
+
+                const res = await api.get(`homepage/get_products_by_section_number/${SECTION_NUMBER}`);
+                const productData = res.data;
+                console.log(productData);
+                const formattedProducts: CardData[] = productData.map((p) => ({
+                    id: p.product_id,
+                    imageUrl: p.images[0].image_url || '/Homepage/CardTypeOne.svg',
+                    title: p.product_name,
+                    description: `${p.stores.area.name}, ${p.stores.city.name}`,
+                }));
+                setProducts(formattedProducts);
+
+                const resSection = await api.get(`/homepage/get_section_by_number/${SECTION_NUMBER}`);
+                const sectionData = resSection.data;
+                setViewAll(sectionData.section_url);
+                setName(sectionData.section_name);
+
+
             }
             catch (error) {
                 console.log('failed to fetch segment information');
@@ -72,9 +91,12 @@ export default function SectionTwoContainer() {
     return (
         <div className='w-[1242px]  mx-auto space-y-8'>
             <div className='flex justify-between'>
-                <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>NEW ARRIVALS</span>
-                <div className='flex items-center gap-2'
-                onClick={handleViewAllClick}>
+                <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
+                <a
+                    href={viewAll}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className='flex items-center gap-2'>
                     <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
                     <Image
                         src="/Homepage/right_arrow.svg"
@@ -82,7 +104,7 @@ export default function SectionTwoContainer() {
                         width={5}
                         height={5} />
 
-                </div>
+                </a>
 
             </div>
 
@@ -108,17 +130,24 @@ export default function SectionTwoContainer() {
                             transform: `translateX(-${translateX}px)`,
                         }}
                     >
-                        {cards.map((card) => (
+                        {products.map((card) => (
                             <div
                                 key={card.id}
                                 style={{ minWidth: `${cardWidth}px` }}
-                                onClick={() => console.log(card.id)}
+
                             >
-                                <CardTypeThree
-                                    imageUrl={card.imageUrl}
-                                    title={card.title}
-                                    description={card.description || ''}
-                                />
+                                <a
+                                    href={`/product_detail/${card.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <CardTypeThree
+                                        imageUrl={card.imageUrl}
+                                        title={card.title}
+                                        description={card.description || ''}
+                                    />
+                                </a>
+
                             </div>
                         ))}
                     </div>
