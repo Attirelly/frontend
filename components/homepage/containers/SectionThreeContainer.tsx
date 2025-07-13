@@ -1,3 +1,4 @@
+'use client';
 import { manrope } from "@/font";
 import CardTypeFive from "../cards/CardTypeFive";
 import Image from "next/image";
