@@ -4,48 +4,48 @@ import { ProductCardType } from '@/types/ProductTypes';
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { toast } from "sonner";
-const prods: ProductCardType[] = [
-    {
-        title: 'dasads',
-        price: 13,
-        originalPrice: 12,
-        imageUrl: ['https://picsum.photos/200/300'],
-        discountPercentage: 23,
-        description: 'asdasd',
-    },
-    {
-        title: 'dasads',
-        price: 13,
-        originalPrice: 12,
-        imageUrl: ['https://picsum.photos/200/300'],
-        discountPercentage: 23,
-        description: 'asdasd',
-    },
-    {
-        title: 'dasads',
-        price: 13,
-        originalPrice: 12,
-        imageUrl: ['https://picsum.photos/200/300'],
-        discountPercentage: 23,
-        description: 'asdasd',
-    },
-    {
-        title: 'dasads',
-        price: 13,
-        originalPrice: 12,
-        imageUrl: ['https://picsum.photos/200/300'],
-        discountPercentage: 23,
-        description: 'asdasd',
-    },
-    {
-        title: 'dasads',
-        price: 13,
-        originalPrice: 12,
-        imageUrl: ['https://picsum.photos/200/300'],
-        discountPercentage: 23,
-        description: 'asdasd',
-    },
-];
+// const prods: ProductCardType[] = [
+//     {
+//         title: 'dasads',
+//         price: 13,
+//         originalPrice: 12,
+//         imageUrl: ['https://picsum.photos/200/300'],
+//         discountPercentage: 23,
+//         description: 'asdasd',
+//     },
+//     {
+//         title: 'dasads',
+//         price: 13,
+//         originalPrice: 12,
+//         imageUrl: ['https://picsum.photos/200/300'],
+//         discountPercentage: 23,
+//         description: 'asdasd',
+//     },
+//     {
+//         title: 'dasads',
+//         price: 13,
+//         originalPrice: 12,
+//         imageUrl: ['https://picsum.photos/200/300'],
+//         discountPercentage: 23,
+//         description: 'asdasd',
+//     },
+//     {
+//         title: 'dasads',
+//         price: 13,
+//         originalPrice: 12,
+//         imageUrl: ['https://picsum.photos/200/300'],
+//         discountPercentage: 23,
+//         description: 'asdasd',
+//     },
+//     {
+//         title: 'dasads',
+//         price: 13,
+//         originalPrice: 12,
+//         imageUrl: ['https://picsum.photos/200/300'],
+//         discountPercentage: 23,
+//         description: 'asdasd',
+//     },
+// ];
 
 interface ShowMoreProductProps {
     store_id: string,
@@ -71,6 +71,7 @@ export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductPro
                         : 0;
 
                 return {
+                    id:item.id,
                     imageUrl: item.image || [],
                     title: item.title || 'Untitled Product',
                     description: item.description || '',
