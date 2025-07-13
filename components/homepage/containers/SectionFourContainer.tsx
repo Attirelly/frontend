@@ -101,7 +101,7 @@ export default function CardStack() {
 
                 {/* Card Stack */}
                 <div className="relative flex items-center justify-center w-full h-[588px]">
-                    {products.map((card, i) => {
+                    {cards.map((card, i) => {
                         const offset = i - centerOffset;
                         const zIndex = 10 - Math.abs(offset);
                         const cardWidth = 392;
