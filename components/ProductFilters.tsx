@@ -186,6 +186,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           ))}
         </Select>
 
+
         {/* <Search
           placeholder="Product Name"
           onSearch={(v) => setFilters({ ...filters, productName: v })}
@@ -207,6 +208,15 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         >
           <Option value="Completed">Completed</Option>
           <Option value="Pending">Pending</Option>
+        </Select>
+        
+        <Select
+          mode="multiple"
+          placeholder="Source"
+          onChange={(v) => setFilters({ ...filters, status: v })}
+        >
+          <Option value="Self">Self</Option>
+          <Option value="Shopify">Shopify</Option>
         </Select>
       </div>
     </div>

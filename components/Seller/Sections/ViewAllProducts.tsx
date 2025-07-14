@@ -55,6 +55,7 @@ export default function ProductsPage({
     productName: [],
     sku: [],
     imageUploadStatus: null,
+    source: null,
   });
 
 
@@ -80,6 +81,7 @@ export default function ProductsPage({
           productNames: json.product_names,
           skus: json.skus,
           image_upload_statuses: [],
+          source: [],
         });
         setIsReady(true);
       } catch (err) {
@@ -258,7 +260,8 @@ export default function ProductsPage({
         filters.productName.includes(item.product_name)) &&
       (!filters.sku.length || filters.sku.includes(item.sku)) &&
       (!filters.imageUploadStatus ||
-        filters.imageUploadStatus === item.imageUploadStatus)
+        filters.imageUploadStatus === item.imageUploadStatus) && 
+      (!filters.source || filters.source === item.source)
     );
   });
 

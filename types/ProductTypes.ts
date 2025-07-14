@@ -25,6 +25,7 @@ export interface ProductFiltersType {
   productName: string[];
   sku: string[];
   imageUploadStatus: "Pending" | "Completed" | null;
+  source: "Self" | "Shopify" | null;
 }
 
 
@@ -36,6 +37,7 @@ export interface FilterOptions{
   productNames: string[];
   skus: string[];
   image_upload_statuses: ("Pending" | "Completed")[];
+  source: ("Self" | "Shopify")[];
 }
 
 export interface Product {
@@ -56,6 +58,7 @@ export interface Product {
   // city: string;
   // subLocation: string;
   imageUploadStatus: "Pending" | "Completed";
+  source: "Self" | "Shopify";
 }
 
 export interface Image {
