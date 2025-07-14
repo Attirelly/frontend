@@ -262,7 +262,7 @@ export default function ProductsPage({
       (!filters.sku.length || filters.sku.includes(item.sku)) &&
       (!filters.imageUploadStatus ||
         filters.imageUploadStatus === item.imageUploadStatus) && 
-      (!filters.source || filters.source === derivedSource)
+      (!filters.source || filters.source.includes(derivedSource))
     );
   });
 
