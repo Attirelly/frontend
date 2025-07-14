@@ -246,6 +246,7 @@ export default function ProductsPage({
     const sub_Cat1 = item.category?.find((cat) => cat.level === 2)?.name || "";
     const sub_Cat2 = item.category?.find((cat) => cat.level === 3)?.name || "";
     const sub_Cat3 = item.category?.find((cat) => cat.level === 4)?.name || "";
+    const derivedSource = item.shopify_id === null ? "Self" : "Shopify";
 
     return (
       (!filters.pmCat.length || filters.pmCat.includes(primaryCat)) &&
@@ -261,7 +262,7 @@ export default function ProductsPage({
       (!filters.sku.length || filters.sku.includes(item.sku)) &&
       (!filters.imageUploadStatus ||
         filters.imageUploadStatus === item.imageUploadStatus) && 
-      (!filters.source || filters.source === item.source)
+      (!filters.source || filters.source === derivedSource)
     );
   });
 
