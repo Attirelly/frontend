@@ -25,7 +25,8 @@ export interface ProductFiltersType {
   productName: string[];
   sku: string[];
   imageUploadStatus: "Pending" | "Completed" | null;
-  source: "Self" | "Shopify" | null;
+  // source: "Self" | "Shopify" | null;
+  source: ("Self" | "Shopify")[];
 }
 
 

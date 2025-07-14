@@ -55,7 +55,7 @@ export default function ProductsPage({
     productName: [],
     sku: [],
     imageUploadStatus: null,
-    source: null,
+    source: [],
   });
 
 
@@ -247,6 +247,7 @@ export default function ProductsPage({
     const sub_Cat2 = item.category?.find((cat) => cat.level === 3)?.name || "";
     const sub_Cat3 = item.category?.find((cat) => cat.level === 4)?.name || "";
     const derivedSource = item.shopify_id === null ? "Self" : "Shopify";
+    console.log(item.shopify_id, derivedSource)
 
     return (
       (!filters.pmCat.length || filters.pmCat.includes(primaryCat)) &&
@@ -262,7 +263,7 @@ export default function ProductsPage({
       (!filters.sku.length || filters.sku.includes(item.sku)) &&
       (!filters.imageUploadStatus ||
         filters.imageUploadStatus === item.imageUploadStatus) && 
-      (!filters.source || filters.source.includes(derivedSource))
+      (!filters.source.length || filters.source.includes(derivedSource))
     );
   });
 
