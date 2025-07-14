@@ -41,7 +41,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
             ))}
         </Select>
 
-        <Select
+        {/* <Select
           mode="multiple"
           placeholder="Sub Category 1"
           value={filters.subCat1}
@@ -52,7 +52,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
             .map((cat) => (
               <Option key={cat.category_id} value={cat.name}>{cat.name}</Option>
             ))}
-        </Select>
+        </Select> */}
 
         <Select
           mode="multiple"

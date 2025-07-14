@@ -247,7 +247,7 @@ export default function ProductsPage({
 
     return (
       (!filters.pmCat.length || filters.pmCat.includes(primaryCat)) &&
-      (!filters.subCat1.length || filters.subCat1.includes(sub_Cat1)) &&
+      // (!filters.subCat1.length || filters.subCat1.includes(sub_Cat1)) &&
       (!filters.subCat2.length || filters.subCat2.includes(sub_Cat2)) &&
       (!filters.subCat3.length || filters.subCat3.includes(sub_Cat3)) &&
       (!filters.size.length || filters.size.includes(item.size)) &&
@@ -262,13 +262,7 @@ export default function ProductsPage({
     );
   });
 
-  // useEffect(() => {
-  //   useEffect(() => {
-  //     result.forEach((r) => {
-  //       router.prefetch(`/product_upload/${r.product_id}`);
-  //     });
-  //   }, [result]);
-  // });
+
 
   if (!isReady || !filterOptions) {
     return <LoadingSpinner />;
