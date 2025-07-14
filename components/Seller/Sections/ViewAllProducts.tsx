@@ -266,6 +266,7 @@ export default function ProductsPage({
       (!filters.source.length || filters.source.includes(derivedSource))
     );
   });
+  console.log(filters);
 
 
 
