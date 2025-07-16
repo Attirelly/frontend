@@ -40,7 +40,7 @@ export default function StoreProfilePage() {
         <div className="mt-8 w-full max-w-4xl px-4">
           <StoreInfoContainer storeId = {storeId} />
           <hr className="border border-[#D9D9D9]" />
-          { defaultButton ? <PostCatalogueButton defaultValue={defaultButton} /> : <PostCatalogueButton  />}
+          { defaultButton ? <PostCatalogueButton storeId={storeId} defaultValue={defaultButton} /> : <PostCatalogueButton storeId={storeId}  />}
           
         </div>
 
