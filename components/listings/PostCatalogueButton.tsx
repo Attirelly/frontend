@@ -24,7 +24,7 @@ export default function PostCatalogueButton({
     async function checkProducts() {
       try {
         const res = await api.get(`products/check_product_available/${storeId}`);
-        console.log('asasas': res.data);
+        console.log('asasas', res.data);
         setHasProducts(res.data.is_available); // true or false
       } catch (err) {
         console.error('Error checking products availability', err);
