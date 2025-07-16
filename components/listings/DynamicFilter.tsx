@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useFilterStore, useProductFilterStore } from '@/store/filterStore';
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { playfair_display, manrope } from '@/font';
-import DynamicFilterSkeleton from './skeleton/DynamicFilterSkeleton';
-import { Range } from 'react-range';
+import { useFilterStore, useProductFilterStore } from "@/store/filterStore";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { playfair_display, manrope } from "@/font";
+import DynamicFilterSkeleton from "./skeleton/DynamicFilterSkeleton";
+import { Range } from "react-range";
 
 type DynamicFilterProps = {
-  context: 'store' | 'product';
+  context: "store" | "product";
 };
 
 const DynamicFilter = ({ context }: DynamicFilterProps) => {
   const filterStore =
-    context === 'store' ? useFilterStore() : useProductFilterStore();
+    context === "store" ? useFilterStore() : useProductFilterStore();
   const {
     facets,
     selectedFilters,
@@ -28,28 +28,31 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   const [openFacets, setOpenFacets] = useState<Record<string, boolean>>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([0,1]);
+  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([
+    0, 1,
+  ]);
 
   useEffect(() => {
-    if (context === 'product' && priceBounds) {
+    if (context === "product" && priceBounds) {
       setLocalPriceRange(priceBounds);
     }
-  }, [context,priceBounds]);
-  
+  }, [context, priceBounds]);
+
   console.log("selectedFilters", selectedFilters);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (
-        context === 'product' &&
+        context === "product" &&
         priceRange &&
-        (localPriceRange[0] !== priceRange[0] || localPriceRange[1] !== priceRange[1])
+        (localPriceRange[0] !== priceRange[0] ||
+          localPriceRange[1] !== priceRange[1])
       ) {
         setPriceRange(localPriceRange);
       }
     }, 100); // 100ms delay
 
-    return () => clearTimeout(timeout);   
+    return () => clearTimeout(timeout);
   }, [localPriceRange]);
 
   useEffect(() => {
@@ -75,15 +78,14 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
   const formatFacetName = (name: string) =>
     name
-      .split('_')
+      .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-
+      .join(" ");
 
   const handleResetFilters = () => {
     resetFilters();
     setLocalPriceRange(priceBounds);
-  }
+  };
 
   if (loading) return <DynamicFilterSkeleton />;
 
@@ -126,45 +128,45 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           </button>
         </div>
         <div className="flex flex-col">
-<div className="flex items-center justify-between mb-3">
-              <h1 className={`${playfair_display.className}`}>Filters</h1>
-              <button
-          onClick={() => handleResetFilters()}
-          className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
-        >
-          Reset Filters
-        </button>
+          <div className="flex items-center justify-between mb-3">
+            <h1 className={`${playfair_display.className}`}>Filters</h1>
+            <button
+              onClick={() => handleResetFilters()}
+              className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+            >
+              Reset Filters
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2 max-w-xs">
+            {Object.entries(selectedFilters).map(([key, values]) =>
+              values.map((value) => (
+                <div
+                  key={`${key}-${value}`}
+                  className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-sm text-gray-800 rounded-full"
+                >
+                  <span>{value}</span>
+                  <button
+                    onClick={() => toggleFilter(key, value)}
+                    className="text-gray-500 hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))
+            )} 
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2 max-w-xs">
-  {Object.entries(selectedFilters).map(([key, values]) =>
-    values.map((value) => (
-      <div
-        key={`${key}-${value}`}
-        className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-sm text-gray-800 rounded-full"
-      >
-        <span>{value}</span>
-        <button
-          onClick={() => toggleFilter(key, value)}
-          className="text-gray-500 hover:text-red-500"
-        >
-          ×
-        </button>
-      </div>
-    ))
-  )}
-</div>
-        </div>
-        
+
         <hr className="my-4 border-[#D9D9D9]" />
 
         {Object.entries(facets).map(([facetName, values]) => {
           const isOpen = openFacets[facetName];
           const fName = formatFacetName(facetName);
-          const searchValue = searchTerms[facetName]?.toLowerCase() || '';
+          const searchValue = searchTerms[facetName]?.toLowerCase() || "";
           const filteredValues = values.filter((facet) =>
             facet.name.toLowerCase().includes(searchValue)
           );
-           
+
           return (
             <React.Fragment key={facetName}>
               <div className="mb-4">
@@ -173,29 +175,35 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                   onClick={() => toggleFacet(facetName)}
                 >
                   <h2 className={`${playfair_display.className}`}>
-                    {fName === 'Area' ? 'Location' : fName}
+                    {fName === "Area" ? "Location" : fName}
                   </h2>
                   <Image
                     src="/ListingPageHeader/dropdown.svg"
                     alt="toggle"
                     width={20}
                     height={20}
-                    className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    className={`transition-transform ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
                   />
                 </div>
 
                 {isOpen && (
                   <>
-                    {context === 'product' && fName === 'Prices' ? (
+                    {context === "product" && fName === "Prices" ? (
                       <div className="mb-3">
-                        <label className="text-sm text-gray-600 mb-1 block">Range</label>
+                        <label className="text-sm text-gray-600 mb-1 block">
+                          Range
+                        </label>
 
                         <Range
                           step={100}
                           min={0}
                           max={priceBounds?.[1] || 10000}
                           values={localPriceRange}
-                          onChange={(values) => setLocalPriceRange([values[0], values[1]])}
+                          onChange={(values) =>
+                            setLocalPriceRange([values[0], values[1]])
+                          }
                           renderTrack={({ props, children }) => (
                             <div
                               {...props}
@@ -205,9 +213,20 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                               <div
                                 className="h-1 bg-black rounded-full"
                                 style={{
-                                  position: 'absolute',
-                                  left: `${((localPriceRange[0] - (priceBounds?.[0] || 0)) / ((priceBounds?.[1] || 10000) - (priceBounds?.[0] || 0))) * 100}%`,
-                                  width: `${((localPriceRange[1] - localPriceRange[0]) / ((priceBounds?.[1] || 10000) - (priceBounds?.[0] || 0))) * 100}%`,
+                                  position: "absolute",
+                                  left: `${
+                                    ((localPriceRange[0] -
+                                      (priceBounds?.[0] || 0)) /
+                                      ((priceBounds?.[1] || 10000) -
+                                        (priceBounds?.[0] || 0))) *
+                                    100
+                                  }%`,
+                                  width: `${
+                                    ((localPriceRange[1] - localPriceRange[0]) /
+                                      ((priceBounds?.[1] || 10000) -
+                                        (priceBounds?.[0] || 0))) *
+                                    100
+                                  }%`,
                                   top: 0,
                                   bottom: 0,
                                 }}
@@ -229,11 +248,11 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                       </div>
                     ) : (
                       <>
-                        {fName !== 'Genders' && fName !== 'Price Ranges' && (
+                        {fName !== "Genders" && fName !== "Price Ranges" && (
                           <input
                             type="text"
                             placeholder="Search..."
-                            value={searchTerms[facetName] || ''}
+                            value={searchTerms[facetName] || ""}
                             onChange={(e) =>
                               handleSearchChange(facetName, e.target.value)
                             }
@@ -257,9 +276,25 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                     }
                                     className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                                   />
-                                  <div className='flex gap-4'>
-                                    <span className='text-sm' style={{ fontWeight: 400 }}>{facet.name}</span>
-                                    {fName === 'Price Ranges' && (<span className='text-sm text-[#666666]' style={{ fontWeight: 400 }}>{facet.name === 'Affordable' ? 'starts from 2000/-' : facet.name === 'Premium' ? 'start from 5000/-' : 'starts from 25000/-'}</span>)}
+                                  <div className="flex gap-4">
+                                    <span
+                                      className="text-sm"
+                                      style={{ fontWeight: 400 }}
+                                    >
+                                      {facet.name}
+                                    </span>
+                                    {fName === "Price Ranges" && (
+                                      <span
+                                        className="text-sm text-[#666666]"
+                                        style={{ fontWeight: 400 }}
+                                      >
+                                        {facet.name === "Affordable"
+                                          ? "starts from 2000/-"
+                                          : facet.name === "Premium"
+                                          ? "start from 5000/-"
+                                          : "starts from 25000/-"}
+                                      </span>
+                                    )}
                                   </div>
                                 </div>
                               </label>
@@ -292,5 +327,3 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 };
 
 export default DynamicFilter;
-
-

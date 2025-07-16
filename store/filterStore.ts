@@ -121,6 +121,7 @@ type FacetValue = {
 type Facets = Record<string, FacetValue[]>;
 
 interface FilterState {
+  activeFacet: string|null
   results: number;
   setResults : (results : number) => void;
   category: string;
@@ -141,6 +142,8 @@ interface FilterState {
 
 function createFilterStore() {
   return create<FilterState>((set, get) => ({
+    activeFacet:null,
+    setActiveFacet: (facet) => set({ activeFacet: facet }),
     results: 0,
     setResults: (results: number) => set({ results }),
     category: "",
@@ -196,6 +199,7 @@ function createFilterStore() {
           .map(f => f.name);
 
         return {
+          activeFacet: facetName  , 
           facets: updatedFacets,
           selectedFilters: updatedSelectedFilters
         };

@@ -200,7 +200,8 @@ export default function ProductContainer({
     setResults,
     facetInit,
     setFacetInit,
-    category
+    category,
+    activeFacet
   } = useProductFilterStore();
 
   const { query, storeTypeString, priceRangeType, sortBy } = useHeaderStore();
@@ -258,7 +259,7 @@ export default function ProductContainer({
       // setIsFacetLoading(true);
       const filterParam = skipFilters ? "" : filters;
       const res = await api.get(
-        `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&sort_by=${sortBy}`
+        `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`
       );
 
       const data = res.data;
