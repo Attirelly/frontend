@@ -2,28 +2,48 @@
 
 import { useHeaderStore } from '@/store/listing_header_store';
 import React, { useEffect, useState } from 'react';
-import { event } from '@/lib/gtag';
 import { manrope } from '@/font';
 import Image from 'next/image';
+import { api } from '@/lib/axios'; // assuming you have api instance configured
 
 type PostCatalogueButtonProps = {
-  defaultValue? : string
-}
+  defaultValue?: string;
+  storeId: string;
+};
 
-export default function PostCatalogueButton({defaultValue = 'Posts'} : PostCatalogueButtonProps) {
-  // const [selected, setSelected] = useState<'Posts' | 'Catalogue'>('Posts');
+export default function PostCatalogueButton({
+  defaultValue = 'Posts',
+  storeId,
+}: PostCatalogueButtonProps) {
   const [selected, setSelected] = useState(defaultValue);
+  const [hasProducts, setHasProducts] = useState(false);
   const { setViewType } = useHeaderStore();
+
+  // Fetch product availability for this store
+  useEffect(() => {
+    async function checkProducts() {
+      try {
+        const res = await api.get(`products/check_product_available/${storeId}`);
+        console.log('asasas', res.data);
+        setHasProducts(res.data.is_available); // true or false
+      } catch (err) {
+        console.error('Error checking products availability', err);
+        setHasProducts(false);
+      }
+    }
+    if (storeId) {
+      checkProducts();
+    }
+  }, [storeId]);
 
   useEffect(() => {
     setViewType(selected);
-    // event({
-    //   action: 'Store Mode',
-    //   params: { value: selected },
-    // });
   }, [selected]);
 
-  const options: ('Posts' | 'Catalogue')[] = ['Posts', 'Catalogue'];
+  // Build options based on availability
+  const options: ('Posts' | 'Catalogue')[] = hasProducts
+    ? ['Posts', 'Catalogue']
+    : ['Posts'];
 
   const getIconPath = (option: 'Posts' | 'Catalogue') => {
     if (option === 'Posts') return '/ListingPageHeader/post_icon.svg';
@@ -56,7 +76,6 @@ export default function PostCatalogueButton({defaultValue = 'Posts'} : PostCatal
             </span>
           </div>
 
-          {/* Top border indicator */}
           {selected === option && (
             <div className="absolute -top-[1px] left-0 w-full h-[2px] bg-black rounded-t-sm" />
           )}
