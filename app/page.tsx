@@ -95,6 +95,7 @@ export default function Home() {
   // Debounce search input
   useEffect(() => {
     const handler = setTimeout(() => {
+      console.log("hello") ; 
       setDebouncedSearch(search);
     }, 500);
 
