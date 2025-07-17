@@ -2,6 +2,7 @@
 import { create } from 'zustand'
 import {Product, FilterOptions} from '@/types/ProductTypes'
 import { BrandType, GenderType, City, Area, Pincode, Category, StoreTypePriceRange, PriceRangeType } from '@/types/SellerTypes';
+import { connect } from 'http2';
 
 // type BrandType = {
 //   id: string,
@@ -165,6 +166,9 @@ type SellerState = {
   batch_id : string | null , 
   setBatchId : (batch_id :string|null )=>void ;
 
+  isInstagramConnected : boolean ,
+  setIsInstagramConnected: (connect : boolean)=>void;
+
 
   resetSellerStore: () => void;
 }
@@ -266,5 +270,8 @@ export const useSellerStore = create<SellerState>((set) => ({
       qrId: null,
       user: null
     }),
+
+    isInstagramConnected:false ,
+    setIsInstagramConnected:(connect)=>set({isInstagramConnected:connect})
 
 }))

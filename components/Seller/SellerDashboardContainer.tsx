@@ -1,21 +1,21 @@
-'use client';
-import { useEffect, useState } from 'react';
-import DashboardSidebar from '@/components/Seller/DashboardSidebar';
-import SocialLinksComponent from '@/components/Seller/Sections/SocialLinks';
-import BusinessDetailsComponent from '@/components/Seller/Sections/BusinessDetails';
-import PriceFiltersComponent from '@/components/Seller/Sections/PriceFilters';
-import WhereToSellComponent from '@/components/Seller/Sections/WhereToSell';
-import StorePhotosComponent from '@/components/Seller/Sections/StorePhotos';
-import QrCodeGeneration from '@/components/Seller/Sections/QrGeneration';
-import ViewAllProducts from '@/components/Seller/Sections/ViewAllProducts'
-import BulkUploadPage from '@/components/Seller/Sections/BulkUploadProducts';
-import UpdateButton from '@/components/Seller/UpdateButton';
-import Header from '@/components/Header';
-import { useSellerStore } from '@/store/sellerStore'
-import { api } from '@/lib/axios';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import { logout } from '@/utils/logout';
-import { useUpdateStore } from '@/utils/handleUpdate';
+"use client";
+import { useEffect, useState } from "react";
+import DashboardSidebar from "@/components/Seller/DashboardSidebar";
+import SocialLinksComponent from "@/components/Seller/Sections/SocialLinks";
+import BusinessDetailsComponent from "@/components/Seller/Sections/BusinessDetails";
+import PriceFiltersComponent from "@/components/Seller/Sections/PriceFilters";
+import WhereToSellComponent from "@/components/Seller/Sections/WhereToSell";
+import StorePhotosComponent from "@/components/Seller/Sections/StorePhotos";
+import QrCodeGeneration from "@/components/Seller/Sections/QrGeneration";
+import ViewAllProducts from "@/components/Seller/Sections/ViewAllProducts";
+import BulkUploadPage from "@/components/Seller/Sections/BulkUploadProducts";
+import UpdateButton from "@/components/Seller/UpdateButton";
+import Header from "@/components/Header";
+import { useSellerStore } from "@/store/sellerStore";
+import { api } from "@/lib/axios";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { logout } from "@/utils/logout";
+import { useUpdateStore } from "@/utils/handleUpdate";
 import { useParams, useSearchParams } from "next/navigation";
 // import Toast from '@/components/ui/Toast';
 
@@ -39,6 +39,7 @@ export default function SellerDashboardContainer() {
     sellerId,
     sellerName,
     sellerEmail,
+    isInstagramConnected,
     setBusinessDetailsData,
     setPriceFiltersData,
     setWhereToSellData,
@@ -48,27 +49,31 @@ export default function SellerDashboardContainer() {
     setFurthestStep,
     setSellerEmail,
     setSellerName,
-    setSellerNumber
+    setSellerNumber,
+    setIsInstagramConnected,
   } = useSellerStore();
-  const [activeSection, setActiveSection] = useState('');
+  const [activeSection, setActiveSection] = useState("");
   const searchParams = useSearchParams();
-  const storeId = searchParams.get('storeId');
-  console.log(storeId)
+  const storeId = searchParams.get("storeId");
+  console.log(storeId);
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        console.log(sellerId)
+        console.log(sellerId);
         let response;
         let fetchedSellerName;
         let fetchedSellerEmail;
-        if(sellerId){
-          response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } })
-        }
-        else if(storeId){
+        if (sellerId) {
+          response = await api.get("/stores/store_by_owner", {
+            params: { store_owner_id: sellerId },
+          });
+        } else if (storeId) {
           response = await api.get(`stores/${storeId}`);
           const store_owner_id = response.data.store_owner_id;
-          const resSeller = await api.get(`/users/user`, {params: {user_id: store_owner_id}});
+          const resSeller = await api.get(`/users/user`, {
+            params: { user_id: store_owner_id },
+          });
           const resData = resSeller.data;
           console.log(resData);
           setSellerEmail(resData.email);
@@ -77,9 +82,9 @@ export default function SellerDashboardContainer() {
           fetchedSellerEmail = resData.email;
           fetchedSellerName = resData.name;
         }
-        
+
         const storeData = response?.data;
-        console.log("response" , storeData);
+        console.log("response", storeData);
         const curr_section = storeData.curr_section;
 
         const cityData: City[] = storeData.city ? [storeData.city] : [];
@@ -89,9 +94,16 @@ export default function SellerDashboardContainer() {
           : [];
 
         setStoreId(storeData.store_id);
+
         setQrId(storeData.qr_id);
         setFurthestStep(curr_section);
         setStoreNameString(storeData.store_name);
+
+        const instagramCheck = await api.get(
+          `/instagram/connect_check/${storeData.store_id}`
+        );
+
+        setIsInstagramConnected(instagramCheck?.data);
 
         const priceRangeRes = await api.get("stores/store_type_price_ranges", {
           params: { store_id: storeData.store_id },
@@ -99,10 +111,10 @@ export default function SellerDashboardContainer() {
         console.log("price range data", priceRangeRes);
         if (curr_section >= 1) {
           setBusinessDetailsData({
-            ownerName: sellerName || fetchedSellerName || '',
-            ownerEmail: sellerEmail || fetchedSellerEmail || '',
-            brandName: storeData.store_name || '',
-            businessWpNum: storeData.whatsapp_number || '',
+            ownerName: sellerName || fetchedSellerName || "",
+            ownerEmail: sellerEmail || fetchedSellerEmail || "",
+            brandName: storeData.store_name || "",
+            businessWpNum: storeData.whatsapp_number || "",
             brandTypes: storeData.store_types || [],
             categories: storeData.categories || [],
             genders: storeData.genders || [],
@@ -201,8 +213,8 @@ export default function SellerDashboardContainer() {
   };
 
   return (
-    <ProtectedRoute role={["admin","super_admin"]}>
-      <div className='min-h-screen bg-gray-100'>
+    <ProtectedRoute role={["admin", "super_admin"]}>
+      <div className="min-h-screen bg-gray-100">
         <Header
           title="Attirelly"
           actions={

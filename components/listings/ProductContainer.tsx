@@ -249,7 +249,7 @@ export default function ProductContainer({
     
     return encodeURIComponent(JSON.stringify(filters));
   };
-  console.log(category);
+
 
   const fetchProducts = async (currentPage: number) => {
     setLoading(true);
@@ -258,6 +258,7 @@ export default function ProductContainer({
     try {
       // setIsFacetLoading(true);
       const filterParam = skipFilters ? "" : filters;
+      console.log("activefacets" , activeFacet) ; 
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`
       );

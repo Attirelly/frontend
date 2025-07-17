@@ -3,10 +3,17 @@ import React, { useState, useEffect } from "react";
 import { useSellerStore } from "@/store/sellerStore";
 import { toast } from "sonner";
 import { encode } from "punycode";
+import { api } from "@/lib/axios";
 
 export default function SocialLinksComponent() {
-  const { setSocialLinksData, setSocialLinksValid, socialLinksData , storeId } =
-    useSellerStore();
+  const {
+    setSocialLinksData,
+    setSocialLinksValid,
+    socialLinksData,
+    storeId,
+    isInstagramConnected,
+    setIsInstagramConnected,
+  } = useSellerStore();
 
   const [instagramUsname, setInstagramUsname] = useState(
     socialLinksData?.instagramUsname || ""
@@ -29,8 +36,6 @@ export default function SocialLinksComponent() {
     setInstagramUsname(username);
     setInstagramUrl(`https://instagram.com/${username}`);
   };
-  
-  
 
   useEffect(() => {
     setSocialLinksData({
@@ -64,10 +69,20 @@ export default function SocialLinksComponent() {
       const encodedState = encodeURIComponent(JSON.stringify(stateData));
 
       window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${encodedState}`;
+      setIsInstagramConnected(true)
     } else {
       toast.error("Enter Valid Instagram Username");
     }
   };
+
+  const handleInstagramDisConnect = async()=>{
+    try {
+      const response = await api.delete(`/${storeId}/disconnect-instagram`)
+      setIsInstagramConnected(false)
+    } catch (error) {
+      console.log(error) 
+    }
+  }
 
   return (
     <div className="space-y-8 rounded-md overflow-hidden w-3xl">
@@ -134,12 +149,22 @@ export default function SocialLinksComponent() {
           <p className="text-gray-500">
             Connect your Instagram, so Attirelly can engage
           </p>
-          <button
-            className="bg-black text-white px-5 py-2 rounded-full cursor-pointer"
-            onClick={handleInstagramConnect}
-          >
-            Integrate
-          </button>
+
+          {isInstagramConnected ? (
+            <button
+              className="bg-black text-white px-5 py-2 rounded-full cursor-pointer"
+              onClick={handleInstagramConnect}
+            >
+              Integrate
+            </button>
+          ) : (
+            <button
+              className="bg-black text-white px-5 py-2 rounded-full cursor-pointer"
+              onClick={handleInstagramDisConnect}
+            >
+              Disconnect
+            </button>
+          )}
         </div>
         <div className="mt-4 md:mt-0 md:w-1/3 flex justify-center">
           <img
