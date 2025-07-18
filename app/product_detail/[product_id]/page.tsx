@@ -84,7 +84,6 @@ export default function ProductDetail() {
         const response = await api.get(
           `/stores/store_basic?store_id=${product?.store_id}`
         );
-          console.log("hihi huhu", response.data);
         setStoreBasicInfo(response.data);
       } catch (error) {
         console.error("Failed to fetch store basic info", error);
@@ -96,8 +95,6 @@ export default function ProductDetail() {
     }
   }, [product]);
 
-  console.log("system hi system", storeBasicInfo);
-
   const sendToWhatsApp = async () => {
     setSignIn(true);
     try {
@@ -105,7 +102,6 @@ export default function ProductDetail() {
       const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
       const encodedMessage = encodeURIComponent(message);
       const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-      console.log(url);
       window.open(url, "_blank");
     } catch (error) {
       console.error("Failed to fetch product details", error);
