@@ -12,7 +12,6 @@ interface ProductContainerProps {
   storeId?: string;
   colCount?: number;
 }
-type Facets = Record<string, FacetValue[]>;
 
 export default function ProductContainer({
   storeId = "",
@@ -43,6 +42,7 @@ export default function ProductContainer({
   const loaderRef = useRef<HTMLDivElement>(null);
   const prevStoreTypeRef = useRef<string>("");
   const [skipFilters, setSkipFilters] = useState(false);
+  
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
@@ -140,26 +140,12 @@ export default function ProductContainer({
         }
       }
       // if (Object.keys(facets).length === 0) {
-
+        setFacets(data.facets , activeFacet);
       // }
-      if (!facetInit) {
-        setFacets(data.facets);
-        setFacetInit(true);
-      } else {
-        setFacets((prevFacets) => {
-          const newFacets: Facets = { ...prevFacets };
-
-          (Object.keys(data.facets) as Array<keyof Facets>).forEach(
-            (facetKey) => {
-              if (facetKey !== activeFacet) {
-                newFacets[facetKey] = data.facets[facetKey];
-              }
-            }
-          );
-
-          return newFacets;
-        });
-      }
+      // if (!facetInit) {
+      //   setFacets(data.facets);
+      //   setFacetInit(true);
+      // }
       // setIsFacetLoading(false);
 
       if (currentPage === 0) {
@@ -194,14 +180,14 @@ export default function ProductContainer({
     }
   }, [storeTypeString]);
 
-  useEffect(() => {
-    const debounce = setTimeout(() => {
-      setPage(0);
-      fetchProducts(0);
-    }, 100);
+useEffect(() => {
+  const debounce = setTimeout(() => {
+    setPage(0);
+    fetchProducts(0);
+  }, 100);
 
-    return () => clearTimeout(debounce);
-  }, [selectedFilters, priceRange, query, storeTypeString, sortBy, category]);
+  return () => clearTimeout(debounce);
+}, [selectedFilters, priceRange, query, storeTypeString, sortBy, category]);
 
   useEffect(() => {
     if (page !== 0) fetchProducts(page);
