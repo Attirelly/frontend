@@ -42,6 +42,7 @@ export default function ProductContainer({
   const loaderRef = useRef<HTMLDivElement>(null);
   const prevStoreTypeRef = useRef<string>("");
   const [skipFilters, setSkipFilters] = useState(false);
+  
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
@@ -139,12 +140,12 @@ export default function ProductContainer({
         }
       }
       // if (Object.keys(facets).length === 0) {
-      //   setFacets(data.facets);
+      setFacets(data.facets , activeFacet);
       // }
-      if (!facetInit) {
-        setFacets(data.facets);
-        setFacetInit(true);
-      }
+      // if (!facetInit) {
+      //   setFacets(data.facets);
+      //   setFacetInit(true);
+      // }
       // setIsFacetLoading(false);
 
       if (currentPage === 0) {
@@ -164,10 +165,6 @@ export default function ProductContainer({
     }
   };
 
-  // useEffect(() => {
-  //   const priceFilter = `price >= ${priceRange[0]} AND price <= ${priceRange[1]}`;
-  //   setFilters(priceFilter);
-  // }, [priceRange]);
   useEffect(() => {
     const [min, max] = priceRange;
     const newFilter = `price >= ${min} AND price <= ${max}`;
@@ -183,13 +180,9 @@ export default function ProductContainer({
     }
   }, [storeTypeString]);
 
-useEffect(() => {
-  const debounce = setTimeout(() => {
+useEffect(()=>{
     setPage(0);
     fetchProducts(0);
-  }, 100);
-
-  return () => clearTimeout(debounce);
 }, [selectedFilters, priceRange, query, storeTypeString, sortBy, category]);
 
   useEffect(() => {

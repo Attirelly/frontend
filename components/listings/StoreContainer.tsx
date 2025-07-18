@@ -10,7 +10,7 @@ import { event } from "@/lib/gtag";
 import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";
 
 export default function StoreContainerPage() {
-  const { facets, setFacets, getSelectedFilters, selectedFilters } =
+  const { facets, setFacets, getSelectedFilters, selectedFilters , activeFacet  , algoliaFilters , setAlgoliaFilters} =
     useFilterStore();
   const { city, query, storeType, deliveryType } = useHeaderStore();
 
@@ -24,28 +24,6 @@ export default function StoreContainerPage() {
 
   const [scrollMilestones, setScrollMilestones] = useState<number[]>([]);
 
-  // const buildFacetFilters = (facets: Record<string, string[]>): string => {
-  //   const filters: string[][] = [];
-  //   for (const key in facets) {
-  //     if (facets[key].length > 0) {
-  //       filters.push(facets[key].map((value) => `${key}:${value}`));
-  //     }
-  //   }
-  //   console.log("filtersfilters", filters);
-  //   return encodeURIComponent(JSON.stringify(filters));
-  // };
-
-  // const buildCityStoreTypeFacets = () => {
-  //   const filters: string[][] = [];
-  //   if(city){
-  //     filters.push([`city:${city.name}`]);
-  //   }
-  //   if(storeType){
-  //     filters.push([`store_types:${storeType.store_type}`]);
-  //   }
-  //   return encodeURIComponent(JSON.stringify(filters));
-  // }
-
   const buildFacetFilters = (
   facets: Record<string, string[]>,
   city?: City | null,
@@ -55,7 +33,7 @@ export default function StoreContainerPage() {
 
   // selected filters (e.g. gender, price range, category)
   for (const key in facets) {
-    if (facets[key].length > 0) {
+    if (facets[key].length > 0 && key.toLowerCase() !== 'discount') {
       filters.push(facets[key].map((value) => `${key}:${value}`));
     }
   }
@@ -78,14 +56,9 @@ export default function StoreContainerPage() {
     setLoading(true);
     const facetFilters = buildFacetFilters(selectedFilters, city, storeType);
     console.log("filters", facetFilters, selectedFilters);
-    // const fi = "is_both:'true'";
-    // const res = await api.get(
-    //   `/search/search_store?query=${query} ${storeType?.store_type || ""} ${
-    //     city?.name || ""
-    //   }&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
-    // );
+    
     const res = await api.get(
-      `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
+      `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${algoliaFilters}&facetFilters=${facetFilters}`
     );
     console.log("facet Filters", selectedFilters);
     event({
@@ -103,9 +76,11 @@ export default function StoreContainerPage() {
     console.log(data);
     // setFacets(data.facets);
 
-    if (currentPage === 0 && Object.keys(facets).length === 0) {
-      setFacets(data.facets);
-    }
+    // if (currentPage === 0 && Object.keys(facets).length === 0) {
+    //   setFacets(data.facets);
+    // }
+
+    setFacets(data.facets , activeFacet) ; 
     // if (currentPage === 0) {
     //   setFacets(data.facets);
     // }
@@ -149,12 +124,12 @@ export default function StoreContainerPage() {
 
   useEffect(() => {
     if (deliveryType == "In Store") {
-      setFilters("is_online:'false' OR is_both:'true'");
+      let tempstr = algoliaFilters ? algoliaFilters + 'AND' + "is_online:'false' OR is_both:'true'" :  "is_online:'false' OR is_both:'true'" ; 
+      setAlgoliaFilters(tempstr) ; 
     } else if (deliveryType == "Home Delivery") {
-      setFilters("is_online:'true' OR is_both:'true'");
-    } else {
-      setFilters("");
-    }
+      let tempstr = algoliaFilters ? algoliaFilters + 'AND' + "is_online:'true' OR is_both:'true'" :  "is_online:'true' OR is_both:'true'" ; 
+      setAlgoliaFilters(tempstr) ; 
+    } 
   }, [deliveryType]);
 
   // Trigger fetch on scroll
