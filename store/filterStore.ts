@@ -184,12 +184,13 @@ function createFilterStore() {
       const currentFacets = get().facets;
 
       const updatedFacets: Facets = { ...currentFacets };
-
+      
       for (const [facetName, values] of Object.entries(apiFacets)) {
         if (!values || typeof values !== "object") continue;
 
         // 🚫 Skip updating active facet to avoid re-trigger
-        if (facetName === activeFacet) continue;
+        console.log("debugging" , facetName  , activeFacet) ; 
+        if (facetName.toLowerCase() === activeFacet?.toLowerCase()) continue;
 
         const existing = currentFacets[facetName] || [];
 
