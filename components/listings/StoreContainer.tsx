@@ -10,7 +10,7 @@ import { event } from "@/lib/gtag";
 import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";
 
 export default function StoreContainerPage() {
-  const { facets, setFacets, getSelectedFilters, selectedFilters , activeFacet  , algoliaFilters , setAlgoliaFilters} =
+  const { facets, setFacets, getSelectedFilters, selectedFilters , activeFacet} =
     useFilterStore();
   const { city, query, storeType, deliveryType } = useHeaderStore();
 
@@ -54,11 +54,26 @@ export default function StoreContainerPage() {
 
   const fetchStores = async (currentPage: number) => {
     setLoading(true);
+    
+    // adding discount to filter 
+    let discountArray = selectedFilters['discount'] || []; 
+    let discountStr = discountArray.map((val)=>`discount >= ${val.slice(0,2)}`).join(' OR ') ; 
+    let tempFilterStr = ""
+    if(filters.length > 0 && discountStr.length > 0 ){
+      tempFilterStr = filters + " AND " + discountStr
+    }
+    else if(filters.length > 0 ){
+      tempFilterStr = filters 
+    }
+    else{
+      tempFilterStr = discountStr
+    }
+     
+
     const facetFilters = buildFacetFilters(selectedFilters, city, storeType);
-    console.log("filters", facetFilters, selectedFilters);
     
     const res = await api.get(
-      `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${algoliaFilters}&facetFilters=${facetFilters}`
+      `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${tempFilterStr}&facetFilters=${facetFilters}`
     );
     console.log("facet Filters", selectedFilters);
     event({
@@ -126,12 +141,12 @@ export default function StoreContainerPage() {
 
   useEffect(() => {
     if (deliveryType == "In Store") {
-      let tempstr = algoliaFilters ? algoliaFilters + 'AND' + "is_online:'false' OR is_both:'true'" :  "is_online:'false' OR is_both:'true'" ; 
-      setAlgoliaFilters(tempstr) ; 
+      setFilters("is_online:'false' OR is_both:'true'");
     } else if (deliveryType == "Home Delivery") {
-      let tempstr = algoliaFilters ? algoliaFilters + 'AND' + "is_online:'true' OR is_both:'true'" :  "is_online:'true' OR is_both:'true'" ; 
-      setAlgoliaFilters(tempstr) ; 
-    } 
+      setFilters("is_online:'true' OR is_both:'true'");
+    } else {
+      setFilters("");
+    }
   }, [deliveryType]);
 
   // Trigger fetch on scroll
