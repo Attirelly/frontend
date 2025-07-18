@@ -5,6 +5,7 @@ import { instaMediaType, MediaItemType } from '@/types/SellerTypes';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { roboto } from '@/font';
+import SidecarCarousel from './SidecarCarousel';
 
 type Props = {
   isOpen: boolean;
@@ -35,24 +36,30 @@ export default function ApifyPostDialog({ isOpen, post, onClose, onNext, onPrev,
     <div className="fixed inset-0 z-50 bg-neutral-900/70 flex justify-center items-center">
       <div
         ref={wrapperRef}
-        className="relative flex max-w-[70vw] max-h-[90vh] bg-black"
+        className="relative flex w-[1000px] h-[600px] bg-black"
       >
-        <div className='grid grid-cols-[1.5fr_1fr]'>
-          {post.media_type === 'Video' ? (
-            <video
-              src={post.media_urls[0].media_url}
-              controls
-              autoPlay
-              muted
-              className="max-w-full max-h-full object-contain"
-            />
-          ) : (
-            <img
-              src={post.media_urls[0].media_url}
-              alt="Instagram post"
-              className="max-w-full max-h-full object-contain"
-            />
-          )}
+        <div className='grid grid-cols-[1.5fr_1fr] w-full h-full'>
+          <div className="flex justify-center items-center w-full h-full bg-black overflow-hidden">
+            {post.media_type === 'Sidecar' ? (
+              <SidecarCarousel mediaUrls={post.media_urls} />
+            ) : post.media_type === 'Video' ? (
+              <video
+                src={post.media_urls[0].media_url}
+                controls
+                autoPlay
+                muted
+                className="max-w-full max-h-full object-contain"
+              />
+            ) : (
+              <img
+                src={`/api/proxy-image?url=${encodeURIComponent(post.media_urls[0].media_url)}`}
+                alt="Instagram post"
+                className="max-w-full max-h-full object-contain"
+              />
+            )}
+          </div>
+
+
           <div className={`${roboto.className} bg-white px-3 flex flex-col gap-3`}
             style={{ fontWeight: 600 }}>
             <div className='flex pt-2 gap-4 items-center'>

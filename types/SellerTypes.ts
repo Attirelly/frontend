@@ -77,6 +77,7 @@ export interface instaMediaType {
 
 export interface MediaUrlType {
   media_id: string;
+  type: 'Image' | 'Video';
   id: string;
   media_url: string;
 }
@@ -89,6 +90,7 @@ export interface MediaItemType {
   caption: string;
   media_type: 'Video' | 'Image' | 'Sidecar'; // Sidecar is carousel (multi-media)
   comments_count: number;
+  display_url: string;
   media_urls: MediaUrlType[];
 }
 
