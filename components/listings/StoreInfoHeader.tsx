@@ -53,7 +53,7 @@ export default function StoreInfoPage({
     return (
         <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 p-6">
             {/* Left: Circular Store Image */}
-            <div className="flex justify-center items-center w-76.5 h-63.75 bg-[#F8F8F8] p-4 rounded-2xl">
+            {/* <div className="flex justify-center items-center w-76.5 h-63.75 bg-[#F8F8F8] p-4 rounded-2xl"> */}
                 <div className="flex flex-col items-center">
                     <div className="relative w-32 h-32">
                         <Image
@@ -88,7 +88,7 @@ export default function StoreInfoPage({
                     </div>
                 </div>
 
-            </div>
+            {/* </div> */}
 
             {/* Right: Store Info (expand as needed) */}
             <div className={`${roboto.className} flex flex-col`}
