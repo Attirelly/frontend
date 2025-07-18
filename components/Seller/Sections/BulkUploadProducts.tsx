@@ -213,11 +213,11 @@ export default function BulkUploadPage() {
         <div className="text-center mt-6">
           <button
             onClick={handleCreateProducts}
-            disabled={isUploading}
-            className="bg-blue-600 text-white px-6 py-2 rounded cursor-pointer hover:bg-blue-700 hover:shadow-md active:scale-[0.98] transition-all duration-200"
+            disabled={isUploading || !selectedFileName}
+            className="bg-blue-600 text-white px-6 py-2 rounded cursor-pointer hover:bg-blue-700 hover:shadow-md active:scale-[0.98] transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
 
           >
-            {isUploading ? "Uploading..." : "Create Products"}
+            {isUploading ? "Uploading..." : "Upload Products"}
           </button>
         </div>
       </Section>

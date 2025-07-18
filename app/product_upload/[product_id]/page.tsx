@@ -61,7 +61,11 @@ export default function ProductUpdatePage() {
           updateFormData("pricing", formData.pricing);
           updateFormData("variants", formData.variants);
           updateFormData("media", formData.media);
-          setCurrentStep(1);
+          const searchParams = new URLSearchParams(window.location.search);
+        const stepParam = searchParams.get('step');
+        const requestedStep = stepParam ? parseInt(stepParam, 10) : 1;
+        const safeStep = Math.min(Math.max(requestedStep, 0), sectionComponents.length - 1);
+        setCurrentStep(safeStep);
           setLoading(false);
         } catch (error) {
           console.error("Failed to fetch product for editing", error);
