@@ -74,3 +74,24 @@ export interface instaMediaType {
   like_count: number,
   comments_count:number
 }
+
+export interface MediaUrlType {
+  media_id: string;
+  id: string;
+  media_url: string;
+}
+
+export interface MediaItemType {
+  id: string;
+  parent_id: string;
+  username:string;
+  likes_count: number;
+  caption: string;
+  media_type: 'Video' | 'Image' | 'Sidecar'; // Sidecar is carousel (multi-media)
+  comments_count: number;
+  media_urls: MediaUrlType[];
+}
+
+export interface MediaResponseType {
+  media: MediaItemType[];
+}

@@ -2,14 +2,15 @@
 
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { instaMediaType } from '@/types/SellerTypes';
+import { MediaItemType } from '@/types/SellerTypes';
 import PostDialogue from './PostDialgue';
+import ApifyPostDialog from './ApifyPostDialog';
 
 type Props = {
-  posts: instaMediaType[];
+  posts: MediaItemType[];
 };
 
-export default function GridPostGallery({ posts }: Props) {
+export default function ApifyPostGallery({ posts }: Props) {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   const openDialog = (index: number) => {
@@ -41,17 +42,17 @@ export default function GridPostGallery({ posts }: Props) {
             className="relative aspect-square overflow-hidden bg-black"
             onClick={() => openDialog(index)}
           >
-            {post.media_type === 'IMAGE' || post.media_type === 'CAROUSEL_ALBUM' ? (
+            {post.media_type === 'Image' || post.media_type === 'Sidecar' ? (
               <Image
-                src={post.media_url}
+                src={post.media_urls[0].media_url}
                 alt="Instagram post"
                 fill
                 className="object-cover"
                 unoptimized
               />
-            ) : post.media_type === 'VIDEO' ? (
+            ) : post.media_type === 'Video' ? (
               <video
-                src={post.media_url}
+                src={post.media_urls[0].media_url}
                 className="object-cover w-full h-full"
                 autoPlay
                 muted
@@ -60,7 +61,7 @@ export default function GridPostGallery({ posts }: Props) {
               />
             ) : null}
 
-            {post.media_type === 'VIDEO' && (
+            {post.media_type === 'Video' && (
               <div className="absolute top-1 right-1">
                 <Image
                   src="/ListingPageHeader/reel_logo.svg"
@@ -75,7 +76,7 @@ export default function GridPostGallery({ posts }: Props) {
       </div>
 
       {currentIndex !== null && (
-        <PostDialogue
+        <ApifyPostDialog
           isOpen={true}
           post={posts[currentIndex]}
           onClose={closeDialog}

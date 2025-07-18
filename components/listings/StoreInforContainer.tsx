@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from '@/lib/axios'
 import StoreInfoPage from "./StoreInfoHeader";
-import { StoreInfoType } from "@/types/SellerTypes";
+import { MediaResponseType, StoreInfoType } from "@/types/SellerTypes";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { toast } from "sonner";
 import StoreInfoSkeleton from "./skeleton/store_desc/StoreInfoSkeleton";
@@ -11,7 +11,7 @@ type StoreInfoContainerProps = {
 };
 
 export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps) {
-  const { setInstaMedia, setProfilePic, setInstaMediaLoading, setInstaUsername } = useHeaderStore();
+  const { setInstaMedia, setProfilePic, setInstaMediaLoading, setInstaUsername, setInstaMediaApify } = useHeaderStore();
   const [store, setStore] = useState<StoreInfoType>();
   const [loading, setLoading] = useState(true); // ✅ Loading state
 
@@ -45,9 +45,11 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
         const res = await api.get(`/instagram/connect_check/${storeId}`);
         console.log("Ghibli art", res.data);
         if (!res.data) {
+          setInstaMediaApify([]);
           const instaApify = await api.get(`/instagram_apify/${sellerId}`);
           console.log("apify data", instaApify.data);
           const apifyData = instaApify.data;
+          setInstaMediaApify(apifyData.media);
           setProfilePic(apifyData.profile_pic_hd);
           const storeFinal3: StoreInfoType = {
             id: storeData.store_id,

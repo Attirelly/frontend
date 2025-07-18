@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { City, BrandType, instaMediaType, PriceRangeType } from '@/types/SellerTypes'
+import { City, BrandType, instaMediaType, PriceRangeType, MediaResponseType, MediaItemType } from '@/types/SellerTypes'
 
 // Replace with actual Ludhiana city object from your database
 const defaultCity: City = {
@@ -34,6 +34,8 @@ type HeaderState = {
     setInstaUsername: (instaUsername:string)=>void;
     instaMedia: instaMediaType[];
     setInstaMedia:(instaMedia: instaMediaType[]) => void;
+    instaMediaApify : MediaItemType[];
+    setInstaMediaApify: (instaMediaApify: MediaItemType[]) => void; 
     instaMediaLoading:boolean;
     setInstaMediaLoading: (instaMediaLoading:boolean) => void;
     profilePic: string;
@@ -64,6 +66,8 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setInstaUsername: (instaUsername: string) => set({ instaUsername }),
     instaMedia: [],
     setInstaMedia: (instaMedia) => set({ instaMedia }),
+    instaMediaApify: [],
+    setInstaMediaApify: (instaMediaApify: MediaItemType[]) => set({ instaMediaApify }),
     instaMediaLoading: false,
     setInstaMediaLoading: (instaMediaLoading: boolean) => set({ instaMediaLoading }),
     profilePic: '',
