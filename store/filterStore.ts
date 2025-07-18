@@ -120,6 +120,8 @@ type FacetValue = {
 
 type Facets = Record<string, FacetValue[]>;
 
+
+
 interface FilterState {
   activeFacet: string|null
   results: number;
