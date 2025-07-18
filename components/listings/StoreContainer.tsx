@@ -10,7 +10,7 @@ import { event } from "@/lib/gtag";
 import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";
 
 export default function StoreContainerPage() {
-  const { facets, setFacets, getSelectedFilters, selectedFilters , activeFacet } =
+  const { facets, setFacets, getSelectedFilters, selectedFilters , activeFacet  , algoliaFilters , setAlgoliaFilters} =
     useFilterStore();
   const { city, query, storeType, deliveryType } = useHeaderStore();
 
@@ -56,8 +56,9 @@ export default function StoreContainerPage() {
     setLoading(true);
     const facetFilters = buildFacetFilters(selectedFilters, city, storeType);
     console.log("filters", facetFilters, selectedFilters);
+    
     const res = await api.get(
-      `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
+      `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${algoliaFilters}&facetFilters=${facetFilters}`
     );
     console.log("facet Filters", selectedFilters);
     event({
@@ -123,12 +124,12 @@ export default function StoreContainerPage() {
 
   useEffect(() => {
     if (deliveryType == "In Store") {
-      setFilters("is_online:'false' OR is_both:'true'");
+      let tempstr = algoliaFilters ? algoliaFilters + 'AND' + "is_online:'false' OR is_both:'true'" :  "is_online:'false' OR is_both:'true'" ; 
+      setAlgoliaFilters(tempstr) ; 
     } else if (deliveryType == "Home Delivery") {
-      setFilters("is_online:'true' OR is_both:'true'");
-    } else {
-      setFilters("");
-    }
+      let tempstr = algoliaFilters ? algoliaFilters + 'AND' + "is_online:'true' OR is_both:'true'" :  "is_online:'true' OR is_both:'true'" ; 
+      setAlgoliaFilters(tempstr) ; 
+    } 
   }, [deliveryType]);
 
   // Trigger fetch on scroll

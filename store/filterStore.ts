@@ -120,6 +120,7 @@ type FacetValue = {
 type Facets = Record<string, FacetValue[]>;
 
 interface FilterState {
+  algoliaFilters : string|null;
   activeFacet: string | null;
   results: number;
   setResults: (results: number) => void;
@@ -134,6 +135,7 @@ interface FilterState {
   facets: Facets;
   selectedFilters: Record<string, string[]>;
   setFacets: (apiFacets: Record<string, Record<string, number>> , activeFacet : string|null ) => void;
+  setAlgoliaFilters:(filter:string|null)=>void
   toggleFilter: (facetName: string, value: string) => void;
   resetFilters: () => void;
   getSelectedFilters: () => Record<string, string[]>;
@@ -141,6 +143,8 @@ interface FilterState {
 
 function createFilterStore() {
   return create<FilterState>((set, get) => ({
+    algoliaFilters:null , 
+    setAlgoliaFilters:(filter)=>set({algoliaFilters : filter}),
     activeFacet: null,
     setActiveFacet: (facet) => set({ activeFacet: facet }),
     results: 0,
@@ -226,6 +230,8 @@ function createFilterStore() {
         updatedSelectedFilters[facetName] = updatedFacets[facetName]
           .filter((f) => f.selected)
           .map((f) => f.name);
+        
+        
 
         return {
           activeFacet: facetName,
