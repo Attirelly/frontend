@@ -43,12 +43,12 @@ export default function ApifyPostGallery({ posts }: Props) {
             onClick={() => openDialog(index)}
           >
             {post.media_type === 'Image' || post.media_type === 'Sidecar' ? (
-              <Image
+              <img
                 src={post.media_urls[0].media_url}
                 alt="Instagram post"
-                fill
+                
                 className="object-cover"
-                unoptimized
+                
               />
             ) : post.media_type === 'Video' ? (
               <video

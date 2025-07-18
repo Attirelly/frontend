@@ -41,11 +41,13 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
         setStore(storeFinal);
         console.log(storeFinal);
         setInstaMediaLoading(true);
+        setInstaMediaApify([]);
+        setInstaMedia([]);
 
         const res = await api.get(`/instagram/connect_check/${storeId}`);
         console.log("Ghibli art", res.data);
         if (!res.data) {
-          setInstaMediaApify([]);
+          
           const instaApify = await api.get(`/instagram_apify/${sellerId}`);
           console.log("apify data", instaApify.data);
           const apifyData = instaApify.data;
@@ -69,7 +71,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
           setStore(storeFinal3);
         }
         else {
-          setInstaMedia([]);
+          
           const instaRes = await api.get(`instagram/seller/${storeId}/data`);
           const instaData = instaRes.data;
           setInstaMedia(instaData.media);
