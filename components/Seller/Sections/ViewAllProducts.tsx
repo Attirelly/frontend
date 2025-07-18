@@ -124,7 +124,6 @@ export default function ProductsPage({
 
   const handleImageUpload = (record: Product) => {
     message.success(`Image uploaded for ${record.product_name}`);
-    // window.open(`/product_upload/${record.product_id}`, '_blank', 'noopener,noreferrer');
     actions.setCurrentStep(6);
   };
 
