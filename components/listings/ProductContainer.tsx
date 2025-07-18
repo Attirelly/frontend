@@ -139,12 +139,12 @@ export default function ProductContainer({
         }
       }
       // if (Object.keys(facets).length === 0) {
-      //   setFacets(data.facets);
-      // }
-      if (!facetInit) {
         setFacets(data.facets);
-        setFacetInit(true);
-      }
+      // }
+      // if (!facetInit) {
+      //   setFacets(data.facets);
+      //   setFacetInit(true);
+      // }
       // setIsFacetLoading(false);
 
       if (currentPage === 0) {
@@ -164,10 +164,6 @@ export default function ProductContainer({
     }
   };
 
-  // useEffect(() => {
-  //   const priceFilter = `price >= ${priceRange[0]} AND price <= ${priceRange[1]}`;
-  //   setFilters(priceFilter);
-  // }, [priceRange]);
   useEffect(() => {
     const [min, max] = priceRange;
     const newFilter = `price >= ${min} AND price <= ${max}`;
