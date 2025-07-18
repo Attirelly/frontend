@@ -42,10 +42,10 @@ export default function ApifyPostGallery({ posts }: Props) {
             className="relative aspect-square overflow-hidden bg-black"
             onClick={() => openDialog(index)}
           >
-            {post.media_type === 'Image' || post.media_type === 'Sidecar' ? (
+            {/* {post.media_type === 'Image' || post.media_type === 'Sidecar' ? (
               <img
-                // src={post.media_urls[0].media_url}
-                src="https://instagram.fpoa35-1.fna.fbcdn.net/v/t51.2885-15/520347357_18544084108035859_2250915303986305106_n.jpg?stp=dst-jpg_e35_p1080x1080_sh0.08_tt6&_nc_ht=instagram.fpoa35-1.fna.fbcdn.net&_nc_cat=1&_nc_oc=Q6cZ2QHOv4ybWn_MSpqkut1MKM128aKh85uBjoz7u-ARq_IDKz91gXaONO1_MlMOQs6aXy0&_nc_ohc=i6cS79MBdcQQ7kNvwE1x4Eg&_nc_gid=OHdlhSDeSJQi5v3NjNhrpA&edm=AOQ1c0wBAAAA&ccb=7-5&ig_cache_key=MzY3OTE0MTM1MTk1NTI4OTkxNw%3D%3D.3-ccb7-5&oh=00_AfRNl_6J-jfjxUJ_KnlL3PDA_DLdFIAX0uO6vU0WCe48PA&oe=68802640&_nc_sid=8b3546"
+                src={post.display_url}
+                // src={`/api/proxy-image?url=${encodeURIComponent(post.media_urls[0].media_url)}`}
                 alt="Instagram post"
                 
                 className="object-cover w-full h-full"
@@ -53,15 +53,22 @@ export default function ApifyPostGallery({ posts }: Props) {
               />
             ) : post.media_type === 'Video' ? (
               <video
-                src={post.media_urls[0].media_url}
+                src={post.display_url}
                 className="object-cover w-full h-full"
                 autoPlay
                 muted
                 loop
                 playsInline
               />
-            ) : null}
+            ) : null} */}
 
+            <Image
+                src={`/api/proxy-image?url=${encodeURIComponent(post.display_url)}`}
+                alt="Instagram post"
+                fill
+                className="object-cover"
+                unoptimized
+            />
             {post.media_type === 'Video' && (
               <div className="absolute top-1 right-1">
                 <Image
@@ -72,6 +79,16 @@ export default function ApifyPostGallery({ posts }: Props) {
                 />
               </div>
             )}
+            {post.media_type === 'Sidecar' && (
+    <div className="absolute top-1 right-1">
+      <Image
+        src="/ListingPageHeader/carousel_logo.png"  // Make sure this image exists
+        alt="carousel"
+        width={36}
+        height={36}
+      />
+    </div>
+  )}
           </div>
         ))}
       </div>
