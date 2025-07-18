@@ -56,12 +56,6 @@ export default function StoreContainerPage() {
     setLoading(true);
     const facetFilters = buildFacetFilters(selectedFilters, city, storeType);
     console.log("filters", facetFilters, selectedFilters);
-    // const fi = "is_both:'true'";
-    // const res = await api.get(
-    //   `/search/search_store?query=${query} ${storeType?.store_type || ""} ${
-    //     city?.name || ""
-    //   }&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
-    // );
     const res = await api.get(
       `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${filters}&facetFilters=${facetFilters}`
     );
@@ -85,7 +79,7 @@ export default function StoreContainerPage() {
     //   setFacets(data.facets);
     // }
 
-    setFacets(data.facets) ; 
+    setFacets(data.facets , activeFacet) ; 
     // if (currentPage === 0) {
     //   setFacets(data.facets);
     // }
