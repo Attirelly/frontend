@@ -228,14 +228,14 @@ export default function ProductsPage({
     {
       title: "Image Upload",
       render: (_: any, record: Product) => (
-        <Upload showUploadList={false}>
+        // <Upload showUploadList={false}>
           <Button
             icon={<UploadOutlined />}
             onClick={() => handleImageUpload(record)}
           >
             Upload
           </Button>
-        </Upload>
+        // </Upload>
       ),
     },
   ];
