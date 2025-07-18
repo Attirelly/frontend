@@ -15,8 +15,15 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 
 export default function ListingPageHeader() {
   const router = useRouter();
-  const { city, setCity, query, setQuery, setStoreType, setSearchFocus, searchFocus } =
-    useHeaderStore();
+  const {
+    city,
+    setCity,
+    query,
+    setQuery,
+    setStoreType,
+    setSearchFocus,
+    searchFocus,
+  } = useHeaderStore();
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(city || null);
   const [tempQuery, setTempQuery] = useState<string>(query || "");
@@ -43,8 +50,14 @@ export default function ListingPageHeader() {
 
   const handleSearchQuerySuggestion = async () => {
     try {
-      const response = await api.post("/search/search_suggestion", {
+      let tempStr = "";
+      console.log("selectedcity" , selectedCity)
+      if (selectedCity) {
+        tempStr = `city:${selectedCity.name}`;
+      }
+      const response = await api.post(`/search/search_suggestion`, {
         query: tempQuery,
+        filters: tempStr
       });
 
       const data = response.data;
