@@ -237,7 +237,10 @@ export default function ProductsPage({
         // <Upload showUploadList={false}>
           <Button
             icon={<UploadOutlined />}
-            onClick={() => handleImageUpload(record)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleImageUpload(record);
+            }}
           >
             Upload
           </Button>
