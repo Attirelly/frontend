@@ -16,8 +16,7 @@ import type {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
-  useCurrentStep,
-  useProductFormStore,
+  useFormActions
 } from "@/store/product_upload_store";
 
 
@@ -26,7 +25,7 @@ export default function ProductsPage({
 }: {
   batchId?: string | null;
 }) {
-  const { actions } = useProductFormStore();
+  const { setCurrentStep } = useFormActions();
 
   const {
     products,
@@ -124,8 +123,8 @@ export default function ProductsPage({
 
   const handleImageUpload = (record: Product) => {
     // message.success(`Image uploaded for ${record.product_name}`);
-    actions.setCurrentStep(6);
-    window.open(`/product_upload/${record.product_id}`, '_blank', 'noopener,noreferrer');
+    // setCurrentStep(6);
+    window.open(`/product_upload/${record.product_id}?step=6`, '_blank', 'noopener,noreferrer');
   };
 
   const columns = [
