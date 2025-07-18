@@ -140,7 +140,7 @@ export default function ProductContainer({
         }
       }
       // if (Object.keys(facets).length === 0) {
-        setFacets(data.facets , activeFacet);
+      setFacets(data.facets , activeFacet);
       // }
       // if (!facetInit) {
       //   setFacets(data.facets);

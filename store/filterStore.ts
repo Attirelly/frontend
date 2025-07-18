@@ -189,7 +189,7 @@ function createFilterStore() {
         if (!values || typeof values !== "object") continue;
 
         // 🚫 Skip updating active facet to avoid re-trigger
-        if (!activeFacet || facetName === activeFacet) continue;
+        if (facetName === activeFacet) continue;
 
         const existing = currentFacets[facetName] || [];
 
