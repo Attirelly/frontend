@@ -41,6 +41,8 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
         console.log(storeFinal);
         setInstaMediaLoading(true);
         setInstaMedia([]);
+        const res = await api.get(`/instagram/connect_check/${storeId}`);
+        console.log("Ghibli art",res.data);
         const instaRes = await api.get(`instagram/seller/${storeId}/data`);
         const instaData = instaRes.data;
         setInstaMedia(instaData.media);
@@ -68,7 +70,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
 
 
       } catch (error) {
-        // toast.error('failed to fetch data');
+        // instagram is not connected
       } finally {
         setInstaMediaLoading(false);
         setLoading(false);
