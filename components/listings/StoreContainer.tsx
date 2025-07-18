@@ -10,7 +10,7 @@ import { event } from "@/lib/gtag";
 import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";
 
 export default function StoreContainerPage() {
-  const { facets, setFacets, getSelectedFilters, selectedFilters } =
+  const { facets, setFacets, getSelectedFilters, selectedFilters , activeFacet } =
     useFilterStore();
   const { city, query, storeType, deliveryType } = useHeaderStore();
 
@@ -23,28 +23,6 @@ export default function StoreContainerPage() {
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
   const [scrollMilestones, setScrollMilestones] = useState<number[]>([]);
-
-  // const buildFacetFilters = (facets: Record<string, string[]>): string => {
-  //   const filters: string[][] = [];
-  //   for (const key in facets) {
-  //     if (facets[key].length > 0) {
-  //       filters.push(facets[key].map((value) => `${key}:${value}`));
-  //     }
-  //   }
-  //   console.log("filtersfilters", filters);
-  //   return encodeURIComponent(JSON.stringify(filters));
-  // };
-
-  // const buildCityStoreTypeFacets = () => {
-  //   const filters: string[][] = [];
-  //   if(city){
-  //     filters.push([`city:${city.name}`]);
-  //   }
-  //   if(storeType){
-  //     filters.push([`store_types:${storeType.store_type}`]);
-  //   }
-  //   return encodeURIComponent(JSON.stringify(filters));
-  // }
 
   const buildFacetFilters = (
   facets: Record<string, string[]>,
@@ -103,9 +81,11 @@ export default function StoreContainerPage() {
     console.log(data);
     // setFacets(data.facets);
 
-    if (currentPage === 0 && Object.keys(facets).length === 0) {
-      setFacets(data.facets);
-    }
+    // if (currentPage === 0 && Object.keys(facets).length === 0) {
+    //   setFacets(data.facets);
+    // }
+
+    setFacets(data.facets) ; 
     // if (currentPage === 0) {
     //   setFacets(data.facets);
     // }

@@ -180,13 +180,9 @@ export default function ProductContainer({
     }
   }, [storeTypeString]);
 
-useEffect(() => {
-  const debounce = setTimeout(() => {
+useEffect(()=>{
     setPage(0);
     fetchProducts(0);
-  }, 100);
-
-  return () => clearTimeout(debounce);
 }, [selectedFilters, priceRange, query, storeTypeString, sortBy, category]);
 
   useEffect(() => {
