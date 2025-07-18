@@ -59,7 +59,7 @@ export default function MediaAssets() {
   }, [media]);
 
   useEffect(() => {
-    const isValid = !!media?.mainImage;
+    const isValid = !!media?.mainImage?.length;
     console.log("System hai bhai",media);
     setStepValidation(currentStep, isValid);
   }, [media, currentStep]);
