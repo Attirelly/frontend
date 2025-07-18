@@ -33,7 +33,7 @@ export default function StoreContainerPage() {
 
   // selected filters (e.g. gender, price range, category)
   for (const key in facets) {
-    if (facets[key].length > 0) {
+    if (facets[key].length > 0 && key.toLowerCase() !== 'discount') {
       filters.push(facets[key].map((value) => `${key}:${value}`));
     }
   }
