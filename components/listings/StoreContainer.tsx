@@ -107,7 +107,9 @@ export default function StoreContainerPage() {
       location: `${sc.area}, ${sc.city}`,
       storeTypes: sc.store_types || [],
       priceRanges: [
-        ...new Set(sc.store_type_price_range.map((item) => item.price_range)),
+        ...new Set(sc.store_type_price_range
+          .filter(item=> item.store_type === storeType?.store_type)
+          .map((item) => item.price_range)),
       ],
       bestSelling: sc.categories,
       discount: sc.discount,

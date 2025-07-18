@@ -15,6 +15,10 @@ import type {
 } from "@/types/ProductTypes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import {
+  useCurrentStep,
+  useProductFormStore,
+} from "@/store/product_upload_store";
 
 
 export default function ProductsPage({
@@ -22,6 +26,7 @@ export default function ProductsPage({
 }: {
   batchId?: string | null;
 }) {
+  const { actions } = useProductFormStore();
 
   const {
     products,
@@ -118,7 +123,9 @@ export default function ProductsPage({
 
 
   const handleImageUpload = (record: Product) => {
-    message.success(`Image uploaded for ${record.product_name}`);
+    // message.success(`Image uploaded for ${record.product_name}`);
+    actions.setCurrentStep(6);
+    window.open(`/product_upload/${record.product_id}`, '_blank', 'noopener,noreferrer');
   };
 
   const columns = [
@@ -228,14 +235,17 @@ export default function ProductsPage({
     {
       title: "Image Upload",
       render: (_: any, record: Product) => (
-        <Upload showUploadList={false}>
+        // <Upload showUploadList={false}>
           <Button
             icon={<UploadOutlined />}
-            onClick={() => handleImageUpload(record)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleImageUpload(record);
+            }}
           >
             Upload
           </Button>
-        </Upload>
+        // </Upload>
       ),
     },
   ];
