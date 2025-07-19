@@ -338,7 +338,7 @@ export default function ProductDetail() {
                       <div className="flex flex-col items-center">
                         <button
                           key={color.color_id}
-                          className={`w-15 h-15 rounded-full border-0.25  ${selectedColor?.color_id === color.color_id
+                          className={`w-10 h-10 rounded-full border-0.25  ${selectedColor?.color_id === color.color_id
                               ? "border-black"
                               : "border-gray-300"
                             }`}
