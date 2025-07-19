@@ -84,7 +84,6 @@ export default function ProductDetail() {
         const response = await api.get(
           `/stores/store_basic?store_id=${product?.store_id}`
         );
-          console.log("hihi huhu", response.data);
         setStoreBasicInfo(response.data);
       } catch (error) {
         console.error("Failed to fetch store basic info", error);
@@ -96,8 +95,6 @@ export default function ProductDetail() {
     }
   }, [product]);
 
-  console.log("system hi system", storeBasicInfo);
-
   const sendToWhatsApp = async () => {
     setSignIn(true);
     try {
@@ -105,37 +102,36 @@ export default function ProductDetail() {
       const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
       const encodedMessage = encodeURIComponent(message);
       const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-      console.log(url);
       window.open(url, "_blank");
     } catch (error) {
       console.error("Failed to fetch product details", error);
     }
   };
-  
+
 
   const updateVariantBySelection = (color: Color | null, size: Size | null) => {
     if (!product) return;
-    if(!color && !size) return ; 
-    let matched  ; 
-    if(color &&  size ){
+    if (!color && !size) return;
+    let matched;
+    if (color && size) {
       matched = product.variants.find(
         (v) =>
           v.color.color_id === color.color_id && v.size.size_id === size.size_id
       );
     }
-    else if(color){
+    else if (color) {
       matched = product.variants.find(
         (v) =>
-          v.color.color_id === color?.color_id 
+          v.color.color_id === color?.color_id
       );
     }
-    else{
+    else {
       matched = product.variants.find(
         (v) =>
-          v.size.size_id === size?.size_id 
+          v.size.size_id === size?.size_id
       );
     }
-    
+
 
     if (matched) {
       setSelectedVariant(matched);
@@ -228,9 +224,8 @@ export default function ProductDetail() {
                   {images.map((src, idx) => (
                     <div
                       key={idx}
-                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${
-                        idx === activeIndex ? "border-black" : "border-gray-300"
-                      }`}
+                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${idx === activeIndex ? "border-black" : "border-gray-300"
+                        }`}
                       onClick={() => setActiveIndex(idx)}
                     >
                       <Image
@@ -265,9 +260,8 @@ export default function ProductDetail() {
                       backgroundImage: `url(${images[activeIndex]})`,
                       backgroundRepeat: "no-repeat",
                       backgroundSize: `${600 * 2}px ${600 * 2}px`,
-                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${
-                        lensPosition.y * 2 - 150
-                      }px`,
+                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${lensPosition.y * 2 - 150
+                        }px`,
                     }}
                   />
                 </div>
@@ -321,11 +315,10 @@ export default function ProductDetail() {
                         onClick={() =>
                           updateVariantBySelection(selectedColor, size)
                         }
-                        className={`border rounded-sm w-19 h-10 ${
-                          selectedSize?.size_id === size.size_id
+                        className={`border rounded-sm w-19 h-10 ${selectedSize?.size_id === size.size_id
                             ? "border-black font-semibold bg-[#EBEBEB]"
                             : "border-gray-300"
-                        }`}
+                          }`}
                       >
                         {size.size_name}
                       </button>
@@ -342,18 +335,23 @@ export default function ProductDetail() {
                   </p>
                   <div className="flex gap-3 mt-5">
                     {colors.map((color) => (
-                      <button
-                        key={color.color_id}
-                        className={`w-19 h-10 rounded-lg border-0.25  ${
-                          selectedColor?.color_id === color.color_id
-                            ? "border-black"
-                            : "border-gray-300"
-                        }`}
-                        style={{ backgroundColor: color.hex_code || "#ccc" }}
-                        onClick={() =>
-                          updateVariantBySelection(color, selectedSize)
-                        }
-                      />
+                      <div className="flex flex-col items-center">
+                        <button
+                          key={color.color_id}
+                          className={`w-10 h-10 rounded-full border-0.25  ${selectedColor?.color_id === color.color_id
+                              ? "border-black"
+                              : "border-gray-300"
+                            }`}
+                          style={{ backgroundColor: color.hex_code || "#ccc" }}
+                          onClick={() =>
+                            updateVariantBySelection(color, selectedSize)
+                          }
+                        />
+                        <span className="text-sm mt-1">
+                          {color.color_name}
+                        </span>
+                      </div>
+
                     ))}
                   </div>
                 </div>
@@ -369,7 +367,8 @@ export default function ProductDetail() {
               </button>
 
               {/* Product Details & Care */}
-              <div className="mt-8">
+              {!product.shopify_id && (
+<div className="mt-8">
                 <div className="flex justify-between items-center mb-2">
                   <h1 className="w-full text-xl font-500 border-y border-0.25 border-[#CCCCCC] py-5">
                     Product Details
@@ -411,6 +410,8 @@ export default function ProductDetail() {
                   </div>
                 )}
               </div>
+              )}
+              
 
               {/* Product Description */}
               <div className="mt-8">
@@ -466,36 +467,36 @@ export default function ProductDetail() {
         </div>
       </div>
       {product && (
-<div className="w-300 flex flex-col mx-auto">
-        <hr
-          className="border-t border-transparent"
-          style={{
-            borderImage:
-              "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
-            borderImageSlice: 1,
-          }}
-        />
-        
-        <div className={`${roboto.className} flex mt-16 justify-between`}>
-          <span className="text-3xl" style={{ fontWeight: 600 }}>
-            More from {storeBasicInfo?.store_name}
-          </span>
-          <span
-            className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
-            style={{ fontWeight: 500 }}
-            onClick={() => {router.push(`/store_profile/${product?.store_id}?defaultButton=${encodeURIComponent("Catalogue")}`)}}
-          >
-            View All
-          </span>
-        </div>
+        <div className="w-300 flex flex-col mx-auto">
+          <hr
+            className="border-t border-transparent"
+            style={{
+              borderImage:
+                "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
+              borderImageSlice: 1,
+            }}
+          />
 
-        <div className="relative mt-6">
-          <ShowMoreProducts store_id={product?.store_id} limit={5} />
-          <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
+          <div className={`${roboto.className} flex mt-16 justify-between`}>
+            <span className="text-3xl" style={{ fontWeight: 600 }}>
+              More from {storeBasicInfo?.store_name}
+            </span>
+            <span
+              className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
+              style={{ fontWeight: 500 }}
+              onClick={() => { router.push(`/store_profile/${product?.store_id}?defaultButton=${encodeURIComponent("Catalogue")}`) }}
+            >
+              View All
+            </span>
+          </div>
+
+          <div className="relative mt-6">
+            <ShowMoreProducts store_id={product?.store_id} limit={5} />
+            <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
+          </div>
         </div>
-      </div>
       )}
-      
+
 
       <div className="mt-10">
         <ListingFooter />

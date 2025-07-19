@@ -109,7 +109,7 @@ export default function ProductsPage({
     setFilterOptions,
   ]);
 
-    useEffect(() => {
+  useEffect(() => {
     // Prefetch current page items
     const start = (pagination.current - 1) * pagination.pageSize;
     const end = start + pagination.pageSize;
@@ -210,6 +210,8 @@ export default function ProductsPage({
     {
       title: "Store Price",
       dataIndex: "price",
+      sorter: (a: Product, b: Product) => a.price - b.price,
+      sortDirections: ['ascend', 'descend'] as ('ascend' | 'descend')[],
     },
     // {
     //   title: "Available for Rent",
@@ -235,15 +237,15 @@ export default function ProductsPage({
       title: "Image Upload",
       render: (_: any, record: Product) => (
         // <Upload showUploadList={false}>
-          <Button
-            icon={<UploadOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleImageUpload(record);
-            }}
-          >
-            Upload
-          </Button>
+        <Button
+          icon={<UploadOutlined />}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleImageUpload(record);
+          }}
+        >
+          Upload
+        </Button>
         // </Upload>
       ),
     },
@@ -271,7 +273,7 @@ export default function ProductsPage({
         filters.productName.includes(item.product_name)) &&
       (!filters.sku.length || filters.sku.includes(item.sku)) &&
       (!filters.imageUploadStatus ||
-        filters.imageUploadStatus === item.imageUploadStatus) && 
+        filters.imageUploadStatus === item.imageUploadStatus) &&
       (!filters.source.length || filters.source.includes(derivedSource))
     );
   });

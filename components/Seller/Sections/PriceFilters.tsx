@@ -141,7 +141,7 @@ export default function PriceFiltersComponent() {
         priceRanges: selectedPrices,
         priceRangesStr: selectedPrices.map((item) => ({
           id: item.price_range_id,
-          label: item.price_range,
+          label: item.price_range ?? "",
         })),
       });
     }
