@@ -14,7 +14,9 @@ interface Category {
   level?: number;
 }
 
+
 export default function BulkUploadPage() {
+
   const { storeId, socialLinksData, businessDetailsData } = useSellerStore();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFileName, setSelectedFileName] = useState("");
@@ -120,7 +122,7 @@ export default function BulkUploadPage() {
       {/* Section: Category Selection + Download */}
       <Section
         title="Select Category & Download Format"
-        subtitle="Choose category and download format-specific Excel file"
+        subtitle="Choose category and download format-specifi c Excel file"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Category */}
