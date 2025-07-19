@@ -68,6 +68,7 @@ export interface Product {
   like: number;
   views: number;
   share: number;
+  shopify_id:string | null;
   categories: Category[];
   attributes: Attribute[];
   variants: Variant[];

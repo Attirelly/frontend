@@ -367,7 +367,8 @@ export default function ProductDetail() {
               </button>
 
               {/* Product Details & Care */}
-              <div className="mt-8">
+              {product.shopify_id && (
+<div className="mt-8">
                 <div className="flex justify-between items-center mb-2">
                   <h1 className="w-full text-xl font-500 border-y border-0.25 border-[#CCCCCC] py-5">
                     Product Details
@@ -409,6 +410,8 @@ export default function ProductDetail() {
                   </div>
                 )}
               </div>
+              )}
+              
 
               {/* Product Description */}
               <div className="mt-8">
