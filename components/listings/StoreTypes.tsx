@@ -91,7 +91,7 @@ export default function StoreTypeTabs({
                     <button
                         className={clsx(
                             manrope.className,
-                            'px-4 py-2 rounded-full transition-all duration-200 mx-2',
+                            'px-4 py-2 rounded-full transition-all duration-200 mx-2 text-base',
                             selectedStoreType?.id === tab.value
                                 ? 'bg-white shadow text-black'
                                 : 'text-[#565656] hover:text-black'

@@ -10,6 +10,8 @@ import { rubik, manrope } from "@/font";
 import StoreSearchType from "./StoreSearchType";
 import { useRouter } from "next/navigation";
 import MenWomenNavbar from "./MenWomenNavbar";
+import CustomerSignIn from "../Customer/CustomerSignIn";
+import useAuthStore from "@/store/auth";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -24,6 +26,9 @@ export default function ListingPageHeader() {
     setSearchFocus,
     searchFocus,
   } = useHeaderStore();
+  const { user } = useAuthStore();
+  console.log("user", user);
+  const [signIn, setSignIn] = useState(false);
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(city || null);
   const [tempQuery, setTempQuery] = useState<string>(query || "");
@@ -51,7 +56,7 @@ export default function ListingPageHeader() {
   const handleSearchQuerySuggestion = async () => {
     try {
       let tempStr = "";
-      console.log("selectedcity" , selectedCity)
+      console.log("selectedcity", selectedCity)
       if (selectedCity) {
         tempStr = `city:${selectedCity.name}`;
       }
@@ -165,11 +170,11 @@ export default function ListingPageHeader() {
   const selectedOption: SelectOption =
     selectedCity != null
       ? {
-          value: selectedCity.id,
-          label: selectedCity.name,
-          name: selectedCity.name,
-          country: "India",
-        }
+        value: selectedCity.id,
+        label: selectedCity.name,
+        name: selectedCity.name,
+        country: "India",
+      }
       : cityOptions[0];
 
   function highlightMatch(text: string, query: string) {
@@ -193,26 +198,27 @@ export default function ListingPageHeader() {
 
   return (
     <div>
-      <header className="bg-white shadow h-[70px]">
-        <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-20 h-full">
-          <div className="flex justify-between items-center">
+      <header className="bg-white shadow h-[72px]">
+        <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-[83px] h-full">
+          <div className="flex justify-center items-center">
             <div
-              className={`${rubik.className} text-[32px] font-bold cursor-pointer`}
+              className={`${rubik.className} text-[27px] font-bold cursor-pointer`}
               onClick={() => router.push("/homepage")}
+              style={{ fontWeight: 700 }}
             >
               Attirelly
             </div>
           </div>
-          <div className="flex h-full items-center">
+          <div className="flex h-full items-center justify-center">
             <MenWomenNavbar />
           </div>
           <div className="flex justify-center">
-            <div className="flex border border-gray-300 rounded-full items-center gap-4 w-full max-w-[600px] px-4 relative">
+            <div className="flex border border-gray-300 rounded-full items-center gap-4 w-full max-w-[611px] px-4 relative">
               <div className="flex items-center gap-2 w-[250px] h-[24px]">
                 <img
                   src="/ListingPageHeader/location_pin.svg"
                   alt="Location"
-                  className="opacity-80"
+                  className="opacity-100"
                 />
                 <Select
                   options={cityOptions}
@@ -247,7 +253,7 @@ export default function ListingPageHeader() {
               <div className="border-l-2 border-gray-300 h-5 my-2" />
 
               <div
-                className="flex items-center px-4 py-2 w-full relative"
+                className="flex items-center px-2 py-2 w-full relative"
                 ref={dropdownRef}
               >
                 <img
@@ -376,29 +382,49 @@ export default function ListingPageHeader() {
             </div>
           </div>
 
-          <div className="flex justify-center">
-            <div className="flex items-center gap-6 text-sm w-full max-w-[200px]">
-              <img
+          {/* <div className="flex justify-center"> */}
+          <div className="flex items-center gap-6 text-sm w-full justify-end">
+            {/* <img
                 src="/ListingPageHeader/shopping_cart_2.svg"
                 alt="Cart"
                 className="opacity-100 w-[32px] h-[32px]"
               />
-              <div className="w-px h-10 bg-gray-300"></div>
+              <div className="w-px h-10 bg-gray-300"></div> */}
+            {!user ? (
               <div className="flex items-center gap-2">
-                <img
+                {/* <img
                   src="/ListingPageHeader/user_logo.svg"
                   alt="User"
                   className="opacity-100"
-                />
+                /> */}
                 <span
-                  className={`${manrope.className}`}
+                  className={`${manrope.className} text-base text-[#373737] cursor-pointer`}
                   style={{ fontWeight: 400 }}
+                  onClick={() => setSignIn(true)}
                 >
-                  Archit
+                  Login
                 </span>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                {/* <img
+                  src="/ListingPageHeader/user_logo.svg"
+                  alt="User"
+                  className="opacity-100"
+                /> */}
+                <span
+                  className={`${manrope.className} text-base text-[#373737] cursor-pointer`}
+                  style={{ fontWeight: 400 }}
+                  onClick={() => setSignIn(true)}
+                >
+                  {user.name}
+                </span>
+              </div>
+            )}
+
+
           </div>
+          {/* </div> */}
         </div>
       </header>
 
@@ -406,6 +432,7 @@ export default function ListingPageHeader() {
         visible={showStoreType}
         onClose={() => setShowStoreType(false)}
       />
+      {signIn && <CustomerSignIn onClose={() => setSignIn(false)} />}
     </div>
   );
 }

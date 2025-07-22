@@ -88,13 +88,13 @@ export default function SocialLoginButtons() {
             </div> */}
 
             {/* Social login buttons */}
-            <div className={`${roboto.className} flex flex-col justify-center gap-6`}
-            style={{fontWeight:700}}>
+            <div className={`${roboto.className} flex flex-col justify-center gap-[20px]`}
+            style={{fontWeight:500}}>
                 <button
                     type="button"
                     aria-label="Login with Facebook"
                     onClick={handleFacebookLogin}
-                    className="w-105 h-13.5 rounded-xl bg-blue-500 shadow flex items-center justify-center hover:bg-blue-600 gap-2"
+                    className="w-[423px] h-[54px] rounded-xl bg-blue-500 shadow flex items-center justify-center hover:bg-blue-600 gap-2 cursor-pointer"
                 >
                     <Image src="/Login/facebook_all_white.svg" alt="Facebook" width={24} height={24} />
                     <span className='text-xl text-white'>Sign In with Facebook</span>
@@ -103,10 +103,10 @@ export default function SocialLoginButtons() {
                     type="button"
                     aria-label="Login with Google"
                     onClick={() => handleGoogleLogin()}
-                    className="w-105 h-13.5 rounded-xl bg-white shadow flex items-center justify-center hover:bg-gray-100 gap-2"
+                    className="w-[423px] h-[54px] rounded-xl bg-white shadow-sm shadow-black/30 flex items-center justify-center hover:bg-gray-100 gap-2 cursor-pointer"
                 >
                     <Image src="/Login/google.svg" alt="Google" width={24} height={24} />
-                    <span className='text-xl' style={{fontWeight:500}}>Sign In with Google</span>
+                    <span className='text-xl'>Sign In with Google</span>
                 </button>
                 
             </div>
