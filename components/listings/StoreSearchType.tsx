@@ -4,6 +4,7 @@ import { api } from "@/lib/axios";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import {manrope} from "@/font";
 
 
 interface StoreType{
@@ -76,10 +77,10 @@ export default function StoreSearchType({
       {searchFocus && (
         <div
           ref={containerRef}
-          className="absolute top-[70px] left-1/2 transform -translate-x-1/2 bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50"
+          className={`${manrope.className} absolute top-[70px] left-1/2 transform -translate-x-1/2 bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50`}
         >
           <h1 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-            Explore Store Types
+            Store Type
           </h1>
 
           <div className="grid grid-cols-2 gap-4">
