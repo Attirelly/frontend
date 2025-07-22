@@ -27,13 +27,12 @@ export default function TwoOptionToggle({ options, defaultValue, context }: TwoO
       });
     }
   }, [selected, context, setDeliveryType]);
-
   // helper to get image path
   const getImageForOption = (option: string, isSelected: boolean) => {
     const lower = option.toLowerCase().replace(/\s+/g, '_'); // e.g. "in store shopping" -> "in_store_shopping"
     return isSelected
-      ? `/${lower}_white.svg`
-      : `/${lower}_gray.svg`;
+      ? `/ListingPageHeader/${lower}_white.svg`
+      : `/ListingPageHeader/${lower}_gray.svg`;
   };
 
   return (
