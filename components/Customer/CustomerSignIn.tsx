@@ -11,22 +11,22 @@ export default function CustomerSignIn({ onClose }: CustomerSignInProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-full shadow-lg relative">
+      <div className="bg-white rounded-lg max-w-full shadow-lg relative">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
+          className="absolute top-3 right-5 text-gray-600 hover:text-black text-xl cursor-pointer"
         >
           ✕
         </button>
 
-        <div className="grid grid-cols-[1fr_1.5fr] gap-6">
-          <div className="relative w-60 h-60">
+        <div className="grid grid-cols-[1fr_1.5fr] gap-[40px] px-[21px] py-[26px]">
+          <div className="relative w-[277px] h-[277px]">
             <Image src={img} alt="Customer Signin" fill className="rounded" />
           </div>
 
           <div className={`${manrope.className} flex flex-col justify-center`} style={{ fontWeight: 700 }}>
             <span className="text-2xl">Sign up to</span>
-            <span className="text-base font-normal">the new style of wearing Ethic with Attirelly</span>
+            <span className="text-base" style={{ fontWeight: 400 }}>the new style of wearing Ethic with Attirelly</span>
             <div className="mt-4">
               <SocialLoginButtons />
             </div>

@@ -6,6 +6,7 @@ import { immer } from "zustand/middleware/immer";
 interface UserSession {
   id: string;
   role: string;
+  name?: string;
 }
 
 type AuthState = {
@@ -75,7 +76,7 @@ export const useAuthStore = create<AuthState>()(
           withCredentials: true,
         });
         set({
-          user: { id: data.id, role: data.role },
+          user: { id: data.id, role: data.role, name:data.name },
           isAuthenticated: true,
           error: null,
         });
