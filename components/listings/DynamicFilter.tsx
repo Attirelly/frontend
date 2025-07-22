@@ -134,7 +134,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
               onClick={() => handleResetFilters()}
               className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
             >
-              Reset Filters
+              Reset
             </button>
           </div>
           <div className="flex flex-wrap gap-2 max-w-xs">
@@ -142,7 +142,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
               values.map((value) => (
                 <div
                   key={`${key}-${value}`}
-                  className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-sm text-gray-800 rounded-full"
+                  className="flex items-center gap-1 px-2 py-1 border border-[1.25px] border-[#858585] text-sm text-gray-800 rounded-full"
                 >
                   <span>{value}</span>
                   <button
@@ -157,7 +157,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           </div>
         </div>
 
-        <hr className="my-4 border-[#D9D9D9]" />
+        {/* <hr className="my-4 border-[#D9D9D9]" /> */}
 
         {Object.entries(facets).map(([facetName, values]) => {
           const isOpen = openFacets[facetName];

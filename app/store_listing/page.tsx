@@ -45,19 +45,19 @@ console.log("dikkat ki baat hai lol", storeType, process.env.NEXT_PUBLIC_RETAIL_
   return (
     <div className="bg-[#FFFFFF]">
       <ListingPageHeader />
-      <div className="mx-45 mt-8 gap-10 flex flex-col">
+      <div className="mx-[81px] mt-8 gap-10 flex flex-col">
        {/* <h1 className="text-2xl font-bold text-gray-800">{getHeading()}</h1> */}
-       <h1 className={`${manrope.className} text-4xl`} style={{fontWeight:500}}>{getHeading()}</h1>
+       <h1 className={`${manrope.className} text-[32px]`} style={{fontWeight:500}}>{getHeading()}</h1>
         {/* <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID || ''}/> */}
         <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_STORES_ID || ''}/>
-        <div className="border-t border-gray-300"/>
+        <div className="border-t border-[#D9D9D9]"/>
         <div className="grid grid-cols-[1fr_3fr] gap-3">
           {/* <div className="self-start"> */}
           <div>
             <DynamicFilter context="store"/>
           </div>
           <div className="flex flex-col gap-5">
-            <TwoOptionToggle options={['Home Delivery', 'In Store']} defaultValue="Home Delivery" context="store"/>
+            <TwoOptionToggle options={['Online Shopping', 'In Store Shopping']} defaultValue="Online Shopping" context="store"/>
             <div className="w-full">
               <StoreContainerPage />
             </div>
