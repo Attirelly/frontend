@@ -81,7 +81,7 @@ export default function StoreSearchType({
       {searchFocus && (
         <div
           ref={containerRef}
-          className={`${manrope.className} absolute top-[70px] left-1/2 transform -translate-x-1/2 bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50`}
+          className={`${manrope.className} absolute top-[70px] left-1/2 transform  bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50`}
           style={{fontWeight:600}}
         >
           <h1 className="text-lg font-semibold text-gray-800 mb-4 text-center"
