@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { manrope } from "@/font";
 import Image from "next/image";
+import { styleText } from "util";
 
 const StoreTypeImage = [
   { name: "Designer Labels", url: "/Homepage/designer_labels.svg" },
@@ -81,8 +82,10 @@ export default function StoreSearchType({
         <div
           ref={containerRef}
           className={`${manrope.className} absolute top-[70px] left-1/2 transform -translate-x-1/2 bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50`}
+          style={{fontWeight:600}}
         >
-          <h1 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+          <h1 className="text-lg font-semibold text-gray-800 mb-4 text-center"
+          style={{fontWeight:400}}>
             Store Type
           </h1>
 
@@ -99,14 +102,14 @@ export default function StoreSearchType({
                   className="flex items-center gap-3 bg-[#F8F8F8] hover:bg-[#e7e7e7] py-3 px-4 rounded-2xl cursor-pointer transition-all"
                   onClick={() => handleSearchTypeClick(type)}
                 >
-                  <div className="relative w-10 h-10 flex-shrink-0">
+                  <div className="relative w-[24px] h-[24px] flex-shrink-0">
                     <Image
                       src={storeImage?.url || "/Homepage/tailor.svg"}
                       alt="Store Type"
                       fill
                     />
                   </div>
-                  <span className="text-gray-700 font-medium">
+                  <span className="text-base">
                     {type.store_type}
                   </span>
                 </div>
