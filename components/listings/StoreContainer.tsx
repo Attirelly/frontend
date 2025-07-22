@@ -141,9 +141,9 @@ export default function StoreContainerPage() {
   }, [query, storeType, selectedFilters, city, filters]);
 
   useEffect(() => {
-    if (deliveryType == "In Store") {
+    if (deliveryType == "In Store Shopping") {
       setFilters("is_online:'false' OR is_both:'true'");
-    } else if (deliveryType == "Home Delivery") {
+    } else if (deliveryType == "Online Shopping") {
       setFilters("is_online:'true' OR is_both:'true'");
     } else {
       setFilters("");
