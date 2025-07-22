@@ -59,7 +59,7 @@ export default function StoreCard({
       onClick={handleCardClick}
     >
       {/* Store Image */}
-      <div className="relative w-60 h-60 overflow-hidden flex-shrink-0">
+      <div className="relative w-[256px] h-[224px] overflow-hidden flex-shrink-0">
         <Image
           src={imageUrl}
           alt={storeName}
@@ -91,7 +91,7 @@ export default function StoreCard({
         className={`${manrope.className} flex flex-col justify-between w-full gap-[8.5px]`}
         style={{ fontWeight: 400 }}
       >
-        <div>
+        <div className="flex flex-col gap-[8.5px]">
           <div className="flex justify-between items-start flex-wrap">
             <h3
               className="text-2xl text-black max-w-[80%]"
@@ -122,14 +122,14 @@ export default function StoreCard({
               width={14}
               height={14}
             />
-            <p className="text-xs text-[#5F5F5F]">{location}</p>
+            <p className="text-[9px] text-[#5F5F5F]">{location}</p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mt-2">
             {storeTypes.map((type, idx) => (
               <span
                 key={idx}
-                className="text-xs bg-[#F5F5F5] px-2 py-1 rounded-full text-black"
+                className="text-xs bg-[#F5F5F5] px-3 py-1 rounded-full text-black"
                 style={{ fontWeight: 500 }}
               >
                 {type}
@@ -141,7 +141,7 @@ export default function StoreCard({
             {priceRanges?.map((type, idx) => (
               <span
                 key={idx}
-                className="text-xs bg-[#F5F5F5] px-2 py-1 rounded-full text-black"
+                className="text-xs bg-[#F5F5F5] px-3 py-1 rounded-full text-black"
               >
                 {type}
               </span>
@@ -152,11 +152,14 @@ export default function StoreCard({
           <div className="flex flex-col gap-[8.5px]">
             <div className="border border-t border-[#D9D9D9]" />
             <p className={`${manrope.className} text-base`} style={{fontWeight:500}}>Best Selling</p>
-            {bestSelling?.map((item, index) => (
+            <div className="flex gap-2">
+{bestSelling?.map((item, index) => (
               <span key={index} className={`${manrope.className} mr-4 text-sm text-[#676363]`} style={{fontWeight:400}}>
                 {item}
               </span>
             ))}
+            </div>
+            
           </div>
         )}
       </div>
