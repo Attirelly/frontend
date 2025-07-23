@@ -292,7 +292,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                       onChange={() =>
                                         toggleFilter(facetName, facet.name)
                                       }
-                                      className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                      className="h-4 w-4 text-black rounded border-gray-300"
                                     />
                                     <div className="flex gap-4">
                                       <span
