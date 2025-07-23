@@ -92,7 +92,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   if (isCollapsed) {
     return (
       <div className="sticky top-2 z-10">
-        <div className="w-fit px-3 py-2 rounded-lg shadow-sm border border-gray-200 flex items-center">
+        <div className="w-fit px-3 py-2 bg-white rounded-lg shadow-sm  flex items-center">
           <button
             className="flex items-center gap-2 text-sm font-medium text-gray-700"
             onClick={() => setIsCollapsed(false)}
@@ -113,7 +113,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   return (
     <div className="sticky top-2 z-10">
       <div
-        className={`${manrope.className} h-fit max-w-xs p-4 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 relative`}
+        className={`${manrope.className} h-fit max-w-xs p-4 bg-white rounded-lg shadow-sm  relative`}
         style={{ fontWeight: 500 }}
       >
         <div className="flex items-center justify-between mb-3">
@@ -169,7 +169,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
           return (
             <React.Fragment key={facetName}>
-              <div className="flex flex-col gap-4 mb-4">
+              <div className="flex flex-col gap-4">
                 <div
                   className="flex items-center justify-between mb-2 cursor-pointer"
                   onClick={() => toggleFacet(facetName)}
@@ -310,7 +310,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                   </>
                 )}
               </div>
-              <hr className="my-4 border-[#D9D9D9]" />
+              {/* <hr className="my-4 border-[#D9D9D9]" /> */}
             </React.Fragment>
           );
         })}
