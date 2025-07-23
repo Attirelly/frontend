@@ -258,7 +258,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                       ) : (
                         <>
                           {fName !== "Genders" && fName !== "Price Ranges" && (
-                            <div className="flex px-2 items-center border border-black rounded">
+                            <div className="flex pr-2 items-center border border-black rounded">
                               <input
                                 type="text"
                                 placeholder="Search"
