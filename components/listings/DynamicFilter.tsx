@@ -92,7 +92,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   if (isCollapsed) {
     return (
       <div className="sticky top-2 z-10">
-        <div className="w-fit px-3 py-2 bg-[#FFFAFA] rounded-lg shadow-sm border border-gray-200 flex items-center">
+        <div className="w-fit px-3 py-2 rounded-lg shadow-sm border border-gray-200 flex items-center">
           <button
             className="flex items-center gap-2 text-sm font-medium text-gray-700"
             onClick={() => setIsCollapsed(false)}
@@ -129,12 +129,12 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
         </div>
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-3">
-            <h1 className={`${playfair_display.className}`}>Filters</h1>
+            <h1 className={`${manrope.className}`}>FILTERS</h1>
             <button
               onClick={() => handleResetFilters()}
               className="mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
             >
-              Reset
+              RESET
             </button>
           </div>
           <div className="flex flex-wrap gap-2 max-w-xs">
@@ -144,7 +144,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                   key={`${key}-${value}`}
                   className="flex items-center gap-1 px-2 py-1 border border-[1.25px] border-[#858585] text-sm text-gray-800 rounded-full"
                 >
-                  <span>{value}</span>
+                  <span className={`${manrope.className} text-sm`} style={{fontWeight:400}}>{value}</span>
                   <button
                     onClick={() => toggleFilter(key, value)}
                     className="text-gray-500 hover:text-red-500"
@@ -169,12 +169,12 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
           return (
             <React.Fragment key={facetName}>
-              <div className="mb-4">
+              <div className="flex flex-col gap-4 mb-4">
                 <div
                   className="flex items-center justify-between mb-2 cursor-pointer"
                   onClick={() => toggleFacet(facetName)}
                 >
-                  <h2 className={`${playfair_display.className}`}>
+                  <h2 className={`${manrope.className} text-base uppercase`} style={{fontWeight:600}}>
                     {fName === "Area" ? "Location" : fName}
                   </h2>
                   <Image
