@@ -88,6 +88,7 @@ export default function ListingPageHeader() {
     const fetchCities = async () => {
       try {
         const res = await api.get("/location/cities/");
+        console.log("cities data" , res.data)
         setCities(res.data);
       } catch {
         toast.error("Failed to fetch cities");
