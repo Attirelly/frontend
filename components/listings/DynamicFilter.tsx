@@ -252,7 +252,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                     ) : (
                       <>
                         {fName !== "Genders" && fName !== "Price Ranges" && (
-                          <div className="flex">
+                          <div className="flex items-center border border-black rounded">
 <input
                             type="text"
                             placeholder="Search"
@@ -260,7 +260,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                             onChange={(e) =>
                               handleSearchChange(facetName, e.target.value)
                             }
-                            className="mb-3 w-full px-2 py-1 border border-black rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            className="mb-3 w-full px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                           />
                           <Image
                           src="/ListingPageHeader/search_lens.svg"
