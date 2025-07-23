@@ -266,7 +266,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                 onChange={(e) =>
                                   handleSearchChange(facetName, e.target.value)
                                 }
-                                className="mb-3 w-full px-2 py-1 text-sm "
+                                className="w-full px-2 py-1 text-sm "
                               />
                               <Image
                                 src="/ListingPageHeader/search_lens.svg"
