@@ -4,8 +4,6 @@ export default function getCroppedImg(
   imageSrc: string,
   crop: Area,
   quality: number = 0.7,
-  width:number , 
-  height:number
 ): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const image = new Image();
