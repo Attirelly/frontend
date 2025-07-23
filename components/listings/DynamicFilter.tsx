@@ -144,7 +144,12 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                   key={`${key}-${value}`}
                   className="flex items-center gap-1 px-2 py-1 border border-[1.25px] border-[#858585] text-sm text-gray-800 rounded-full"
                 >
-                  <span className={`${manrope.className} text-sm`} style={{fontWeight:400}}>{value}</span>
+                  <span
+                    className={`${manrope.className} text-sm`}
+                    style={{ fontWeight: 400 }}
+                  >
+                    {value}
+                  </span>
                   <button
                     onClick={() => toggleFilter(key, value)}
                     className="text-gray-500 hover:text-red-500"
@@ -153,180 +158,179 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                   </button>
                 </div>
               ))
-            )} 
+            )}
           </div>
         </div>
 
         {/* <hr className="my-4 border-[#D9D9D9]" /> */}
         <div className="flex flex-col gap-5">
-        {Object.entries(facets).map(([facetName, values]) => {
-          const isOpen = openFacets[facetName];
-          const fName = formatFacetName(facetName);
-          const searchValue = searchTerms[facetName]?.toLowerCase() || "";
-          const filteredValues = values.filter((facet) =>
-            facet.name.toLowerCase().includes(searchValue)
-          );
+          {Object.entries(facets).map(([facetName, values]) => {
+            const isOpen = openFacets[facetName];
+            const fName = formatFacetName(facetName);
+            const searchValue = searchTerms[facetName]?.toLowerCase() || "";
+            const filteredValues = values.filter((facet) =>
+              facet.name.toLowerCase().includes(searchValue)
+            );
 
-          return (
-            
+            return (
+              <React.Fragment key={facetName}>
+                <div className="flex flex-col gap-2">
+                  <div
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => toggleFacet(facetName)}
+                  >
+                    <h2
+                      className={`${manrope.className} text-base uppercase`}
+                      style={{ fontWeight: 600 }}
+                    >
+                      {fName === "Area" ? "Location" : fName}
+                    </h2>
+                    <Image
+                      src="/ListingPageHeader/dropdown.svg"
+                      alt="toggle"
+                      width={20}
+                      height={20}
+                      className={`transition-transform ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
 
-            
-            <React.Fragment key={facetName}>
-              <div className="flex flex-col gap-2">
-                <div
-                  className="flex items-center justify-between cursor-pointer"
-                  onClick={() => toggleFacet(facetName)}
-                >
-                  <h2 className={`${manrope.className} text-base uppercase`} style={{fontWeight:600}}>
-                    {fName === "Area" ? "Location" : fName}
-                  </h2>
-                  <Image
-                    src="/ListingPageHeader/dropdown.svg"
-                    alt="toggle"
-                    width={20}
-                    height={20}
-                    className={`transition-transform ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
+                  {isOpen && (
+                    <>
+                      {context === "product" && fName === "Prices" ? (
+                        <div className="mb-3">
+                          <label className="text-sm text-gray-600 mb-1 block">
+                            Range
+                          </label>
 
-                {isOpen && (
-                  <>
-                    {context === "product" && fName === "Prices" ? (
-                      <div className="mb-3">
-                        <label className="text-sm text-gray-600 mb-1 block">
-                          Range
-                        </label>
-
-                        <Range
-                          step={100}
-                          min={0}
-                          max={priceBounds?.[1] || 10000}
-                          values={localPriceRange}
-                          onChange={(values) =>
-                            setLocalPriceRange([values[0], values[1]])
-                          }
-                          renderTrack={({ props, children }) => (
-                            <div
-                              {...props}
-                              className="h-1 bg-gray-300 rounded-full"
-                              style={{ ...props.style }}
-                            >
+                          <Range
+                            step={100}
+                            min={0}
+                            max={priceBounds?.[1] || 10000}
+                            values={localPriceRange}
+                            onChange={(values) =>
+                              setLocalPriceRange([values[0], values[1]])
+                            }
+                            renderTrack={({ props, children }) => (
                               <div
-                                className="h-1 bg-black rounded-full"
-                                style={{
-                                  position: "absolute",
-                                  left: `${
-                                    ((localPriceRange[0] -
-                                      (priceBounds?.[0] || 0)) /
-                                      ((priceBounds?.[1] || 10000) -
-                                        (priceBounds?.[0] || 0))) *
-                                    100
-                                  }%`,
-                                  width: `${
-                                    ((localPriceRange[1] - localPriceRange[0]) /
-                                      ((priceBounds?.[1] || 10000) -
-                                        (priceBounds?.[0] || 0))) *
-                                    100
-                                  }%`,
-                                  top: 0,
-                                  bottom: 0,
-                                }}
+                                {...props}
+                                className="h-1 bg-gray-300 rounded-full"
+                                style={{ ...props.style }}
+                              >
+                                <div
+                                  className="h-1 bg-black rounded-full"
+                                  style={{
+                                    position: "absolute",
+                                    left: `${
+                                      ((localPriceRange[0] -
+                                        (priceBounds?.[0] || 0)) /
+                                        ((priceBounds?.[1] || 10000) -
+                                          (priceBounds?.[0] || 0))) *
+                                      100
+                                    }%`,
+                                    width: `${
+                                      ((localPriceRange[1] -
+                                        localPriceRange[0]) /
+                                        ((priceBounds?.[1] || 10000) -
+                                          (priceBounds?.[0] || 0))) *
+                                      100
+                                    }%`,
+                                    top: 0,
+                                    bottom: 0,
+                                  }}
+                                />
+                                {children}
+                              </div>
+                            )}
+                            renderThumb={({ props }) => (
+                              <div
+                                {...props}
+                                className="w-3 h-3 bg-black border border-white rounded-full shadow-md"
                               />
-                              {children}
+                            )}
+                          />
+
+                          <div className="text-sm text-gray-600 mt-2">
+                            ₹{localPriceRange[0]} – ₹{localPriceRange[1]}
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {fName !== "Genders" && fName !== "Price Ranges" && (
+                            <div className="flex px-2 items-center border border-black rounded">
+                              <input
+                                type="text"
+                                placeholder="Search"
+                                value={searchTerms[facetName] || ""}
+                                onChange={(e) =>
+                                  handleSearchChange(facetName, e.target.value)
+                                }
+                                className="mb-3 w-full px-2 py-1 text-sm "
+                              />
+                              <Image
+                                src="/ListingPageHeader/search_lens.svg"
+                                alt="Search Lens"
+                                width={20}
+                                height={20}
+                              />
                             </div>
                           )}
-                          renderThumb={({ props }) => (
-                            <div
-                              {...props}
-                              className="w-3 h-3 bg-black border border-white rounded-full shadow-md"
-                            />
-                          )}
-                        />
 
-                        <div className="text-sm text-gray-600 mt-2">
-                          ₹{localPriceRange[0]} – ₹{localPriceRange[1]}
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        {fName !== "Genders" && fName !== "Price Ranges" && (
-                          <div className="flex items-center border border-black rounded">
-<input
-                            type="text"
-                            placeholder="Search"
-                            value={searchTerms[facetName] || ""}
-                            onChange={(e) =>
-                              handleSearchChange(facetName, e.target.value)
-                            }
-                            className="mb-3 w-full px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-                          />
-                          <Image
-                          src="/ListingPageHeader/search_lens.svg"
-                          alt="Search Lens"
-                          width={20}
-                          height={20}
-                          />
-                          </div>
-                          
-                        )}
-
-                        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
-                          {filteredValues.length > 0 ? (
-                            filteredValues.map((facet) => (
-                              <label
-                                key={facet.name}
-                                className="flex items-center justify-between space-x-2 cursor-pointer"
-                              >
-                                <div className="flex items-center space-x-2">
-                                  <input
-                                    type="checkbox"
-                                    checked={facet.selected}
-                                    onChange={() =>
-                                      toggleFilter(facetName, facet.name)
-                                    }
-                                    className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                                  />
-                                  <div className="flex gap-4">
-                                    <span
-                                      className="text-sm"
-                                      style={{ fontWeight: 400 }}
-                                    >
-                                      {facet.name}
-                                    </span>
-                                    {fName === "Price Ranges" && (
+                          <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                            {filteredValues.length > 0 ? (
+                              filteredValues.map((facet) => (
+                                <label
+                                  key={facet.name}
+                                  className="flex items-center justify-between space-x-2 cursor-pointer"
+                                >
+                                  <div className="flex items-center space-x-2">
+                                    <input
+                                      type="checkbox"
+                                      checked={facet.selected}
+                                      onChange={() =>
+                                        toggleFilter(facetName, facet.name)
+                                      }
+                                      className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                    />
+                                    <div className="flex gap-4">
                                       <span
-                                        className="text-sm text-[#666666]"
+                                        className="text-sm"
                                         style={{ fontWeight: 400 }}
                                       >
-                                        {facet.name === "Affordable"
-                                          ? "starts from 2000/-"
-                                          : facet.name === "Premium"
-                                          ? "start from 5000/-"
-                                          : "starts from 25000/-"}
+                                        {facet.name}
                                       </span>
-                                    )}
+                                      {fName === "Price Ranges" && (
+                                        <span
+                                          className="text-sm text-[#666666]"
+                                          style={{ fontWeight: 400 }}
+                                        >
+                                          {facet.name === "Affordable"
+                                            ? "starts from 2000/-"
+                                            : facet.name === "Premium"
+                                            ? "start from 5000/-"
+                                            : "starts from 25000/-"}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                              </label>
-                            ))
-                          ) : (
-                            <div className="text-gray-400 text-sm italic">
-                              No options found
-                            </div>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </>
-                )}
-              </div>
-              {/* <hr className="my-4 border-[#D9D9D9]" /> */}
-            </React.Fragment>
-            
-          );
-        })}
+                                </label>
+                              ))
+                            ) : (
+                              <div className="text-gray-400 text-sm italic">
+                                No options found
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+                {/* <hr className="my-4 border-[#D9D9D9]" /> */}
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
     </div>
