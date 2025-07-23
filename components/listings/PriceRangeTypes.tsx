@@ -173,7 +173,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
   if (loading) return <StoreTypeTabsSkeleton />;
 
   return (
-    <div className="flex space-x-2">
+    <div className="flex space-x-2 bg-[#F5F5F5] rounded-full px-2 py-1">
       {priceRanges.map((range) => {
         const icon = priceRangeIcons[range.label|| 'Affordable'] || null;
         const subtitle =
@@ -189,10 +189,11 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
               ${manrope.className}
               px-4 py-2 rounded-3xl transition text-base flex items-center gap-2
               ${isSelected
-                ? 'bg-[#F2F2F2] border border-[#717171] font-semibold'
-                : 'bg-white text-[#717171] font-normal border border-transparent'}
+                ? 'bg-white font-semibold'
+                : 'bg-[#F5F5F5] text-[#717171] font-normal'}
             `}
             onClick={() => handleTabClick(range)}
+            style={{fontWeight:500}}
           >
             {/* {icon && (
               <Image
@@ -204,7 +205,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
               />
             )} */}
             <div className="flex flex-col items-center">
-              <span className="text-sm">{range.label.toUpperCase()}</span>
+              <span className="text-base">{range.label.toUpperCase()}</span>
               <span className="text-xs text-[#8E8E8E] leading-none">{subtitle}</span>
             </div>
           </button>

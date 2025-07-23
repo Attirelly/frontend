@@ -6,8 +6,8 @@ import CustomerSignIn from "../Customer/CustomerSignIn";
 import { toast } from "sonner";
 
 const StoreTypeImage = [
-    { name: "Designer Labels", url: "/ListingPageHeader/designer_labels.svg" },
-    { name: "Retail Stores", url: "/ListingPageHeader/retail_stores.svg" },
+    { name: "Designer Label", url: "/ListingPageHeader/designer_labels.svg" },
+    { name: "Retail Brands", url: "/ListingPageHeader/retail_stores.svg" },
     { name: "Boutiques", url: "/ListingPageHeader/boutiques.svg" }
 
 ]
@@ -91,7 +91,7 @@ export default function StoreInfoPage({
             {/* </div> */}
 
             {/* Right: Store Info (expand as needed) */}
-            <div className={`${roboto.className} flex flex-col`}
+            <div className={`${manrope.className} flex flex-col`}
             >
                 <div className="flex justify-between items-start flex-wrap">
                     <h2 className="text-xl mb-2 max-w-[60%]"
@@ -123,21 +123,21 @@ export default function StoreInfoPage({
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-6">
                         <div className="flex gap-12">
-                            {post_count?.length === 0 ? <div></div> : <div className="flex gap-1">
+                            {post_count?.length === 0 ? <div></div> : <div className="flex flex-col gap-1">
                                 <h2 style={{ fontWeight: 700 }}>{post_count}</h2>
                                 <span style={{ fontWeight: 400 }}>Posts</span>
                             </div>}
-                            {instagramFollowers?.length === 0 ? <div></div> : <div className="flex gap-1">
-                                <Image
+                            {instagramFollowers?.length === 0 ? <div></div> : <div className="flex flex-col gap-1">
+                                {/* <Image
                                     src='/OnboardingSections/instagram.svg'
                                     alt='Instagram'
                                     width={20}
                                     height={20}
-                                />
+                                /> */}
                                 <h2 style={{ fontWeight: 700 }}>{instagramFollowers}</h2>
                                 <span style={{ fontWeight: 400 }}>Followers</span>
                             </div>}
-                            {product_count?.length === 0 ? <div></div> :<div className="flex gap-1">
+                            {product_count?.length === 0 ? <div></div> :<div className="flex flex-col gap-1">
                                 <h2 style={{ fontWeight: 700 }}>{product_count}</h2>
                                 <span style={{ fontWeight: 400 }}>Products</span>
                             </div>}

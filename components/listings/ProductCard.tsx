@@ -47,7 +47,9 @@ export default function ProductCard({
         className="w-full rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2"
       >
         <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group">
-          <div onMouseEnter={handleNext} onMouseLeave={handlePrev}>
+          <div
+          //  onMouseEnter={handleNext} onMouseLeave={handlePrev}
+           >
             <Image
               src={imageUrl[imageIndex]}
               alt={title}
