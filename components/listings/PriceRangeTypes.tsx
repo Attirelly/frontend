@@ -173,7 +173,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
   if (loading) return <StoreTypeTabsSkeleton />;
 
   return (
-    <div className="flex space-x-2 bg-[#F5F5F5]">
+    <div className="flex space-x-2 bg-[#F5F5F5] rounded-full px-2 py-1">
       {priceRanges.map((range) => {
         const icon = priceRangeIcons[range.label|| 'Affordable'] || null;
         const subtitle =
