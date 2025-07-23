@@ -132,7 +132,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
             <h1 className={`${manrope.className}`}>FILTERS</h1>
             <button
               onClick={() => handleResetFilters()}
-              className="px-4 py-2 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 text-gray-700 rounded hover:bg-gray-200 cursor-pointer transition-colors"
             >
               RESET
             </button>
