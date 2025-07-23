@@ -252,15 +252,24 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                     ) : (
                       <>
                         {fName !== "Genders" && fName !== "Price Ranges" && (
-                          <input
+                          <div className="flex">
+<input
                             type="text"
-                            placeholder="Search..."
+                            placeholder="Search"
                             value={searchTerms[facetName] || ""}
                             onChange={(e) =>
                               handleSearchChange(facetName, e.target.value)
                             }
-                            className="mb-3 w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            className="mb-3 w-full px-2 py-1 border border-black rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                           />
+                          <Image
+                          src="/ListingPageHeader/search_lens.svg"
+                          alt="Search Lens"
+                          width={20}
+                          height={20}
+                          />
+                          </div>
+                          
                         )}
 
                         <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
