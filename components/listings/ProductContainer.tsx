@@ -15,7 +15,7 @@ interface ProductContainerProps {
 
 export default function ProductContainer({
   storeId = "",
-  colCount = 3,
+  colCount = 4,
 }: ProductContainerProps) {
   const {
     priceBounds,
