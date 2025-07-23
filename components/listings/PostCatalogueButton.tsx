@@ -41,13 +41,13 @@ export default function PostCatalogueButton({
   }, [selected]);
 
   // Build options based on availability
-  const options: ('Posts' | 'Catalogue')[] = hasProducts
-    ? ['Posts', 'Catalogue']
+  const options: ('Posts' | 'Products')[] = hasProducts
+    ? ['Posts', 'Products']
     : ['Posts'];
 
-  const getIconPath = (option: 'Posts' | 'Catalogue') => {
+  const getIconPath = (option: 'Posts' | 'Products') => {
     if (option === 'Posts') return '/ListingPageHeader/post_icon.svg';
-    if (option === 'Catalogue') return '/ListingPageHeader/catalogue_logo.svg';
+    if (option === 'Products') return '/ListingPageHeader/catalogue_logo.svg';
     return '';
   };
 

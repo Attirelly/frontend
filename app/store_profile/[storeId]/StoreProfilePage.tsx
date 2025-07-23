@@ -52,7 +52,7 @@ export default function StoreProfilePage() {
           </div>
         )}
 
-        {viewType === 'Catalogue' && (
+        {viewType === 'Products' && (
           <div className="mt-8 w-full px-4">
             <div className="px-20 w-full grid grid-cols-[300px_1fr] gap-6">
               <div>

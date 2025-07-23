@@ -484,7 +484,7 @@ export default function ProductDetail() {
             <span
               className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
               style={{ fontWeight: 500 }}
-              onClick={() => { router.push(`/store_profile/${product?.store_id}?defaultButton=${encodeURIComponent("Catalogue")}`) }}
+              onClick={() => { router.push(`/store_profile/${product?.store_id}?defaultButton=${encodeURIComponent("Products")}`) }}
             >
               View All
             </span>
