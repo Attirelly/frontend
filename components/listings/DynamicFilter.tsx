@@ -158,7 +158,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
         </div>
 
         {/* <hr className="my-4 border-[#D9D9D9]" /> */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
         {Object.entries(facets).map(([facetName, values]) => {
           const isOpen = openFacets[facetName];
           const fName = formatFacetName(facetName);
@@ -174,7 +174,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
             <React.Fragment key={facetName}>
               <div className="flex flex-col gap-2">
                 <div
-                  className="flex items-center justify-between mb-2 cursor-pointer"
+                  className="flex items-center justify-between cursor-pointer"
                   onClick={() => toggleFacet(facetName)}
                 >
                   <h2 className={`${manrope.className} text-base uppercase`} style={{fontWeight:600}}>
