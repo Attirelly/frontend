@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import {
   useCurrentStep,
   useFormActions,
@@ -10,9 +10,10 @@ import { FiUpload, FiX, FiImage, FiPlus, FiTrash2 } from "react-icons/fi";
 import { toast } from "sonner";
 import axios from "axios";
 import { api } from "@/lib/axios";
-import Cropper, { ReactCropperElement } from "react-cropper";
-import "cropperjs/dist/cropper.css";
-import imageCompression from "browser-image-compression";
+import Cropper from "react-easy-crop";
+import getCroppedImg from "@/lib/cropImage";
+import Modal from "react-modal";
+import { Area } from "react-easy-crop";
 
 interface UploadResponse {
   upload_url: string;
@@ -27,6 +28,8 @@ export default function MediaAssets() {
   const variantImageInputRefs = useRef<{
     [key: string]: HTMLInputElement | null;
   }>({});
+
+  // State for image previews and upload status
   const [mainPreview, setMainPreview] = useState<string | null>(null);
   const [variantPreviews, setVariantPreviews] = useState<{
     [key: string]: string[];
@@ -36,13 +39,14 @@ export default function MediaAssets() {
     variants: {} as { [key: string]: boolean },
   });
 
-  // Cropper states for multiple files
-  const [cropperOpen, setCropperOpen] = useState(false);
-  const [cropperImage, setCropperImage] = useState<string | null>(null);
+  // State for cropping
+  const [croppingImage, setCroppingImage] = useState<File | null>(null);
+  const [currentSku, setCurrentSku] = useState<string>("");
   const [filesToProcess, setFilesToProcess] = useState<File[]>([]);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
-  const [currentSku, setCurrentSku] = useState<string>("");
-  const cropperRef = useRef<ReactCropperElement>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   // Initialize with existing media data
   useEffect(() => {
@@ -60,11 +64,26 @@ export default function MediaAssets() {
 
   useEffect(() => {
     const isValid = !!media?.mainImage?.length;
-    console.log("System hai bhai",media);
     setStepValidation(currentStep, isValid);
   }, [media, currentStep]);
 
   const variantsList = variants?.variants || [];
+
+  // Image source for cropper
+  const imageSrc = useMemo(
+    () =>
+      filesToProcess[currentFileIndex]
+        ? URL.createObjectURL(filesToProcess[currentFileIndex])
+        : "",
+    [filesToProcess, currentFileIndex]
+  );
+
+  // Clean up object URLs
+  useEffect(() => {
+    return () => {
+      if (imageSrc) URL.revokeObjectURL(imageSrc);
+    };
+  }, [imageSrc]);
 
   const handleMainImageClick = () => {
     mainImageInputRef.current?.click();
@@ -74,58 +93,49 @@ export default function MediaAssets() {
     variantImageInputRefs.current[sku]?.click();
   };
 
-  const compressImage = async (file: File): Promise<File> => {
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
-    return await imageCompression(file, options);
-  };
-
   const startCroppingProcess = (files: File[], sku: string) => {
     setFilesToProcess(files);
     setCurrentSku(sku);
     setCurrentFileIndex(0);
-    showCropper(files[0]);
+    setCroppingImage(files[0]);
   };
 
-  const showCropper = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCropperImage(reader.result as string);
-      setCropperOpen(true);
-    };
-    reader.readAsDataURL(file);
+  const handleCropComplete = (_: any, croppedArea: Area) => {
+    setCroppedAreaPixels(croppedArea);
   };
 
   const handleCrop = async () => {
-    if (cropperRef.current?.cropper) {
-      cropperRef.current.cropper.getCroppedCanvas().toBlob(
-        async (blob) => {
-          if (blob) {
-            const croppedFile = new File([blob], `cropped-${Date.now()}.jpg`, {
-              type: "image/jpeg",
-            });
-            const compressedFile = await compressImage(croppedFile);
+    if (!croppedAreaPixels || !filesToProcess[currentFileIndex]) return;
 
-            // Process the cropped/compressed file
-            await processCroppedFile(compressedFile, currentSku);
-
-            // Move to next file or finish
-            if (currentFileIndex < filesToProcess.length - 1) {
-              const nextIndex = currentFileIndex + 1;
-              setCurrentFileIndex(nextIndex);
-              showCropper(filesToProcess[nextIndex]);
-            } else {
-              setCropperOpen(false);
-              setFilesToProcess([]);
-            }
-          }
-        },
-        "image/jpeg",
+    try {
+      const croppedBlob = await getCroppedImg(
+        imageSrc,
+        croppedAreaPixels,
         0.9
       );
+      if (!croppedBlob) {
+        throw new Error("Failed to crop image");
+      }
+
+      const croppedFile = new File(
+        [croppedBlob],
+        filesToProcess[currentFileIndex].name,
+        { type: filesToProcess[currentFileIndex].type }
+      );
+
+      await processCroppedFile(croppedFile, currentSku);
+
+      // Move to next file or finish
+      if (currentFileIndex < filesToProcess.length - 1) {
+        setCurrentFileIndex(currentFileIndex + 1);
+        setCroppingImage(filesToProcess[currentFileIndex + 1]);
+      } else {
+        setCroppingImage(null);
+        setFilesToProcess([]);
+      }
+    } catch (error) {
+      console.error("Cropping failed:", error);
+      toast.error("Failed to process image. Please try again.");
     }
   };
 
@@ -133,52 +143,24 @@ export default function MediaAssets() {
     const tempPreview = URL.createObjectURL(file);
 
     // Add temporary preview
-    if(sku == "main"){
+    if (sku === "main") {
       setMainPreview(tempPreview);
       setIsUploading((prev) => ({ ...prev, main: true }));
+    } else {
+      setVariantPreviews((prev) => ({
+        ...prev,
+        [sku]: [...(prev[sku] || []), tempPreview],
+      }));
+      setIsUploading((prev) => ({
+        ...prev,
+        variants: { ...prev.variants, [sku]: true },
+      }));
     }
-    setVariantPreviews((prev) => ({
-      ...prev,
-      [sku]: [...(prev[sku] || []), tempPreview],
-    }));
 
     try {
       const file_url = await uploadFile(file);
 
       // Update the actual URLs
-      const existingVariantImages = media?.variantImages || [];
-      const existingVariant = existingVariantImages.find(
-        (vi) => vi.sku === sku
-      );
-
-      const updatedVariantImages = existingVariant
-        ? existingVariantImages.map((vi) =>
-            vi.sku === sku ? { ...vi, images: [...vi.images, file_url] } : vi
-          )
-        : [...existingVariantImages, { sku, images: [file_url] }];
-
-      updateFormData("media", {
-        ...media,
-        variantImages: updatedVariantImages,
-      });
-
-      // Replace temp URL with permanent URL
-      if(sku === "main"){
-        setMainPreview(file_url)
-      }
-      setVariantPreviews((prev) => ({
-        ...prev,
-        [sku]: [
-          ...(prev[sku]?.filter((url) => url !== tempPreview) || []),
-          file_url,
-        ],
-      }));
-
-      setIsUploading((prev) => ({
-        ...prev,
-        variants: { ...prev.variants, [sku]: false },
-      }));
-
       if (sku === "main") {
         setMainPreview(file_url);
         updateFormData("media", {
@@ -186,14 +168,50 @@ export default function MediaAssets() {
           mainImage: [file_url],
         });
         setIsUploading((prev) => ({ ...prev, main: false }));
+      } else {
+        const existingVariantImages = media?.variantImages || [];
+        const existingVariant = existingVariantImages.find(
+          (vi) => vi.sku === sku
+        );
+
+        const updatedVariantImages = existingVariant
+          ? existingVariantImages.map((vi) =>
+              vi.sku === sku
+                ? { ...vi, images: [...vi.images, file_url] }
+                : vi
+            )
+          : [...existingVariantImages, { sku, images: [file_url] }];
+
+        updateFormData("media", {
+          ...media,
+          variantImages: updatedVariantImages,
+        });
+
+        // Replace temp URL with permanent URL
+        setVariantPreviews((prev) => ({
+          ...prev,
+          [sku]: [
+            ...(prev[sku]?.filter((url) => url !== tempPreview) || []),
+            file_url,
+          ],
+        }));
+
+        setIsUploading((prev) => ({
+          ...prev,
+          variants: { ...prev.variants, [sku]: false },
+        }));
       }
     } catch (error: any) {
       console.error("Upload failed:", error);
       // Remove failed upload
-      setVariantPreviews((prev) => ({
-        ...prev,
-        [sku]: prev[sku]?.filter((url) => url !== tempPreview) || [],
-      }));
+      if (sku === "main") {
+        setMainPreview(null);
+      } else {
+        setVariantPreviews((prev) => ({
+          ...prev,
+          [sku]: prev[sku]?.filter((url) => url !== tempPreview) || [],
+        }));
+      }
       toast.error(error.message || "Upload failed. Please try again.");
     } finally {
       URL.revokeObjectURL(tempPreview);
@@ -239,7 +257,16 @@ export default function MediaAssets() {
     if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
 
-    startCroppingProcess([file], "main");
+    // Check image dimensions
+    const img = new Image();
+    img.onload = () => {
+      if (img.width < 800 || img.height < 800) {
+        toast.error("Image must be at least 800×800 pixels");
+        return;
+      }
+      startCroppingProcess([file], "main");
+    };
+    img.src = URL.createObjectURL(file);
   };
 
   const handleVariantImageChange = async (
@@ -249,12 +276,28 @@ export default function MediaAssets() {
     if (!e.target.files || e.target.files.length === 0) return;
     const files = Array.from(e.target.files);
 
-    setIsUploading((prev) => ({
-      ...prev,
-      variants: { ...prev.variants, [sku]: true },
-    }));
+    // Check image dimensions for each file
+    const validFiles: File[] = [];
+    const checkPromises = files.map((file) => {
+      return new Promise<void>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          if (img.width >= 800 && img.height >= 800) {
+            validFiles.push(file);
+          } else {
+            toast.error(`Image ${file.name} must be at least 800×800 pixels`);
+          }
+          resolve();
+        };
+        img.src = URL.createObjectURL(file);
+      });
+    });
 
-    startCroppingProcess(files, sku);
+    await Promise.all(checkPromises);
+
+    if (validFiles.length > 0) {
+      startCroppingProcess(validFiles, sku);
+    }
 
     // Reset input to allow selecting same files again
     if (variantImageInputRefs.current[sku]) {
@@ -262,8 +305,18 @@ export default function MediaAssets() {
     }
   };
 
-  const removeMainImage = async(imageUrl: string) => {
-    await deleteImageFromS3(imageUrl); 
+  const deleteImageFromS3 = async (imageUrl: string) => {
+    try {
+      await api.delete(`/products/delete_image`, {
+        data: { file_url: imageUrl },
+      });
+    } catch (error) {
+      console.error("Error deleting image from S3:", error);
+    }
+  };
+
+  const removeMainImage = async (imageUrl: string) => {
+    await deleteImageFromS3(imageUrl);
     setMainPreview(null);
     updateFormData("media", {
       ...media,
@@ -274,18 +327,9 @@ export default function MediaAssets() {
     }
     toast.info("Main image removed");
   };
-  async function deleteImageFromS3(imageUrl: string) {
-    try {
-      const payload = {
-        file_url: imageUrl,
-      }
-      await api.delete(`/products/delete_image`, {data:{ "file_url" : imageUrl }});
-    } catch (error) {
-      console.error("Error deleting image from S3:", error);
-    }
-  }
-  const removeVariantImage = async(sku: string, imageUrl: string) => {
-    await deleteImageFromS3(imageUrl); 
+
+  const removeVariantImage = async (sku: string, imageUrl: string) => {
+    await deleteImageFromS3(imageUrl);
     setVariantPreviews((prev) => ({
       ...prev,
       [sku]: prev[sku]?.filter((url) => url !== imageUrl) || [],
@@ -311,53 +355,75 @@ export default function MediaAssets() {
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg">
       {/* Cropper Modal */}
-      {cropperOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex flex-col items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-4 w-full max-w-3xl max-h-[90vh] overflow-auto">
-            <h2 className="text-lg font-semibold mb-4">
-              Crop Image ({currentFileIndex + 1} of {filesToProcess.length})
-            </h2>
-            <div className="w-full h-96">
+      <Modal
+        isOpen={!!croppingImage}
+        ariaHideApp={false}
+        onRequestClose={() => {
+          setCroppingImage(null);
+          setFilesToProcess([]);
+          setIsUploading((prev) => ({
+            ...prev,
+            variants: { ...prev.variants, [currentSku]: false },
+          }));
+        }}
+        style={{
+          content: {
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "720px",
+            height: "750px",
+            padding: 0,
+            borderRadius: "12px",
+            overflow: "hidden",
+            position: "relative",
+            paddingTop: "20px",
+          },
+          overlay: { backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 1000 },
+        }}
+      >
+        {croppingImage && (
+          <>
+            <div className="relative w-full h-[700px] bg-black">
               <Cropper
-                src={cropperImage || ""}
-                style={{ height: "100%", width: "100%" }}
-                initialAspectRatio={1}
-                guides={true}
-                ref={cropperRef}
-                viewMode={1}
-                responsive={true}
-                autoCropArea={1}
-                checkOrientation={false}
+                image={imageSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={1 / 1.15} // 1:1.15 aspect ratio
+                cropSize={{ width: 600, height: 600 }}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={handleCropComplete}
+                cropShape="rect"
+                showGrid={true}
+                zoomWithScroll={true}
+                restrictPosition={true}
+                objectFit="contain"
               />
+              <div className="absolute bottom-0 w-full px-6 pb-4 flex flex-col items-center z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                <input
+                  type="range"
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  value={zoom}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="w-full max-w-[400px] mb-3"
+                />
+                <button
+                  onClick={handleCrop}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+                >
+                  {currentFileIndex < filesToProcess.length - 1
+                    ? "Save & Next"
+                    : "Save & Finish"}
+                </button>
+              </div>
             </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => {
-                  setCropperOpen(false);
-                  setFilesToProcess([]);
-                  setIsUploading((prev) => ({
-                    ...prev,
-                    variants: { ...prev.variants, [currentSku]: false },
-                  }));
-                }}
-                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100"
-              >
-                Cancel All
-              </button>
-              <button
-                onClick={handleCrop}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                {currentFileIndex < filesToProcess.length - 1
-                  ? "Save & Next"
-                  : "Save & Finish"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
-      {/* Rest of your existing UI remains the same */}
       <div>
         <h1 className="text-lg font-semibold">Media Assets</h1>
         <p className="text-gray-500 text-sm">
@@ -465,7 +531,9 @@ export default function MediaAssets() {
                 </div>
 
                 <input
-                  ref={(el) => { variantImageInputRefs.current[sku] = el; }}
+                  ref={(el) => {
+                    variantImageInputRefs.current[sku] = el;
+                  }}
                   type="file"
                   accept=".svg,.png,.jpg,.jpeg,.webp"
                   className="hidden"
