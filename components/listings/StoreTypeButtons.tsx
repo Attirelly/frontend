@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { manrope } from '@/font';
 
 interface StoreTypesButtonProps {
-  options: { store_type: string; id: string }[]; // updated
+  options: { store_type: string; id: string }[];
   defaultValue: string;
   context: string;
 }
@@ -22,18 +22,27 @@ export default function StoreTypeButtons({
   defaultValue,
   context,
 }: StoreTypesButtonProps) {
- 
-  const defaultOption = options.find((opt) => opt.store_type === defaultValue);
-  console.log("defualtoption" , defaultOption)
-  const [selected, setSelected] = useState<{ store_type: string; id: string } | undefined>(defaultOption);
   const { setStoreTypeString, setStoreType } = useHeaderStore();
-  console.log("selected" , selected)
+
+  const [selected, setSelected] = useState<{ store_type: string; id: string } | undefined>(
+    options.find((opt) => opt.store_type === defaultValue)
+  );
+
+  // Sync local state when defaultValue changes
+  useEffect(() => {
+    const newDefault = options.find((opt) => opt.store_type === defaultValue);
+    if (newDefault && newDefault.store_type !== selected?.store_type) {
+      setSelected(newDefault);
+    }
+  }, [defaultValue, options]);
+
+  // Update global store when local selection changes
   useEffect(() => {
     if (selected) {
       setStoreTypeString(selected.store_type);
       setStoreType({ store_type: selected.store_type, id: selected.id });
     }
-  }, [selected]);
+  }, [selected, setStoreType, setStoreTypeString]);
 
   return (
     <div className="flex space-x-2">
