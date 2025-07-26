@@ -17,7 +17,7 @@ export default function CustomerDashboard() {
             "rental": true,
         }
         const res = await api.post('/stores/', payload);
-        console.log(res.data);
+        
     }
 
     return (

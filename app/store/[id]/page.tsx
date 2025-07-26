@@ -140,7 +140,7 @@ export default function StoreFormPage({ params }: { params: { id: string } }) {
           api.get("/stores/all_store_options/"),
         ]);
 
-        console.log("store_data", storeRes.data);
+        
 
         setStoreOptions(optionsRes.data);
 
@@ -250,7 +250,7 @@ export default function StoreFormPage({ params }: { params: { id: string } }) {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      console.log("submit form data", formData);
+      
 
       await api.put(`/stores/${id}`, formData);
       setMode("view");

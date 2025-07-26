@@ -33,7 +33,7 @@ export default function StoreRankingPanel() {
     axios
       .get("http://localhost:8000/homepage/section_store_details")
       .then((res) => {
-        console.log(res);
+        
         setData(res.data);
       });
   }, []);

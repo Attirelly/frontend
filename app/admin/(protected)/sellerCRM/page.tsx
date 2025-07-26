@@ -696,7 +696,7 @@ export default function Home() {
       }
     }
 
-    console.log(filters);
+    
     const encoded = encodeURIComponent(JSON.stringify(filters));
     return encoded;
   };
@@ -782,7 +782,7 @@ export default function Home() {
           : "";
   
         const algoia_facets = buildFacetFilters(selectedFacets);
-        console.log("facets", algoia_facets);
+        
   
         const res = await api.get(
           `/search/search_store?query=${params.query || ""}&page=${
@@ -791,7 +791,7 @@ export default function Home() {
         );
   
         const data = res.data;
-        console.log("algoliaa", data);
+        
         setTotalItems(data.total_hits);
         setTotalPages(data.total_pages);
         const sellers: Seller[] = data.hits.map((hit: any) => ({
@@ -811,7 +811,7 @@ export default function Home() {
   
         setSellers(sellers);
         setTotalItems(data.total || data.hits.length);
-        console.log("algolia", data);
+        
         const newFacets: Facets = {
           area: Object.entries(data.facets?.area || {}),
           city: Object.entries(data.facets?.city || {}),
@@ -1045,14 +1045,14 @@ export default function Home() {
   };
 
   // const handleClickView = (id: string) => {
-  //     console.log(id);
+  //     
   // };
 
   // const handleLocationRoute = () => {
-  //      console.log(locationUrl);
+  //      
   //      window.open(locationUrl, '_blank', 'noopener,noreferrer');
   //   };
-  console.log("bas teri bas teri", selectedFacets);
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="w-full max-w-7xl mx-auto p-6">

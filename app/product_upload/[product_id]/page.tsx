@@ -48,12 +48,12 @@ export default function ProductUpdatePage() {
           setLoading(true);
           const res = await api.get(`/products/${product_id}`);
           const product = res.data;
-          console.log(product);
+          
           setStoreId(product.store_id); // Set the store ID from the product data
           setStoreNameString(product.store_name);
-          console.log("Fetched product data:", product);
+          
           const formData = convertToFormData(product);
-          console.log("Fetched product data after conversion :", formData);
+          
           updateFormData("product_id", product_id);
           updateFormData("keyDetails", formData.keyDetails);
           updateFormData("category", formData.category);

@@ -59,7 +59,7 @@ export default function VariantAndInventory() {
   const [excludedVariants, setExcludedVariants] = useState<
     { size_id: string; color_id: string }[]
   >([]);
-  console.log(globalVariants);
+  
   const [availableSizes, setAvailableSizes] = useState<SizeOption[]>([]);
   const [availableColors, setAvailableColors] = useState<ColorOption[]>([]);
   const [showSizeDropdown, setShowSizeDropdown] = useState(false);

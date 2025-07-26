@@ -81,14 +81,14 @@ export default function SellerSignup() {
         const response = await api.get("/users/user", {
           params: { phone_number: phone },
         });
-        console.log(response);
+        
         setSellerId(response.data.id);
         setSellerName(response.data.name);
         setSellerEmail(response.data.email);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          console.log("Status Code:", error.response.status);
-          console.log("Response Data:", error.response.data);
+          
+          
           alert(
             `Error : ${
               error.response.data?.message || "Something went wrong"
@@ -96,7 +96,7 @@ export default function SellerSignup() {
           );
           return;
         } else {
-          console.log("Unexpected error:", error);
+          
           alert("An unexpected error occurred. Please try again.");
         }
       }

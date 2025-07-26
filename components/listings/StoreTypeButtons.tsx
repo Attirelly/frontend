@@ -22,10 +22,12 @@ export default function StoreTypeButtons({
   defaultValue,
   context,
 }: StoreTypesButtonProps) {
+ 
   const defaultOption = options.find((opt) => opt.store_type === defaultValue);
+  console.log("defualtoption" , defaultOption)
   const [selected, setSelected] = useState<{ store_type: string; id: string } | undefined>(defaultOption);
   const { setStoreTypeString, setStoreType } = useHeaderStore();
-
+  console.log("selected" , selected)
   useEffect(() => {
     if (selected) {
       setStoreTypeString(selected.store_type);

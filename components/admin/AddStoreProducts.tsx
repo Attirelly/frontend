@@ -43,7 +43,7 @@ export default function AddStoreProduct() {
   const [viewAllUrl, setViewAllUrl] = useState('');
   const [storesFromSection, setStoresFromSection] = useState<Store[]>([]);
   const router = useRouter();
-  console.log(productsByStore);
+  
 
   useEffect(() => {
     if (!curation_id) return;
@@ -203,7 +203,7 @@ export default function AddStoreProduct() {
       store_ids: selectedStoreIds,
       product_ids: productSelections.filter((id) => id),
     };
-    console.log('Payload:', payload);
+    
     // return;
 
     try {
@@ -211,7 +211,7 @@ export default function AddStoreProduct() {
       // alert('Section created successfully!');
       toast.success("Curation submitted successfully!");
       router.replace("/admin/curationModule/createCuration");
-      console.log('Created:', response.data);
+      
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       console.error('Failed to create section:', error);
@@ -247,10 +247,10 @@ export default function AddStoreProduct() {
     const productList = productsByStore[selectedStoreId] || [];
     const found = productList.find((product) => product.product_id === productId);
     const updated = [...productSelections];
-    console.log('Product ID:', productId);
+    
     updated[index] = found ? found.product_id : '';
     setProductSelections(updated);
-    console.log('updated:', updated);
+    
   };
 
   const storeOptions = stores.map((store) => ({
@@ -258,7 +258,7 @@ export default function AddStoreProduct() {
     value: store.store_id,
   }));
 
-  console.log(products);
+  
 
   // const getProductOptions = (storeId: string) =>
   //   (productsByStore[storeId] || []).map((product) => ({
@@ -302,7 +302,7 @@ export default function AddStoreProduct() {
       <div className="space-y-4 mb-12">
         {rows.map((_, index) => {
           const storeId = storeSelections[index];
-          // console.log('Store ID:', storeId);
+          // 
           const storeName = stores.find((s) => s.store_id === storeId)?.store_name;
           const selectedStoreId = storeSelections[index];
           const productList = productsByStore[selectedStoreId] || [];

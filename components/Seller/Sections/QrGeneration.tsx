@@ -18,7 +18,7 @@ export default function QrCodeGeneration() {
                 const response = await api.get(`qrcode/qr_by_id/${qrId}`);
                 const data = response.data;
                 setQrImageUrl(data.qr_path);  // e.g., /uploads/abc.png
-                console.log(data);
+                
             } catch (err) {
                 console.error("Failed to fetch QR image:", err);
             }
@@ -35,12 +35,12 @@ export default function QrCodeGeneration() {
             await api.put(`/stores/${storeId}`, {curr_section:furthestStep + 1});
             setQrId(qrData.qr_id);
             setQrImageUrl(qrData.qr_path);
-            console.log(qrData);
+            
         } catch (err) {
             console.error("QR generation failed", err);
         }
     };
-    console.log(furthestStep);
+    
 
     const handleDownload = async () => {
         try {

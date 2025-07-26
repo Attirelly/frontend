@@ -34,10 +34,10 @@ export default function SellerSignup() {
     const testing_phone = '9821205090'
 
     useEffect(() => {
-        console.log('started');
+        
         router.prefetch('/seller_dashboard');
         router.prefetch('/seller_signup/sellerOnboarding');
-        console.log(router);
+        
     }, []);
 
     useEffect(() => {
@@ -133,7 +133,7 @@ export default function SellerSignup() {
                 }
             }
             catch (error) {
-                console.log(error);
+                
                 if (axios.isAxiosError(error) && error.response?.status === 403) {
                     const detail = error.response.data?.detail;
                     const msg = typeof detail === 'string' ? detail : detail?.message;
@@ -165,7 +165,7 @@ export default function SellerSignup() {
             try {
 
                 const response = await api.get('/users/user', { params: { phone_number: phone } });
-                console.log(response);
+                
                 const user_data = response.data;
                 const curr_section_res = await api.get('/stores/get_store_section', { params: { user_id: user_data.id } })
                 console.log(curr_section_res)
@@ -185,12 +185,12 @@ export default function SellerSignup() {
 
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
-                    console.log('Status Code:', error.response.status);
-                    console.log('Response Data:', error.response.data);
+                    
+                    
                     alert(`Error : ${error.response.data?.message || 'Something went wrong'}, Please Sign In`);
                     return;
                 } else {
-                    console.log('Unexpected error:', error);
+                    
                     alert('An unexpected error occurred. Please try again.');
                 }
             }

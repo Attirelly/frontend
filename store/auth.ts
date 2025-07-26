@@ -86,7 +86,7 @@ export const useAuthStore = create<AuthState>()(
         };
       } catch (error) {
         const err = error as AxiosError;
-        console.log(err);
+        
 
         set({
           user: null,

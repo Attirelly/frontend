@@ -41,7 +41,7 @@ export default function CardStack() {
 
                 const res = await api.get(`homepage/get_products_by_section_number/${SECTION_NUMBER}`);
                 const productData = res.data;
-                console.log(productData);
+                
                 const formattedProducts: CardData[] = productData.map((p) => ({
                     id: p.product_id,
                     imageUrl: p.images[0].image_url || '/Homepage/CardTypeOne.svg',
@@ -58,7 +58,7 @@ export default function CardStack() {
 
             }
             catch (error) {
-                console.log('failed to fetch segment information');
+                
             }
         }
 

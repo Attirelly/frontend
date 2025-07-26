@@ -58,7 +58,7 @@ export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductPro
             const res = await api.get(
                 `/search/search_product?query=${store_id}&page=0&limit=${limit}&filters=&facetFilters=`
             );
-            console.log(res.data);
+            
             const data = res.data;
             const formattedProducts: ProductCardType[] = data.hits.map((item: any) => {
                 const price = item.price || 500;

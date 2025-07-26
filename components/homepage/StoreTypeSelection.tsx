@@ -43,14 +43,14 @@ export default function StoreTypeSelection() {
         router.push('/store_listing');
         // onChange(value);
     };
-    // console.log(storeType);
+    // 
 
     useEffect(() => {
         const fetchStoreTypes = async () => {
             try {
                 setLoading(true)
                 const res = await api.get("stores/store_types");
-                console.log(res.data);
+                
                 setStoreTypes(res.data);
                 const options: SelectOption[] = res.data.map((t: BrandType) => ({
                     label: t.store_type,

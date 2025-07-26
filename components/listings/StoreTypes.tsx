@@ -44,14 +44,14 @@ export default function StoreTypeTabs({
         setStoreType(storeType);
         // onChange(value);
     };
-    // console.log(selected);
+    // 
 
     useEffect(() => {
         const fetchStoreTypes = async () => {
             try {
                 setLoading(true)
                 const res = await api.get("stores/store_types");
-                console.log(res.data);
+                
                 setStoreTypes(res.data);
                 const options: SelectOption[] = res.data.map((t: BrandType) => ({
                     label: t.store_type,
@@ -143,7 +143,7 @@ export default function StoreTypeTabs({
 
 //     fetchTabs();
 //   }, [defaultValue]);
-//   console.log(tabs, selected);
+//   
 
 //   const handleTabClick = (value: string) => {
 //     setSelected(value);

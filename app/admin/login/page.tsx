@@ -14,15 +14,15 @@ export default function SellerSignup() {
   const [error, setError] = useState("");
   // const setUser = useSellerStore((state) => state.setUser);
   useEffect(() => {
-    console.log("prefetching");
+    
     router.prefetch("/admin");
-    console.log("fetched");
+    
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log("loggin you in..");
+      
       const response = await api.post(
         "/users/login_super_admin",
         {
@@ -33,12 +33,12 @@ export default function SellerSignup() {
           withCredentials: true,
         }
       );
-      console.log(response);
+      
       router.push("/admin");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        console.log("Status Code:", error.response.status);
-        console.log("Response Data:", error.response.data);
+        
+        
         alert(
           `Error : ${
             error.response.data?.message || "Something went wrong"
@@ -46,7 +46,7 @@ export default function SellerSignup() {
         );
         return;
       } else {
-        console.log("Unexpected error:", error);
+        
         alert("An unexpected error occurred. Please try again.");
       }
     }

@@ -27,7 +27,6 @@ export default function ListingPageHeader() {
     searchFocus,
   } = useHeaderStore();
   const { user } = useAuthStore();
-  console.log("user", user);
   const [signIn, setSignIn] = useState(false);
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(city || null);
@@ -42,7 +41,7 @@ export default function ListingPageHeader() {
   const [showStoreType, setShowStoreType] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  console.log(city);
+  
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -66,7 +65,7 @@ export default function ListingPageHeader() {
       });
 
       const data = response.data;
-      console.log("stores", data.stores);
+      
       setStoreSuggestions(data.store_search_suggestion || []);
       setProductSuggestions(data.product_search_suggestion || []);
       setCategories(data.categories || []);

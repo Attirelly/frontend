@@ -49,7 +49,7 @@ export default function StoreContainerPage() {
     filters.push([`store_types:${storeType.store_type}`]);
   }
 
-  console.log("facetFilters =>", filters);
+  
   return encodeURIComponent(JSON.stringify(filters));
 };
 
@@ -76,7 +76,7 @@ export default function StoreContainerPage() {
     const res = await api.get(
       `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${tempFilterStr}&facetFilters=${facetFilters}`
     );
-    console.log("facet Filters", selectedFilters);
+    
     event({
       action: "Fiter_applied",
       params: {
@@ -89,7 +89,7 @@ export default function StoreContainerPage() {
       },
     });
     const data = res.data;
-    console.log(data);
+    
     // setFacets(data.facets);
 
     // if (currentPage === 0 && Object.keys(facets).length === 0) {
@@ -175,7 +175,7 @@ export default function StoreContainerPage() {
 
   useEffect(() => {
     if (page !== 0) {
-      console.log("Fetching page", page);
+      
       fetchStores(page);
     }
   }, [page]);
@@ -188,7 +188,7 @@ export default function StoreContainerPage() {
 
     thresholds.forEach((threshold) => {
       if (percent >= threshold && !scrollMilestones.includes(threshold)) {
-        console.log(`🧭 Reached ${threshold}% of pages loaded`);
+        
         setScrollMilestones((prev) => [...prev, threshold]);
         event({
           action: "page_scroll",

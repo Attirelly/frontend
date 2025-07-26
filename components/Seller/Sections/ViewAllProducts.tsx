@@ -132,14 +132,14 @@ export default function ProductsPage({
       title: "Image",
       dataIndex: "image",
       render: (_: any, record: Product) => {
-        console.log(record);
+        
         const record_images = record?.images || [];
 
         const imageSrc =
           Array.isArray(record_images) && record_images.length > 0
             ? record_images[0]
             : "/window.svg"; // A fallback image stored in public folder
-        console.log(imageSrc);
+        
         return (
           <Image
             src={imageSrc}
@@ -277,7 +277,7 @@ export default function ProductsPage({
       (!filters.source.length || filters.source.includes(derivedSource))
     );
   });
-  console.log(filters);
+  
 
 
 

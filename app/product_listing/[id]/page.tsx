@@ -230,7 +230,7 @@ export default function ProductsPage() {
                 current: page,
                 pageSize: pageSize,
               });
-              console.log("Page:", page, "Page Size:", pageSize);
+              
             },
           }}
           scroll={{ x: "max-content" }}

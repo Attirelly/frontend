@@ -15,9 +15,9 @@ export default function CreateCurationPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('prefetching');
+    
     router.prefetch('/admin/curationModule/addStoreProduct');
-    console.log('fetched');
+    
   }, []);
 
   useEffect(() => {

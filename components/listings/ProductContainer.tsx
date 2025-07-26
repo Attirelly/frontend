@@ -88,17 +88,17 @@ export default function ProductContainer({
       category,
       storeTypeString
     );
-    console.log(facetFilters);
+    
     try {
       // setIsFacetLoading(true);
       const filterParam = skipFilters ? "" : filters;
-      console.log("activefacets", activeFacet);
+      
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`
       );
 
       const data = res.data;
-      console.log("algolia_data", data);
+      
       setResults(data.hits.length);
 
       const formattedProducts: ProductCardType[] = data.hits.map(

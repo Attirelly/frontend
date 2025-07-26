@@ -186,7 +186,7 @@ export default function ProductDirectoryPage({
 }: {
   searchParams: { category?: string; search?: string };
 }) {
-  console.log("Search Params",searchParams);
+  
   return (
 <Suspense>
 < ProductListPage/>

@@ -103,7 +103,7 @@
 //   // Save to Zustand store when component unmounts
 //   useEffect(() => {
 //     return () => {
-//       console.log(selectedCategories);
+//       
 //       updateFormData("category", selectedCategories);
 //     };
 //   }, [selectedCategories, updateFormData]);
@@ -165,7 +165,7 @@
 //     return category?.name || "";
 //   };
 
-//   console.log(showCategoryDropdown);
+//   
 
 //   return (
 //     isLoading ? (
@@ -385,7 +385,7 @@ export default function CategorySelector() {
     level3: false,
     level4: false,
   });
-  console.log(category);
+  
   const [selectedCategories, setSelectedCategories] = useState({
     level1: category?.level1 || null,
     level2: category?.level2 || null,
@@ -481,16 +481,16 @@ export default function CategorySelector() {
   const getSelectedCategoryName = (level: number): string => {
     const categoryId = selectedCategories[`level${level}` as keyof typeof selectedCategories]?.category_id;
     if (!categoryId) return "";
-    console.log(categoryId, level);
-    console.log(categories);
+    
+    
     return categories.find((cat) => cat.category_id === categoryId)?.name || "";
   };
 
   useEffect(() => {
     if (selectedCategories.level1 && !categorySearch) {
-      console.log(selectedCategories.level1);
+      
       const prefilledName = getSelectedCategoryName(1);
-      console.log(prefilledName);
+      
       setCategorySearch(prefilledName);
     }
   }, [categories,selectedCategories.level1, categorySearch]);

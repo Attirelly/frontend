@@ -56,7 +56,7 @@ export default function CustomerPage() {
       try {
         const res = await api.get(`users/customer`);
         const data = res.data;
-        console.log("Customer data:", data);
+        
 
         setCustomers(data);
         setFilteredCustomers(data);

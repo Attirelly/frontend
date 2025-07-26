@@ -63,7 +63,7 @@ export default function BusinessDetailsComponent({
   const [rentOutfits, setRentOutfits] = useState<string | null>(
     businessDetailsData?.rentOutfits || null
   );
-  console.log(businessDetailsData);
+  
 
   const [cities, setCities] = useState<City[]>([]);
   const [cityOptions, setCityOptions] = useState<SelectOption[]>([]);
@@ -210,7 +210,7 @@ export default function BusinessDetailsComponent({
       return;
 
     const cityFromStore = businessDetailsData.city[0];
-    console.log(businessDetailsData);
+    
     const fullCity = cities.find((city) => city.id === cityFromStore.id);
     const cityOption = cityOptions.find(
       (opt) => opt.value === cityFromStore.id
@@ -258,7 +258,7 @@ export default function BusinessDetailsComponent({
     const areaOption = areaOptions.find(
       (opt) => opt.value === areaFromStore.id
     );
-    console.log(areaOption);
+    
     if (fullArea) setSelectedArea([fullArea]);
 
     if (areaOption) {
@@ -327,7 +327,7 @@ export default function BusinessDetailsComponent({
       selectedPincode.length > 0 &&
       selectedCategoryOptions.length >= 1 &&
       selectedCategoryOptions.length <= 3;
-    console.log(selectedCategoryOptions.length);
+    
     const categoriesForZustand = selectedCategoryOptions.map((opt) => ({
       category_id: opt.value,
       name: opt.label,
@@ -370,7 +370,7 @@ export default function BusinessDetailsComponent({
     selectedCategoryOptions,
   ]);
 
-  console.log(businessDetailsData);
+  
   const toggleSelection = <T extends { id: string }>(
     item: T,
     current: T[],

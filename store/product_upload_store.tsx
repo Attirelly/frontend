@@ -142,9 +142,9 @@ export const useProductFormStore = create<ProductFormStore>()(
       updateForm: async () => {
         const { formData } = get();
         const storeId = useSellerStore.getState().storeId;
-        console.log("Updating form with storeId:", storeId);
+        
         const storeName = useSellerStore.getState().storeNameString;
-        console.log(useSellerStore.getState().storeNameString);
+        
         const apiPayload = transformPayload(
           formData,
           storeId,
@@ -194,7 +194,7 @@ export const useProductFormStore = create<ProductFormStore>()(
             toast.success("Product details saved in draft!");
           }, 0);
         } catch (error) {
-          console.log("Error in saving draft");
+          
         }
       },
       loadDraft: async () => {
@@ -223,7 +223,7 @@ export const useProductFormStore = create<ProductFormStore>()(
       deleteDraft: async () => {
         try {
           const res = await api.delete('/product_draft/');
-          console.log("Draft deleted response:", res);
+          
           if (res.status === 200) {
             set({
               currentStep: 0,
@@ -254,10 +254,10 @@ export const useProductFormStore = create<ProductFormStore>()(
         const storeId = useSellerStore.getState().storeId;
         const storeName = useSellerStore.getState().storeNameString || "Default Store";
         const apiPayload = transformPayload( formData,storeId,storeName);
-        console.log("apiPayload", apiPayload);
+        
         try {
           const response = await api.post("/products/", apiPayload);
-          console.log("Submission successful:", response.data);
+          
           const res = await api.delete('/product_draft/');
           // Clear the form after successful submission
           set({

@@ -56,7 +56,7 @@
 //   // Fetch attributes from API
 //   useEffect(() => {
 //     const fetchAttributes = async () => {
-//       console.log(category);
+//       
 //       try {
 //         // setLoading(true);
 //         const response = await api.get(

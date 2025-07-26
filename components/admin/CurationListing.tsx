@@ -23,9 +23,9 @@ export default function CurationPage() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log('prefetching');
+    
     router.prefetch('/admin/curationModule/createCuration');
-    console.log('fetched');
+    
   }, []);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function CurationPage() {
         setLoading(true);
         setError(null);
         const response = await api.get('/homepage/section'); // Replace with your backend API URL
-        // console.log('Curations:', response.data);
+        // 
         setCurations(response.data);
       } catch (err) {
         setError('Failed to load curations.');
