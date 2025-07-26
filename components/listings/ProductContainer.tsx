@@ -32,7 +32,7 @@ export default function ProductContainer({
     activeFacet,
   } = useProductFilterStore();
 
-  const { query, storeTypeString, priceRangeType, sortBy } = useHeaderStore();
+  const { query, city , storeTypeString, priceRangeType, sortBy } = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -73,6 +73,9 @@ export default function ProductContainer({
     }
     if (storeTypeString) {
       filters.push([`store_types:${storeTypeString}`]);
+    }
+    if (city) {
+    filters.push([`city:${city.name}`]);
     }
 
     return encodeURIComponent(JSON.stringify(filters));
