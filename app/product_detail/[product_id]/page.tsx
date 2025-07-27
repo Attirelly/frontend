@@ -174,7 +174,7 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full bg-white">
       <ListingPageHeader />
       <div className="mx-auto lg:w-[1300px] flex flex-col gap-2">
         <div className="w-full flex flex-col mt-10 mb-10">
