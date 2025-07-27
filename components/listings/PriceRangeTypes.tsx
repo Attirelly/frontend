@@ -48,6 +48,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
         
         setPriceRanges(storeRanges);
         if(storeRanges.length() > 0 ){
+          setSelectedPriceRange(storeRanges[0]);
           setPriceRangeType(storeRanges[0]) ; 
           setPriceRange([storeRanges[0].lower_value , storeRanges[0].upper_value])
           console.log("triggered price range change")
