@@ -48,7 +48,7 @@ export default function ProductCard({
       >
         <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group">
           <div
-           onMouseEnter={handleNext} onMouseLeave={handlePrev}
+          //  onMouseEnter={handleNext} onMouseLeave={handlePrev}
            >
             <Image
               src={imageUrl[imageIndex]}
