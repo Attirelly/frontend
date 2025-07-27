@@ -478,7 +478,7 @@ export default function ProductDetail() {
           />
 
           <div className={`${roboto.className} flex mt-16 justify-between`}>
-            <span className="text-3xl" style={{ fontWeight: 600 }}>
+            <span className="text-[28px] text-[#141414]" style={{ fontWeight: 600 }}>
               More from {storeBasicInfo?.store_name}
             </span>
             <span
