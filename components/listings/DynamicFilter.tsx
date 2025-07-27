@@ -41,6 +41,9 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
+      console.log(context) ; 
+      console.log(localPriceRange) ; 
+      console.log(priceRange) ; 
       if (
         context === "product" &&
         priceRange &&
@@ -48,6 +51,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           localPriceRange[1] !== priceRange[1])
       ) {
         setPriceRange(localPriceRange);
+      
       }
     }, 100); // 100ms d elay
 
