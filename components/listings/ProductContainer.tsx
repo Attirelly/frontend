@@ -122,25 +122,25 @@ export default function ProductContainer({
         }
       );
 
-      if (data.facets?.prices) {
-        const priceKeys = Object.keys(data.facets.prices)
-          .map(Number)
-          .filter((n) => !isNaN(n));
-        if (priceKeys.length > 0) {
-          const min = Math.min(...priceKeys);
-          const max = Math.max(...priceKeys);
+      // if (data.facets?.prices) {
+      //   const priceKeys = Object.keys(data.facets.prices)
+      //     .map(Number)
+      //     .filter((n) => !isNaN(n));
+      //   if (priceKeys.length > 0) {
+      //     const min = Math.min(...priceKeys);
+      //     const max = Math.max(...priceKeys);
 
-          if (priceBounds[0] > min || priceBounds[1] < max) {
-            setPriceBounds([
-              Math.min(priceBounds[0], min),
-              Math.max(priceBounds[1], max),
-            ]);
-          }
-          if (priceRange[0] === 0 && priceRange[1] === 0) {
-            setPriceRange([min, max]);
-          }
-        }
-      }
+      //     if (priceBounds[0] > min || priceBounds[1] < max) {
+      //       setPriceBounds([
+      //         Math.min(priceBounds[0], min),
+      //         Math.max(priceBounds[1], max),
+      //       ]);
+      //     }
+      //     if (priceRange[0] === 0 && priceRange[1] === 0) {
+      //       setPriceRange([min, max]);
+      //     }
+      //   }
+      // }
       // if (Object.keys(facets).length === 0) {
       setFacets(data.facets , activeFacet);
       // }
@@ -169,7 +169,8 @@ export default function ProductContainer({
 
   useEffect(() => {
     const [min, max] = priceRange; 
-    const newFilter = `price >= ${min} AND price <= ${max}`;
+    
+    const newFilter = max >= 100000 ? `price >= ${min}` : `price >= ${min} AND price <= ${max}`;
     if (filters !== newFilter) {
       setFilters(newFilter);
     }

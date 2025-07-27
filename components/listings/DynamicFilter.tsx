@@ -12,8 +12,7 @@ type DynamicFilterProps = {
 };
 
 const DynamicFilter = ({ context }: DynamicFilterProps) => {
-  const filterStore =
-    context === "store" ? useFilterStore() : useProductFilterStore();
+  const filterStore =  context === "store" ? useFilterStore() : useProductFilterStore();
   const {
     facets,
     selectedFilters,
@@ -50,10 +49,10 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
       ) {
         setPriceRange(localPriceRange);
       }
-    }, 100); // 100ms delay
+    }, 100); // 100ms d elay
 
     return () => clearTimeout(timeout);
-  }, [localPriceRange]);
+  }, [localPriceRange , priceRange]);
 
   useEffect(() => {
     const defaultOpen: Record<string, boolean> = {};

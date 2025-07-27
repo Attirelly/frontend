@@ -38,7 +38,7 @@ function createFilterStore() {
     setCategory: (category: string) => set({ category }),
     priceRange: [0, 0],
     setPriceRange: (range: [number, number]) => set({ priceRange: range }),
-    priceBounds: [0, 0],
+    priceBounds: [0, 100000],
     setPriceBounds: (bounds: [number, number]) => set({ priceBounds: bounds }),
     facetInit: false,
     setFacetInit: (loading: boolean) => set({ facetInit: loading }),
