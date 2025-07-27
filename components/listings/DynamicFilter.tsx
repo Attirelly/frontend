@@ -28,7 +28,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([
-    0, 1,
+    0, 0
   ]);
 
   useEffect(() => {

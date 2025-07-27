@@ -186,7 +186,7 @@ export default function ProductContainer({
 useEffect(()=>{
     setPage(0);
     fetchProducts(0);
-}, [selectedFilters, priceRange, query, storeTypeString, sortBy, category , city]);
+}, [selectedFilters, query, storeTypeString, sortBy, category , city]);
 
   useEffect(() => {
     if (page !== 0) fetchProducts(page);
