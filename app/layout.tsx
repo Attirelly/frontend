@@ -7,6 +7,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/AuthProvider";
 import Script from "next/script";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-         {/* Google Analytics 4 */}
+        {/* Google Analytics 4 */}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
             <Script
@@ -56,9 +57,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster richColors />
-        <Providers>
-          <AuthProvider>{children}</AuthProvider>
-        </Providers>
+        <ThemeProvider>
+          <Providers>
+            <AuthProvider>{children}</AuthProvider>
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

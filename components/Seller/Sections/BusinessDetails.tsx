@@ -20,19 +20,6 @@ const Select = dynamic(
   }
 );
 
-// type SelectOption = { value: string; label: string };
-// type BrandType = { id: string; store_type: string };
-// type GenderType = { id: string; gender_value: string };
-// type City = { id: string; name: string; state_id: string };
-// type Area = { id: string; name: string; city_id: string };
-// type Pincode = { id: string, code: string, city_id: string };
-
-const RequiredLabel: FC<{ children: React.ReactNode }> = ({ children }) => (
-  <label className="block text-sm font-medium mb-1">
-    {children} <span className="text-red-500">*</span>
-  </label>
-);
-
 export default function BusinessDetailsComponent({
   onValidationChange,
 }: {
@@ -63,7 +50,15 @@ export default function BusinessDetailsComponent({
   const [rentOutfits, setRentOutfits] = useState<string | null>(
     businessDetailsData?.rentOutfits || null
   );
-  
+  const [retDays, setRetDays] = useState<number>(() => {
+    return businessDetailsData?.returnDays ?? 0;
+  });
+  const [returnAvailable, setReturnAvailable] = useState<string | null>("");
+  const [excDays, setExcDays] = useState<number>(() => {
+    return businessDetailsData?.exchangeDays ?? 0;
+  });
+  const [exchangeAvailable, setExchangeAvailable] = useState<string | null>("");
+
 
   const [cities, setCities] = useState<City[]>([]);
   const [cityOptions, setCityOptions] = useState<SelectOption[]>([]);
@@ -121,6 +116,28 @@ export default function BusinessDetailsComponent({
       setBusinessWpNum(sellerNumber || "");
     }
   }, [sameAsOwner, sellerNumber]);
+  useEffect(() => {
+    if (returnAvailable === "No") {
+      setRetDays(0);
+    }
+    if (exchangeAvailable === "No") {
+      setExcDays(0);
+    }
+
+  }, [returnAvailable, exchangeAvailable]);
+
+  useEffect(() => {
+    if (!businessDetailsData) return;
+
+    // Only set if it's still at initial empty state
+    setReturnAvailable(prev =>
+      prev === "" ? (businessDetailsData.returnDays === 0 ? "No" : businessDetailsData.returnDays > 0 ? "Yes" : "") : prev
+    );
+
+    setExchangeAvailable(prev =>
+      prev === "" ? (businessDetailsData.exchangeDays === 0 ? "No" : businessDetailsData.exchangeDays > 0 ? "Yes" : "") : prev
+    );
+  }, [businessDetailsData]);
 
   useEffect(() => {
     if (businessDetailsData && !hasHydrated.current) {
@@ -326,8 +343,10 @@ export default function BusinessDetailsComponent({
       selectedCity.length > 0 &&
       selectedPincode.length > 0 &&
       selectedCategoryOptions.length >= 1 &&
-      selectedCategoryOptions.length <= 3;
-    
+      selectedCategoryOptions.length <= 3 &&
+      exchangeAvailable !== "" &&
+      returnAvailable !== "";
+    console.log(exchangeAvailable, returnAvailable, valid);
     const categoriesForZustand = selectedCategoryOptions.map((opt) => ({
       category_id: opt.value,
       name: opt.label,
@@ -352,6 +371,8 @@ export default function BusinessDetailsComponent({
         area: selectedArea,
         pinCode: selectedPincode,
         brandAddress,
+        returnDays: Number(retDays) || 0,
+        exchangeDays: Number(excDays) || 0,
         // storeLocation
       });
       setStoreNameString(brandName);
@@ -368,6 +389,10 @@ export default function BusinessDetailsComponent({
     rentOutfits,
     brandAddress,
     selectedCategoryOptions,
+    exchangeAvailable,
+    returnAvailable,
+    retDays,
+    excDays,
   ]);
 
   
@@ -381,7 +406,6 @@ export default function BusinessDetailsComponent({
       exists ? current.filter((t) => t.id !== item.id) : [...current, item]
     );
   };
-
   return (
     <div className="space-y-8 rounded-md w-3xl">
       {/* Brand Owner Section */}
@@ -494,6 +518,71 @@ export default function BusinessDetailsComponent({
         {/* <RadioGroup label="Do you rent outfits" options={['Yes', 'No']} selected={rentOutfits} onChange={setRentOutfits} /> */}
       </Section>
 
+      {/* Return Exchange Section */}
+
+      <Section
+        title="Return & Exchange"
+        subtitle="Customers will see these details on Attirelly">
+        <div className="flex items-center gap-4">
+          <RadioGroup
+            label="Return Available"
+            options={["Yes", "No"]}
+            selected={returnAvailable || ""}
+            onChange={setReturnAvailable}
+            required={true}
+          />
+          {returnAvailable === "Yes" && (
+            <div className="ml-4">
+              <label className="block text-sm font-medium mb-2">Return Days</label>
+              <input
+                type="number"
+                value={retDays || ""}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  if (val < 1) setRetDays(1);
+                  else if (val > 45) setRetDays(45);
+                  else setRetDays(val);
+                }}
+                min={1}
+                max={45}
+                className="border px-2 py-1 rounded-md w-20"
+                placeholder="Days"
+              />
+            </div>
+
+          )}
+        </div>
+        <div className="flex items-center gap-4 mt-4">
+          <RadioGroup
+            label="Exchange Available"
+            options={["Yes", "No"]}
+            selected={exchangeAvailable || ""}
+            onChange={setExchangeAvailable}
+            required={true}
+          />
+          {exchangeAvailable === "Yes" && (
+            <div className="ml-4">
+              <label className="block text-sm font-medium mb-2">Exchange Days</label>
+              <input
+                type="number"
+                value={excDays || ""}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  if (val < 1) setExcDays(1);
+                  else if (val > 45) setExcDays(45);
+                  else setExcDays(val);
+                }}
+                min={1}
+                max={45}
+                className="border px-2 py-1 rounded-md w-20"
+                placeholder="Days"
+              />
+            </div>
+          )}
+        </div>
+
+      </Section>
+
       {/* Brand Location Section */}
       <Section
         title="Brand location"
@@ -556,6 +645,12 @@ export default function BusinessDetailsComponent({
 
 // Utility Components
 
+const RequiredLabel: FC<{ children: React.ReactNode }> = ({ children }) => (
+  <label className="block text-sm font-medium mb-1">
+    {children} <span className="text-red-500">*</span>
+  </label>
+);
+
 const Section: FC<{
   title: string;
   subtitle: string;
@@ -576,7 +671,8 @@ const InputField: FC<{
   onChange?: (value: string) => void;
   required?: boolean;
   placeholder?: string;
-}> = ({ label, value = "", onChange, required, placeholder }) => (
+  type?: string;
+}> = ({ label, value = "", onChange, required, placeholder, type }) => (
   <div>
     {required ? (
       <RequiredLabel>{label}</RequiredLabel>
@@ -584,7 +680,7 @@ const InputField: FC<{
       <label className="block text-sm font-medium mb-1">{label}</label>
     )}
     <input
-      type="text"
+      type={type || "text"}
       className="w-full border border-gray-300 rounded px-3 py-2"
       placeholder={placeholder}
       value={value}
@@ -609,9 +705,8 @@ const ToggleChips: FC<{
           <label
             key={item.id}
             // onClick={() => toggle(item)}
-            className={`px-3 py-2 border border-gray-500 rounded cursor-pointer ${
-              isSelected ? "bg-gray-100" : "bg-white"
-            }`}
+            className={`px-3 py-2 border border-gray-500 rounded cursor-pointer ${isSelected ? "bg-gray-100" : "bg-white"
+              }`}
           >
             <input
               type="checkbox"
@@ -620,9 +715,8 @@ const ToggleChips: FC<{
               className="accent-black"
             />
             <span
-              className={`text-md font-medium ${
-                isSelected ? "text-black" : "text-gray-500"
-              }`}
+              className={`text-md font-medium ${isSelected ? "text-black" : "text-gray-500"
+                }`}
             >
               {" "}
               {text}
@@ -698,16 +792,20 @@ const RadioGroup: FC<{
   options: string[];
   selected: string | null;
   onChange: (value: string) => void;
-}> = ({ label, options, selected, onChange }) => (
+  required?: boolean;
+}> = ({ label, options, selected, onChange, required }) => (
   <div>
-    <label className="block text-sm font-medium mb-2">{label}</label>
+    {required ? (
+      <RequiredLabel>{label}</RequiredLabel>
+    ) : (
+      <label className="block text-sm font-medium mb-2">{label}</label>
+    )}
     <div className="flex gap-4">
       {options.map((opt) => (
         <label
           key={opt}
-          className={`px-4 py-2 border border-gray-500 rounded text-gray-500 cursor-pointer ${
-            selected === opt ? "bg-gray-100" : "bg-white"
-          }`}
+          className={`px-4 py-2 border border-gray-500 rounded text-gray-500 cursor-pointer ${selected === opt ? "bg-gray-100" : "bg-white"
+            }`}
         >
           <input
             type="radio"
@@ -718,9 +816,8 @@ const RadioGroup: FC<{
             onChange={() => onChange(opt)}
           />
           <span
-            className={`text-sm font-medium ${
-              selected === opt ? "text-black" : "text-gray-500"
-            }`}
+            className={`text-sm font-medium ${selected === opt ? "text-black" : "text-gray-500"
+              }`}
           >
             {" "}
             {opt}

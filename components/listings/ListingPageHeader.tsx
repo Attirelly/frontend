@@ -202,7 +202,7 @@ export default function ListingPageHeader() {
         <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-[83px] h-full">
           <div className="flex justify-center items-center">
             <div
-              className={`${rubik.className} text-[27px] font-bold cursor-pointer`}
+              className={`${rubik.className} text-[27px] text-[#373737] font-bold cursor-pointer`}
               onClick={() => router.push("/homepage")}
               style={{ fontWeight: 700 }}
             >
@@ -264,7 +264,7 @@ export default function ListingPageHeader() {
                 <input
                   type="text"
                   placeholder="Find your style..."
-                  className={`${manrope.className} w-full h-[22px] text-[16px] focus:outline-none`}
+                  className={`${manrope.className} w-full h-[22px] text-[16px] focus:outline-none text-[#0F0F0F]`}
                   style={{ fontWeight: 400 }}
                   value={tempQuery}
                   onChange={(e) => {

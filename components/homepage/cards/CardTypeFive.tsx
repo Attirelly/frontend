@@ -35,15 +35,15 @@ export default function CardTypeFive({
         className={`${manrope.className} w-full flex flex-col gap-2`}
         style={{ fontWeight: 500 }}
       >
-        <span className="text-base">{title}</span>
+        <span className="text-base text-[#1E1E1E]">{title}</span>
         <span
-          className="text-[13px] text-[#5F5F5F] truncate"
+          className="text-[13px] text-[#1E1E1E] truncate"
           style={{ fontWeight: 300 }}
         >
           {description}
         </span>
         <div className="flex gap-1 items-center">
-          <span className="text-base">₹{price.toLocaleString()}</span>
+          <span className="text-base text-black">₹{price.toLocaleString()}</span>
           {price !== mrp && (
             <span className="line-through text-gray-400 text-xs">
               ₹{mrp.toLocaleString()}

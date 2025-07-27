@@ -37,6 +37,7 @@ export default function SellerDashboardContainer() {
     setStoreId,
     setStoreNameString,
     sellerId,
+    setSellerId,
     sellerName,
     sellerEmail,
     isInstagramConnected,
@@ -55,12 +56,11 @@ export default function SellerDashboardContainer() {
   const [activeSection, setActiveSection] = useState("");
   const searchParams = useSearchParams();
   const storeId = searchParams.get("storeId");
-  
+  console.log(sellerId);
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        
         let response;
         let fetchedSellerName;
         let fetchedSellerEmail;
@@ -75,7 +75,8 @@ export default function SellerDashboardContainer() {
             params: { user_id: store_owner_id },
           });
           const resData = resSeller.data;
-          
+          console.log(resData);
+          setSellerId(store_owner_id);
           setSellerEmail(resData.email);
           setSellerName(resData.name);
           setSellerNumber(resData.contact_number);
@@ -123,6 +124,8 @@ export default function SellerDashboardContainer() {
             area: areaData || [],
             pinCode: pincodeData || [],
             brandAddress: storeData.store_address || "",
+            returnDays: storeData.return_days || 0,
+            exchangeDays: storeData.exchange_days || 0,
           });
         }
 

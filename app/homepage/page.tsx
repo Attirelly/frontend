@@ -19,7 +19,7 @@ import ListingPageHeader from "@/components/listings/ListingPageHeader";
 
 export default function HomePage() {
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col bg-white">
             <ListingPageHeader />
 
             <div className="px-20">

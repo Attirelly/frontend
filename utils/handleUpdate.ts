@@ -3,6 +3,7 @@ import { api } from '@/lib/axios';
 import { useRouter } from 'next/navigation';
 
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export const useUpdateStore = () => {
     const router = useRouter();
@@ -29,8 +30,12 @@ export const useUpdateStore = () => {
     const [toastType, setToastType] = useState<"success" | "error">("success");
 
     const handleUpdate = async (activeSection?: string, onBoarding?: boolean, curr_section?: number) => {
-        if (activeSection === 'brand' && businessDetailsValid && businessDetailsData) {
-            
+        if (activeSection === 'brand' && businessDetailsData) {
+            if( !businessDetailsValid){
+                // toast.error("Please fill all the required fields");
+                alert("Please fill all the required fields");
+                return false;
+            }
             const seller_up_payload = {
                 email: businessDetailsData.ownerEmail,
                 name: businessDetailsData.ownerName,
@@ -50,6 +55,8 @@ export const useUpdateStore = () => {
                 city: businessDetailsData.city[0],
                 pincode: businessDetailsData.pinCode[0],
                 registered_email: businessDetailsData.ownerEmail,
+                return_days: businessDetailsData.returnDays || 0,
+                exchange_days: businessDetailsData.exchangeDays || 0,
                 // store_type_price_range_links: priceFiltersData?.priceRanges,
             };
 
@@ -70,8 +77,14 @@ export const useUpdateStore = () => {
                 return false;
             }
         }
+
     
-        if (activeSection === 'price' && priceFiltersValid && priceFiltersData) {
+        if (activeSection === 'price' && priceFiltersData) {
+            if(!priceFiltersValid){
+                // toast.error("Please fill all the required fields");
+                alert("Please fill all the required fields");
+                return false;
+            }
             const price_payload = {
                 average_price_min: priceFiltersData.avgPriceMin,
                 average_price_max: priceFiltersData.avgPriceMax,

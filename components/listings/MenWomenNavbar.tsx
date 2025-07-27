@@ -95,7 +95,7 @@ export default function MenWomenNavbar() {
                 {column.map((subcat2: SubCat2) => (
                   <div key={subcat2.category_id} className='p-4'>
                     <h3
-                      className={`${manrope.className} text-sm mb-2`}
+                      className={`${manrope.className} text-sm mb-2 text-[#121212]`}
                       style={{ fontWeight: 700 }}
                     >
                       {subcat2.name}

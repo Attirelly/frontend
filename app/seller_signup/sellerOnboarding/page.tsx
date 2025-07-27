@@ -77,7 +77,9 @@ export default function SellerOnboardingPage() {
             city: cityData || [],
             area: areaData || [],
             pinCode: pincodeData || [],
-            brandAddress: storeData.store_address || ''
+            brandAddress: storeData.store_address || '',
+            returnDays: storeData.return_days || 0,
+            exchangeDays: storeData.exchange_days || 0,
           });
   
           // setBusinessDetailsValid(true);
