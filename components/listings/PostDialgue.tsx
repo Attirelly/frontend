@@ -32,7 +32,7 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-neutral-900/70 flex justify-center items-center">
+    <div className="fixed inset-0 z-50 bg-neutral-900/70 flex justify-center items-center rounded-lg">
       <div
         ref={wrapperRef}
         className="relative flex max-w-[70vw] max-h-[90vh] bg-black"
@@ -60,12 +60,12 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
                 src="/ListingPageHeader/insta_black_logo.svg"
                 alt='Instagram Logo'
                 className='w-6 h-6' />
-              <span className='text-[20px]' style={{fontWeight:700}}>{storeName} x Attirelly</span>
+              <span className='text-[20px] text-black' style={{fontWeight:700}}>{storeName}  x  Attirelly</span>
             </div>
 
             {/* <hr className='border border-gray-300 '/> */}
-            <span className='text-sm' style={{ fontWeight: 400 }}>{post.caption || 'No Caption Found'}</span>
-            <div className='text-sm flex gap-3'>
+            <span className='text-sm text-black' style={{ fontWeight: 400 }}>{post.caption || 'No Caption Found'}</span>
+            {/* <div className='text-sm flex gap-3'>
               <div className='flex flex-col items-center'>
                 <img
                   src='/heart.png'
@@ -81,7 +81,7 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
                   className='w-4 h-4' />
                 <span>{post.comments_count} {post.comments_count == 1 ? 'Comment' : 'Comments'}</span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
