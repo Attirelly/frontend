@@ -58,7 +58,7 @@ export default function StoreTypeButtons({
             key={option.id}
             className={`
               ${manrope.className}
-              px-4 py-2 rounded-2xl transition text-sm flex items-center gap-2
+              px-4 py-2 rounded-full transition text-base flex items-center gap-2
               ${isSelected
                 ? 'bg-black text-white font-semibold'
                 : 'bg-white text-black border-[#878787] font-normal'}
