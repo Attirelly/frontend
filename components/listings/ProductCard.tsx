@@ -44,7 +44,7 @@ export default function ProductCard({
       className="block w-full"
     >
       <div
-        className="w-full rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2"
+        className="w-[225px] h-[355px] rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2"
       >
         <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group">
           <div

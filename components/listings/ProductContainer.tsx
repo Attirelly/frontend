@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/axios";
 import ProductCard from "./ProductCard";
@@ -169,7 +168,7 @@ export default function ProductContainer({
   };
 
   useEffect(() => {
-    const [min, max] = priceRange;
+    const [min, max] = priceRange; 
     const newFilter = `price >= ${min} AND price <= ${max}`;
     if (filters !== newFilter) {
       setFilters(newFilter);
