@@ -80,7 +80,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
               ${manrope.className}
               px-4 py-2 rounded-3xl transition text-base flex items-center gap-2
               ${isSelected
-                ? 'bg-white font-semibold'
+                ? 'bg-white font-normal text-black'
                 : 'bg-[#F5F5F5] text-[#717171] font-normal'}
             `}
             onClick={() => handleTabClick(range)}
@@ -97,7 +97,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
             )} */}
             <div className="flex flex-col items-center">
               <span className="text-base">{range.label.toUpperCase()}</span>
-              <span className="text-xs text-[#8E8E8E] leading-none">{subtitle}</span>
+              <span className="text-xs leading-none">{subtitle}</span>
             </div>
           </button>
         );

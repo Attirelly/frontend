@@ -174,7 +174,7 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full bg-white">
       <ListingPageHeader />
       <div className="mx-auto lg:w-[1300px] flex flex-col gap-2">
         <div className="w-full flex flex-col mt-10 mb-10">
@@ -478,7 +478,7 @@ export default function ProductDetail() {
           />
 
           <div className={`${roboto.className} flex mt-16 justify-between`}>
-            <span className="text-3xl" style={{ fontWeight: 600 }}>
+            <span className="text-[28px] text-[#141414]" style={{ fontWeight: 600 }}>
               More from {storeBasicInfo?.store_name}
             </span>
             <span

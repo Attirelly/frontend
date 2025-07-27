@@ -7,9 +7,10 @@ import PostDialogue from './PostDialgue';
 
 type Props = {
   posts: instaMediaType[];
+  storeName?:string;
 };
 
-export default function GridPostGallery({ posts }: Props) {
+export default function GridPostGallery({ posts, storeName }: Props) {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   const openDialog = (index: number) => {

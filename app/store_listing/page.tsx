@@ -47,7 +47,7 @@ export default function StoreListingPage() {
       <ListingPageHeader />
       <div className="mx-[81px] mt-8 gap-10 flex flex-col">
        {/* <h1 className="text-2xl font-bold text-gray-800">{getHeading()}</h1> */}
-       <h1 className={`${manrope.className} text-[32px]`} style={{fontWeight:500}}>{getHeading()}</h1>
+       <h1 className={`${manrope.className} text-[32px] text-black`} style={{fontWeight:500}}>{getHeading()}</h1>
         {/* <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID || ''}/> */}
         <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_STORES_ID || ''}/>
         <div className="border-t border-[#D9D9D9]"/>

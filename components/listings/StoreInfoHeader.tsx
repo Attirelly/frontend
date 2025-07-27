@@ -94,7 +94,7 @@ export default function StoreInfoPage({
             height={16}
           />
           <span
-            className={`${manrope.className} text-sm`}
+            className={`${manrope.className} text-sm text-black`}
             style={{ fontWeight: 400 }}
           >
             {area}, {city}
@@ -105,12 +105,12 @@ export default function StoreInfoPage({
       {/* Right: Store Info */}
       <div className={`${manrope.className} flex flex-col`}>
         <div className="flex justify-between items-start flex-wrap">
-          <h2 className="text-xl mb-2 max-w-[60%]" style={{ fontWeight: 500 }}>
+          <h2 className="text-xl text-black mb-2 max-w-[60%]" style={{ fontWeight: 500 }}>
             {storeName}
           </h2>
           <div className="flex gap-2.5 flex-shrink-0">
             <button
-              className="flex border rounded-full items-center justify-center px-4"
+              className="flex border border-black rounded-full items-center justify-center px-4"
               onClick={handlePhoneClick}
             >
               <Image
@@ -121,10 +121,10 @@ export default function StoreInfoPage({
               />
             </button>
             <button
-              className="flex border rounded-full items-center justify-center gap-2 px-4"
+              className="flex border border-black rounded-full items-center justify-center gap-2 px-4"
               onClick={handleCopyUrl}
             >
-              <span style={{ fontWeight: 400 }}>Share</span>
+              <span className="text-black" style={{ fontWeight: 400 }}>Share</span>
               <Image
                 src="/ListingPageHeader/share.svg"
                 alt="share"
@@ -140,10 +140,10 @@ export default function StoreInfoPage({
             <div className="flex gap-12">
               {post_count && post_count !== "0" ? (
                 <div className="flex flex-col gap-1">
-                  <h2 style={{ fontWeight: 700 }}>
+                  <h2 className="text-black" style={{ fontWeight: 700 }}>
                     {formatNumberStr(post_count)}
                   </h2>
-                  <span style={{ fontWeight: 400 }}>Posts</span>
+                  <span className="text-black" style={{ fontWeight: 400 }}>Posts</span>
                 </div>
               ) : (
                 <div></div>
@@ -151,10 +151,10 @@ export default function StoreInfoPage({
 
               {instagramFollowers && instagramFollowers !== "0" ? (
                 <div className="flex flex-col gap-1">
-                  <h2 style={{ fontWeight: 700 }}>
+                  <h2 className="text-black" style={{ fontWeight: 700 }}>
                     {formatNumberStr(instagramFollowers)}
                   </h2>
-                  <span style={{ fontWeight: 400 }}>Followers</span>
+                  <span className="text-black" style={{ fontWeight: 400 }}>Followers</span>
                 </div>
               ) : (
                 <div></div>
@@ -162,10 +162,10 @@ export default function StoreInfoPage({
 
               {product_count && product_count !== "0" ? (
                 <div className="flex flex-col gap-1">
-                  <h2 style={{ fontWeight: 700 }}>
+                  <h2 className="text-black" style={{ fontWeight: 700 }}>
                     {formatNumberStr(product_count)}
                   </h2>
-                  <span style={{ fontWeight: 400 }}>Products</span>
+                  <span className="text-black" style={{ fontWeight: 400 }}>Products</span>
                 </div>
               ) : (
                 <div></div>
@@ -174,7 +174,7 @@ export default function StoreInfoPage({
 
             {/* Bio with line breaks */}
             {bio && (
-              <p style={{ fontWeight: 400, whiteSpace: "pre-line" }}>{bio}</p>
+              <p className="text-black" style={{ fontWeight: 400, whiteSpace: "pre-line" }}>{bio}</p>
             )}
           </div>
 

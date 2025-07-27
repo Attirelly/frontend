@@ -104,7 +104,7 @@ export default function ProductContainer({
         (item: any) => {
           const price = item.price || 500;
           const originalPrice = item.mrp || item.price || 500;
-          const desc = colCount === 4 ? item.store_name : "";
+          const desc = item.title;
           const discount =
             originalPrice > price
               ? Math.round(((originalPrice - price) / originalPrice) * 100)
@@ -113,7 +113,7 @@ export default function ProductContainer({
           return {
             id: item.id,
             imageUrl: item.image || [],
-            title: item.title || "Untitled Product",
+            title: item.store_name || "Untitled Product",
             description: desc,
             price,
             originalPrice,

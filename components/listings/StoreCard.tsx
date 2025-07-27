@@ -151,7 +151,7 @@ export default function StoreCard({
         {bestSelling.length > 0 && (
           <div className="flex flex-col gap-[8.5px]">
             <div className="border border-t border-[#D9D9D9]" />
-            <p className={`${manrope.className} text-base`} style={{fontWeight:500}}>Best Selling</p>
+            <p className={`${manrope.className} text-base text-black`} style={{fontWeight:500}}>Best Selling</p>
             <div className="flex gap-2">
 {bestSelling?.map((item, index) => (
               <span key={index} className={`${manrope.className} mr-4 text-sm text-[#676363]`} style={{fontWeight:400}}>

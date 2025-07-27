@@ -38,7 +38,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     }
   }, [context, priceBounds]);
 
-  
+
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -114,10 +114,10 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     <div className="sticky top-2 z-10">
       <div
         className={`${manrope.className} h-fit max-w-xs p-4 bg-white relative`}
-        style={{ fontWeight: 500 }}
+        style={{ fontWeight: 600 }}
       >
         <div className="flex items-center justify-between mb-3">
-          <h1 className={`${playfair_display.className}`}>Refine</h1>
+          <h1 className="text-[#1F2937]">Refine</h1>
           <button onClick={() => setIsCollapsed(true)}>
             <Image
               src="/ListingPageHeader/left_pointing_arrow.svg"
@@ -129,7 +129,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
         </div>
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-3">
-            <h1 className={`${manrope.className}`}>FILTERS</h1>
+            <h1 className="text-[#1F2937]">FILTERS</h1>
             <button
               onClick={() => handleResetFilters()}
               className="px-4 py-2 text-gray-700 rounded hover:bg-gray-200 cursor-pointer transition-colors"
@@ -137,7 +137,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
               RESET
             </button>
           </div>
-          <div className="flex flex-wrap gap-2 max-w-xs">
+          <div className="flex flex-wrap gap-2 max-w-xs mb-4">
             {Object.entries(selectedFilters).map(([key, values]) =>
               values.map((value) => (
                 <div
@@ -180,7 +180,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                     onClick={() => toggleFacet(facetName)}
                   >
                     <h2
-                      className={`${manrope.className} text-base uppercase`}
+                      className={`${manrope.className} text-base uppercase text-[#1F2937]`}
                       style={{ fontWeight: 600 }}
                     >
                       {fName === "Area" ? "Location" : fName}
@@ -190,9 +190,8 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                       alt="toggle"
                       width={20}
                       height={20}
-                      className={`transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform ${isOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </div>
 
@@ -222,20 +221,18 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                   className="h-1 bg-black rounded-full"
                                   style={{
                                     position: "absolute",
-                                    left: `${
-                                      ((localPriceRange[0] -
+                                    left: `${((localPriceRange[0] -
                                         (priceBounds?.[0] || 0)) /
                                         ((priceBounds?.[1] || 10000) -
                                           (priceBounds?.[0] || 0))) *
                                       100
-                                    }%`,
-                                    width: `${
-                                      ((localPriceRange[1] -
+                                      }%`,
+                                    width: `${((localPriceRange[1] -
                                         localPriceRange[0]) /
                                         ((priceBounds?.[1] || 10000) -
                                           (priceBounds?.[0] || 0))) *
                                       100
-                                    }%`,
+                                      }%`,
                                     top: 0,
                                     bottom: 0,
                                   }}
@@ -263,10 +260,9 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                 type="text"
                                 placeholder="Search"
                                 value={searchTerms[facetName] || ""}
-                                onChange={(e) =>
-                                  handleSearchChange(facetName, e.target.value)
-                                }
-                                className="w-full px-2 py-1 text-sm "
+                                onChange={(e) => handleSearchChange(facetName, e.target.value)}
+                                className="w-full px-2 py-1 text-sm text-[#AFAFAF] focus:outline-none focus:border-none"
+                                style={{ fontWeight: 400 }}
                               />
                               <Image
                                 src="/ListingPageHeader/search_lens.svg"
@@ -278,7 +274,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                             </div>
                           )}
 
-                          <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                          <div className="space-y-2 max-h-40 overflow-y-auto pr-2 scrollbar-thin">
                             {filteredValues.length > 0 ? (
                               filteredValues.map((facet) => (
                                 <label
@@ -292,11 +288,11 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                       onChange={() =>
                                         toggleFilter(facetName, facet.name)
                                       }
-                                      className="h-4 w-4 accent-black text-black rounded border-gray-300"
+                                      className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
                                     />
                                     <div className="flex gap-4">
                                       <span
-                                        className="text-sm"
+                                        className="text-sm text-[#1F2937]"
                                         style={{ fontWeight: 400 }}
                                       >
                                         {facet.name}
@@ -309,8 +305,8 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                           {facet.name === "Affordable"
                                             ? "starts from 2000/-"
                                             : facet.name === "Premium"
-                                            ? "start from 5000/-"
-                                            : "starts from 25000/-"}
+                                              ? "start from 5000/-"
+                                              : "starts from 25000/-"}
                                         </span>
                                       )}
                                     </div>
