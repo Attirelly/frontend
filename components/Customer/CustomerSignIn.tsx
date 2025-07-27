@@ -25,8 +25,8 @@ export default function CustomerSignIn({ onClose }: CustomerSignInProps) {
           </div>
 
           <div className={`${manrope.className} flex flex-col justify-center`} style={{ fontWeight: 700 }}>
-            <span className="text-2xl">Sign up to</span>
-            <span className="text-base" style={{ fontWeight: 400 }}>the new style of wearing Ethic with Attirelly</span>
+            <span className="text-2xl text-black">Sign up to</span>
+            <span className="text-base text-black" style={{ fontWeight: 400 }}>the new style of wearing Ethic with Attirelly</span>
             <div className="mt-4">
               <SocialLoginButtons />
             </div>

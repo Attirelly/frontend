@@ -90,3 +90,28 @@ body {
   font-weight: 600;
   color: #111;
 }
+
+
+/* Custom Scrollbar Styles */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background-color: #ffffff; 
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #B0B0B0; 
+  border-radius: 4px;
+}
+
+/* 🌙 Dark mode overrides */
+.dark .scrollbar-thin::-webkit-scrollbar-track {
+  background-color: #ffffff;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #B0B0B0; 
+}

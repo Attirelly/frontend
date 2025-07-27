@@ -106,7 +106,7 @@ export default function SocialLoginButtons() {
                     className="w-[423px] h-[54px] rounded-xl bg-white shadow-sm shadow-black/30 flex items-center justify-center hover:bg-gray-100 gap-2 cursor-pointer"
                 >
                     <Image src="/Login/google.svg" alt="Google" width={24} height={24} />
-                    <span className='text-xl'>Sign In with Google</span>
+                    <span className='text-xl text-gray-400'>Sign In with Google</span>
                 </button>
                 
             </div>
