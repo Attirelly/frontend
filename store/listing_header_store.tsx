@@ -40,6 +40,8 @@ type HeaderState = {
     setInstaMediaLoading: (instaMediaLoading:boolean) => void;
     profilePic: string;
     setProfilePic: (pic: string) => void;
+    storeName: string;
+    setStoreName: (name: string) => void;
 
 }
 
@@ -72,4 +74,6 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setInstaMediaLoading: (instaMediaLoading: boolean) => set({ instaMediaLoading }),
     profilePic: '',
     setProfilePic: (pic: string) => set({ profilePic: pic }),
+    storeName: '',
+    setStoreName: (name: string) => set({ storeName: name }),
 }));

@@ -9,8 +9,8 @@ import ApifyPostGallery from './ApifyPostGallery';
 
 export default function PostGalleryContainer() {
 
-  const { instaMedia, instaMediaLoading, instaUsername, instaMediaApify } = useHeaderStore();
-  
+  const { instaMedia, instaMediaLoading, instaUsername, instaMediaApify, storeName } = useHeaderStore();
+
   // const loading = !instaMedia;
 
   return (
@@ -18,7 +18,7 @@ export default function PostGalleryContainer() {
       {instaMediaLoading ? (
         <GridPostGallerySkeleton />
       ) : instaMedia?.length > 0 ? (
-        <GridPostGallery posts={instaMedia} />
+        <GridPostGallery posts={instaMedia} storeName={storeName}/>
       ) : instaMediaApify ?(
         <ApifyPostGallery posts={instaMediaApify} />
       )
