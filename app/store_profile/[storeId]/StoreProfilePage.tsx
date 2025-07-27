@@ -26,7 +26,6 @@ export default function StoreProfilePage() {
   useEffect(() => {
   setFacetInit(false);
   setPriceRange([0,0]);
-  setPriceBounds([0,0]);
 }, []);
 
 

@@ -45,6 +45,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
         });
 
         const storeRanges = res.data?.[0]?.price_ranges || [];
+        console.log("price ranges" , storeRanges)
         setPriceRanges(storeRanges);
         if(storeRanges.length() > 0 ){
           setPriceRangeType(storeRanges[0]) ; 

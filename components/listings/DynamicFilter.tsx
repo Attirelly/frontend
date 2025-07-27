@@ -56,7 +56,26 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     }, 100); // 100ms d elay
 
     return () => clearTimeout(timeout);
-  }, [localPriceRange , priceRange]);
+  }, [localPriceRange]);
+
+    useEffect(() => {
+    const timeout = setTimeout(() => {
+      console.log(context) ; 
+      console.log(localPriceRange) ; 
+      console.log(priceRange) ; 
+      if (
+        context === "product" &&
+        priceRange &&
+        (localPriceRange[0] !== priceRange[0] ||
+          localPriceRange[1] !== priceRange[1])
+      ) {
+        setLocalPriceRange(priceRange);
+      
+      }
+    }, 100); // 100ms d elay
+
+    return () => clearTimeout(timeout);
+  }, [priceRange]);
 
   useEffect(() => {
     const defaultOpen: Record<string, boolean> = {};
