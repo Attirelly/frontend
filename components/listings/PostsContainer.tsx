@@ -10,7 +10,7 @@ import ApifyPostGallery from './ApifyPostGallery';
 export default function PostGalleryContainer() {
 
   const { instaMedia, instaMediaLoading, instaUsername, instaMediaApify } = useHeaderStore();
-  console.log(instaUsername);
+  
   // const loading = !instaMedia;
 
   return (

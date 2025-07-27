@@ -32,7 +32,7 @@ export default function ProductContainer({
     activeFacet,
   } = useProductFilterStore();
 
-  const { query, storeTypeString, priceRangeType, sortBy } = useHeaderStore();
+  const { query, city , storeTypeString, priceRangeType, sortBy } = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -74,6 +74,9 @@ export default function ProductContainer({
     if (storeTypeString) {
       filters.push([`store_types:${storeTypeString}`]);
     }
+    if (city) {
+    filters.push([`city:${city.name}`]);
+    }
 
     return encodeURIComponent(JSON.stringify(filters));
   };
@@ -85,17 +88,17 @@ export default function ProductContainer({
       category,
       storeTypeString
     );
-    console.log(facetFilters);
+    
     try {
       // setIsFacetLoading(true);
       const filterParam = skipFilters ? "" : filters;
-      console.log("activefacets", activeFacet);
+      
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`
       );
 
       const data = res.data;
-      console.log("algolia_data", data);
+      
       setResults(data.hits.length);
 
       const formattedProducts: ProductCardType[] = data.hits.map(
@@ -183,7 +186,7 @@ export default function ProductContainer({
 useEffect(()=>{
     setPage(0);
     fetchProducts(0);
-}, [selectedFilters, priceRange, query, storeTypeString, sortBy, category]);
+}, [selectedFilters, priceRange, query, storeTypeString, sortBy, category , city]);
 
   useEffect(() => {
     if (page !== 0) fetchProducts(page);

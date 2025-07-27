@@ -73,7 +73,7 @@ export const useUpdateStore = () => {
                 }
                 return true;
             } catch (error) {
-                console.log('Seller not updated');
+                
                 return false;
             }
         }
@@ -94,17 +94,17 @@ export const useUpdateStore = () => {
             };
             try {
                 await api.put(`/stores/${storeId}`, price_payload);
-                console.log('store updated');
+                
                 return true;
             } catch (error) {
-                console.log('Cannot update store');
+                
                 return false;
             }
         }
 
         if (activeSection === 'market' && whereToSellData) {
-            console.log(activeSection);
-            console.log(whereToSellData);
+            
+            
             const market_payload = {
                 is_online : whereToSellData.isOnline,
                 is_both : whereToSellData.isBoth,
@@ -112,15 +112,15 @@ export const useUpdateStore = () => {
             }
             try {
                 await api.put(`/stores/${storeId}`, market_payload);
-                console.log('store updated');
+                
                 return true;
             } catch (error) {
-                console.log('Cannot update store');
+                
                 return false;
             }
         }
         if (activeSection === 'social' && socialLinksData) {
-            console.log(activeSection);
+            
             const social_payload = {
                 instagram_link: socialLinksData.instagramUrl || '',
                 facebook_link: socialLinksData.facebookUrl || '',
@@ -128,17 +128,17 @@ export const useUpdateStore = () => {
                 curr_section: curr_section,
             }
             try {
-                console.log('inside store');
+                
                 await api.put(`/stores/${storeId}`, social_payload);
                 console.log('store updated')
                 return true;
             } catch (error) {
-                console.log('Cannot update store');
+                
                 return false;
             }
         }
         if (activeSection === 'photos' && storePhotosData) {
-            console.log(activeSection);
+            
             const photos_payload = {
                 listing_page_image : storePhotosData.bannerUrl,
                 profile_image : storePhotosData.profileUrl,
@@ -159,7 +159,7 @@ export const useUpdateStore = () => {
                 }
                 return true;
             } catch (error) {
-                console.log('Cannot update store');
+                
                 return false;
             }
         }    

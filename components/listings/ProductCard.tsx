@@ -54,7 +54,7 @@ export default function ProductCard({
               src={imageUrl[imageIndex]}
               alt={title}
               fill
-              className="object-cover transition-all duration-300"
+              className="object-contain transition-all duration-300"
             />
           </div>
 

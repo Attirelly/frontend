@@ -39,7 +39,7 @@ export default function SellerOnboardingPage() {
     setFurthestStep,
     furthestStep
   } = useSellerStore();
-  console.log(sellerId);
+  
 
   const router = useRouter();
 
@@ -52,7 +52,7 @@ export default function SellerOnboardingPage() {
           const response = await api.get('/stores/store_by_owner', { params: { store_owner_id: sellerId } });
           const storeData = response.data;
           setFurthestStep(storeData.curr_section);
-          console.log(storeData);
+          
   
           const cityData: City[] = storeData.city ? [storeData.city] : [];
           const areaData: Area[] = storeData.area ? [storeData.area] : [];
@@ -63,7 +63,7 @@ export default function SellerOnboardingPage() {
           // setQrId(storeData.qr_id);
   
           const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id: storeData.store_id } });
-          console.log(priceRangeRes);
+          
   
           setBusinessDetailsData({
             ownerName: sellerName || '',
@@ -141,7 +141,7 @@ export default function SellerOnboardingPage() {
 
   const goToNextSection = async () => {
     const nextStep = currentSectionIndex + 1;
-    console.log(currentSectionIndex, furthestStep, activeSection);
+    
     const res = await handleUpdate(activeSection, true, Math.max(furthestStep, nextStep));
     if(res){
       // setToastMessage("Store updated!");
@@ -160,7 +160,7 @@ export default function SellerOnboardingPage() {
       setActiveSection(sectionOrder[nextStep]);
     }
   };
-  console.log(furthestStep);
+  
 
   const goToPreviousSection = () => {
     if (currentSectionIndex > 0) {

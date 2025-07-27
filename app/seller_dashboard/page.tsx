@@ -71,7 +71,7 @@
 //           const store_owner_id = response.data.store_owner_id;
 //           const resSeller = await api.get(`/users/user`, {params: {user_id: store_owner_id}});
 //           const resData = resSeller.data;
-//           console.log(resData);
+//           
 //           setSellerEmail(resData.email);
 //           setSellerName(resData.name);
 //           setSellerNumber(resData.contact_number);
@@ -80,7 +80,7 @@
 //         }
         
 //         const storeData = response?.data;
-//         console.log("response" , storeData);
+//         
 //         const curr_section = storeData.curr_section;
 
 //         const cityData: City[] = storeData.city ? [storeData.city] : [];
@@ -97,7 +97,7 @@
 //         const priceRangeRes = await api.get("stores/store_type_price_ranges", {
 //           params: { store_id: storeData.store_id },
 //         });
-//         console.log("price range data", priceRangeRes);
+//         
 //         if (curr_section >= 1) {
 //           setBusinessDetailsData({
 //             ownerName: sellerName || fetchedSellerName || '',
@@ -188,7 +188,7 @@
 //   };
 
 //   const handleUpdateClick = async () => {
-//     console.log("activesession", activeSection);
+//     
 //     const res = await handleUpdate(activeSection, false);
 //     if (res) {
 //       // setToastMessage("Store updated!");

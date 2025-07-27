@@ -38,7 +38,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     }
   }, [context, priceBounds]);
 
-  console.log("selectedFilters", selectedFilters);
+  
 
   useEffect(() => {
     const timeout = setTimeout(() => {

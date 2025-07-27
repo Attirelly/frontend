@@ -85,7 +85,7 @@ export default function SellerDashboardContainer() {
         }
 
         const storeData = response?.data;
-        console.log("response", storeData);
+        
         const curr_section = storeData.curr_section;
 
         const cityData: City[] = storeData.city ? [storeData.city] : [];
@@ -109,7 +109,7 @@ export default function SellerDashboardContainer() {
         const priceRangeRes = await api.get("stores/store_type_price_ranges", {
           params: { store_id: storeData.store_id },
         });
-        console.log("price range data", priceRangeRes);
+        
         if (curr_section >= 1) {
           setBusinessDetailsData({
             ownerName: sellerName || fetchedSellerName || "",
@@ -202,7 +202,7 @@ export default function SellerDashboardContainer() {
   };
 
   const handleUpdateClick = async () => {
-    console.log("activesession", activeSection);
+    
     const res = await handleUpdate(activeSection, false);
     if (res) {
       // setToastMessage("Store updated!");

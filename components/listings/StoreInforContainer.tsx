@@ -39,17 +39,17 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
           phone_number: storeData.whatsapp_number,
         };
         setStore(storeFinal);
-        console.log(storeFinal);
+        
         setInstaMediaLoading(true);
         setInstaMediaApify([]);
         setInstaMedia([]);
 
         const res = await api.get(`/instagram/connect_check/${storeId}`);
-        console.log("Ghibli art", res.data);
+        
         if (!res.data) {
           
           const instaApify = await api.get(`/instagram_apify/${sellerId}`);
-          console.log("apify data", instaApify.data);
+          
           const apifyData = instaApify.data;
           setInstaMediaApify(apifyData.media);
           setProfilePic(apifyData.profile_pic_hd);
@@ -95,7 +95,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
             phone_number: storeData.whatsapp_number,
           };
           setStore(storeFinal2);
-          console.log(storeFinal2);
+          
         }
       } catch (error) {
         // instagram is not connected

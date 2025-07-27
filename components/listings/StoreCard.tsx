@@ -40,7 +40,7 @@ export default function StoreCard({
   }, []);
 
   const handleCardClick = () => {
-    console.log(storeName, id);
+    
     setStoreId(id);
     event({
       action: "Store",

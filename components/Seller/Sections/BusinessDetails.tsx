@@ -227,7 +227,7 @@ export default function BusinessDetailsComponent({
       return;
 
     const cityFromStore = businessDetailsData.city[0];
-    console.log(businessDetailsData);
+    
     const fullCity = cities.find((city) => city.id === cityFromStore.id);
     const cityOption = cityOptions.find(
       (opt) => opt.value === cityFromStore.id
@@ -275,7 +275,7 @@ export default function BusinessDetailsComponent({
     const areaOption = areaOptions.find(
       (opt) => opt.value === areaFromStore.id
     );
-    console.log(areaOption);
+    
     if (fullArea) setSelectedArea([fullArea]);
 
     if (areaOption) {
@@ -395,7 +395,7 @@ export default function BusinessDetailsComponent({
     excDays,
   ]);
 
-  console.log(businessDetailsData);
+  
   const toggleSelection = <T extends { id: string }>(
     item: T,
     current: T[],

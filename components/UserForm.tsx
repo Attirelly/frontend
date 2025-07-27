@@ -24,7 +24,7 @@ export default function UserForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitted:", formData);
+    
     // Submit logic here
   };
 

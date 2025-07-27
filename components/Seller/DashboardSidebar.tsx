@@ -94,8 +94,8 @@ export default function DashboardSidebar({
         listing_page_image: storePhotosData.bannerUrl,
         profile_image : storePhotosData.profileUrl
       }
-      console.log(store_up_payload);
-      console.log(storeId);
+      
+      
       try{
         await api.put(`/users/update_user/${sellerId}`, seller_up_payload);
         await api.put(`/stores/${storeId}`, store_up_payload);
@@ -104,7 +104,7 @@ export default function DashboardSidebar({
         alert(`Error : ${error}`);
       }
 
-      console.log('store_updated');
+      
 
   }
 

@@ -64,7 +64,7 @@ export default function SocialLinksComponent() {
         store_id: storeId,
       };
 
-      console.log("stateData", stateData);
+      
 
       const encodedState = encodeURIComponent(JSON.stringify(stateData));
 

@@ -62,7 +62,7 @@ export default function ProductDetail() {
       try {
         const response = await api.get(`/products/${product_id}`);
         const data: Product = response.data;
-        console.log(data);
+        
         setProduct(data);
         // setStoreId(data.store_id);
         const defaultVariant = data.variants[0];

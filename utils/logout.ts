@@ -4,7 +4,7 @@ import { api } from '@/lib/axios';
 const logoutFacebook = () => {
   if (typeof window !== 'undefined' && window.FB) {
     window.FB.logout(() => {
-      console.log('Facebook user logged out');
+      
     });
   }
 };

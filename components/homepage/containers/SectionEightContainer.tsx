@@ -36,7 +36,7 @@ export default function SectionEightContainer() {
       try {
         const res = await api.get(`homepage/stores_by_section_number/${SECTION_NUMBER}`);
         const storeData = res.data;
-        console.log(storeData);
+        
         const formattedStores: CardData[] = storeData.map((store) => ({
           id: store.store_id,
           imageUrl: store.profile_image,

@@ -35,7 +35,7 @@ export default function ProtectedRoute({ role, children }: Props) {
           setSellerEmail(user.email);
         }
         setUser(user);
-        console.log('Authenticated user:',user);
+        
 
       //   if (role && user.role !== role) {
       //     // router.replace('/unauthorized');

@@ -11,7 +11,7 @@ function CallbackHandler() {
 
   const code = searchParams.get("code");
   const state = searchParams.get("state");
-  console.log("state", state);
+  
 
   let instagramUrl = "";
   let storeId = "";
@@ -51,7 +51,7 @@ function CallbackHandler() {
         );
 
         const { user_id } = response.data;
-        console.log(response);
+        
         localStorage.setItem("instagram_connected", "true");
 
         router.push(`/seller_dashboard`);

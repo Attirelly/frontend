@@ -49,7 +49,7 @@ export default function AddStorePriorityPage() {
 
   useEffect(() => {
     axios.get('http://localhost:8000/homepage/section').then((response) =>{
-      console.log(response);
+      
         const sections = response.data.map((section: Section) => ({
           label: section.description,
           value: section.section_id,
@@ -59,7 +59,7 @@ export default function AddStorePriorityPage() {
   }, []);
   useEffect(() => {
     axios.get('http://localhost:8000/stores/store_types').then((res) => {
-      console.log(res);
+      
       const types = res.data.map((t: StoreType) => ({
         label: t.store_type,
         value: t.id,
@@ -100,11 +100,11 @@ export default function AddStorePriorityPage() {
 
   useEffect(() => {
     if (subLocation) {
-      console.log('Fetching stores for subLocation:', subLocation);
+      
       axios
         .get(`http://localhost:8000/homepage/stores_by_area/${subLocation}`)
         .then((res) => {
-          console.log(res);
+          
           const storesData = res.data.map((store: Store) => ({
             label: store.store_name,
             value: store.store_id,
