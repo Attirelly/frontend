@@ -60,7 +60,7 @@ export default function StoreTypeButtons({
               ${manrope.className}
               px-4 py-2 rounded-2xl transition text-sm flex items-center gap-2
               ${isSelected
-                ? 'bg-[#F2F2F2] font-semibold shadow-xl'
+                ? 'bg-black text-white font-semibold'
                 : 'bg-white text-black border-[#878787] font-normal'}
             `}
             onClick={() => setSelected(option)}

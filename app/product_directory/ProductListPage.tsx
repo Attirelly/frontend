@@ -167,7 +167,7 @@ export default function ProductListPage() {
 
       <div className="flex flex-col mx-20">
         <span
-          className={`${manrope.className} text-xl mt-4`}
+          className={`${manrope.className} text-[#101010] mt-4 text-[32px]`}
           style={{ fontWeight: 500 }}
         >
           {results > 0 ? query : "Sorry, no result found for your search"}
@@ -199,7 +199,7 @@ export default function ProductListPage() {
                     )}
                     <SortByDropdown />
                   </div>
-                  <div className="overflow-y-auto scrollbar-none h-498">
+                  <div className="overflow-y-auto scrollbar-none h-498 scrollbar-thin">
                     <ProductContainer colCount={4} />
                   </div>
                 </div>

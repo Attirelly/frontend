@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { ProductCardType } from '@/types/ProductTypes';
-import { roboto } from '@/font';
+import { manrope, roboto } from '@/font';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function ProductCard({
@@ -85,21 +85,21 @@ export default function ProductCard({
           )}
         </div>
 
-        <div className={`${roboto.className}`} style={{ fontWeight: 500 }}>
-          <h3 className="text-lg text-black mt-2 mb-1">{title}</h3>
-          <p className="text-base mb-2 truncate" style={{ fontWeight: 300 }}>
+        <div className={`${manrope.className}`} style={{ fontWeight: 500 }}>
+          <h3 className="text-sm text-black mt-2 mb-1">{title}</h3>
+          <p className="text-xs text-[#333333] mb-2 truncate" style={{ fontWeight: 300 }}>
             {description}
           </p>
-          <div className="flex items-center gap-2 text-[14px] font-medium">
-            <span className="text-lg">₹{price.toLocaleString()}</span>
+          <div className="flex items-center gap-2 font-medium">
+            <span className="text-sm">₹{price.toLocaleString()}</span>
             {price !== originalPrice && (
 
-<span className="line-through text-gray-400 text-[15px]">
+<span className="line-through text-gray-400 text-[11px]">
               ₹{originalPrice.toLocaleString()}
             </span>
             )}
             {price !== originalPrice && (
-<span className="text-green-600">{discountPercentage}% OFF</span>
+<span className="text-green-600 text-[10px]">{discountPercentage}% OFF</span>
             )}
             
             

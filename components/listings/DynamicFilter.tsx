@@ -274,7 +274,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                             </div>
                           )}
 
-                          <div className="space-y-2 max-h-40 overflow-y-auto pr-2 scrollbar-thin scrollbar-">
+                          <div className="space-y-2 max-h-40 overflow-y-auto pr-2 scrollbar-thin">
                             {filteredValues.length > 0 ? (
                               filteredValues.map((facet) => (
                                 <label
