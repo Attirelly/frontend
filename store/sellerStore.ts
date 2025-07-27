@@ -67,6 +67,8 @@ type BusinessDetailsData = {
   area: Area[];
   pinCode: Pincode[];
   brandAddress: string | null;
+  returnDays: number;
+  exchangeDays: number;
   // storeLocation: string | null; // New field for storing the full address or location details
 };
 
