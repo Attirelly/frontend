@@ -32,12 +32,12 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-neutral-900/70 flex justify-center items-center rounded-lg">
+    <div className="fixed inset-0 z-50 bg-neutral-900/70 flex justify-center items-center ">
       <div
         ref={wrapperRef}
-        className="relative flex max-w-[70vw] max-h-[90vh] bg-black"
+        className="relative flex max-w-[70vw] max-h-[90vh]"
       >
-        <div className='grid grid-cols-[1.5fr_1fr]'>
+        <div className='grid grid-cols-[1.5fr_1fr] rounded-2xl overflow-hidden'>
           {post.media_type === 'VIDEO' ? (
             <video
               src={post.media_url}
