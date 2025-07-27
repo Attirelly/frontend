@@ -14,7 +14,7 @@ export default function PostGalleryContainer() {
   // const loading = !instaMedia;
 
   return (
-    <div id="scrollable-container" className="h-[927px] overflow-y-auto scrollbar-none">
+    <div id="scrollable-container" className="h-[927px] overflow-y-auto scrollbar-thin">
       {instaMediaLoading ? (
         <GridPostGallerySkeleton />
       ) : instaMedia?.length > 0 ? (
