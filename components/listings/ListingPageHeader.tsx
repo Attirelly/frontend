@@ -184,15 +184,15 @@ export default function ListingPageHeader() {
     if (index === -1) return text;
 
     return (
-      <>
+      <div className={`${manrope.className} text-base text-gray-400`} style={{fontWeight: 400}}>
         {text.slice(0, index)}
-        <span className="font-semibold text-black">
+        <span className="text-black">
           {text.slice(index, index + query.length)}
         </span>
         <span className="text-gray-400">
           {text.slice(index + query.length)}
         </span>
-      </>
+      </div>
     );
   }
 
@@ -232,15 +232,15 @@ export default function ListingPageHeader() {
                   formatOptionLabel={(data, { context }) =>
                     context === "menu" ? (
                       <div>
-                        <div className="font-semibold text-base">
+                        <div className="font-semibold text-base text-[#0F0F0F]">
                           {data.name}
                         </div>
-                        <div className="text-gray-500 text-sm">
+                        <div className="text-[#646464] text-sm">
                           {data.country}
                         </div>
                       </div>
                     ) : (
-                      <span>{data.name}</span>
+                      <span className="text-[#0F0F0F]">{data.name}</span>
                     )
                   }
                   className={`${manrope.className} w-full`}
@@ -285,7 +285,7 @@ export default function ListingPageHeader() {
                             onClick={() => handleSuggestionClick(suggestion)}
                           >
                             <img
-                              src="/search.png"
+                              src="/SuggestionBox/search_lens.svg"
                               alt="search"
                               className="w-4 h-4 opacity-80"
                             />
@@ -299,23 +299,27 @@ export default function ListingPageHeader() {
 
                     {/* categories */}
                     {categories.length > 0 && (
-                      <div className="px-4 py-3">
-                        <div className="text-gray-500 text-sm mb-2">
-                          CATEGORIES
+                      <div className={`${manrope.className} px-4 py-3`} style={{fontWeight:600}}>
+                        <div className="text-[#1F2937] text-base mb-2">
+                          CATEGORY
                         </div>
-                        <div className="flex gap-2 flex-wrap">
+                        <div className="flex gap-2 flex-wrap" style={{fontWeight:400}}>
                           {categories.map((cat, i) => (
                             <button
                               key={i}
                               className={
-                                "flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all bg-gray-100 hover:bg-gray-200"
+                                "flex items-center gap-2 px-4 py-2 rounded-full text-sm text-black transition-all bg-gray-100 hover:bg-gray-200 cursor-pointer"
                               }
                               onClick={() =>
                                 handleCategoryClick(cat.subcategory3)
                               }
                             >
                               {cat?.subcategory3}
-                              <span className="text-lg">↗</span>
+                              <img
+                                src="/SuggestionBox/top_right_arrow.svg"
+                                alt="Arrow"
+                                className="w-3 h-3"
+                              />
                             </button>
                           ))}
                         </div>
@@ -351,8 +355,12 @@ export default function ListingPageHeader() {
                     )} */}
 
                     {stores.length > 0 && (
-                      <div className="p-4">
-                        <div className="text-gray-500 text-sm mb-1">STORES</div>
+                      <div className={`${manrope.className} p-4`} style={{fontWeight:500}}>
+                        <div className="flex justify-between mb-1">
+                        <span className="text-base text-[#1F2937]" style={{fontWeight:600}}>STORES</span>
+                        <span className="text-sm text-[#3A3A3A] cursor-pointer" style={{fontWeight:400}}>View all</span>
+                          
+                        </div>
                         {stores.map((store, i) => (
                           <div
                             key={i}
@@ -365,10 +373,10 @@ export default function ListingPageHeader() {
                               className="w-10 h-10 rounded-md object-cover bg-gray-200"
                             />
                             <div className="flex flex-col">
-                              <span className="font-medium text-sm">
+                              <span className="text-base text-[#1E1E1E]">
                                 {store.store_name}
                               </span>
-                              <span className="text-xs text-gray-500">
+                              <span className="text-sm text-[#A6A6A6]">
                                 {store.area}, {store.city}
                               </span>
                             </div>

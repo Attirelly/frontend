@@ -84,7 +84,7 @@ export default function StoreSearchType({
           className={`${manrope.className} absolute top-[70px] left-1/2 transform -translate-x-1/4 bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50`}
           style={{fontWeight:600}}
         >
-          <h1 className="text-lg font-semibold text-gray-800 mb-4 text-center"
+          <h1 className="text-lg font-semibold text-[#363636] mb-4 text-center"
           style={{fontWeight:400}}>
             Store Type
           </h1>
@@ -109,7 +109,7 @@ export default function StoreSearchType({
                       fill
                     />
                   </div>
-                  <span className="text-base">
+                  <span className="text-base text-black" style={{fontWeight:400}}>
                     {type.store_type}
                   </span>
                 </div>
