@@ -6,7 +6,7 @@ type StoreInfoContainerProps = {
 };
 export default function Catalogue({ storeId }: StoreInfoContainerProps) {
   return (
-    <div className="overflow-y-auto scrollbar-none h-490">
+    <div className="overflow-y-auto scrollbar-thin h-490">
       <ProductContainer storeId={storeId} />
     </div>
   );
