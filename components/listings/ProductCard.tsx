@@ -50,11 +50,16 @@ export default function ProductCard({
           <div
           //  onMouseEnter={handleNext} onMouseLeave={handlePrev}
            >
-            <Image
+            {/* <Image
               src={imageUrl[imageIndex]}
               alt={title}
               fill
               className="object-contain transition-all duration-300"
+            /> */}
+            <Image
+              src={imageUrl[imageIndex]}
+              alt={title}
+              className="w-[210px] h-[225px] transition-all duration-300"
             />
           </div>
 
