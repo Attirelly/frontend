@@ -44,23 +44,19 @@ export default function ProductCard({
       className="block w-full"
     >
       <div
-        className="w-[225px] h-[355px] rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2"
+        className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2"
       >
         <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group">
           <div
-          //  onMouseEnter={handleNext} onMouseLeave={handlePrev}
+           onMouseEnter={handleNext} onMouseLeave={handlePrev}
            >
-            {/* <Image
-              src={imageUrl[imageIndex]}
-              alt={title}
-              fill
-              className="object-contain transition-all duration-300"
-            /> */}
             <Image
               src={imageUrl[imageIndex]}
               alt={title}
-              className="w-[210px] h-[225px] transition-all duration-300"
+              fill
+              className="object-cover object-top transition-all duration-300"
             />
+            
           </div>
 
           {imageUrl.length > 1 && (
