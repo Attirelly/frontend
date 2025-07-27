@@ -47,7 +47,7 @@ export default function BulkUploadPage() {
   }, []);
 
   const getTemplateFileName = () => {
-    return `${category}-${sub1}-${sub2}-${sub3}.xlsx`.replace(/\s+/g, "_");
+    return `${category}-${sub1}-${sub2}-${sub3}.xlsx`;
   };
 
   const handleBrowseClick = () => {
@@ -148,7 +148,7 @@ export default function BulkUploadPage() {
               setSub3("");
             }}
             disabled={!category}
-            options={categories.filter((cat) => cat.parent_id === category)}
+            options={categories.filter((cat) => cat.parent_id === category && cat.name.toLowerCase() === 'ethnic wear' )}
           />
 
           {/* Subcategory 2 */}
