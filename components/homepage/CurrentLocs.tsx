@@ -11,31 +11,47 @@ const locs = [
 ];
 
 export default function CurrentLocs() {
-    return (
-        <div className={`${manrope.className} flex flex-col gap-10 items-center my-13`} style={{ fontWeight: 500 }}>
-            <span className="text-[32px] text-center">CURRENTLY OPERATING IN</span>
-            <div className="grid grid-cols-3 gap-x-15">
-                {locs.map((location) => (
-                    <span className="text-xl gap-y-6 px-5 py-3">{location.location}</span>
-                ))}
-            </div>
-            <div className="flex gap-3 items-center">
-                <span className="text-[28px] ml-11">Supported By</span>
-                <Image
-                    src="/Homepage/ISB_AIC.svg"
-                    alt="ISB AIC"
-                    width={217}
-                    height={70}
-                />
-                <Image
-                    src="/Homepage/Razorpay.svg"
-                    alt="Razorpay"
-                    width={186}
-                    height={70}
-                    className="mr-11"
-                />
-
-            </div>
+  return (
+    <div
+      className={`${manrope.className} flex flex-col gap-16 justify-center items-center my-13`}
+      style={{ fontWeight: 500 }}
+    >
+      {/* Left Column: Location Info */}
+      <div className="flex flex-col gap-10 items-center">
+        <span className="text-[32px] text-center text-black">
+          CURRENTLY OPERATING IN
+        </span>
+        <div className="grid grid-cols-3 gap-x-6 ml-12">
+          {locs.map((location) => (
+            <span
+              key={location.location}
+              className="text-xl text-black px-5 py-3"
+            >
+              {location.location}
+            </span>
+          ))}
         </div>
-    )
+      </div>
+
+      {/* Right Column: Supported By */}
+      <div className="flex flex-col items-center justify-start gap-5">
+        <span className="text-[28px] text-black">Supported By</span>
+        <div className="flex gap-3 items-center">
+          <Image
+            src="/Homepage/ISB_AIC.svg"
+            alt="ISB AIC"
+            width={217}
+            height={70}
+          />
+          <Image
+            src="/Homepage/Razorpay.svg"
+            alt="Razorpay"
+            width={186}
+            height={70}
+            className="mr-3"
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
