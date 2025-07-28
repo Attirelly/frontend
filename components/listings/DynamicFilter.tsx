@@ -12,8 +12,7 @@ type DynamicFilterProps = {
 };
 
 const DynamicFilter = ({ context }: DynamicFilterProps) => {
-  const filterStore =
-    context === "store" ? useFilterStore() : useProductFilterStore();
+  const filterStore =  context === "store" ? useFilterStore() : useProductFilterStore();
   const {
     facets,
     selectedFilters,
@@ -29,7 +28,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([
-    0, 1,
+    0, 0
   ]);
 
   useEffect(() => {
@@ -42,6 +41,9 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
+      console.log(context) ; 
+      console.log(localPriceRange) ; 
+      console.log(priceRange) ; 
       if (
         context === "product" &&
         priceRange &&
@@ -49,11 +51,31 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           localPriceRange[1] !== priceRange[1])
       ) {
         setPriceRange(localPriceRange);
+      
       }
-    }, 100); // 100ms delay
+    }, 100); // 100ms d elay
 
     return () => clearTimeout(timeout);
   }, [localPriceRange]);
+
+    useEffect(() => {
+    const timeout = setTimeout(() => {
+      console.log(context) ; 
+      console.log(localPriceRange) ; 
+      console.log(priceRange) ; 
+      if (
+        context === "product" &&
+        priceRange &&
+        (localPriceRange[0] !== priceRange[0] ||
+          localPriceRange[1] !== priceRange[1])
+      ) {
+        setLocalPriceRange(priceRange);
+      
+      }
+    }, 100); // 100ms d elay
+
+    return () => clearTimeout(timeout);
+  }, [priceRange]);
 
   useEffect(() => {
     const defaultOpen: Record<string, boolean> = {};

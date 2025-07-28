@@ -23,7 +23,6 @@ export default function ProductContainer({
     facets,
     setPriceRange,
     priceRange,
-    setPriceBounds,
     setResults,
     facetInit,
     setFacetInit,
@@ -31,7 +30,8 @@ export default function ProductContainer({
     activeFacet,
   } = useProductFilterStore();
 
-  const { query, city , storeTypeString, priceRangeType, sortBy } = useHeaderStore();
+  const { query, city, storeTypeString, priceRangeType, sortBy } =
+    useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -41,7 +41,6 @@ export default function ProductContainer({
   const loaderRef = useRef<HTMLDivElement>(null);
   const prevStoreTypeRef = useRef<string>("");
   const [skipFilters, setSkipFilters] = useState(false);
-  
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
@@ -74,7 +73,7 @@ export default function ProductContainer({
       filters.push([`store_types:${storeTypeString}`]);
     }
     if (city) {
-    filters.push([`city:${city.name}`]);
+      filters.push([`city:${city.name}`]);
     }
 
     return encodeURIComponent(JSON.stringify(filters));
@@ -87,17 +86,17 @@ export default function ProductContainer({
       category,
       storeTypeString
     );
-    
+
     try {
       // setIsFacetLoading(true);
       const filterParam = skipFilters ? "" : filters;
-      
+
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`
       );
 
       const data = res.data;
-      
+
       setResults(data.hits.length);
 
       const formattedProducts: ProductCardType[] = data.hits.map(
@@ -122,27 +121,27 @@ export default function ProductContainer({
         }
       );
 
-      if (data.facets?.prices) {
-        const priceKeys = Object.keys(data.facets.prices)
-          .map(Number)
-          .filter((n) => !isNaN(n));
-        if (priceKeys.length > 0) {
-          const min = Math.min(...priceKeys);
-          const max = Math.max(...priceKeys);
+      // if (data.facets?.prices) {
+      //   const priceKeys = Object.keys(data.facets.prices)
+      //     .map(Number)
+      //     .filter((n) => !isNaN(n));
+      //   if (priceKeys.length > 0) {
+      //     const min = Math.min(...priceKeys);
+      //     const max = Math.max(...priceKeys);
 
-          if (priceBounds[0] > min || priceBounds[1] < max) {
-            setPriceBounds([
-              Math.min(priceBounds[0], min),
-              Math.max(priceBounds[1], max),
-            ]);
-          }
-          if (priceRange[0] === 0 && priceRange[1] === 0) {
-            setPriceRange([min, max]);
-          }
-        }
-      }
+      //     if (priceBounds[0] > min || priceBounds[1] < max) {
+      //       setPriceBounds([
+      //         Math.min(priceBounds[0], min),
+      //         Math.max(priceBounds[1], max),
+      //       ]);
+      //     }
+      //     if (priceRange[0] === 0 && priceRange[1] === 0) {
+      //       setPriceRange([min, max]);
+      //     }
+      //   }
+      // }
       // if (Object.keys(facets).length === 0) {
-      setFacets(data.facets , activeFacet);
+      setFacets(data.facets, activeFacet);
       // }
       // if (!facetInit) {
       //   setFacets(data.facets);
@@ -168,8 +167,10 @@ export default function ProductContainer({
   };
 
   useEffect(() => {
-    const [min, max] = priceRange; 
-    const newFilter = `price >= ${min} AND price <= ${max}`;
+    const [min, max] = priceRange;
+
+    const newFilter =
+      max >= 100000 ? `price >= ${min}` : `price >= ${min} AND price <= ${max}`;
     if (filters !== newFilter) {
       setFilters(newFilter);
     }
@@ -182,10 +183,18 @@ export default function ProductContainer({
     }
   }, [storeTypeString]);
 
-useEffect(()=>{
+  useEffect(() => {
     setPage(0);
     fetchProducts(0);
-}, [selectedFilters, priceRange, query, storeTypeString, sortBy, category , city]);
+  }, [
+    selectedFilters,
+    filters,
+    query,
+    storeTypeString,
+    sortBy,
+    category,
+    city,
+  ]);
 
   useEffect(() => {
     if (page !== 0) fetchProducts(page);

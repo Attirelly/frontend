@@ -4,7 +4,7 @@ import { type FC, useEffect, useRef, useState } from "react";
 import { api } from "@/lib/axios";
 import { useSellerStore } from "@/store/sellerStore";
 import ProductsPage from "./ViewAllProducts";
-import { toast } from "sonner" ; 
+import { toast } from "sonner";
 
 interface Category {
   category_id: string;
@@ -14,9 +14,7 @@ interface Category {
   level?: number;
 }
 
-
 export default function BulkUploadPage() {
-
   const { storeId, socialLinksData, businessDetailsData } = useSellerStore();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFileName, setSelectedFileName] = useState("");
@@ -47,7 +45,7 @@ export default function BulkUploadPage() {
   }, []);
 
   const getTemplateFileName = () => {
-    return `${category}-${sub1}-${sub2}-${sub3}.xlsx`.replace(/\s+/g, "_");
+    return `${category}-${sub1}-${sub2}-${sub3}.xlsx`;
   };
 
   const handleBrowseClick = () => {
@@ -116,6 +114,20 @@ export default function BulkUploadPage() {
       setIsSyncing(false);
     }
   };
+  const handleTemplateDownload = async() => {
+    try {
+      const fileName =  "women-ethnic wear-dupattas-georgette dupatta.xlsx"   //getTemplateFileName(); // e.g. 'template.xlsx'
+
+      const response = await api.get(`/products/template/${fileName}`);
+      const { url } = response.data;
+
+      // Trigger download
+      window.location.href = url;
+    } catch (error) {
+      console.error("Failed to download file:", error);
+      toast.error("Could not download the file. Please try again later.");
+    }
+  };
 
   return (
     <div className="space-y-6 w-3xl mx-auto overflow-hidden">
@@ -148,7 +160,11 @@ export default function BulkUploadPage() {
               setSub3("");
             }}
             disabled={!category}
-            options={categories.filter((cat) => cat.parent_id === category)}
+            options={categories.filter(
+              (cat) =>
+                cat.parent_id === category &&
+                cat.name.toLowerCase() === "indian & ethnic wear"
+            )}
           />
 
           {/* Subcategory 2 */}
@@ -175,19 +191,21 @@ export default function BulkUploadPage() {
 
         {sub3 && (
           <div className="mt-6">
-            <a
-              href={`/templates/${getTemplateFileName()}`}
-              download
+            <button
+              onClick={handleTemplateDownload}
               className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
             >
               Download Format
-            </a>
+            </button>
           </div>
         )}
       </Section>
 
       {/* Section: Upload CSV */}
-      <Section title="Upload CSV" subtitle="Upload your product list as a CSV file">
+      <Section
+        title="Upload CSV"
+        subtitle="Upload your product list as a CSV file"
+      >
         <div className="flex gap-4">
           <input
             type="text"
@@ -198,8 +216,7 @@ export default function BulkUploadPage() {
           />
           <button
             onClick={handleBrowseClick}
-           className="bg-gray-700 text-white px-6 py-2 rounded cursor-pointer hover:bg-gray-800 hover:shadow-md active:scale-[0.98] transition-all duration-200"
-
+            className="bg-gray-700 text-white px-6 py-2 rounded cursor-pointer hover:bg-gray-800 hover:shadow-md active:scale-[0.98] transition-all duration-200"
           >
             Browse
           </button>
@@ -217,7 +234,6 @@ export default function BulkUploadPage() {
             onClick={handleCreateProducts}
             disabled={isUploading || !selectedFileName}
             className="bg-blue-600 text-white px-6 py-2 rounded cursor-pointer hover:bg-blue-700 hover:shadow-md active:scale-[0.98] transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
-
           >
             {isUploading ? "Uploading..." : "Upload Products"}
           </button>
@@ -242,7 +258,6 @@ export default function BulkUploadPage() {
               onClick={handleSyncShopify}
               disabled={isSyncing}
               className="bg-green-600 text-white px-6 py-2 rounded cursor-pointer hover:bg-green-700 hover:shadow-md active:scale-[0.98] transition-all duration-200"
-
             >
               {isSyncing ? "Syncing..." : "Sync Products"}
             </button>
@@ -269,7 +284,9 @@ const SelectField: FC<{
   disabled?: boolean;
 }> = ({ label, value, onChange, options, disabled }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -299,4 +316,3 @@ const Section: FC<{
     {children}
   </div>
 );
-

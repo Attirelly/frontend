@@ -157,6 +157,12 @@ export default function ListingPageHeader() {
     router.push("/store_profile/" + storeID);
   };
 
+  const handleStoreListRoute = ()=>{
+    setSearchFocus(false) ; 
+    setQuery(tempQuery) ; 
+    router.push("/store_listing") ; 
+  }
+
   const cityOptions: SelectOption[] = [
     { value: "", label: "All Cities", name: "All Cities", country: "" },
     ...cities.map((c) => ({
@@ -358,7 +364,9 @@ export default function ListingPageHeader() {
                       <div className={`${manrope.className} p-4`} style={{fontWeight:500}}>
                         <div className="flex justify-between mb-1">
                         <span className="text-base text-[#1F2937]" style={{fontWeight:600}}>STORES</span>
-                        <span className="text-sm text-[#3A3A3A] cursor-pointer" style={{fontWeight:400}}>View all</span>
+                        <span 
+                        className="text-sm text-[#3A3A3A] cursor-pointer" style={{fontWeight:400}} 
+                        onClick={handleStoreListRoute}>View all</span>
                           
                         </div>
                         {stores.map((store, i) => (
