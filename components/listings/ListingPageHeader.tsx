@@ -159,6 +159,7 @@ export default function ListingPageHeader() {
 
   const handleStoreListRoute = ()=>{
     setSearchFocus(false) ; 
+    setQuery(tempQuery) ; 
     router.push("/store_listing") ; 
   }
 
