@@ -249,7 +249,8 @@ export default function ListingPageHeader() {
                       <span className="text-[#0F0F0F]">{data.name}</span>
                     )
                   }
-                  className={`${manrope.className} w-full`}
+                  className={`${manrope.className} w-full scrollbar-thin`}
+                  styles={customStyles}
                   classNamePrefix="city-select"
                   placeholder="City Name"
                   isSearchable
@@ -452,3 +453,29 @@ export default function ListingPageHeader() {
     </div>
   );
 }
+
+const customStyles = {
+  menuList: (base) => ({
+    ...base,
+    maxHeight: '200px', // optional: controls dropdown height
+    overflowY: 'auto',
+    /* Scrollbar styles */
+    '::-webkit-scrollbar': {
+      width: '8px',
+    },
+    '::-webkit-scrollbar-track': {
+      background: '#ffffff',
+    },
+    '::-webkit-scrollbar-thumb': {
+      background: '#B0B0B0',
+      borderRadius: '4px',
+    },
+    /* Dark mode overrides */
+    '.dark &::-webkit-scrollbar-track': {
+      background: '#ffffff',
+    },
+    '.dark &::-webkit-scrollbar-thumb': {
+      background: '#B0B0B0',
+    },
+  }),
+};
