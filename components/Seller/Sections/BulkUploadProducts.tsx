@@ -130,7 +130,7 @@ export default function BulkUploadPage() {
   };
 
   return (
-    <div className="space-y-6 w-3xl mx-auto overflow-hidden">
+    <div className="space-y-6 w-3xl mx-auto overflow-hidden text-black">
       {/* Section: Category Selection + Download */}
       <Section
         title="Select Category & Download Format"
@@ -291,7 +291,7 @@ const SelectField: FC<{
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+      className="w-full border border-gray-300 scrollbar-thin rounded-lg px-4 py-2 bg-white text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
     >
       <option value="">{`Select ${label}`}</option>
       {options.map((opt) => (
