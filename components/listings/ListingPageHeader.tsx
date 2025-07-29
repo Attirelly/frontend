@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import MenWomenNavbar from "./MenWomenNavbar";
 import CustomerSignIn from "../Customer/CustomerSignIn";
 import useAuthStore from "@/store/auth";
+import customStyles from "@/utils/selectStyles";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -249,7 +250,8 @@ export default function ListingPageHeader() {
                       <span className="text-[#0F0F0F]">{data.name}</span>
                     )
                   }
-                  className={`${manrope.className} w-full`}
+                  className={`${manrope.className} w-full scrollbar-thin`}
+                  styles={customStyles}
                   classNamePrefix="city-select"
                   placeholder="City Name"
                   isSearchable
@@ -452,3 +454,5 @@ export default function ListingPageHeader() {
     </div>
   );
 }
+
+

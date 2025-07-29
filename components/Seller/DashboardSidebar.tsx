@@ -109,7 +109,7 @@ export default function DashboardSidebar({
   }
 
   return (
-    <div className="bg-gray-100 p-4 rounded-2xl w-full max-w-sm self-start space-y-6">
+    <div className="bg-gray-100 p-4 rounded-2xl w-full max-w-sm self-start space-y-6 text-black">
       <h2 className="text-xl font-bold mb-4">Dashboard</h2>
 
       {sectionGroups.map((group) => (

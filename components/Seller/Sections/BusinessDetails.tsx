@@ -415,14 +415,14 @@ export default function BusinessDetailsComponent({
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-black">
               {" "}
               Brand owner number
             </label>
             <input
               type="text"
               defaultValue={sellerNumber || ""}
-              className="w-full border border-gray-300 rounded px-3 py-2 text-gray bg-gray-100"
+              className="w-full border border-gray-300 rounded px-3 py-2 text-gray bg-gray-100 text-black"
               disabled={!!sellerNumber}
             />
           </div>
@@ -455,7 +455,7 @@ export default function BusinessDetailsComponent({
           required
         />
         <div className="space-y-1">
-          <label className="text-sm">Business WhatsApp number</label>
+          <label className="text-sm text-black">Business WhatsApp number</label>
           <input
             type="tel"
             disabled={sameAsOwner}
@@ -470,10 +470,10 @@ export default function BusinessDetailsComponent({
             maxLength={10}
             inputMode="numeric"
             pattern="\d{10}"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border rounded px-3 py-2 text-black placeholder-gray-400"
             placeholder="Enter 10-digit number"
           />
-          <label className="text-sm flex items-center gap-2">
+          <label className="text-sm flex items-center gap-2 text-black">
             <input
               type="checkbox"
               checked={sameAsOwner}
@@ -533,7 +533,7 @@ export default function BusinessDetailsComponent({
           />
           {returnAvailable === "Yes" && (
             <div className="ml-4">
-              <label className="block text-sm font-medium mb-2">Return Days</label>
+              <label className="block text-sm font-medium mb-2 text-black">Return Days</label>
               <input
                 type="number"
                 value={retDays || ""}
@@ -545,7 +545,7 @@ export default function BusinessDetailsComponent({
                 }}
                 min={1}
                 max={45}
-                className="border px-2 py-1 rounded-md w-20"
+                className="border px-2 py-1 rounded-md w-20 text-black placeholder-gray-400"
                 placeholder="Days"
               />
             </div>
@@ -562,7 +562,7 @@ export default function BusinessDetailsComponent({
           />
           {exchangeAvailable === "Yes" && (
             <div className="ml-4">
-              <label className="block text-sm font-medium mb-2">Exchange Days</label>
+              <label className="block text-sm font-medium mb-2 text-black">Exchange Days</label>
               <input
                 type="number"
                 value={excDays || ""}
@@ -574,7 +574,7 @@ export default function BusinessDetailsComponent({
                 }}
                 min={1}
                 max={45}
-                className="border px-2 py-1 rounded-md w-20"
+                className="border px-2 py-1 rounded-md w-20 text-black placeholder-gray-400"
                 placeholder="Days"
               />
             </div>
@@ -646,7 +646,7 @@ export default function BusinessDetailsComponent({
 // Utility Components
 
 const RequiredLabel: FC<{ children: React.ReactNode }> = ({ children }) => (
-  <label className="block text-sm font-medium mb-1">
+  <label className="block text-sm font-medium mb-1 text-black">
     {children} <span className="text-red-500">*</span>
   </label>
 );
@@ -657,7 +657,7 @@ const Section: FC<{
   children: React.ReactNode;
 }> = ({ title, subtitle, children }) => (
   <div className="p-6 space-y-4 rounded-2xl shadow-sm bg-white">
-    <h2 className="text-lg font-semibold mb-1">{title}</h2>
+    <h2 className="text-lg font-semibold mb-1 text-black">{title}</h2>
     <p className="text-sm text-gray-500 mb-4">{subtitle}</p>
     {/* Divider */}
     <div className="-mx-6 border-t border-gray-300"></div>
@@ -677,11 +677,11 @@ const InputField: FC<{
     {required ? (
       <RequiredLabel>{label}</RequiredLabel>
     ) : (
-      <label className="block text-sm font-medium mb-1">{label}</label>
+      <label className="block text-sm font-medium mb-1 text-black">{label}</label>
     )}
     <input
       type={type || "text"}
-      className="w-full border border-gray-300 rounded px-3 py-2"
+      className="w-full border border-gray-300 rounded px-3 py-2 text-black placeholder-gray-400"
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange?.(e.target.value)}

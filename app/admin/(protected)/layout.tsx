@@ -51,7 +51,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen((prev) => !prev)}
-              className="text-lg font-semibold focus:outline-none"
+              className="text-lg font-semibold focus:outline-none text-black"
             >
               Admin Panel ∨
             </button>
@@ -66,7 +66,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </button> */}
                 <Link
                   href="/admin/profile"
-                  className="w-full text-left block px-4 py-2 hover:bg-gray-100"
+                  className="w-full text-left block px-4 py-2 hover:bg-gray-100 text-black"
                 >
                   Profile
                 </Link>

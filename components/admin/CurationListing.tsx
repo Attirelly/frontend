@@ -74,7 +74,7 @@ export default function CurationPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Curation Module</h1>
+        <h1 className="text-2xl font-bold text-black">Curation Module</h1>
         <Link
           href ='/admin/curationModule/createCuration'
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -88,21 +88,21 @@ export default function CurationPage() {
         <table className="min-w-full border mt-4">
           <thead className="bg-gray-200 text-left">
             <tr>
-              <th className="border px-4 py-2">Curation Name</th>
-              <th className="border px-4 py-2">Curation Type</th>
-              <th className="border px-4 py-2">Curation Segment</th>
-              <th className="border px-4 py-2">View All URL</th>
-              <th className="border px-4 py-2">Edit</th>
-              <th className="border px-4 py-2">Delete</th>
+              <th className="border px-4 py-2 text-black">Curation Name</th>
+              <th className="border px-4 py-2 text-black">Curation Type</th>
+              <th className="border px-4 py-2 text-black">Curation Segment</th>
+              <th className="border px-4 py-2 text-black">View All URL</th>
+              <th className="border px-4 py-2 text-black">Edit</th>
+              <th className="border px-4 py-2 text-black">Delete</th>
             </tr>
           </thead>
           <tbody>
             {curations.map((curation) => (
               <tr key={curation.section_id} className="hover:bg-gray-100">
-                <td className="border px-4 py-2">{curation.section_name}</td>
-                <td className="border px-4 py-2">{curation.section_type}</td>
-                <td className="border px-4 py-2">{curation.section_number}</td>
-                <td className="border px-4 py-2">
+                <td className="border px-4 py-2 text-black">{curation.section_name}</td>
+                <td className="border px-4 py-2 text-black">{curation.section_type}</td>
+                <td className="border px-4 py-2 text-black">{curation.section_number}</td>
+                <td className="border px-4 py-2 text-black">
                   <a
                     href={curation.section_url}
                     target="_blank"
@@ -112,13 +112,13 @@ export default function CurationPage() {
                     View
                   </a>
                 </td>
-                <td className="border px-4 py-2">
+                <td className="border px-4 py-2 text-black">
                   <button className="bg-yellow-400 hover:bg-yellow-500 px-3 py-1 rounded"
                     onClick={() => handleEdit(curation.section_id, curation.section_name, curation.section_url, curation.section_type, curation.section_number)}>
                     Edit
                   </button>
                 </td>
-                <td className="border px-4 py-2">
+                <td className="border px-4 py-2 text-black">
                   <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
                     onClick={() => handleDelete(curation.section_id)}>
                     Delete</button>

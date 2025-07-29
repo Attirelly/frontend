@@ -548,7 +548,7 @@ export default function CategorySelector() {
               placeholder="Main Category"
             />
             {showCategoryDropdown.level1 && (
-              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto scrollbar-thin">
                 {filteredCategories.length > 0 ? (
                   filteredCategories.map((category) => (
                     <div

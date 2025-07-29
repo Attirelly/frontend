@@ -85,7 +85,7 @@ export default function SocialLinksComponent() {
   }
 
   return (
-    <div className="space-y-8 rounded-md overflow-hidden w-3xl">
+    <div className="space-y-8 rounded-md overflow-hidden w-3xl text-black placeholder-gray-400">
       <div className="rounded-2xl p-6 space-y-4 max-w-2xl shadow-sm bg-white">
         <div>
           <h2 className="text-lg font-semibold">Social Links</h2>

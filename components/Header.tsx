@@ -9,7 +9,7 @@ interface HeaderProps {
 export default function Header({ title, actions }: HeaderProps) {
   return (
     <header className="flex justify-between items-center px-6 py-4 border-b bg-white">
-      <h1 className="text-xl font-bold">{title}</h1>
+      <h1 className="text-xl font-bold text-black">{title}</h1>
       <div>{actions}</div>
     </header>
   );

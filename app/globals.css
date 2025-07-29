@@ -115,3 +115,30 @@ body {
 .dark .scrollbar-thin::-webkit-scrollbar-thumb {
   background-color: #B0B0B0; 
 }
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: #0F0F0F; /* Your desired text color */
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-box-shadow: 0 0 0 1000px #fff inset; /* Force white background */
+  
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8); /* Lightens the icon */
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* Hide spinner */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Custom appearance */
+/* input[type="number"]::-webkit-inner-spin-button {
+  background-color: #f0f0f0;
+  height: 1em;
+  width: 1em;
+} */

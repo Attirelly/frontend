@@ -46,7 +46,7 @@ export default function ProductUploadPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4">
+    <div className="min-h-screen bg-gray-50 flex justify-center items-start px-4 text-black">
       <div className="flex w-full max-w-4xl gap-4">
         {/* Sidebar */}
         {currentStep !== 0 && (

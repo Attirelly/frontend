@@ -400,8 +400,8 @@ export default function Home() {
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 p-8">
           <div className="flex items-center justify-center mb-6">
-            <Users className="w-8 h-8 text-shadow-gray-700 mr-3" />
-            <h1 className="text-4xl font-bold text-shadow-gray-700">
+            <Users className="w-8 h-8 text-shadow-gray-700 mr-3 text-black" />
+            <h1 className="text-4xl font-bold text-shadow-gray-700 text-black">
               Seller CRM Dashboard
             </h1>
           </div>
@@ -415,7 +415,7 @@ export default function Home() {
                 placeholder="Search sellers..."
                 value={search}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 pr-4 py-3 w-80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="pl-10 pr-4 py-3 w-80 border border-gray-200 placeholder:text-gray-400 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               />
             </div>
 
@@ -472,7 +472,7 @@ export default function Home() {
                   onClick={() => setShowFilters(!showFilters)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  {showFilters ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  {showFilters ? <ChevronUp className="w-5 h-5 text-black" /> : <ChevronDown className="w-5 h-5 text-black" />}
                 </button>
               </div>
 
@@ -506,7 +506,7 @@ export default function Home() {
                   <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
                     {facet.replace('_', ' ')}
                   </h3>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                  <div className="space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
                     {facets[facet]
                       .slice(0, viewAll[facet] ? facets[facet].length : 5)
                       .map(([value, count]) => (
@@ -559,7 +559,7 @@ export default function Home() {
                       setItemsPerPage(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="5">5 per page</option>
                     <option value="10">10 per page</option>
