@@ -20,7 +20,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
 }) => {
   return (
     <div style={{ width: "100%", marginRight: 20 }}>
-      <h3>Filters</h3>
+      <h3 className="text-black">Filters</h3>
       <div
         style={{
           display: "grid",

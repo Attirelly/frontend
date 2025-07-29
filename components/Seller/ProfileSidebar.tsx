@@ -42,7 +42,7 @@ export default function ProfileSidebar({
   ];
 
   return (
-    <div className="bg-white p-4 rounded-2xl w-full max-w-sm self-start">
+    <div className="bg-white p-4 rounded-2xl w-full max-w-sm self-start text-black">
       <h2 className="text-lg font-semibold mb-4">Complete your profile</h2>
       {sections.map((section, index) => {
         const isDisabled = index > furthestStep;

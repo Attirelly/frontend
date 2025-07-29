@@ -293,7 +293,7 @@ export default function ProductsPage({
         filterOptions={filterOptions}
       />
       <div style={{ flexGrow: 1 }}>
-        <h3>Products</h3>
+        <h3 className="text-black">Products</h3>
         <ProductTable
           columns={columns}
           data={result}

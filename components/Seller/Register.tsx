@@ -137,7 +137,7 @@ export default function SellerSignup() {
                 title="Attirelly"
                 actions={
                     <button
-                        className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100"
+                        className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100 text-black"
                         onClick={() => router.push(`/seller_signin`)}>
                         Sign In
                     </button>
@@ -145,7 +145,7 @@ export default function SellerSignup() {
             />
 
             {/* Body */}
-            <main className="flex-grow flex items-center justify-center px-4">
+            <main className="flex-grow flex items-center justify-center px-4 text-black">
                 <form
                     onSubmit={handleSubmit}
                     className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
@@ -180,7 +180,7 @@ export default function SellerSignup() {
                             pattern="\d{10}"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value.replace(/\D/, ''))}
-                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter your mobile number"
                             required
                         />
