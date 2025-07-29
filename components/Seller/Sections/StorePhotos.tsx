@@ -185,7 +185,7 @@ export default function PhotosPage() {
 
       <div>
         <h1 className="text-lg font-semibold">Profile Photo</h1>
-        <p className="text-gray-500 text-sm">Upload a square profile photo for your brand.</p>
+        <p className="text-gray-500 text-sm">Upload a square profile photo for your store</p>
       </div>
 
       <div className="border-t border-gray-300"></div>

@@ -12,6 +12,7 @@ import {
   SelectOption,
   Category,
 } from "@/types/SellerTypes";
+import selectStyles from "@/utils/selectStyles";
 
 const Select = dynamic(
   () => import("react-select").then((mod) => mod.default),
@@ -597,11 +598,17 @@ export default function BusinessDetailsComponent({
               setSelectedCityOption(option);
               const found = cities.find((c) => c.id === option?.value);
               setSelectedCity(found ? [found] : []);
+
+              setSelectedAreaOption(null);
+              setSelectedArea([]);
+              setSelectedPincodeOption(null);
+              setSelectedPincode([]);
+              setPinCode("");
             }}
           />
 
           <InputField
-            label="Store Location URL"
+            label="Enter Google Map link of store"
             value={brandAddress}
             onChange={setBrandAddress}
             placeholder="Enter your Google map store link"
@@ -747,6 +754,8 @@ const SelectField: FC<{
       isDisabled={isDisabled}
       placeholder="Select or type"
       classNamePrefix="react-select"
+      className="text-black"
+      styles={selectStyles}
     />
   </div>
 );

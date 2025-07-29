@@ -50,7 +50,7 @@ export interface StoreCardType {
 export interface StoreInfoType {
   id : string, 
   imageUrl : string,
-  locationUrl: string,
+  locationUrl?: string | null,
   storeName: string,
   post_count: string, 
   instagramFollowers?: string,
