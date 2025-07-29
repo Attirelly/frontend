@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import Select from 'react-select';
 import { City, Area } from '@/types/SellerTypes';
 import { Image } from '@/types/ProductTypes';
+import customStyles from '@/utils/selectStyles';
 
 interface Store {
   store_id: string;
@@ -275,24 +276,24 @@ export default function AddStoreProduct() {
 
   return (
     <div className="min-h-screen bg-white p-8">
-      <h1 className="text-2xl font-bold mb-6">Curation Module</h1>
+      <h1 className="text-2xl font-bold mb-6 text-black">Curation Module</h1>
 
       <div className="flex flex-wrap gap-6 mb-10 items-center">
         <div className="flex flex-col">
-          <label className="font-semibold mb-1">Curation Name</label>
+          <label className="font-semibold mb-1 text-black">Curation Name</label>
           <input
             type="text"
-            className="border rounded px-4 py-2 w-48"
+            className="border rounded px-4 py-2 w-48 placeholder:text-gray-400 text-black"
             value={curationName}
             onChange={(e) => setCurationName(e.target.value)}
           />
         </div>
 
         <div className="flex flex-col">
-          <label className="font-semibold mb-1">View All URL Input</label>
+          <label className="font-semibold mb-1 text-black">View All URL Input</label>
           <input
             type="text"
-            className="border rounded px-4 py-2 w-64"
+            className="border rounded px-4 py-2 w-64 placeholder:text-gray-400 text-black"
             value={viewAllUrl}
             onChange={(e) => setViewAllUrl(e.target.value)}
           />
@@ -322,8 +323,9 @@ export default function AddStoreProduct() {
                   onChange={(e) => handleStoreChange(index, e.target.value)}
                 /> */}
                 <Select
-                  className={`border rounded w-64 ${storeId ? 'border-green-400' : 'border-gray-300'}`}
+                  className={`border rounded w-64 ${storeId ? 'border-green-400' : 'border-gray-300'} text-black`}
                   placeholder="Select Store"
+                  styles={customStyles}
                   options={storeOptions}
                   isClearable
                   value={storeOptions.find(opt => opt.value === storeSelections[index]) || null}
@@ -357,8 +359,9 @@ export default function AddStoreProduct() {
               )} */}
               {curation_type === 'product' ? (
                 <Select
-                  className="w-64"
+                  className="w-64 text-black"
                   options={getProductOptions(storeSelections[index])}
+                  styles={customStyles}
                   isClearable
                   isDisabled={!storeSelections[index]}
                   value={getProductOptions(storeSelections[index]).find(opt => opt.value === productSelections[index]) || null}
@@ -377,7 +380,7 @@ export default function AddStoreProduct() {
                         />
                       )}
                       <div className="flex flex-col">
-                        <span className="font-medium text-sm">{option.label}</span>
+                        <span className="font-medium text-sm text-black">{option.label}</span>
                         {/* <span className="text-xs text-gray-500">{option.sku}</span> */}
                       </div>
                     </div>
@@ -385,7 +388,7 @@ export default function AddStoreProduct() {
                 />
               ) : (
                 <input
-                  className="border rounded px-4 py-2 w-64 opacity-50"
+                  className="border rounded px-4 py-2 w-64 opacity-50 text-black"
                   disabled
                   style={{ visibility: 'hidden' }}
                   placeholder="Select Product"
@@ -394,7 +397,7 @@ export default function AddStoreProduct() {
 
               <input
                 type="text"
-                className="border rounded px-4 py-2 w-64"
+                className="border rounded px-4 py-2 w-64 text-black placeholder:text-gray-400"
                 placeholder="Order"
               />
             </div>

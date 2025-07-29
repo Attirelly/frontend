@@ -71,10 +71,10 @@ export default function SellerSignup() {
           onSubmit={handleSubmit}
           className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
         >
-          <h2 className="text-xl font-semibold mb-4">Sign in as Admin</h2>
+          <h2 className="text-xl font-semibold mb-4 text-black">Sign in as Admin</h2>
 
           <div className="space-y-8">
-            <label htmlFor="email" className="block font-medium text-sm mb-1">
+            <label htmlFor="email" className="block font-medium text-sm mb-1 text-black">
               Email<span className="text-red-500">*</span>
             </label>
             <input
@@ -82,14 +82,14 @@ export default function SellerSignup() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-4 text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email id"
               required
             />
 
             <label
               htmlFor="password"
-              className="block font-medium text-sm mb-1"
+              className="block font-medium text-sm mb-1 text-black"
             >
               Password<span className="text-red-500">*</span>
             </label>
@@ -98,7 +98,7 @@ export default function SellerSignup() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-4 text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter Password"
               required
             />

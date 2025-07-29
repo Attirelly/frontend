@@ -66,7 +66,7 @@ export default function QrCodeGeneration() {
     };
 
     return (
-        <div className="rounded-2xl p-6 space-y-6 w-3xl shadow-sm bg-white">
+        <div className="rounded-2xl p-6 space-y-6 w-3xl shadow-sm bg-white text-black">
             <div>
                 <h2 className="text-lg font-semibold">QR code</h2>
                 <p className="text-sm text-gray-500">Customers will see these details on Attirelly</p>

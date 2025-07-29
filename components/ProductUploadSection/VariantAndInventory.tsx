@@ -203,7 +203,7 @@ export default function VariantAndInventory() {
                     placeholder="Search and select sizes"
                   />
                   {showSizeDropdown && (
-                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto scrollbar-thin">
                       {filteredSizes.length > 0 ? (
                         filteredSizes.map((size) => (
                           <div
@@ -266,7 +266,7 @@ export default function VariantAndInventory() {
                     placeholder="Search and select colors"
                   />
                   {showColorDropdown && (
-                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto scrollbar-thin">
                       {filteredColors.length > 0 ? (
                         filteredColors.map((color) => (
                           <div

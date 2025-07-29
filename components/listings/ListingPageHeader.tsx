@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import MenWomenNavbar from "./MenWomenNavbar";
 import CustomerSignIn from "../Customer/CustomerSignIn";
 import useAuthStore from "@/store/auth";
+import customStyles from "@/utils/selectStyles";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -454,28 +455,4 @@ export default function ListingPageHeader() {
   );
 }
 
-const customStyles = {
-  menuList: (base) => ({
-    ...base,
-    maxHeight: '200px', // optional: controls dropdown height
-    overflowY: 'auto',
-    /* Scrollbar styles */
-    '::-webkit-scrollbar': {
-      width: '8px',
-    },
-    '::-webkit-scrollbar-track': {
-      background: '#ffffff',
-    },
-    '::-webkit-scrollbar-thumb': {
-      background: '#B0B0B0',
-      borderRadius: '4px',
-    },
-    /* Dark mode overrides */
-    '.dark &::-webkit-scrollbar-track': {
-      background: '#ffffff',
-    },
-    '.dark &::-webkit-scrollbar-thumb': {
-      background: '#B0B0B0',
-    },
-  }),
-};
+

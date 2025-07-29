@@ -148,7 +148,7 @@ export default function PriceFiltersComponent() {
   }, [minPrice, maxPrice, selectedPrices, storeTypes]);
 
   return (
-    <div className="p-6 rounded-2xl shadow-sm space-y-4 w-3xl bg-white">
+    <div className="p-6 rounded-2xl shadow-sm space-y-4 w-3xl bg-white text-black">
       <div>
         <h2 className="text-lg font-semibold">Price filters</h2>
         <p className="text-sm text-gray-500">

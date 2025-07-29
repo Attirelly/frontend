@@ -56,17 +56,17 @@ export default function CreateCurationPage() {
   return (
     <div className="min-h-screen p-6">
       {/* Header */}
-      <div className="text-xl font-bold mb-8">Curation Module</div>
+      <div className="text-xl font-bold mb-8 text-black">Curation Module</div>
 
       {/* Form Section */}
       <div className="max-w-2xl space-y-6">
         {/* Curation Type */}
         <div className="flex items-center gap-4">
-          <label className="w-40 font-medium">Curation Type:</label>
+          <label className="w-40 font-medium text-black">Curation Type:</label>
           <select
             value={curationType}
             onChange={(e) => setCurationType(e.target.value)}
-            className="flex-1 border px-3 py-2 rounded"
+            className="flex-1 border px-3 py-2 rounded text-black"
           >
             <option value="">Select Type</option>
             <option value="store">store</option>
@@ -76,11 +76,11 @@ export default function CreateCurationPage() {
 
         {/* Curation Segment */}
         <div className="flex items-center gap-4">
-          <label className="w-40 font-medium">Curation Segment:</label>
+          <label className="w-40 font-medium text-black">Curation Segment:</label>
           <select
             value={curationSegment}
             onChange={(e) => setCurationSegment(e.target.value)}
-            className="flex-1 border px-3 py-2 rounded"
+            className="flex-1 border px-3 py-2 rounded text-black"
           >
             <option value="">Select Segment</option>
             {availableSegments.length > 0 ? (

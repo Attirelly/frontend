@@ -1,3 +1,3 @@
 export default function AdminHome() {
-  return <h1 className="text-2xl">Welcome to Admin Panel</h1>;
+  return <h1 className="text-2xl text-black">Welcome to Admin Panel</h1>;
 }

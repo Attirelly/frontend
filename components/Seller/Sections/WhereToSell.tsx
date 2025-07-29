@@ -77,7 +77,7 @@ export default function WhereToSellComponent() {
   }, [selected, setWhereToSellData]);
 
   return (
-    <div className="rounded-2xl p-6 space-y-4 w-3xl shadow-sm bg-white">
+    <div className="rounded-2xl p-6 space-y-4 w-3xl shadow-sm bg-white text-black">
       <div>
         <h2 className="text-lg font-semibold">Select where you want to sell</h2>
       </div>

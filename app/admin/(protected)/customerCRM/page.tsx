@@ -187,7 +187,7 @@ export default function CustomerPage() {
               placeholder="Search Customers"
               value={search}
               onChange={(e) => handleSearch(e.target.value)}
-              className="border border-gray-300 rounded px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded px-4 py-2 w-full placeholder:text-gray-400 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -215,25 +215,25 @@ export default function CustomerPage() {
       >
         {/* Left Sidebar for Facets */}
         <div className="w-full md:w-[25%] p-4 border-2 border-solid border-gray-200 bg-gray-50 rounded-lg mb-8 md:mb-0">
-          <h2 className="text-xl font-semibold mb-4">Filters</h2>
+          <h2 className="text-xl font-semibold mb-4 text-black">Filters</h2>
           <div>
-            <div>Start Date</div>
+            <div className="text-black">Start Date</div>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="border border-gray-300 rounded px-4 py-2 w-full max-w-full"
+              className="border border-gray-300 rounded px-4 placeholder:text-gray-400 text-black py-2 w-full max-w-full"
               placeholder="Start Date"
             />
           </div>
 
           <div>
-            <div>End Date</div>
+            <div className="text-black">End Date</div>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border border-gray-300 rounded px-4 py-2 w-full max-w-full"
+              className="border border-gray-300 rounded px-4 placeholder:text-gray-400 text-black  py-2 w-full max-w-full"
               placeholder="End Date"
             />
           </div>
@@ -309,26 +309,26 @@ export default function CustomerPage() {
                 ) : (
                   filteredCustomers.map((customer) => (
                     <tr key={customer.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 border text-center">
+                      <td className="px-4 py-3 border text-center text-black">
                         <input
                           type="checkbox"
                           checked={isSelected(customer.id)}
                           onChange={() => handleCheckboxChange(customer.id)}
                         />
                       </td>
-                      <td className="px-6 py-3 border">{customer.name}</td>
-                      <td className="px-6 py-3 border">{customer.email}</td>
-                      <td className="px-6 py-3 border">{customer.provider}</td>
-                      <td className="px-6 py-3 border">{customer.gender}</td>
-                      <td className="px-6 py-3 border">{customer.birthday}</td>
-                      <td className="px-6 py-3 border">{customer.location}</td>
-                      <td className="px-6 py-3 border">
+                      <td className="px-6 py-3 border text-black">{customer.name}</td>
+                      <td className="px-6 py-3 border text-black">{customer.email}</td>
+                      <td className="px-6 py-3 border text-black">{customer.provider}</td>
+                      <td className="px-6 py-3 border text-black">{customer.gender}</td>
+                      <td className="px-6 py-3 border text-black">{customer.birthday}</td>
+                      <td className="px-6 py-3 border text-black">{customer.location}</td>
+                      <td className="px-6 py-3 border text-black">
                         {customer.contact_number}
                       </td>
-                      <td className="px-6 py-3 border">
+                      <td className="px-6 py-3 border text-black">
                         {new Date(customer.created_at).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-3 border text-center space-x-2">
+                      <td className="px-6 py-3 border text-center space-x-2 text-black">
                         <div className="flex gap-2 justify-center">
                           <Link href={`/customer/${customer.id}`} target="_blank" rel="noopener noreferrer">
                             <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
