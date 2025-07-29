@@ -24,7 +24,7 @@ import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 export default function ProductDetail() {
   const params = useParams();
   const product_id = params?.product_id as string;
-  const router = useRouter()
+  const router = useRouter();
 
   // const { setStoreId } = useSellerStore();
   const [signIn, setSignIn] = useState(false);
@@ -62,7 +62,7 @@ export default function ProductDetail() {
       try {
         const response = await api.get(`/products/${product_id}`);
         const data: Product = response.data;
-        
+
         setProduct(data);
         // setStoreId(data.store_id);
         const defaultVariant = data.variants[0];
@@ -95,11 +95,38 @@ export default function ProductDetail() {
     }
   }, [product]);
 
+  // const sendToWhatsApp = async () => {
+  //   setSignIn(true);
+  //   try {
+  //     const phoneNumber = storeBasicInfo?.whatsapp_number; // Replace with your WhatsApp number
+  //     const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
+  //     const encodedMessage = encodeURIComponent(message);
+  //     const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+  //     window.open(url, "_blank");
+  //   } catch (error) {
+  //     console.error("Failed to fetch product details", error);
+  //   }
+  // };
+
   const sendToWhatsApp = async () => {
     setSignIn(true);
     try {
-      const phoneNumber = storeBasicInfo?.whatsapp_number; // Replace with your WhatsApp number
-      const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
+      const phoneNumber = storeBasicInfo?.whatsapp_number;
+      const storeName = storeBasicInfo?.store_name || "Store"; // fallback if not available
+      const productName = product?.product_name || "";
+      const variant = selectedVariant?.sku || "";
+      const price = selectedVariant?.mrp || "";
+      const productLink = window.location.href; // current page link
+
+      const message = `Hi ${storeName}, I'm interested in the following product listed on your Attirelly storepage:
+
+    Product Name: ${productName} 
+    Variant: ${variant}
+    Price: ${price}
+    Link: ${productLink}
+
+Could you please confirm its availability and share more details.`;
+
       const encodedMessage = encodeURIComponent(message);
       const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
       window.open(url, "_blank");
@@ -107,7 +134,6 @@ export default function ProductDetail() {
       console.error("Failed to fetch product details", error);
     }
   };
-
 
   const updateVariantBySelection = (color: Color | null, size: Size | null) => {
     if (!product) return;
@@ -118,20 +144,13 @@ export default function ProductDetail() {
         (v) =>
           v.color.color_id === color.color_id && v.size.size_id === size.size_id
       );
-    }
-    else if (color) {
+    } else if (color) {
       matched = product.variants.find(
-        (v) =>
-          v.color.color_id === color?.color_id
+        (v) => v.color.color_id === color?.color_id
       );
+    } else {
+      matched = product.variants.find((v) => v.size.size_id === size?.size_id);
     }
-    else {
-      matched = product.variants.find(
-        (v) =>
-          v.size.size_id === size?.size_id
-      );
-    }
-
 
     if (matched) {
       setSelectedVariant(matched);
@@ -224,8 +243,9 @@ export default function ProductDetail() {
                   {images.map((src, idx) => (
                     <div
                       key={idx}
-                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${idx === activeIndex ? "border-black" : "border-gray-300"
-                        }`}
+                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${
+                        idx === activeIndex ? "border-black" : "border-gray-300"
+                      }`}
                       onClick={() => setActiveIndex(idx)}
                     >
                       <Image
@@ -260,8 +280,9 @@ export default function ProductDetail() {
                       backgroundImage: `url(${images[activeIndex]})`,
                       backgroundRepeat: "no-repeat",
                       backgroundSize: `${600 * 2}px ${600 * 2}px`,
-                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${lensPosition.y * 2 - 150
-                        }px`,
+                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${
+                        lensPosition.y * 2 - 150
+                      }px`,
                     }}
                   />
                 </div>
@@ -270,7 +291,7 @@ export default function ProductDetail() {
                 By {storeBasicInfo?.store_name}
               </p>
               <h1 className="text-2xl text-[#7D7D7D] font-medium tracking-tighter mt-2">
-                {product?.title || ''}
+                {product?.title || ""}
               </h1>
 
               <div className="flex items-center gap-4 mt-4">
@@ -315,10 +336,11 @@ export default function ProductDetail() {
                         onClick={() =>
                           updateVariantBySelection(selectedColor, size)
                         }
-                        className={`border rounded-sm w-19 h-10 ${selectedSize?.size_id === size.size_id
+                        className={`border rounded-sm w-19 h-10 ${
+                          selectedSize?.size_id === size.size_id
                             ? "border-black font-semibold bg-[#EBEBEB]"
                             : "border-gray-300"
-                          }`}
+                        }`}
                       >
                         {size.size_name}
                       </button>
@@ -338,20 +360,18 @@ export default function ProductDetail() {
                       <div className="flex flex-col items-center">
                         <button
                           key={color.color_id}
-                          className={`w-10 h-10 rounded-full border-0.25  ${selectedColor?.color_id === color.color_id
+                          className={`w-10 h-10 rounded-full border-0.25  ${
+                            selectedColor?.color_id === color.color_id
                               ? "border-black"
                               : "border-gray-300"
-                            }`}
+                          }`}
                           style={{ backgroundColor: color.hex_code || "#ccc" }}
                           onClick={() =>
                             updateVariantBySelection(color, selectedSize)
                           }
                         />
-                        <span className="text-sm mt-1">
-                          {color.color_name}
-                        </span>
+                        <span className="text-sm mt-1">{color.color_name}</span>
                       </div>
-
                     ))}
                   </div>
                 </div>
@@ -368,50 +388,53 @@ export default function ProductDetail() {
 
               {/* Product Details & Care */}
               {!product.shopify_id && (
-<div className="mt-8">
-                <div className="flex justify-between items-center mb-2">
-                  <h1 className="w-full text-xl font-500 border-y border-0.25 border-[#CCCCCC] py-5">
-                    Product Details
-                  </h1>
-                  <button
-                    onClick={() =>
-                      setProductDetailCollapse(!isProductDetailCollapse)
-                    }
-                    className="text-sm text-gray-600 hover:text-gray-800"
-                  >
-                    {isProductDetailCollapse ? <ChevronDown /> : <ChevronUp />}
-                  </button>
-                </div>
-
-                {!isProductDetailCollapse && (
-                  <div>
-                    <ul className="grid grid-cols-2 gap-4">
-                      {product?.attributes.map((item, idx) => (
-                        <li key={idx} className="flex flex-col">
-                          <div className="text-sm font-40 text-[#766874]">
-                            {item.name}
-                          </div>
-                          <div className="text-4 font-500 mt-2">
-                            {item.value}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="mt-4">
-                      <h2 className="font-400 mb-1 text-[#766874]">
-                        Care Instructions
-                      </h2>
-                      <p className="text-4 font-500 mt-2">
-                        Do not wash with white clothes, Do not use hard
-                        detergents
-                      </p>
-                    </div>
+                <div className="mt-8">
+                  <div className="flex justify-between items-center mb-2">
+                    <h1 className="w-full text-xl font-500 border-y border-0.25 border-[#CCCCCC] py-5">
+                      Product Details
+                    </h1>
+                    <button
+                      onClick={() =>
+                        setProductDetailCollapse(!isProductDetailCollapse)
+                      }
+                      className="text-sm text-gray-600 hover:text-gray-800"
+                    >
+                      {isProductDetailCollapse ? (
+                        <ChevronDown />
+                      ) : (
+                        <ChevronUp />
+                      )}
+                    </button>
                   </div>
-                )}
-              </div>
+
+                  {!isProductDetailCollapse && (
+                    <div>
+                      <ul className="grid grid-cols-2 gap-4">
+                        {product?.attributes.map((item, idx) => (
+                          <li key={idx} className="flex flex-col">
+                            <div className="text-sm font-40 text-[#766874]">
+                              {item.name}
+                            </div>
+                            <div className="text-4 font-500 mt-2">
+                              {item.value}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="mt-4">
+                        <h2 className="font-400 mb-1 text-[#766874]">
+                          Care Instructions
+                        </h2>
+                        <p className="text-4 font-500 mt-2">
+                          Do not wash with white clothes, Do not use hard
+                          detergents
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
-              
 
               {/* Product Description */}
               <div className="mt-8">
@@ -478,13 +501,22 @@ export default function ProductDetail() {
           />
 
           <div className={`${roboto.className} flex mt-16 justify-between`}>
-            <span className="text-[28px] text-[#141414]" style={{ fontWeight: 600 }}>
+            <span
+              className="text-[28px] text-[#141414]"
+              style={{ fontWeight: 600 }}
+            >
               More from {storeBasicInfo?.store_name}
             </span>
             <span
               className="text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
               style={{ fontWeight: 500 }}
-              onClick={() => { router.push(`/store_profile/${product?.store_id}?defaultButton=${encodeURIComponent("Products")}`) }}
+              onClick={() => {
+                router.push(
+                  `/store_profile/${
+                    product?.store_id
+                  }?defaultButton=${encodeURIComponent("Products")}`
+                );
+              }}
             >
               View All
             </span>
@@ -496,7 +528,6 @@ export default function ProductDetail() {
           </div>
         </div>
       )}
-
 
       <div className="mt-10">
         <ListingFooter />

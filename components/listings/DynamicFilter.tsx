@@ -20,7 +20,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     resetFilters,
     setPriceRange,
     priceRange,
-    priceBounds,
+    priceBounds
   } = filterStore;
 
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
