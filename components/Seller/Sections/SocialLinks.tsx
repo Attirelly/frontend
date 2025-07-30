@@ -77,7 +77,7 @@ export default function SocialLinksComponent() {
 
   const handleInstagramDisConnect = async()=>{
     try {
-      const response = await api.delete(`/${storeId}/disconnect-instagram`)
+      const response = await api.delete(`/disconnect-instagram/${storeId}`)
       setIsInstagramConnected(false)
     } catch (error) {
       console.log(error) 
