@@ -9,11 +9,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const StoreTypeImage = [
-    { name: 'Designer Labels', url: '/Homepage/designer_labels.svg' },
-    { name: 'Retail Brands', url: '/Homepage/retail_stores.svg' },
+    { name: 'Designer Label', url: '/Homepage/designer_labels.svg' },
+    { name: 'Retail Store', url: '/Homepage/retail_stores.svg' },
     { name: 'Boutiques', url: '/ListingPageHeader/boutiques.svg' },
     { name: 'Tailor', url: '/Homepage/tailor.svg' },
-    { name: 'Styler', url: '/Homepage/styler.svg' },
+    { name: 'Stylist', url: '/Homepage/styler.svg' },
 ];
 
 

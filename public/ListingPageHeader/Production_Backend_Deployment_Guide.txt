@@ -1,0 +1,95 @@
+
+Production Deployment Guide for FastAPI Backend on EC2 with Nginx and SSL
+
+==========================
+🖥️ Server Environment Setup
+==========================
+1. SSH into EC2 instance (Amazon Linux 2023)
+2. Create and activate virtual environment:
+   $ python3.13 -m venv venv
+   $ source venv/bin/activate
+
+3. Clone backend repo from GitHub:
+   $ git clone https://github.com/Attirelly/Product-crud-backend.git
+   $ cd Product-crud-backend
+
+4. Install required packages:
+   $ pip install -r requirements.txt
+
+==========================
+🌐 Domain and Nginx Setup
+==========================
+5. Install and configure Nginx:
+   $ sudo yum install nginx -y
+   $ sudo systemctl start nginx
+   $ sudo systemctl enable nginx
+
+6. Setup Nginx reverse proxy for FastAPI app:
+   Create config at /etc/nginx/conf.d/backend.prod.attirelly.com.conf:
+   (configured to serve using gunicorn via 127.0.0.1:8000)
+
+7. Test and reload Nginx:
+   $ sudo nginx -t
+   $ sudo systemctl reload nginx
+
+==========================
+🔐 SSL Setup with Certbot
+==========================
+8. Install Certbot:
+   $ sudo yum install certbot python3-certbot-nginx -y
+
+9. Issue SSL certificate:
+   $ sudo certbot --nginx -d backend.prod.attirelly.com
+
+10. Setup auto-renewal via cron:
+   $ crontab -e
+   Add line:
+   0 0 * * * certbot renew --quiet && systemctl reload nginx
+
+==========================
+🚀 Gunicorn + Uvicorn Setup
+==========================
+11. Run server using Gunicorn:
+   $ gunicorn app.main:app -k uvicorn.workers.UvicornWorker --bind 127.0.0.1:8000
+
+   (You can also use nohup or systemd for persistent service)
+
+==========================
+🧪 Testing & Verification
+==========================
+12. Reboot server to test persistence:
+   $ sudo reboot
+
+13. After reboot, SSH again and verify:
+   $ curl -I https://backend.prod.attirelly.com
+
+   Check nginx and gunicorn are running
+
+==========================
+🛠️ Maintenance Commands
+==========================
+- Check Nginx status:
+  $ sudo systemctl status nginx
+
+- Reload Nginx after config change:
+  $ sudo systemctl reload nginx
+
+- Renew SSL manually:
+  $ sudo certbot renew --dry-run
+
+- Check logs:
+  $ sudo journalctl -u nginx
+  $ sudo tail -f /var/log/nginx/error.log
+
+-restart/start server
+  check running services
+  $ systemctl list-units --type=service | grep running
+  restart service
+  $ sudo systemctl restart attirelly-backend.service
+==========================
+✅ Recommended Next Steps
+==========================
+- Create systemd service for gunicorn for auto-restart on boot.
+- Add monitoring/log rotation for gunicorn + nginx.
+- Setup CI/CD (e.g., GitHub Actions) to deploy updates.
+
