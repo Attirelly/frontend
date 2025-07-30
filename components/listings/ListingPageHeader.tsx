@@ -82,6 +82,7 @@ export default function ListingPageHeader() {
     router.prefetch("/store_listing");
     router.prefetch("/product_directory");
     router.prefetch("/homepage");
+    router.prefetch("/");
   }, [router]);
 
   useEffect(() => {
@@ -210,7 +211,8 @@ export default function ListingPageHeader() {
           <div className="flex justify-center items-center">
             <div
               className={`${rubik.className} text-[27px] text-[#373737] font-bold cursor-pointer`}
-              onClick={() => router.push("/homepage")}
+              // onClick={() => router.push("/homepage")}
+              onClick={() => router.push("/")}
               style={{ fontWeight: 700 }}
             >
               Attirelly
