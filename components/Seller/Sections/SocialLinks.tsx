@@ -14,7 +14,7 @@ export default function SocialLinksComponent() {
     isInstagramConnected,
     setIsInstagramConnected,
   } = useSellerStore();
-
+  
   const [instagramUsname, setInstagramUsname] = useState(
     socialLinksData?.instagramUsname || ""
   );
@@ -150,7 +150,7 @@ export default function SocialLinksComponent() {
             Connect your Instagram, so Attirelly can engage
           </p>
 
-          {isInstagramConnected ? (
+          {!isInstagramConnected ? (
             <button
               className="bg-black text-white px-5 py-2 rounded-full cursor-pointer"
               onClick={handleInstagramConnect}

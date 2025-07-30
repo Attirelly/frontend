@@ -105,6 +105,8 @@ export default function SellerDashboardContainer() {
           `/instagram/connect_check/${storeData.store_id}`
         );
 
+        console.log("instagram check" , instagramCheck)
+
         setIsInstagramConnected(instagramCheck?.data);
 
         const priceRangeRes = await api.get("stores/store_type_price_ranges", {
