@@ -1,13 +1,14 @@
 // components/SocialLoginButtons.tsx
 'use client';
 
-import {useRouter} from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import useAuthStore from '@/store/auth';
 
 import Image from 'next/image';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api } from '@/lib/axios';
 import { useEffect } from 'react';
-import { roboto } from '@/font'; 
+import { roboto } from '@/font';
 
 type FacebookLoginResponse = {
     status: string;
@@ -20,11 +21,12 @@ type FacebookLoginResponse = {
     };
 };
 
-export default function SocialLoginButtons() {
+export default function SocialLoginButtons({ onSuccess }: { onSuccess: () => void }) {
+    const { fetchUser } = useAuthStore();
     const router = useRouter();
-    useEffect(()=>{
-       router.prefetch("/customer_dashboard")
-    },[])
+    useEffect(() => {
+        router.prefetch("/customer_dashboard")
+    }, [])
     // ----------------- Google Login -----------------
     const handleGoogleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
@@ -32,6 +34,8 @@ export default function SocialLoginButtons() {
                 const res = await api.post('/users/google', {
                     access_token: tokenResponse.access_token,
                 });
+                fetchUser();
+                onSuccess();
                 alert('Google login successful!');
                 // router.push('/customer_dashboard');
             } catch (err) {
@@ -64,14 +68,15 @@ export default function SocialLoginButtons() {
                             access_token: response.authResponse?.accessToken,
                             userID: response.authResponse?.userID,
                         });
-
+                        fetchUser();
+                        onSuccess();
                         alert('Facebook login successful!');
                         // router.push('/customer_dashboard');
                     } catch (err) {
                         console.error('Facebook login error:', err);
                         alert('Facebook login failed.');
                     }
-                })();``
+                })(); ``
             },
             { scope: 'email, public_profile' }
         );
@@ -89,7 +94,7 @@ export default function SocialLoginButtons() {
 
             {/* Social login buttons */}
             <div className={`${roboto.className} flex flex-col justify-center gap-[20px]`}
-            style={{fontWeight:500}}>
+                style={{ fontWeight: 500 }}>
                 <button
                     type="button"
                     aria-label="Login with Facebook"
@@ -108,7 +113,7 @@ export default function SocialLoginButtons() {
                     <Image src="/Login/google.svg" alt="Google" width={24} height={24} />
                     <span className='text-xl text-gray-400'>Sign In with Google</span>
                 </button>
-                
+
             </div>
         </div>
     );

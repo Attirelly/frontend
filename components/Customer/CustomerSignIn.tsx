@@ -4,9 +4,10 @@ import SocialLoginButtons from "./SocialLoginButtons";
 
 interface CustomerSignInProps {
   onClose: () => void;
+  onSuccess: () => void;
 }
 
-export default function CustomerSignIn({ onClose }: CustomerSignInProps) {
+export default function CustomerSignIn({ onClose, onSuccess }: CustomerSignInProps) {
   const img = '/Login/CustomerLogin.svg';
 
   return (
@@ -28,7 +29,7 @@ export default function CustomerSignIn({ onClose }: CustomerSignInProps) {
             <span className="text-2xl text-black">Sign up to</span>
             <span className="text-base text-black" style={{ fontWeight: 400 }}>the new style of wearing Ethic with Attirelly</span>
             <div className="mt-4">
-              <SocialLoginButtons />
+              <SocialLoginButtons onSuccess={onSuccess} />
             </div>
           </div>
         </div>

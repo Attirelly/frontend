@@ -20,14 +20,17 @@ import { useParams, useRouter } from "next/navigation";
 import ShowMoreProducts from "@/components/curations/ShowMoreProducts";
 import { roboto, manrope } from "@/font";
 import CustomerSignIn from "@/components/Customer/CustomerSignIn";
+import useAuthStore from "@/store/auth";
 
 export default function ProductDetail() {
+  const {user} = useAuthStore();
   const params = useParams();
   const product_id = params?.product_id as string;
   const router = useRouter();
 
   // const { setStoreId } = useSellerStore();
   const [signIn, setSignIn] = useState(false);
+  const [pendingWhatsApp, setPendingWhatsApp] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
@@ -107,6 +110,23 @@ export default function ProductDetail() {
   //     console.error("Failed to fetch product details", error);
   //   }
   // };
+
+  const isCustomerAuthenticated = () => {
+  return Boolean(user?.id); // Or session value / cookie
+}
+
+  useEffect(() => {
+  if (!pendingWhatsApp) return;
+  if (isCustomerAuthenticated()) {
+    sendToWhatsApp();
+    setPendingWhatsApp(false);
+  }
+}, [pendingWhatsApp, user?.id]);
+
+  const handleSendToWhatsAppClick = () => {
+  setPendingWhatsApp(true);     // Set intent to open WhatsApp
+  setSignIn(true);              // Trigger sign-in modal
+};
 
   const sendToWhatsApp = async () => {
     setSignIn(true);
@@ -380,7 +400,7 @@ Could you please confirm its availability and share more details.`;
               {/* WhatsApp Button */}
               <button
                 className="w-full mt-5 h-15 p-5 bg-[#00AA63] text-white flex items-center justify-center gap-6 rounded text-2xl hover:bg-green-700 transition"
-                onClick={sendToWhatsApp}
+                onClick={handleSendToWhatsAppClick}
               >
                 <FaWhatsapp size={36} />
                 Buy on WhatsApp
@@ -532,7 +552,22 @@ Could you please confirm its availability and share more details.`;
       <div className="mt-10">
         <ListingFooter />
       </div>
-      {signIn && <CustomerSignIn onClose={() => setSignIn(false)} />}
+      {signIn && (
+  <CustomerSignIn
+    onClose={() => {
+      setSignIn(false);
+      setPendingWhatsApp(false); // Cancel WhatsApp intent if modal closed
+    }}
+    onSuccess={() => {
+      console.log("success");
+      setSignIn(false);
+      if (pendingWhatsApp) {
+        sendToWhatsApp();        // Proceed now
+        setPendingWhatsApp(false);
+      }
+    }}
+  />
+)}
     </div>
   );
 }
