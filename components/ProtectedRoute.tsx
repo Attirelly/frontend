@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function ProtectedRoute({ role, children }: Props) {
-  const{
+  const {
     setSellerId,
     setSellerNumber,
     setSellerName,
@@ -28,27 +28,27 @@ export default function ProtectedRoute({ role, children }: Props) {
       try {
         const res = await api.get('users/me');
         const user = res.data;
-        if(user.role == "admin"){
+        if (user.role == "admin") {
           setSellerNumber(user.contact_number);
           setSellerName(user.name);
           setSellerId(user.id);
           setSellerEmail(user.email);
         }
         setUser(user);
-        
 
-      //   if (role && user.role !== role) {
-      //     // router.replace('/unauthorized');
-      //     alert("Unauthorized");
-      //      router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
-      //   } else {
-      //     setIsReady(true);
-      //   }
-      // } catch (err) {
-      //   // Not authenticated or token invalid
-      //   router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
-      // }
-      if (role) {
+
+        //   if (role && user.role !== role) {
+        //     // router.replace('/unauthorized');
+        //     alert("Unauthorized");
+        //      router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
+        //   } else {
+        //     setIsReady(true);
+        //   }
+        // } catch (err) {
+        //   // Not authenticated or token invalid
+        //   router.replace(role === 'admin' ? '/seller_signin' : role === 'user' ? '/customer_signin' : '/admin/login');
+        // }
+        if (role) {
           const allowedRoles = Array.isArray(role) ? role : [role];
           if (!allowedRoles.includes(user.role)) {
             alert('Unauthorized access');
@@ -56,21 +56,26 @@ export default function ProtectedRoute({ role, children }: Props) {
               admin: '/seller_signin',
               user: '/customer_signin',
               super_admin: '/admin/login'
-            }[user.role as RoleType] || '/';
+            }[role && typeof role === 'string' ? role : allowedRoles[0]] || '/';
             router.replace(fallback);
             return;
           }
         }
 
+
         // Mark as ready if no role restriction or valid role
         setIsReady(true);
 
       } catch (err) {
+        console.log('Error fetching user role:', role);
+
         const fallback = {
           admin: '/seller_signin',
           user: '/customer_signin',
           super_admin: '/admin/login'
-        }[(role && typeof role === 'string') ? role : 'user'] || '/';
+        }[role && typeof role === 'string' ? role : Array.isArray(role) ? role[0] : 'user'] || '/';
+
+        console.log('fallback route:', fallback);
         router.replace(fallback);
       }
     };
@@ -78,7 +83,7 @@ export default function ProtectedRoute({ role, children }: Props) {
     verifyUser();
   }, []);
 
-  if(!isReady){
+  if (!isReady) {
     return <LoadingSpinner />;
   }
 
