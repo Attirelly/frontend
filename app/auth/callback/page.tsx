@@ -34,7 +34,7 @@ function CallbackHandler() {
           window.location.pathname
         );
 
-
+        
         const response = await api.post(
           `${process.env.NEXT_PUBLIC_API_URL}/instagram/auth`,
           {
@@ -49,7 +49,7 @@ function CallbackHandler() {
             withCredentials: true,
           }
         );
-
+        console.log("response" , response) 
         const { user_id } = response.data;
         
         localStorage.setItem("instagram_connected", "true");
