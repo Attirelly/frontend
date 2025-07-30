@@ -113,7 +113,7 @@ export default function SellerOnboardingPage() {
   
         } catch (error) {
           console.error('Error fetching initial data:', error);
-          alert('error fetching data, signin again');
+          // alert('error fetching data, signin again');
         }
       };
       fetchInitialData();
