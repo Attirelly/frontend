@@ -152,8 +152,7 @@ export default function PriceFiltersComponent() {
       <div>
         <h2 className="text-lg font-semibold">Price filters</h2>
         <p className="text-sm text-gray-500">
-          Define product tiers in affordable, premium and luxury for easy
-          filtering.
+          Select price range you mostly sell your outfits at:
         </p>
       </div>
 
@@ -199,9 +198,10 @@ export default function PriceFiltersComponent() {
       <div className="flex-grow border-t border-dotted border-gray-300"></div>
 
       <div className="space-y-6">
+        {/* <h1 className="text-lg font-bold text-black">Select price range you mostly sell your outfits at:</h1> */}
         {storeTypes.map((storeType) => (
           <div key={storeType.id}>
-            <h3 className="text-lg font-semibold mb-2">
+            <h3 className="text-base font-semibold mb-2">
               {storeType.store_type}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -214,32 +214,34 @@ export default function PriceFiltersComponent() {
                 return (
                   <label
                     key={price.id}
-                    className={`border rounded-lg p-4 cursor-pointer transition ${
-                      isSelected ? "bg-gray-200" : "border-gray-300"
-                    }`}
+                    className={`border rounded-lg p-4 cursor-pointer transition ${isSelected ? "bg-gray-200" : "border-gray-300"
+                      }`}
                   >
-                    <input
-                      type="checkbox"
-                      name={`price-${storeType.id}`}
-                      value={price.id}
-                      checked={isSelected}
-                      onChange={() =>
-                        handleSelect(
-                          storeType.id,
-                          price.id,
-                          storeType.store_type,
-                          price.label
-                        )
-                      }
-                      className="accent-black"
-                    />
-                    <div>
-                      <div className="font-medium">{price.label}</div>
-                      <div className="text-sm text-gray-600">
-                        Rs {price.lower_value.toLocaleString()} -{" "}
-                        {price.upper_value.toLocaleString()}
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="checkbox"
+                        name={`price-${storeType.id}`}
+                        value={price.id}
+                        checked={isSelected}
+                        onChange={() =>
+                          handleSelect(
+                            storeType.id,
+                            price.id,
+                            storeType.store_type,
+                            price.label
+                          )
+                        }
+                        className="accent-black"
+                      />
+                      <div>
+                        <div className="font-medium">{price.label}</div>
+                        <div className="text-sm text-gray-600">
+                          Rs {price.lower_value.toLocaleString()} -{" "}
+                          {price.upper_value.toLocaleString()}
+                        </div>
                       </div>
                     </div>
+
                   </label>
                 );
               })}

@@ -53,7 +53,8 @@ export default function SellerDashboardContainer() {
     setSellerNumber,
     setIsInstagramConnected,
   } = useSellerStore();
-  const [activeSection, setActiveSection] = useState("");
+  // const [activeSection, setActiveSection] = useState("");
+  const [activeSection, setActiveSection] = useState("one_product");
   const searchParams = useSearchParams();
   const storeId = searchParams.get("storeId");
   console.log(sellerId);

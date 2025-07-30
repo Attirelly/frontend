@@ -40,7 +40,9 @@ export default function StoreInfoPage({
   const [copied, setCopied] = useState(false);
 
   const handleLocationRoute = () => {
-    window.open(locationUrl, "_blank", "noopener,noreferrer");
+    if (typeof locationUrl === "string" && locationUrl) {
+      window.open(locationUrl, "_blank", "noopener,noreferrer");
+    }
   };
 
   const handlePhoneClick = () => {
@@ -84,8 +86,8 @@ export default function StoreInfoPage({
 
         {/* Location */}
         <div
-          className="flex items-center gap-2 mt-6 cursor-pointer"
-          onClick={handleLocationRoute}
+          className={`flex items-center gap-2 mt-6 ${locationUrl ? "cursor-pointer" : "cursor-default"}`}
+          onClick={locationUrl ? handleLocationRoute : undefined}
         >
           <Image
             src="/ListingPageHeader/location_pin_black.svg"

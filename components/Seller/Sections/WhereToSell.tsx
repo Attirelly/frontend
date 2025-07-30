@@ -14,7 +14,7 @@ const OPTIONS: Option[] = [
   {
     id: 'both',
     title: 'Both online and offline',
-    description: 'Sell your products on your website and in your physical store.',
+    description: 'Sell outfits through your physical store & Attirelly. You will upload inventory on Attirelly.',
     icon: (
       <Image
         src="/OnboardingSections/both_online_offline.png"
@@ -28,7 +28,7 @@ const OPTIONS: Option[] = [
   {
     id: 'online',
     title: 'Online only',
-    description: 'List your products only on your website.',
+    description: 'Sell your products only through Attirelly. You don’t have a physical store.',
     icon: (
       <Image
         src="/OnboardingSections/online_only.png"
@@ -42,7 +42,7 @@ const OPTIONS: Option[] = [
   {
     id: 'offline',
     title: 'Offline only',
-    description: 'Sell your products only in your physical store.',
+    description: 'Sell your products only through your physical store. You won’t be uploading your inventory on Attirelly. You just want offline footfall.',
     icon: (
       <Image
         src="/OnboardingSections/offline_only.png"
@@ -93,7 +93,7 @@ export default function WhereToSellComponent() {
               selected === option.id ? 'border-black bg-gray-100' : 'border-gray-300'
             }`}
           >
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <input
                 type="radio"
                 name="sellLocation"
