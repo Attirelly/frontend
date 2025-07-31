@@ -129,6 +129,24 @@ export default function VariantAndInventory() {
     }
   }, [selectedSizes, selectedColors]);
 
+  const closeAllDropdowns = () => {
+    setShowColorDropdown(false);
+    setShowSizeDropdown(false);
+  };
+
+  const handleClickOutside = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest(".category-dropdown-container")) {
+        closeAllDropdowns();
+      }
+    };
+  
+    useEffect(() => {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
+
   const handleSkuChange = (index: number, val: string) => {
     setVariantsList((prev) => {
       const updated = [...prev];
