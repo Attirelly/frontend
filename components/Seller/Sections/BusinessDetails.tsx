@@ -792,6 +792,7 @@ const MultiSelectField: FC<{
       placeholder="Select up to 3"
       closeMenuOnSelect={false}
       classNamePrefix="react-select"
+      styles={selectStyles}
     />
   </div>
 );

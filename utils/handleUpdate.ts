@@ -151,6 +151,7 @@ export const useUpdateStore = () => {
                     try {
                         // here we will create jwt tokens
                         await api.post("/users/login", { contact_number: sellerNumber });
+                        toast.success("Onboarding Complete, Welcome to Attirelly!");
                         router.push('/seller_dashboard');
                     }
                     catch (error) {
