@@ -138,7 +138,7 @@ export const useUpdateStore = () => {
             }
         }
         if (activeSection === 'photos' && storePhotosData) {
-            
+            console.log('storePhotosData', storePhotosData)
             const photos_payload = {
                 listing_page_image : storePhotosData.bannerUrl,
                 profile_image : storePhotosData.profileUrl,

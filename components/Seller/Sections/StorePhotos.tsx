@@ -52,9 +52,15 @@ export default function PhotosPage() {
   }
 
   const removeMainImage = async (imageUrl: string) => {
-    await deleteImageFromS3(imageUrl);
-    setProfileUrl("");
-    setStorePhotosData((prev) => ({ ...prev, profileUrl: "" }));
+    try {
+      if (!imageUrl) return;
+      await deleteImageFromS3(imageUrl);
+      setProfileUrl("");
+      let newStorePhotosData = { ...storePhotosData, profileUrl: "" };
+      setStorePhotosData(newStorePhotosData);
+    } catch (error) {
+      console.error("Error removing main image:", error);
+    }
   };
 
   const uploadToS3 = async (file: File): Promise<string | null> => {

@@ -229,6 +229,7 @@ export const useSellerStore = create<SellerState>((set) => ({
 
   storePhotosData: null,
   setStorePhotosData: (data) => set({ storePhotosData: data }),
+  
 
   storePhotosValid: false,
   setStorePhotosValid: (valid) => set({ storePhotosValid: valid }),
