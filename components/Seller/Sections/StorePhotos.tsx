@@ -106,7 +106,8 @@ export default function PhotosPage() {
   useEffect(() => {
     if (profileUrl.trim() !== "") {
       setStorePhotosValid(true);
-      setStorePhotosData((prev) => ({ ...prev, profileUrl }));
+      let newStorePhotosData = { ...storePhotosData, profileUrl};
+      setStorePhotosData(newStorePhotosData);
     }
   }, [profileUrl]);
 
