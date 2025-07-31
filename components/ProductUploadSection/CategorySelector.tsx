@@ -588,7 +588,7 @@ export default function CategorySelector() {
                 }}
               />
               {showCategoryDropdown.level3 && (
-                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto scrollbar-thin">
                   {getSubcategories(3).map((category) => (
                     <div
                       key={category.category_id}
@@ -626,7 +626,7 @@ export default function CategorySelector() {
                 }}
               />
               {showCategoryDropdown.level2 && (
-                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto scrollbar-thin">
                   {getSubcategories(2).map((category) => (
                     <div
                       key={category.category_id}
@@ -661,7 +661,7 @@ export default function CategorySelector() {
                 }}
               />
               {showCategoryDropdown.level4 && (
-                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto scrollbar-thin">
                   {getSubcategories(4).map((category) => (
                     <div
                       key={category.category_id}

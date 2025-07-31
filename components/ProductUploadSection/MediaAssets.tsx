@@ -63,8 +63,24 @@ export default function MediaAssets() {
   }, [media]);
 
   useEffect(() => {
-    const isValid = !!media?.mainImage?.length;
-    setStepValidation(currentStep, isValid);
+    const mainImageValid = !!media?.mainImage?.length;
+
+  // Extract all SKUs from the variants
+  const allSKUs = variants?.variants?.map((v) => v.sku) || [];
+
+  // Check if all SKUs have corresponding images
+  const variantImagesMap = new Map(
+    media?.variantImages?.map((vi) => [vi.sku, vi.images]) || []
+  );
+
+  const allVariantsHaveImages = allSKUs.every((sku) => {
+    const images = variantImagesMap.get(sku);
+    return Array.isArray(images) && images.length > 0;
+  });
+
+  const isValid = mainImageValid && allVariantsHaveImages;
+
+  setStepValidation(currentStep, isValid);
   }, [media, currentStep]);
 
   const variantsList = variants?.variants || [];
