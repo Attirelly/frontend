@@ -327,6 +327,7 @@ import type {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useFormActions } from "@/store/product_upload_store";
+import { title } from "process";
 
 interface ProductVariantIDs {
   product_id: string;
@@ -562,12 +563,18 @@ export default function ProductsPage({
     },
     {
       title: "MRP",
-      dataIndex: "price",
+      dataIndex: "mrp",
     },
     {
       title: "Store Price",
       dataIndex: "price",
       sorter: (a: Product, b: Product) => a.price - b.price,
+      sortDirections: ["ascend", "descend"] as ("ascend" | "descend")[],
+    },
+    {
+      title: "Discount",
+      dataIndex: "discount",
+      sorter: (a: Product, b: Product) => a.discount - b.discount,
       sortDirections: ["ascend", "descend"] as ("ascend" | "descend")[],
     },
     {

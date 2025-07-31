@@ -54,6 +54,7 @@ export interface Product {
   mrp: number;
   shopify_id : string;
   price: number;
+  discount: number;
   rent: boolean;
   inventory: number;
   status: boolean;
