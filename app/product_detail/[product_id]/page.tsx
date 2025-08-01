@@ -23,7 +23,7 @@ import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 import useAuthStore from "@/store/auth";
 
 export default function ProductDetail() {
-  const {user} = useAuthStore();
+  const { user } = useAuthStore();
   const params = useParams();
   const product_id = params?.product_id as string;
   const router = useRouter();
@@ -112,21 +112,21 @@ export default function ProductDetail() {
   // };
 
   const isCustomerAuthenticated = () => {
-  return Boolean(user?.id); // Or session value / cookie
-}
+    return Boolean(user?.id); // Or session value / cookie
+  }
 
   useEffect(() => {
-  if (!pendingWhatsApp) return;
-  if (isCustomerAuthenticated()) {
-    sendToWhatsApp();
-    setPendingWhatsApp(false);
-  }
-}, [pendingWhatsApp, user?.id]);
+    if (!pendingWhatsApp) return;
+    if (isCustomerAuthenticated()) {
+      sendToWhatsApp();
+      setPendingWhatsApp(false);
+    }
+  }, [pendingWhatsApp, user?.id]);
 
   const handleSendToWhatsAppClick = () => {
-  setPendingWhatsApp(true);     // Set intent to open WhatsApp
-  setSignIn(true);              // Trigger sign-in modal
-};
+    setPendingWhatsApp(true);     // Set intent to open WhatsApp
+    setSignIn(true);              // Trigger sign-in modal
+  };
 
   const sendToWhatsApp = async () => {
     setSignIn(true);
@@ -263,9 +263,8 @@ Could you please confirm its availability and share more details.`;
                   {images.map((src, idx) => (
                     <div
                       key={idx}
-                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${
-                        idx === activeIndex ? "border-black" : "border-gray-300"
-                      }`}
+                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${idx === activeIndex ? "border-black" : "border-gray-300"
+                        }`}
                       onClick={() => setActiveIndex(idx)}
                     >
                       <Image
@@ -300,9 +299,8 @@ Could you please confirm its availability and share more details.`;
                       backgroundImage: `url(${images[activeIndex]})`,
                       backgroundRepeat: "no-repeat",
                       backgroundSize: `${600 * 2}px ${600 * 2}px`,
-                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${
-                        lensPosition.y * 2 - 150
-                      }px`,
+                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${lensPosition.y * 2 - 150
+                        }px`,
                     }}
                   />
                 </div>
@@ -345,9 +343,9 @@ Could you please confirm its availability and share more details.`;
                       <span className="text-[#7D7D7D]">Size:</span>{" "}
                       <span>{selectedSize?.size_name}</span>
                     </p>
-                    <button className="text-lg text-[#7D7D7D] underline">
+                    {/* <button className="text-lg text-[#7D7D7D] underline">
                       View Size Chart
-                    </button>
+                    </button> */}
                   </div>
                   <div className="flex gap-3 flex-wrap mt-5">
                     {sizes.map((size) => (
@@ -356,11 +354,10 @@ Could you please confirm its availability and share more details.`;
                         onClick={() =>
                           updateVariantBySelection(selectedColor, size)
                         }
-                        className={`border rounded-sm w-19 h-10 ${
-                          selectedSize?.size_id === size.size_id
-                            ? "border-black font-semibold bg-[#EBEBEB]"
-                            : "border-gray-300"
-                        }`}
+                        className={`border rounded-sm w-19 h-10 ${selectedSize?.size_id === size.size_id
+                          ? "border-black font-semibold bg-[#EBEBEB]"
+                          : "border-gray-300"
+                          }`}
                       >
                         {size.size_name}
                       </button>
@@ -380,11 +377,10 @@ Could you please confirm its availability and share more details.`;
                       <div className="flex flex-col items-center">
                         <button
                           key={color.color_id}
-                          className={`w-10 h-10 rounded-full border-0.25  ${
-                            selectedColor?.color_id === color.color_id
-                              ? "border-black"
-                              : "border-gray-300"
-                          }`}
+                          className={`w-10 h-10 rounded-full border-0.25  ${selectedColor?.color_id === color.color_id
+                            ? "border-black"
+                            : "border-gray-300"
+                            }`}
                           style={{ backgroundColor: color.hex_code || "#ccc" }}
                           onClick={() =>
                             updateVariantBySelection(color, selectedSize)
@@ -487,22 +483,64 @@ Could you please confirm its availability and share more details.`;
 
               <div>
                 {/* Delivery Info */}
-                <div className="flex flex-col gap-4 mt-4 w-[500px]">
-                  <div className="border rounded-xl border-0.25 border-[#CCCCCC] p-4 space-y-2 text-sm">
-                    <Truck size={18} className="text-black inline-block" />
-                    <span className="font-semibold ml-1">Free Delivery</span>
+                <div className="flex flex-col gap-4 mt-4 w-[500px] border rounded-xl border-[#E4E4E4] py-4">
+                  <div className="flex flex-col px-4">
+                    <div className="flex items-center">
+                      <Image
+                        src="/ListingPageHeader/truck.svg"
+                        alt="truck"
+                        width={18}
+                        height={18}
+                        className="text-black inline-block"
+                      />
+                      <span className="font-semibold ml-1">Free Delivery</span>
+                    </div>
+
                     <p className="text-[#726C6C]">
                       Enter your Postal code for Delivery Availability
                     </p>
                   </div>
-                  <div className="border rounded-xl border-0.25 border-[#CCCCCC] p-4 space-y-2 text-4">
-                    <RefreshCcw size={18} className="text-black inline-block" />
-                    <span className="font-semibold ml-1">Return Delivery</span>
-                    <p className="text-[#726C6C]">
-                      Free 30 days Delivery Return.{" "}
-                      <span className="underline cursor-pointer">Details</span>
-                    </p>
-                  </div>
+
+                  {storeBasicInfo?.return_days > 0 && (
+                    <div className="flex flex-col gap-4">
+                      <hr className="border-t border-[#E4E4E4]" />
+                      <div className="flex flex-col px-4">
+                        <div className="flex items-center">
+                          <Image
+                            src="/ListingPageHeader/shopping_bag.svg"
+                            alt="shopping bag"
+                            width={18}
+                            height={18}
+                            className="text-black inline-block"
+                          />
+                          <span className="font-semibold ml-1">Return Delivery</span>
+                        </div>
+
+                        <p className="text-[#726C6C]">
+                          Free {storeBasicInfo?.return_days} days Delivery Return.{" "}
+                          <span className="underline cursor-pointer">Details</span>
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {storeBasicInfo?.exchange_days > 0 && (
+                    <div className="flex flex-col gap-4">
+                      <hr className="border-t border-[#E4E4E4]" />
+                      <div className="flex flex-col px-4">
+                        <div className="flex items-center">
+                          <RefreshCcw size={18} className="text-black inline-block" />
+                          <span className="font-semibold ml-1">Exchange Delivery</span>
+                        </div>
+
+                        <p className="text-[#726C6C]">
+                          Free {storeBasicInfo?.exchange_days} days Delivery Exchange.{" "}
+                          <span className="underline cursor-pointer">Details</span>
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+
                 </div>
               </div>
             </div>
@@ -532,8 +570,7 @@ Could you please confirm its availability and share more details.`;
               style={{ fontWeight: 500 }}
               onClick={() => {
                 router.push(
-                  `/store_profile/${
-                    product?.store_id
+                  `/store_profile/${product?.store_id
                   }?defaultButton=${encodeURIComponent("Products")}`
                 );
               }}
@@ -553,21 +590,21 @@ Could you please confirm its availability and share more details.`;
         <ListingFooter />
       </div>
       {signIn && (
-  <CustomerSignIn
-    onClose={() => {
-      setSignIn(false);
-      setPendingWhatsApp(false); // Cancel WhatsApp intent if modal closed
-    }}
-    onSuccess={() => {
-      console.log("success");
-      setSignIn(false);
-      if (pendingWhatsApp) {
-        sendToWhatsApp();        // Proceed now
-        setPendingWhatsApp(false);
-      }
-    }}
-  />
-)}
+        <CustomerSignIn
+          onClose={() => {
+            setSignIn(false);
+            setPendingWhatsApp(false); // Cancel WhatsApp intent if modal closed
+          }}
+          onSuccess={() => {
+            console.log("success");
+            setSignIn(false);
+            if (pendingWhatsApp) {
+              sendToWhatsApp();        // Proceed now
+              setPendingWhatsApp(false);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
