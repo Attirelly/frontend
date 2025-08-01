@@ -458,21 +458,25 @@ export default function ProductsPage({
       });
 
       // Update local state
+      console.log("selectedRowKeys", selectedRowKeys);
       const updatedProducts = products.map((product) => {
-        if (
-          selectedRowKeys.some(
-            (selected) =>
-              selected.product_id === product.product_id &&
-              selected.variant_id === product.variant_id
-          )
-        ) {
-          return { ...product, status };
-        }
-        return product;
-      });
+      const isSelected = selectedRowKeys.some(
+        (selected) =>
+          selected.product_id === product.product_id &&
+          selected.variant_id === product.variant_id
+      );
+      if (isSelected) {
+    console.log(
+      `Updating product ${product.product_id} | variant ${product.variant_id} from status=${product.status} to status=${status}`
+    );
+  }
 
+      return isSelected ? { ...product, status } : product;
+    });
+      console.log("updated products",updatedProducts);
       setProducts(updatedProducts);
-      setFilteredData(updatedProducts);
+      // setFilteredData(updatedProducts);
+      // setFilters((prev) => ({ ...prev }));
       setSelectedRowKeys([]);
       message.success(
         `Successfully updated ${selectedRowKeys.length} product(s) to ${
@@ -480,7 +484,6 @@ export default function ProductsPage({
         }`
       );
     } catch (error) {
-      console.error("Error updating product statuses:", error);
       message.error("Failed to update product statuses");
     } finally {
       setLoading(false);
@@ -585,7 +588,7 @@ export default function ProductsPage({
     },
     {
       title: "Status",
-      dataIndex: "active",
+      dataIndex: "status",
       render: (status: Product["status"]) => (
         <Tag color={status === true ? "green" : "volcano"}>
           {status === true ? "Active" : "Inactive"}
@@ -607,7 +610,6 @@ export default function ProductsPage({
       ),
     },
   ];
-  console.log("re triggered")  ; 
   const result = products.filter((item) => {
     const primaryCat =
       item.category?.find((cat) => cat.level === 1)?.name || "";
@@ -701,7 +703,6 @@ export default function ProductsPage({
               product_id: String(row.product_id ?? ""),
               variant_id: String(row.variant_id ?? ""),
             }));
-            console.log("Selected Product IDs:", selectedProductIds);
 
             // Optional: store them in state or send to server
             setSelectedRowKeys(selectedProductIds);
