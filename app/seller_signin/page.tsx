@@ -2,15 +2,12 @@
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { send } from 'process';
 import Image from "next/image";
 import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
 import Header from '@/components/Header';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
-
-
 
 export default function SellerSignup() {
     const [phone, setPhone] = useState('');
@@ -31,7 +28,7 @@ export default function SellerSignup() {
 
     const isPhoneValid = /^\d{10}$/.test(phone);
     const router = useRouter();
-    const testing_phone = '9821205090'
+    const testing_phone = '7015241757'
 
     useEffect(() => {
         
