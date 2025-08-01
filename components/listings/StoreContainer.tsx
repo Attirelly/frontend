@@ -114,7 +114,7 @@ export default function StoreContainerPage() {
       ],
       bestSelling: sc.categories,
       discount: sc.discount,
-      instagramFollowers: "220k",
+      instagramFollowers: sc.followers_count || "1K",
     }));
 
     if (currentPage === 0) {
