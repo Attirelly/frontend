@@ -13,12 +13,14 @@ type StoreInfoContainerProps = {
 export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps) {
   const { setInstaMedia, setProfilePic, setInstaMediaLoading, setInstaUsername, setInstaMediaApify, setStoreName } = useHeaderStore();
   const [store, setStore] = useState<StoreInfoType>();
+  const [productCount, setProductCount] = useState<number>(0);
   const [loading, setLoading] = useState(true); // ✅ Loading state
 
   useEffect(() => {
     const fetchStore = async () => {
       try {
         const storeRes = await api.get(`/stores/${storeId}`);
+        const productCountRes = await api.get(`/stores/product_count/${storeId}`);
         const storeData = storeRes.data;
         const sellerId = storeData.store_owner_id;
         setStoreName(storeData.store_name);
@@ -30,7 +32,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
           locationUrl: storeData.store_address,
           storeName: storeData.store_name,
           post_count: "",
-          product_count: "",
+          product_count: productCountRes.data.toString(),
           bio: "",
           storeTypes: storeData.store_types.map((item: any) => item.store_type),
           priceRanges: storeData.price_ranges.map((item: any) => item.label),
@@ -60,7 +62,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
             locationUrl: storeData.store_address,
             storeName: storeData.store_name,
             post_count: apifyData.post_count,
-            product_count: "345",
+            product_count: productCountRes.data.toString(),
             bio: apifyData.biography,
             storeTypes: storeData.store_types.map((item: any) => item.store_type),
             priceRanges: storeData.price_ranges.map((item: any) => item.label),
@@ -86,7 +88,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
             locationUrl: storeData.store_address,
             storeName: storeData.store_name,
             post_count: instaData.media_count,
-            product_count: "345",
+            product_count: productCountRes.data.toString(),
             bio: instaData.biography,
             storeTypes: storeData.store_types.map((item: any) => item.store_type),
             priceRanges: storeData.price_ranges.map((item: any) => item.label),
