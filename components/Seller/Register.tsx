@@ -16,18 +16,48 @@ export default function SellerSignup() {
     const [agreed, setAgreed] = useState(false);
     const [sendOTP, setSendOTP] = useState(false);
     const { setSellerId, setSellerNumber } = useSellerStore()
+
+    const [resendTimer, setResendTimer] = useState(60);
+    const [isBlocked, setIsBlocked] = useState(false);
+    const [blockedUntil, setBlockedUntil] = useState<Date | null>(null);
+
     const resetSellerStore = useSellerStore((state) => state.resetSellerStore);
     const isPhoneValid = /^\d{10}$/.test(phone);
-    // const isOTPValid = /^\d{6}$/.test(otp);
+
     const router = useRouter();
+    const testing_phone = '7015241757'
+
     useEffect(() => {
-        // Reset everything when component mounts (optional)
+
         resetSellerStore();
         router.prefetch("/seller_signup/sellerOnboarding")
+
     }, []);
 
-    
+    useEffect(() => {
+            let timer: NodeJS.Timeout;
+            if (sendOTP && resendTimer > 0) {
+                timer = setTimeout(() => setResendTimer((prev) => prev - 1), 1000);
+            }
+            return () => clearTimeout(timer);
+        }, [resendTimer, sendOTP]);
 
+    useEffect(() => {
+        if (isBlocked && blockedUntil) {
+            const now = new Date();
+            const timeout = blockedUntil.getTime() - now.getTime();
+            if (timeout > 0) {
+                const timer = setTimeout(() => {
+                    setIsBlocked(false);
+                    setBlockedUntil(null);
+                }, timeout);
+                return () => clearTimeout(timer);
+            } else {
+                setIsBlocked(false);
+                setBlockedUntil(null);
+            }
+        }
+    }, [isBlocked, blockedUntil]);
 
 
     const handleChange = (index: number, value: string) => {
@@ -51,6 +81,20 @@ export default function SellerSignup() {
         }
     };
 
+    const handleResendOTP = async () => {
+        if (resendTimer > 0) return;
+
+        try {
+            await api.post('/otp/send_otp', null, {
+                params: { phone_number: testing_phone, otp_template: "UserLoginOTP" },
+            });
+            toast.success("OTP resent successfully");
+            setResendTimer(60); // Restart resend timer
+        } catch (error) {
+            toast.error("Failed to resend OTP");
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sendOTP) {
@@ -59,7 +103,8 @@ export default function SellerSignup() {
                 alert('Please enter a valid 6-digit OTP');
                 return;
             }
-            if (fullOtp === '123456') {
+            try {
+                await api.post('/otp/verify_otp', null, { params: { phone_number: testing_phone, otp: fullOtp } })
                 try {
                     const payload = {
                         "contact_number": phone.toString(),
@@ -81,10 +126,55 @@ export default function SellerSignup() {
                     toast.error('Failed to sign up!');
                 }
             }
-            else {
-                alert('wrong otp');
-                return;
+            catch (error) {
+                if (axios.isAxiosError(error) && error.response?.status === 403) {
+                    const detail = error.response.data?.detail;
+                    const msg = typeof detail === 'string' ? detail : detail?.message;
+
+                    toast.error(msg || "Too many attempts. Please wait.");
+
+                    if (typeof msg === 'string' && msg.includes('Try again after')) {
+                        const untilMatch = msg.match(/after (\d{2}:\d{2}:\d{2}) UTC/);
+                        if (untilMatch) {
+                            const now = new Date();
+                            const [hours, minutes, seconds] = untilMatch[1].split(':').map(Number);
+                            const target = new Date();
+                            target.setUTCHours(hours, minutes, seconds, 0);
+                            setBlockedUntil(target);
+                            setIsBlocked(true);
+                        }
+                    }
+                } else {
+                    toast.error("OTP not correct");
+                }
             }
+
+            // if (fullOtp === '123456') {
+            //     try {
+            //         const payload = {
+            //             "contact_number": phone.toString(),
+            //             "role": "admin"
+            //         }
+            //         const response = await api.post('/users/register_user', payload)
+
+            //         console.log(response)
+            //         const newSellerId = response.data.id
+            //         console.log(newSellerId)
+            //         setSellerId(newSellerId)
+            //         await api.post("/users/login", { contact_number: phone });
+
+            //         router.push('/seller_signup/sellerOnboarding');
+
+            //     }
+            //     catch (error) {
+            //         console.error('Error fetching stores by section:', error);
+            //         toast.error('Failed to sign up!');
+            //     }
+            // }
+            // else {
+            //     alert('wrong otp');
+            //     return;
+            // }
         }
         else {
 
@@ -100,7 +190,7 @@ export default function SellerSignup() {
                 const response = await api.get("/users/new_user_auth", {
                     params: { contact_number: phone },
                 });
-                
+
             } catch (error: any) {
                 if (axios.isAxiosError(error)) {
                     if (error.response?.status === 403) {
@@ -120,13 +210,15 @@ export default function SellerSignup() {
             }
             const confirmed = window.confirm('Please confirm you phone number');
             if (!confirmed) return;
-            setSellerNumber(phone);
-            setSendOTP(true);
-            // Handle sending OTP
-            alert(`OTP sent to ${phone}`);
-
-            // Redirect to OTP verification page
-            // router.push(`/OTPVerify?phone=${phone}`);
+            try {
+                await api.post('/otp/send_otp', null, { params: { phone_number: testing_phone, otp_template: "UserLoginOTP" } })
+                setSendOTP(true);
+                alert(`OTP sent to ${phone}`);
+                setSellerNumber(phone);
+            }
+            catch {
+                toast.error("Failed to send OTP!");
+            }
         }
     };
 
@@ -237,13 +329,24 @@ export default function SellerSignup() {
                         >
                             Verify OTP
                         </button>
+                        {/* Resend OTP + Block Message */}
+                        <div className="mt-2 text-center text-sm text-gray-600">
+                            <button
+                                type="button"
+                                onClick={handleResendOTP}
+                                disabled={resendTimer > 0 || isBlocked}
+                                className={`text-blue-600 hover:underline disabled:text-gray-400`}
+                            >
+                                {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
+                            </button>
+                        </div>
+
+                        {isBlocked && blockedUntil && (
+                            <div className="text-red-600 text-sm mt-2 text-center">
+                                Too many incorrect attempts. Try again at {blockedUntil.toLocaleTimeString()}.
+                            </div>
+                        )}
                     </div>
-
-
-
-
-
-
                     {/* Sign In link */}
                     <p className="text-center text-xs text-gray-500 mt-4">
                         Already have an account?{' '}
