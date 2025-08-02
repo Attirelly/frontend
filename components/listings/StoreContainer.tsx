@@ -106,7 +106,7 @@ export default function StoreContainerPage() {
       imageUrl: sc.profile_image || "/OnboardingSections/qr.png",
       storeName: sc.store_name,
       location: `${sc.area}, ${sc.city}`,
-      storeTypes: sc.store_types || [],
+      storeTypes: sc.store_types || [], 
       priceRanges: [
         ...new Set(sc.store_type_price_range
           .filter(item=> item.store_type === storeType?.store_type)
