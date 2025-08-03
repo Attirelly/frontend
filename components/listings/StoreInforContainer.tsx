@@ -51,7 +51,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
         
         if (!res.data) {
           
-          const instaApify = await api.get(`/instagram_apify/${sellerId}`);
+          const instaApify = await api.get(`/instagram_apify/${storeId}`);
           
           const apifyData = instaApify.data;
           setInstaMediaApify(apifyData.media);

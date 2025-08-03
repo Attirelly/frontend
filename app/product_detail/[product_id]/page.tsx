@@ -98,19 +98,6 @@ export default function ProductDetail() {
     }
   }, [product]);
 
-  // const sendToWhatsApp = async () => {
-  //   setSignIn(true);
-  //   try {
-  //     const phoneNumber = storeBasicInfo?.whatsapp_number; // Replace with your WhatsApp number
-  //     const message = `Hello, I’m interested in this product! ${product?.product_name} ${selectedVariant?.sku} at price ${selectedVariant?.mrp}`;
-  //     const encodedMessage = encodeURIComponent(message);
-  //     const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-  //     window.open(url, "_blank");
-  //   } catch (error) {
-  //     console.error("Failed to fetch product details", error);
-  //   }
-  // };
-
   const isCustomerAuthenticated = () => {
     return Boolean(user?.id); // Or session value / cookie
   }
@@ -198,7 +185,11 @@ Could you please confirm its availability and share more details.`;
           self.findIndex((v) => v.size_id === value.size_id) === index
       ) || [];
 
-  const images = selectedVariant?.images.map((img) => img.image_url) || [];
+  const images = (selectedVariant?.images?.length
+  ? selectedVariant.images
+  : product?.images || []
+).map((img) => img.image_url);
+
 
   const nextImage = () => {
     setActiveIndex((prev) => (prev + 1) % images.length);
@@ -230,7 +221,7 @@ Could you please confirm its availability and share more details.`;
                   src={images[activeIndex]}
                   alt={`Product Image ${activeIndex + 1}`}
                   fill
-                  className="object-cover rounded-xl"
+                  className="object-contain rounded-xl object-top"
                 />
               </div>
 
