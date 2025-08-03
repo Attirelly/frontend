@@ -235,7 +235,7 @@ export default function SellerSignup() {
                     <div className={sendOTP ? "hidden" : ''}>
                         {/* Brand owner number */}
                         <label htmlFor="phone" className="block font-medium text-sm mb-1">
-                            Brand owner number<span className="text-red-500">*</span>
+                            Mobile Number<span className="text-red-500">*</span>
                         </label>
                         <input
                             id="phone"

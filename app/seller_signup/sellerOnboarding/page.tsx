@@ -181,8 +181,8 @@ export default function SellerOnboardingPage() {
         title="Attirelly"
         actions={
           <div>
-            <a href="tel:+919738383838" className="text-blue-500 text-sm hover:underline">
-              Need help? Call +91 97-38-38-38-38
+            <a href="tel:+918699892707" className="text-blue-500 text-sm hover:underline">
+              Need help? Call +91-8699892707
             </a>
           </div>
         }

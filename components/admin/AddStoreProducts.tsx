@@ -44,7 +44,7 @@ export default function AddStoreProduct() {
   const [viewAllUrl, setViewAllUrl] = useState('');
   const [storesFromSection, setStoresFromSection] = useState<Store[]>([]);
   const router = useRouter();
-  
+
 
   useEffect(() => {
     if (!curation_id) return;
@@ -93,7 +93,7 @@ export default function AddStoreProduct() {
 
   }, [curation_id]);
 
-   useEffect(() => {
+  useEffect(() => {
     api
       .get('/stores/')
       .then((response) => {
@@ -126,7 +126,7 @@ export default function AddStoreProduct() {
     }
   }, [curation_type]);
 
- 
+
 
   const handleEdit = async () => {
     if (!curationName.trim() || !viewAllUrl.trim()) {
@@ -204,7 +204,7 @@ export default function AddStoreProduct() {
       store_ids: selectedStoreIds,
       product_ids: productSelections.filter((id) => id),
     };
-    
+
     // return;
 
     try {
@@ -212,7 +212,7 @@ export default function AddStoreProduct() {
       // alert('Section created successfully!');
       toast.success("Curation submitted successfully!");
       router.replace("/admin/curationModule/createCuration");
-      
+
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       console.error('Failed to create section:', error);
@@ -248,10 +248,10 @@ export default function AddStoreProduct() {
     const productList = productsByStore[selectedStoreId] || [];
     const found = productList.find((product) => product.product_id === productId);
     const updated = [...productSelections];
-    
+
     updated[index] = found ? found.product_id : '';
     setProductSelections(updated);
-    
+
   };
 
   const storeOptions = stores.map((store) => ({
@@ -259,7 +259,7 @@ export default function AddStoreProduct() {
     value: store.store_id,
   }));
 
-  
+
 
   // const getProductOptions = (storeId: string) =>
   //   (productsByStore[storeId] || []).map((product) => ({
@@ -271,7 +271,7 @@ export default function AddStoreProduct() {
     (productsByStore[storeId] || []).map((product) => ({
       label: product.product_name,
       value: product.product_id,          // include SKU
-      image: product.images.length>0 ? product.images[0].image_url : 'https://picsum.photos/200',      // include product image URL
+      image: product.images.length > 0 ? product.images[0].image_url : 'https://picsum.photos/200',      // include product image URL
     }));
 
   return (
@@ -385,6 +385,9 @@ export default function AddStoreProduct() {
                       </div>
                     </div>
                   )}
+                  filterOption={(option, inputValue) =>
+                    option.label.toLowerCase().includes(inputValue.toLowerCase())
+                  }
                 />
               ) : (
                 <input

@@ -46,14 +46,14 @@ type QueryParams = {
   filters?: {
     [key: string]: string[];
   };
-  sort_by:string
+  sort_by: string
 };
 
 export default function Home() {
   const { sortBy } = useAdminStore();
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
-  
+
   const [search, setSearch] = useState("");
   const [selectedFacets, setSelectedFacets] = useState<{
     [key: string]: string[];
@@ -64,7 +64,7 @@ export default function Home() {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
@@ -80,7 +80,7 @@ export default function Home() {
       }
     }
 
-    
+
     const encoded = encodeURIComponent(JSON.stringify(filters));
     return encoded;
   };
@@ -147,70 +147,69 @@ export default function Home() {
   };
 
   // Fetch sellers data with pagination and filters
-   const fetchSellers = async (params: QueryParams) => {
-      setLoading(true);
-      try {
-        // Convert filters to query string
-        const filterParams = Object.entries(params.filters || {}).map(
-          ([key, values]) =>
-            values
-              .map((value) => `filters[${key}]=${encodeURIComponent(value)}`)
-              .flat()
-              .join("&")
-        );
-  
-        const sortParams = params.sortField
-          ? `&sortField=${params.sortField}&sortDirection=${
-              params.sortDirection || "asc"
-            }`
-          : "";
-  
-        const algoia_facets = buildFacetFilters(selectedFacets);
-        
-  
-        const res = await api.get(
-          `/search/search_store?query=${params.query || ""}&page=${
-            (params.page || 1) - 1
-          }&limit=${params.limit || 10}&facetFilters=${algoia_facets}&sort_by=${params.sort_by}`
-        );
-  
-        const data = res.data;
-        
-        setTotalItems(data.total_hits);
-        setTotalPages(data.total_pages);
-        const sellers: Seller[] = data.hits.map((hit: any) => ({
-          id: hit.id,
-          name: hit.store_name,
-          email: hit.registered_email,
-          area: hit.area,
-          address: hit.address,
-          city: hit.city,
-          store_types: hit.store_types || [],
-          genders: hit.genders || [],
-          curr_section: hit.curr_section || 0,
-          created_at: hit.created_at ? new Date(hit.created_at) : undefined,
-          outfits: hit.outfits || [],
-          status: hit.active,
-        }));
-  
-        setSellers(sellers);
-        setTotalItems(data.total || data.hits.length);
-        
-        const newFacets: Facets = {
-          area: Object.entries(data.facets?.area || {}),
-          city: Object.entries(data.facets?.city || {}),
-          store_types: Object.entries(data.facets?.store_types || {}),
-          genders: Object.entries(data.facets?.genders || {}),
-          outfits: Object.entries(data.facets?.outfits || {}),
-        };
-  
-        setFacets(newFacets);
-      } catch (error) {
-        console.error("Failed to fetch sellers:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchSellers = async (params: QueryParams) => {
+    setLoading(true);
+    try {
+      // Convert filters to query string
+      const filterParams = Object.entries(params.filters || {}).map(
+        ([key, values]) =>
+          values
+            .map((value) => `filters[${key}]=${encodeURIComponent(value)}`)
+            .flat()
+            .join("&")
+      );
+
+      const sortParams = params.sortField
+        ? `&sortField=${params.sortField}&sortDirection=${params.sortDirection || "asc"
+        }`
+        : "";
+
+      const algoia_facets = buildFacetFilters(selectedFacets);
+
+
+      const res = await api.get(
+        `/search/search_store?query=${params.query || ""}&page=${(params.page || 1) - 1
+        }&limit=${params.limit || 10}&facetFilters=${algoia_facets}&sort_by=${params.sort_by}`
+      );
+
+      const data = res.data;
+
+      setTotalItems(data.total_hits);
+      setTotalPages(data.total_pages);
+      const sellers: Seller[] = data.hits.map((hit: any) => ({
+        id: hit.id,
+        name: hit.store_name,
+        email: hit.registered_email,
+        mobile: hit.mobile,
+        area: hit.area,
+        address: hit.address,
+        city: hit.city,
+        store_types: hit.store_types || [],
+        genders: hit.genders || [],
+        curr_section: hit.curr_section || 0,
+        created_at: hit.created_at ? new Date(hit.created_at) : undefined,
+        outfits: hit.outfits || [],
+        status: hit.active,
+      }));
+
+      setSellers(sellers);
+      // setTotalItems(data.total || data.hits.length);
+
+      const newFacets: Facets = {
+        city: Object.entries(data.facets?.city || {}),
+        area: Object.entries(data.facets?.area || {}),
+        genders: Object.entries(data.facets?.genders || {}),
+        store_types: Object.entries(data.facets?.store_types || {}),
+        expertise: Object.entries(data.facets?.categories || {}),
+      };
+
+      setFacets(newFacets);
+    } catch (error) {
+      console.error("Failed to fetch sellers:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch sellers data
   useEffect(() => {
@@ -393,10 +392,10 @@ export default function Home() {
   //      
   //      window.open(locationUrl, '_blank', 'noopener,noreferrer');
   //   };
-  
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="w-full max-w-7xl mx-auto p-6">
+    <div className="min-h-screen">
+      <div className="w-full max-w-7xl">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 p-8">
           <div className="flex items-center justify-center mb-6">
@@ -567,7 +566,7 @@ export default function Home() {
                     <option value="50">50 per page</option>
                   </select>
                 </div>
-                <SortBySellerCRM/>
+                <SortBySellerCRM />
               </div>
 
               {/* Table */}
@@ -600,7 +599,7 @@ export default function Home() {
                           />
                         </th>
                         <th
-                          className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('name')}
                         >
                           <div className="flex items-center gap-2">
@@ -608,7 +607,7 @@ export default function Home() {
                           </div>
                         </th>
                         <th
-                          className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('email')}
                         >
                           <div className="flex items-center gap-2">
@@ -616,7 +615,15 @@ export default function Home() {
                           </div>
                         </th>
                         <th
-                          className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort('mobile')}
+                        >
+                          <div className="flex items-center gap-2">
+                            Mobile {getSortIndicator('mobile')}
+                          </div>
+                        </th>
+                        <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('area')}
                         >
                           <div className="flex items-center gap-2">
@@ -624,7 +631,7 @@ export default function Home() {
                           </div>
                         </th>
                         <th
-                          className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('city')}
                         >
                           <div className="flex items-center gap-2">
@@ -639,20 +646,20 @@ export default function Home() {
                             Created At {getSortIndicator('created_at')}
                           </div>
                         </th> */}
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Type</th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Outfits</th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Type</th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expertise</th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
                         <th
-                          className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort('status')}
                         >
                           <div className="flex items-center gap-2">
                             Status {getSortIndicator('status')}
                           </div>
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -667,7 +674,7 @@ export default function Home() {
                       ) : (
                         sellers.map((seller) => (
                           <tr key={seller.id} className="hover:bg-gray-50 transition-colors">
-                            <td className="px-6 py-4">
+                            <td className="px-4 py-4">
                               <input
                                 type="checkbox"
                                 checked={isSelected(seller.id!)}
@@ -675,22 +682,34 @@ export default function Home() {
                                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                               />
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-4 py-4 w-fit">
                               <div className="text-sm font-medium text-gray-900">{seller.name}</div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-4 py-4">
                               <div className="text-sm text-gray-900">{seller.email}</div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-900">{seller.mobile}</div>
+                            </td>
+                            <td className="px-4 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">{seller.area}</div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-4 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">{seller.city}</div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{seller.created_at ? seller.created_at?.toLocaleDateString() + " " + seller.created_at?.toLocaleTimeString() : "N/A"}</div>
+                            <td className="px-4 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-900">
+                                {seller.created_at ? (
+                                  <>
+                                    <div>{seller.created_at.toLocaleDateString()}</div>
+                                    <div>{seller.created_at.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                  </>
+                                ) : (
+                                  "N/A"
+                                )}
+                              </div>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-4 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.store_types?.map((type, idx) => (
                                   <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -699,7 +718,7 @@ export default function Home() {
                                 ))}
                               </div>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-4 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.outfits?.map((outfit, idx) => (
                                   <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -708,7 +727,7 @@ export default function Home() {
                                 ))}
                               </div>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-4 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.genders?.map((gender, idx) => (
                                   <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -717,7 +736,7 @@ export default function Home() {
                                 ))}
                               </div>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-4 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.curr_section !== undefined && (
                                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -727,7 +746,7 @@ export default function Home() {
                                 )}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-4 py-4 whitespace-nowrap">
                               <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${seller.status
                                 ? "bg-green-100 text-green-800"
                                 : "bg-red-100 text-red-800"
@@ -735,7 +754,7 @@ export default function Home() {
                                 {seller.status ? "Active" : "Inactive"}
                               </span>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-4 py-4 whitespace-nowrap">
                               {/* <Link href={`/seller_dashboard/${seller.id}`} target="blank" rel="noopener noreferrer"> */}
                               <Link href={`/seller_dashboard?storeId=${encodeURIComponent(seller.id ?? "")}`} target="blank" rel="noopener noreferrer">
                                 <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"

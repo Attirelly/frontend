@@ -44,6 +44,7 @@ export const useUpdateStore = () => {
                 store_owner_id: sellerId,
                 store_name: businessDetailsData.brandName,
                 pincode_id: businessDetailsData.pinCode[0].id,
+                mobile:sellerNumber,
                 whatsapp_number: businessDetailsData.businessWpNum,
                 store_address: businessDetailsData.brandAddress,
                 // rental: businessDetailsData.rentOutfits === 'Yes',
