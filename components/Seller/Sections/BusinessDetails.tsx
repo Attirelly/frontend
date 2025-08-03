@@ -411,14 +411,14 @@ export default function BusinessDetailsComponent({
     <div className="space-y-8 rounded-md w-3xl">
       {/* Brand Owner Section */}
       <Section
-        title="Brand owner details"
-        subtitle="This is for internal data, your customers won't see this."
+        title="Store owner details"
+        subtitle="This is for internal data, customers won't see this. You will sign in with this number."
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1 text-black">
               {" "}
-              Brand owner number
+              Store owner number
             </label>
             <input
               type="text"
@@ -436,7 +436,7 @@ export default function BusinessDetailsComponent({
             required
           />
           <InputField
-            label="Brand owner name"
+            label="Store owner name"
             value={ownerName}
             onChange={setOwnerName}
             required
@@ -446,17 +446,17 @@ export default function BusinessDetailsComponent({
 
       {/* Brand Details Section */}
       <Section
-        title="Brand details"
+        title="Store details"
         subtitle="Customers will see these details on Attirelly"
       >
         <InputField
-          label="Brand name"
+          label="Store name"
           value={brandName}
           onChange={setBrandName}
           required
         />
         <div className="space-y-1">
-          <label className="text-sm text-black">Business WhatsApp number</label>
+          <label className="text-sm text-black">Store whatsapp number</label>
           <input
             type="tel"
             disabled={sameAsOwner}
@@ -485,7 +485,7 @@ export default function BusinessDetailsComponent({
         </div>
 
         <ToggleChips
-          label="Brand Type"
+          label="Store Type"
           items={brandTypes}
           selected={selectedBrandTypes}
           toggle={(item) =>
@@ -792,6 +792,7 @@ const MultiSelectField: FC<{
       placeholder="Select up to 3"
       closeMenuOnSelect={false}
       classNamePrefix="react-select"
+      className="text-black"
       styles={selectStyles}
     />
   </div>

@@ -174,7 +174,7 @@ export default function CustomerPage() {
   // };
 
   return (
-    <div className="w-[90%] mx-auto p-6 font-sans flex flex-col">
+    <div className="w-full font-sans flex flex-col">
       <div>
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Customer CRM
@@ -214,7 +214,7 @@ export default function CustomerPage() {
       className="flex flex-col md:flex-row gap-4 w-full"
       >
         {/* Left Sidebar for Facets */}
-        <div className="w-full md:w-[25%] p-4 border-2 border-solid border-gray-200 bg-gray-50 rounded-lg mb-8 md:mb-0">
+        <div className="w-full md:w-[15%] p-4 border-2 border-solid border-gray-200 bg-gray-50 rounded-lg mb-8 md:mb-0">
           <h2 className="text-xl font-semibold mb-4 text-black">Filters</h2>
           <div>
             <div className="text-black">Start Date</div>
@@ -288,15 +288,15 @@ export default function CustomerPage() {
                       }
                     />
                   </th>
-                  <th className="px-6 py-3 border">Name</th>
-                  <th className="px-6 py-3 border">Email</th>
-                  <th className="px-6 py-3 border">Provider</th>
-                  <th className="px-6 py-3 border">Gender</th>
-                  <th className="px-6 py-3 border">Birthday</th>
-                  <th className="px-6 py-3 border">Location</th>
-                  <th className="px-6 py-3 border">Contact</th>
-                  <th className="px-6 py-3 border">Created At</th>
-                  <th className="px-6 py-3 border">Operation</th>
+                  <th className="px-4 py-3 border">Name</th>
+                  <th className="px-4 py-3 border">Email</th>
+                  <th className="px-4 py-3 border">Provider</th>
+                  <th className="px-4 py-3 border">Gender</th>
+                  <th className="px-4 py-3 border">Birthday</th>
+                  <th className="px-4 py-3 border">Location</th>
+                  <th className="px-4 py-3 border">Contact</th>
+                  <th className="px-4 py-3 border">Created At</th>
+                  <th className="px-4 py-3 border">Operation</th>
                 </tr>
               </thead>
               <tbody>
@@ -316,19 +316,19 @@ export default function CustomerPage() {
                           onChange={() => handleCheckboxChange(customer.id)}
                         />
                       </td>
-                      <td className="px-6 py-3 border text-black">{customer.name}</td>
-                      <td className="px-6 py-3 border text-black">{customer.email}</td>
-                      <td className="px-6 py-3 border text-black">{customer.provider}</td>
-                      <td className="px-6 py-3 border text-black">{customer.gender}</td>
-                      <td className="px-6 py-3 border text-black">{customer.birthday}</td>
-                      <td className="px-6 py-3 border text-black">{customer.location}</td>
-                      <td className="px-6 py-3 border text-black">
+                      <td className="px-4 py-3 border text-black">{customer.name}</td>
+                      <td className="px-4 py-3 border text-black">{customer.email}</td>
+                      <td className="px-4 py-3 border text-black">{customer.provider}</td>
+                      <td className="px-4 py-3 border text-black">{customer.gender}</td>
+                      <td className="px-4 py-3 border text-black">{customer.birthday}</td>
+                      <td className="px-4 py-3 border text-black">{customer.location}</td>
+                      <td className="px-4 py-3 border text-black">
                         {customer.contact_number}
                       </td>
-                      <td className="px-6 py-3 border text-black">
+                      <td className="px-4 py-3 border text-black">
                         {new Date(customer.created_at).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-3 border text-center space-x-2 text-black">
+                      <td className="px-4 py-3 border text-center space-x-2 text-black">
                         <div className="flex gap-2 justify-center">
                           <Link href={`/customer/${customer.id}`} target="_blank" rel="noopener noreferrer">
                             <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-yellow-600">

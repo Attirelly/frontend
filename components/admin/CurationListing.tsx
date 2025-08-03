@@ -35,7 +35,7 @@ export default function CurationPage() {
         setError(null);
         const response = await api.get('/homepage/section'); // Replace with your backend API URL
         // 
-        setCurations(response.data);
+        setCurations(response.data.sort((a : Curation, b : Curation) => a.section_number - b.section_number));
       } catch (err) {
         setError('Failed to load curations.');
         console.error(err);
