@@ -67,7 +67,7 @@ export default function BulkUploadPage() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("store_id", storeId || "");
-    formData.append("brand_id", "f1e55528-246f-4c88-bc78-11d7e746ef7f");
+    formData.append("brand_id", process.env.BRAND_ID || "");
 
     try {
       setIsUploading(true);
@@ -100,7 +100,7 @@ export default function BulkUploadPage() {
           base_url: shopify_url,
           store_id: storeId,
           store_name: storeName,
-          brand_id: "f1e55528-246f-4c88-bc78-11d7e746ef7f",
+          brand_id: process.env.BRAND_ID || "",
         },
       });
       if (response.data) {
