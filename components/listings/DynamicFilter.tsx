@@ -324,7 +324,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                       <span className="text-sm text-[#1F2937]" style={{ fontWeight: 400 }}>
                                         {facet.name}
                                       </span>
-                                      <span className="text-sm text-[#666666]" style={{ fontWeight: 400 }}>
+                                      <span className="text-sm text-[#666666] mr-10" style={{ fontWeight: 400 }}>
                                         {fName === "Price Ranges"
                                           ? facet.name === "Affordable"
                                             ? "starts from 2000/-"
