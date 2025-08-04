@@ -7,9 +7,9 @@ import { useHeaderStore } from '@/store/listing_header_store';
 import { manrope, roboto } from '@/font';
 import dynamic from "next/dynamic";
 
-const CustomVideoPlayer = dynamic(() => import("../ui/CustomVideoPlayer"), {
-  ssr: false,
-});
+// const CustomVideoPlayer = dynamic(() => import("../ui/CustomVideoPlayer"), {
+//   ssr: false,
+// });
 
 type Props = {
   isOpen: boolean;
