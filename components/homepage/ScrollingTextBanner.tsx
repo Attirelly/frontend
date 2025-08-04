@@ -4,12 +4,12 @@ import { manrope } from '@/font';
 import { useRef } from 'react';
 
 const res = [
-  { text: 'Sale 50% off and get on the boat' },
   { text: 'Welcome to Attirelly' },
-  { text: 'My name is Abhijeet and I am not a terrorist' },
-  { text: 'Jo bhi kasme khai thi humne, wada kiya tha jo milke' },
-  { text: 'Tune hi laya tha jeevan mai mere savera, kya tumhe yaad hai' },
+  { text: 'Get access to 500+ designer label brands at one place' },
+  { text: 'Shop now to get exclusive discounts upto 80%' },
+  { text: 'Shop for wedding wear, regular wear and more' },
 ];
+
 
 export default function ScrollingTextBanner() {
   const fullText = res.map((item) => item.text).join('   •   ');
