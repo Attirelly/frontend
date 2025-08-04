@@ -80,6 +80,7 @@ export default function ListingPageHeader() {
       });
 
       const data = response.data;
+      setShowStoreType(false)
       
       setStoreSuggestions(data.store_search_suggestion || []);
       setProductSuggestions(data.product_search_suggestion || []);
@@ -87,6 +88,7 @@ export default function ListingPageHeader() {
       setStores(data.stores || []);
       setProducts(data.products || []);
       setShowDropdown(true);
+      
     } catch (error) {
       toast.error("Failed to fetch search suggestions");
     }
