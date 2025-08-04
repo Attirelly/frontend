@@ -306,38 +306,45 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
                           <div className="space-y-2 max-h-40 overflow-y-auto pr-2 scrollbar-thin">
                             {filteredValues.length > 0 ? (
-                              filteredValues.map((facet) => (
-                                <label
-                                  key={facet.name}
-                                  className="flex items-center justify-between space-x-2 cursor-pointer"
-                                >
-                                  <div className="flex justify-between items-center w-full space-x-2">
-                                    <input
-                                      type="checkbox"
-                                      checked={facet.selected}
-                                      onChange={() =>
-                                        toggleFilter(facetName, facet.name)
-                                      }
-                                      className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
-                                    />
-                                    <div className="flex justify-between w-full">
-                                      <span className="text-sm text-[#1F2937]" style={{ fontWeight: 400 }}>
-                                        {facet.name}
-                                      </span>
-                                      <span className="text-sm text-[#666666] mr-10" style={{ fontWeight: 400 }}>
-                                        {fName === "Price Ranges"
-                                          ? facet.name === "Affordable"
-                                            ? "starts from 2000/-"
-                                            : facet.name === "Premium"
-                                              ? "starts from 5000/-"
-                                              : "starts from 25000/-"
-                                          : ""}
-                                      </span>
+                              // Sort the filteredValues array based on a predefined order
+                              filteredValues
+                                .slice() // Create a copy to avoid mutating the original array
+                                .sort((a, b) => {
+                                  // Define the order of price ranges
+                                  const order: { [key: string]: number } = { 'Affordable': 1, 'Premium': 2, 'Luxury': 3 };
+                                  // If it's the Price Ranges facet, use our custom order
+                                  if (fName === "Price Ranges") {
+                                    return (order[a.name] || 0) - (order[b.name] || 0);
+                                  }
+                                  // Otherwise maintain original order
+                                  return 0;
+                                })
+                                .map((facet) => (
+                                  <label key={facet.name} className="flex items-center justify-between cursor-pointer">
+                                    <div className="flex justify-between items-center w-full space-x-2">
+                                      <input
+                                        type="checkbox"
+                                        checked={facet.selected}
+                                        onChange={() => toggleFilter(facetName, facet.name)}
+                                        className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
+                                      />
+                                      <div className="flex justify-between w-full">
+                                        <span className="text-sm text-[#1F2937]" style={{ fontWeight: 400 }}>
+                                          {facet.name}
+                                        </span>
+                                        <span className="text-sm text-[#666666] mr-4" style={{ fontWeight: 400 }}>
+                                          {fName === "Price Ranges"
+                                            ? facet.name === "Affordable"
+                                              ? "starts from 2000/-"
+                                              : facet.name === "Premium"
+                                                ? "starts from 5000/-"
+                                                : "starts from 25000/-"
+                                            : ""}
+                                        </span>
+                                      </div>
                                     </div>
-
-                                  </div>
-                                </label>
-                              ))
+                                  </label>
+                                ))
                             ) : (
                               <div className="text-gray-400 text-sm italic">
                                 No options found
