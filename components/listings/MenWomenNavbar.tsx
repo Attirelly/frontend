@@ -32,7 +32,7 @@ export default function MenWomenNavbar() {
 
         const result: Category[] = menAndWomen.map((genderCat) => {
           const ethnicWear = genderCat.children.find(
-            (subcat1: SubCat1) => subcat1.name.toLowerCase() === "indian & ethnic wear"
+            (subcat1: SubCat1) => subcat1.name.toLowerCase() === "ethnic wear"
           );
 
           return {

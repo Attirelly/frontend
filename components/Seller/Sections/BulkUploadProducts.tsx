@@ -163,7 +163,7 @@ export default function BulkUploadPage() {
             options={categories.filter(
               (cat) =>
                 cat.parent_id === category &&
-                cat.name.toLowerCase() === "indian & ethnic wear"
+                cat.name.toLowerCase() === "ethnic wear"
             )}
           />
 
