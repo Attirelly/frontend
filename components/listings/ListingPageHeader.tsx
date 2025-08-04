@@ -127,7 +127,7 @@ export default function ListingPageHeader() {
       setStores([]);
       setProducts([]);
       setShowDropdown(false);
-      setShowStoreType(tempQuery === "");
+      setShowStoreType(true);
       return;
     }
 

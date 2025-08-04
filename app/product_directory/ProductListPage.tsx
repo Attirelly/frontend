@@ -86,9 +86,9 @@ export default function ProductListPage() {
                 </div>
                 <div>
                   <div className="flex justify-between items-center">
-                    {storeType?.id && (
-                      // <PriceRangeTabs storeTypeId={storeType.id} />
-                    )}
+                    {/* {storeType?.id && (
+                      <PriceRangeTabs storeTypeId={storeType.id} />
+                    )} */}
                     <SortByDropdown />
                   </div>
                   <div className="overflow-y-auto scrollbar-none h-498 scrollbar-thin">
