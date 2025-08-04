@@ -44,13 +44,27 @@ export default function ListingPageHeader() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // if (e.key === "Enter") {
+    //   e.preventDefault();
+    //   setQuery(tempQuery);
+    //   setShowDropdown(false);
+    //   setShowStoreType(false);
+    //   router.push("/product_directory?search=" + encodeURIComponent(tempQuery));
+    // }
+
     if (e.key === "Enter") {
-      e.preventDefault();
-      setQuery(tempQuery);
+    e.preventDefault();
+    const trimmed = tempQuery.trim();
+
+    // Only search if query is not empty
+    
+      setQuery(trimmed);
       setShowDropdown(false);
       setShowStoreType(false);
-      router.push("/product_directory?search=" + encodeURIComponent(tempQuery));
-    }
+      if(trimmed !== '' ) {
+        router.push("/product_directory?search=" + encodeURIComponent(trimmed));
+      }
+    
   };
 
   const handleSearchQuerySuggestion = async () => {
@@ -212,7 +226,7 @@ export default function ListingPageHeader() {
             <div
               className={`${rubik.className} text-[27px] text-[#373737] font-bold cursor-pointer`}
               // onClick={() => router.push("/homepage")}
-              onClick={() => router.push("/")}
+              onClick={() => {setQuery("") ; router.push("/")}}
               style={{ fontWeight: 700 }}
             >
               Attirelly
