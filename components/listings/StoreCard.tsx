@@ -64,7 +64,7 @@ export default function StoreCard({
           src={imageUrl}
           alt={storeName}
           fill
-          className="object-cover rounded-xl"
+          className="object-cover object-top rounded-xl"
           sizes="(max-width: 640px) 100vw, 
                             (max-width: 1024px) 50vw, 
                              33vw"

@@ -11,8 +11,14 @@ type DynamicFilterProps = {
   context: "store" | "product";
 };
 
+const priceRangeOrder = [
+  { name: "Affordable", text: "starts from 2000/-" },
+  { name: "Premium", text: "start from 5000/-" },
+  { name: "Luxury", text: "starts from 25000/-" },
+];
+
 const DynamicFilter = ({ context }: DynamicFilterProps) => {
-  const filterStore =  context === "store" ? useFilterStore() : useProductFilterStore();
+  const filterStore = context === "store" ? useFilterStore() : useProductFilterStore();
   const {
     facets,
     selectedFilters,
@@ -41,9 +47,9 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      console.log(context) ; 
-      console.log(localPriceRange) ; 
-      console.log(priceRange) ; 
+      console.log(context);
+      console.log(localPriceRange);
+      console.log(priceRange);
       if (
         context === "product" &&
         priceRange &&
@@ -51,18 +57,18 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           localPriceRange[1] !== priceRange[1])
       ) {
         setPriceRange(localPriceRange);
-      
+
       }
     }, 100); // 100ms d elay
 
     return () => clearTimeout(timeout);
   }, [localPriceRange]);
 
-    useEffect(() => {
+  useEffect(() => {
     const timeout = setTimeout(() => {
-      console.log(context) ; 
-      console.log(localPriceRange) ; 
-      console.log(priceRange) ; 
+      console.log(context);
+      console.log(localPriceRange);
+      console.log(priceRange);
       if (
         context === "product" &&
         priceRange &&
@@ -70,7 +76,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           localPriceRange[1] !== priceRange[1])
       ) {
         setLocalPriceRange(priceRange);
-      
+
       }
     }, 100); // 100ms d elay
 
@@ -187,8 +193,10 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
         {/* <hr className="my-4 border-[#D9D9D9]" /> */}
         <div className="flex flex-col gap-5">
           {Object.entries(facets).map(([facetName, values]) => {
-            const isOpen = openFacets[facetName];
             const fName = formatFacetName(facetName);
+            if (fName === "Store Types") return null;
+            const isOpen = openFacets[facetName];
+
             const searchValue = searchTerms[facetName]?.toLowerCase() || "";
             const filteredValues = values.filter((facet) =>
               facet.name.toLowerCase().includes(searchValue)
@@ -244,15 +252,15 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                   style={{
                                     position: "absolute",
                                     left: `${((localPriceRange[0] -
-                                        (priceBounds?.[0] || 0)) /
-                                        ((priceBounds?.[1] || 10000) -
-                                          (priceBounds?.[0] || 0))) *
+                                      (priceBounds?.[0] || 0)) /
+                                      ((priceBounds?.[1] || 10000) -
+                                        (priceBounds?.[0] || 0))) *
                                       100
                                       }%`,
                                     width: `${((localPriceRange[1] -
-                                        localPriceRange[0]) /
-                                        ((priceBounds?.[1] || 10000) -
-                                          (priceBounds?.[0] || 0))) *
+                                      localPriceRange[0]) /
+                                      ((priceBounds?.[1] || 10000) -
+                                        (priceBounds?.[0] || 0))) *
                                       100
                                       }%`,
                                     top: 0,
@@ -303,7 +311,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                   key={facet.name}
                                   className="flex items-center justify-between space-x-2 cursor-pointer"
                                 >
-                                  <div className="flex items-center space-x-2">
+                                  <div className="flex justify-between items-center w-full space-x-2">
                                     <input
                                       type="checkbox"
                                       checked={facet.selected}
@@ -312,26 +320,21 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                       }
                                       className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
                                     />
-                                    <div className="flex gap-4">
-                                      <span
-                                        className="text-sm text-[#1F2937]"
-                                        style={{ fontWeight: 400 }}
-                                      >
+                                    <div className="flex justify-between w-full">
+                                      <span className="text-sm text-[#1F2937]" style={{ fontWeight: 400 }}>
                                         {facet.name}
                                       </span>
-                                      {fName === "Price Ranges" && (
-                                        <span
-                                          className="text-sm text-[#666666]"
-                                          style={{ fontWeight: 400 }}
-                                        >
-                                          {facet.name === "Affordable"
+                                      <span className="text-sm text-[#666666]" style={{ fontWeight: 400 }}>
+                                        {fName === "Price Ranges"
+                                          ? facet.name === "Affordable"
                                             ? "starts from 2000/-"
                                             : facet.name === "Premium"
-                                              ? "start from 5000/-"
-                                              : "starts from 25000/-"}
-                                        </span>
-                                      )}
+                                              ? "starts from 5000/-"
+                                              : "starts from 25000/-"
+                                          : ""}
+                                      </span>
                                     </div>
+
                                   </div>
                                 </label>
                               ))

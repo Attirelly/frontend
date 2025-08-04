@@ -386,7 +386,7 @@ const ProductAttributes = () => {
     <div className="max-w-4xl mx-auto bg-white rounded-lg self-start">
       <h1 className="text-lg font-bold text-gray-900 mb-2">Attributes</h1>
       <p className="text-sm text-gray-500 mb-4 border-b border-gray-200">
-        This is for internal data, your customers won't see this.
+        Add attributes, so your products are easily discoverable by customers
       </p>
       <p className="text-base text-gray-600 mb-4">Product Attributes</p>
 

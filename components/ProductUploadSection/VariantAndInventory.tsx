@@ -135,7 +135,8 @@ export default function VariantAndInventory() {
   };
 
   const handleClickOutside = (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest(".category-dropdown-container")) {
+      if (!(e.target as HTMLElement).closest(".size-dropdown-container") &&
+          !(e.target as HTMLElement).closest(".color-dropdown-container")) {
         closeAllDropdowns();
       }
     };

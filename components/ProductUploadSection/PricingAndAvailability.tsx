@@ -53,9 +53,9 @@ export default function PricingAndAvailability() {
 
   return (
     <div className="max-w-4xl mx-auto bg-white  rounded-lg self-start">
-      <h1 className="text-lg font-bold mb-2">Pricing and availability</h1>
-      <p className="text-gray-600 mb-6">
-        Set how much it costs and when it's sold
+      <h1 className="text-lg font-bold mb-2">Pricing</h1>
+      <p className="text-gray-600 mb-6 border-b border-gray-200">
+        {/* Set how much it costs and when it's sold */}
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -143,7 +143,7 @@ export default function PricingAndAvailability() {
         </div>
         
         {/* Column 3 */}
-        {/* <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">
               Discount
@@ -152,17 +152,18 @@ export default function PricingAndAvailability() {
             
             <input
               type="number"
-              value={discount}
+              value={mrp && price ? Math.round(((mrp - price) / mrp) * 100) : ""}
               onChange={(e) => setDiscount(e.target.value === "" ? undefined : Number(e.target.value))}
-              className="w-full p-2"
-              placeholder="1000"
+              className="w-full p-2 disabled:cursor-not-allowed"
+              disabled
+              placeholder="100"
             />
             <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">
                 %
             </span>
           </div>
           </div>
-        </div> */}
+        </div>
 
         
       </div>

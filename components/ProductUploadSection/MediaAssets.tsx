@@ -457,7 +457,7 @@ export default function MediaAssets() {
         >
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <FiImage className="text-gray-400" />
-            Main Product Image
+            Thumbnail Image
             {isUploading.main && (
               <span className="text-xs text-blue-500 ml-2">Uploading...</span>
             )}
@@ -468,7 +468,7 @@ export default function MediaAssets() {
               <img
                 src={mainPreview}
                 alt="Main product preview"
-                className="w-full h-60 object-contain rounded-lg border border-gray-200"
+                className="object-contain rounded-lg border border-gray-200"
               />
               {!isUploading.main && (
                 <button
@@ -484,7 +484,7 @@ export default function MediaAssets() {
               )}
             </div>
           ) : (
-            <div className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 text-gray-400 text-sm">
+            <div className="w-60 h-70 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 text-gray-400 text-sm">
               <FiUpload className="text-2xl" />
               <span>Click to upload main product image</span>
               <span className="text-xs">SVG, PNG, JPG, WEBP (max 5MB)</span>

@@ -146,9 +146,9 @@ export default function BrandAndSeller() {
       <LoadingSpinner/>
     ) : (
       <div className="max-w-4xl mx-auto bg-white rounded-lg">
-        <h1 className="text-lg font-bold mb-2 ">Brand and seller info</h1>
+        <h1 className="text-lg font-bold mb-2 ">Product info</h1>
         <p className="text-gray-600 mb-6 border-b border-gray-200">
-          Provide who's selling and where it ships from
+          {/* Provide who's selling and where it ships from */}
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Column 1 */}

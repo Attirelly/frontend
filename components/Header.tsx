@@ -1,4 +1,5 @@
 // components/Header.tsx
+import { rubik } from '@/font';
 import React from 'react';
 
 interface HeaderProps {
@@ -9,7 +10,7 @@ interface HeaderProps {
 export default function Header({ title, actions }: HeaderProps) {
   return (
     <header className="flex justify-between items-center px-6 py-4 border-b bg-white">
-      <h1 className="text-xl font-bold text-black">{title}</h1>
+      <h1 className={`${rubik.className} text-[27px] font-bold text-[#373737]`} style={{fontWeight:700}}>{title}</h1>
       <div>{actions}</div>
     </header>
   );

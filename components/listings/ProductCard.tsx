@@ -88,7 +88,7 @@ export default function ProductCard({
         <div className={`${manrope.className}`} style={{ fontWeight: 500 }}>
           <h3 className="text-sm text-black mt-2 mb-1">{title}</h3>
           <p className="text-xs text-[#333333] mb-2 truncate" style={{ fontWeight: 300 }}>
-            {description}
+            {description? description.charAt(0).toUpperCase() + description.slice(1) : ''}
           </p>
           <div className="flex items-center gap-2 font-medium">
             <span className="text-sm text-black">₹{price.toLocaleString()}</span>

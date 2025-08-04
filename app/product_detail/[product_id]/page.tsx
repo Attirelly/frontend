@@ -300,21 +300,23 @@ Could you please confirm its availability and share more details.`;
                 By {storeBasicInfo?.store_name}
               </p>
               <h1 className="text-2xl text-[#7D7D7D] font-medium tracking-tighter mt-2">
-                {product?.title || ""}
-              </h1>
+  {product?.title
+    ? product.title.charAt(0).toUpperCase() + product.title.slice(1)
+    : ""}
+</h1>
 
               <div className="flex items-center gap-4 mt-4">
                 {selectedVariant?.mrp === selectedVariant?.price ? (
                   <p className="text-[27px] font-medium">
-                    ₹{selectedVariant?.mrp}
+                    ₹{selectedVariant?.mrp.toLocaleString()}
                   </p>
                 ) : (
                   <>
                     <p className="text-[27px] font-medium">
-                      ₹{selectedVariant?.price}
+                      ₹{selectedVariant?.price.toLocaleString()}
                     </p>
                     <p className="text-[22px] line-through text-gray-400">
-                      ₹{selectedVariant?.mrp}
+                      ₹{selectedVariant?.mrp.toLocaleString()}
                     </p>
                     <p className="text-[20px] font-semibold text-[#00AA63] tracking-normal">
                       {selectedVariant?.discount}% Off

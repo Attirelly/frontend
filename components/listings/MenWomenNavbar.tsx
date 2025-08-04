@@ -105,7 +105,7 @@ export default function MenWomenNavbar() {
                         <li key={subcat3.category_id}>
                           <Link
                             href={`/product_directory?category=${encodeURIComponent(subcat3.name)}`}
-                            className={`${manrope.className} text-sm text-[#464646] hover:text-black`}
+                            className={`${manrope.className} text-sm text-[#464646] hover:text-black whitespace-nowrap`}
                             style={{ fontWeight: 400 }}
                           >
                             {subcat3.name}
