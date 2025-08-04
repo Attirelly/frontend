@@ -42,7 +42,7 @@ export default function BrandAndSeller() {
   setFormState((prev) => ({
     ...prev,
     brand: {
-      brand_id: "f1e55528-246f-4c88-bc78-11d7e746ef7f",
+      brand_id: process.env.NEXT_PUBLIC_BRAND_ID || "",
       name: "Attirelly",
       logo_url: "",
     },
