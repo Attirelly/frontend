@@ -120,9 +120,9 @@ export default function ProductDetail() {
     try {
       const phoneNumber = storeBasicInfo?.whatsapp_number;
       const storeName = storeBasicInfo?.store_name || "Store"; // fallback if not available
-      const productName = product?.product_name || "";
-      const variant = selectedVariant?.sku || "";
-      const price = selectedVariant?.mrp || "";
+      const productName = product?.title || "";
+      const variant = "color : " +  selectedColor?.color_name + " " + "size : " + selectedSize?.size_name || "";
+      const price = "₹" + (selectedVariant?.mrp || "");
       const productLink = window.location.href; // current page link
 
       const message = `Hi ${storeName}, I'm interested in the following product listed on your Attirelly storepage:
@@ -262,7 +262,7 @@ Could you please confirm its availability and share more details.`;
                         src={src}
                         alt={`Thumbnail ${idx + 1}`}
                         fill
-                        className="object-cover"
+                        className="object-cover object-top"
                       />
                     </div>
                   ))}
