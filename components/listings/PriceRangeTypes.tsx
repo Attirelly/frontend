@@ -59,7 +59,7 @@ export default function PriceRangeTabs({ storeTypeId }: PriceRangeProps) {
         //   setPriceRangeType(storeRanges[0]);
         // }
       } catch (error) {
-        toast.error("Failed to fetch price ranges");
+        console.log("Failed to fetch price ranges");
       } finally {
         setLoading(false);
       }
