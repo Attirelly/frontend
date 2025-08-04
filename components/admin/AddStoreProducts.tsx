@@ -255,7 +255,7 @@ export default function AddStoreProduct() {
   };
 
   const storeOptions = stores.map((store) => ({
-    label: `${store.store_name} : ${store.city.name}, ${store.area.name} (ID: ${store.store_id.slice(0, 6)})`,
+    label: `${store.store_name} : ${store.city?.name}, ${store.area?.name} (ID: ${store.store_id.slice(0, 6)})`,
     value: store.store_id,
   }));
 
