@@ -65,7 +65,7 @@ export default function ListingPageHeader() {
         router.push("/product_directory?search=" + encodeURIComponent(trimmed));
       }
     
-  };
+  }};
 
   const handleSearchQuerySuggestion = async () => {
     try {
@@ -470,5 +470,4 @@ export default function ListingPageHeader() {
     </div>
   );
 }
-
 
