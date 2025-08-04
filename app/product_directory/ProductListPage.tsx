@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 
 const STORE_TYPE_OPTIONS = [
-  { store_type: "Retail Brand", id: "8e8853ef-4c41-4c79-8e3c-654c35dce5a7" },
-  { store_type: "Designer Label", id: "1626d56a-5750-455a-a681-004c8a978718" },
+  { store_type: "Retail Brand", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
+  { store_type: "Designer Label", id: process.env.NEXT_PUBLIC_DESIGNER_STORE_TYPE },
 ];
 
 export default function ProductListPage() {
