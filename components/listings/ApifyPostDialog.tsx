@@ -45,7 +45,7 @@ export default function ApifyPostDialog({ isOpen, post, onClose, onNext, onPrev,
             ) : post.media_type === 'Video' ? (
               <video
                 src={post.media_urls[0].media_url}
-                controls
+                // controls
                 autoPlay
                 muted
                 className="max-w-full max-h-full object-contain"
@@ -71,7 +71,7 @@ export default function ApifyPostDialog({ isOpen, post, onClose, onNext, onPrev,
             </div>
 
             {/* <hr className='border border-gray-300 '/> */}
-            <span className='text-sm text-black' style={{ fontWeight: 400 }}>{post.caption || 'No Caption Found'}</span>
+            <span className='text-sm text-black' style={{ fontWeight: 400 }}>{post.caption || ''}</span>
             {/* <div className='text-sm flex gap-3'>
               <div className='flex flex-col items-center'>
                 <img

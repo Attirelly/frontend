@@ -5,6 +5,11 @@ import { instaMediaType } from '@/types/SellerTypes';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { manrope, roboto } from '@/font';
+import dynamic from "next/dynamic";
+
+// const CustomVideoPlayer = dynamic(() => import("../ui/CustomVideoPlayer"), {
+//   ssr: false,
+// });
 
 type Props = {
   isOpen: boolean;
@@ -39,7 +44,8 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
       >
         <div className='grid grid-cols-[1.5fr_1fr] rounded-2xl overflow-hidden'>
           {post.media_type === 'VIDEO' ? (
-            <video
+          //  <CustomVideoPlayer src={post.media_url} />
+           <video
               src={post.media_url}
               controls
               autoPlay
@@ -64,7 +70,7 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
             </div>
 
             {/* <hr className='border border-gray-300 '/> */}
-            <span className='text-sm text-black' style={{ fontWeight: 400 }}>{post.caption || 'No Caption Found'}</span>
+            <span className='text-sm text-black' style={{ fontWeight: 400 }}>{post.caption || ''}</span>
             {/* <div className='text-sm flex gap-3'>
               <div className='flex flex-col items-center'>
                 <img

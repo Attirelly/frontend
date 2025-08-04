@@ -38,6 +38,7 @@ export default function StoreInfoPage({
   phone_number,
 }: StoreInfoType) {
   const [copied, setCopied] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
 
   const handleLocationRoute = () => {
     if (typeof locationUrl === "string" && locationUrl) {
@@ -47,6 +48,7 @@ export default function StoreInfoPage({
 
   const handlePhoneClick = () => {
     window.open(`tel:${phone_number}`, "_blank", "noopener,noreferrer");
+    setShowPhone(!showPhone);
   };
 
   const handleCopyUrl = async () => {
@@ -112,16 +114,23 @@ export default function StoreInfoPage({
           </h2>
           <div className="flex gap-2.5 flex-shrink-0">
             <button
-              className="flex border border-black rounded-full items-center justify-center px-4"
-              onClick={handlePhoneClick}
-            >
-              <Image
-                src="/ListingPageHeader/phone.svg"
-                alt="call"
-                width={18}
-                height={18}
-              />
-            </button>
+  className={`flex border border-black rounded-full items-center justify-center gap-2 px-4 transition-all duration-300 ${
+    showPhone ? "bg-gray-100" : ""
+  }`}
+  onClick={handlePhoneClick}
+>
+  <Image
+    src="/ListingPageHeader/phone.svg"
+    alt="call"
+    width={18}
+    height={18}
+  />
+  {showPhone && (
+    <span className="text-black text-sm" style={{ fontWeight: 400 }}>
+     {phone_number}
+    </span>
+  )}
+</button>
             <button
               className="flex border border-black rounded-full items-center justify-center gap-2 px-4"
               onClick={handleCopyUrl}

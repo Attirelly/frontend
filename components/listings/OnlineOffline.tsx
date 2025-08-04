@@ -1,10 +1,77 @@
+// 'use client';
+
+// import { useHeaderStore } from '@/store/listing_header_store';
+// import React, { useEffect, useState } from 'react';
+// import { event } from '@/lib/gtag';
+// import { manrope } from '@/font';
+// import Image from 'next/image';
+
+// interface TwoOptionToggleProps {
+//   options: [string, string];
+//   defaultValue: string;
+//   context: string;
+// }
+
+// export default function TwoOptionToggle({ options, defaultValue, context }: TwoOptionToggleProps) {
+//   const [selected, setSelected] = useState<string>(defaultValue);
+//   const { setDeliveryType } = useHeaderStore();
+
+//   useEffect(() => {
+//     if (context === 'store') {
+//       setDeliveryType(selected);
+//       event({
+//         action: 'Store Mode',
+//         params: {
+//           value: selected,
+//         },
+//       });
+//     }
+//   }, [selected, context, setDeliveryType]);
+//   // helper to get image path
+//   const getImageForOption = (option: string, isSelected: boolean) => {
+//     const lower = option.toLowerCase().replace(/\s+/g, '_'); // e.g. "in store shopping" -> "in_store_shopping"
+//     return isSelected
+//       ? `/ListingPageHeader/${lower}_white.svg`
+//       : `/ListingPageHeader/${lower}_gray.svg`;
+//   };
+
+//   return (
+//     <div className="flex space-x-2">
+//       {options.map((option) => {
+//         const isSelected = selected === option;
+//         return (
+//           <button
+//             key={option}
+//             onClick={() => setSelected(option)}
+//             className={`${manrope.className} flex items-center space-x-2 px-4 py-2 rounded-full border transition ${
+//               isSelected
+//                 ? 'bg-black text-white border-black'
+//                 : 'bg-white text-[#878787] border-[#878787] hover:border-black hover:text-black'
+//             }`}
+//             style={{ fontWeight: 500 }}
+//           >
+//             <div className="relative w-5 h-5">
+//               <Image
+//                 src={getImageForOption(option, isSelected)}
+//                 alt={option}
+//                 fill
+//                 style={{ objectFit: 'contain' }}
+//               />
+//             </div>
+//             <span>{option}</span>
+//           </button>
+//         );
+//       })}
+//     </div>
+//   );
+// }
+
 'use client';
 
 import { useHeaderStore } from '@/store/listing_header_store';
 import React, { useEffect, useState } from 'react';
 import { event } from '@/lib/gtag';
 import { manrope } from '@/font';
-import Image from 'next/image';
 
 interface TwoOptionToggleProps {
   options: [string, string];
@@ -27,18 +94,17 @@ export default function TwoOptionToggle({ options, defaultValue, context }: TwoO
       });
     }
   }, [selected, context, setDeliveryType]);
-  // helper to get image path
-  const getImageForOption = (option: string, isSelected: boolean) => {
-    const lower = option.toLowerCase().replace(/\s+/g, '_'); // e.g. "in store shopping" -> "in_store_shopping"
-    return isSelected
-      ? `/ListingPageHeader/${lower}_white.svg`
-      : `/ListingPageHeader/${lower}_gray.svg`;
+
+  const getIconPath = (option: string) => {
+    return `/ListingPageHeader/${option.toLowerCase().replace(/\s+/g, '_')}.svg`;
   };
 
   return (
     <div className="flex space-x-2">
       {options.map((option) => {
         const isSelected = selected === option;
+        const iconPath = getIconPath(option);
+
         return (
           <button
             key={option}
@@ -50,12 +116,19 @@ export default function TwoOptionToggle({ options, defaultValue, context }: TwoO
             }`}
             style={{ fontWeight: 500 }}
           >
-            <div className="relative w-5 h-5">
-              <Image
-                src={getImageForOption(option, isSelected)}
+            <div className="w-5 h-5 flex items-center justify-center">
+              <img
+                src={iconPath}
                 alt={option}
-                fill
-                style={{ objectFit: 'contain' }}
+                className={`w-full h-full object-contain ${
+                  isSelected 
+                    ? 'filter brightness-0 invert' // Makes SVG white
+                    : 'opacity-80' // Makes SVG slightly transparent (grayish)
+                }`}
+                style={{
+                  // Fallback for SVG visibility
+                  filter: isSelected ? 'brightness(0) invert(1)' : 'opacity(0.8)'
+                }}
               />
             </div>
             <span>{option}</span>

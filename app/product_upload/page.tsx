@@ -18,9 +18,9 @@ import { useEffect } from "react";
 
 const sectionComponents = [
   Blank,
-  BrandAndSeller,
   CategorySelector,
   ProductAttributes,
+  BrandAndSeller,
   PricingAndAvailability,
   VariantAndInventory,
   MediaAssets,
