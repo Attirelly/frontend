@@ -69,7 +69,7 @@ export default function ProductListPage() {
         <div className="mt-10">
           <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
-            defaultValue={matchedStoreType || "Retail Brand"} // use fuzzy match or fallback
+            defaultValue={matchedStoreType || "Retail Store"} // use fuzzy match or fallback
             context="product"
           />
         </div>
