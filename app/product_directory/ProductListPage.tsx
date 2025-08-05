@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 
 const STORE_TYPE_OPTIONS = [
-  { store_type: "Retail Brand", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
+  { store_type: "Retail Store", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
   { store_type: "Designer Label", id: process.env.NEXT_PUBLIC_DESIGNER_STORE_TYPE },
 ];
 
