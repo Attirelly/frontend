@@ -1,6 +1,4 @@
 "use client";
-
-
 import { api } from "@/lib/axios";
 import StoreCard from "./StoreCard";
 import { useHeaderStore } from "@/store/listing_header_store";
@@ -11,6 +9,9 @@ import { event } from "@/lib/gtag";
 import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";
 
 export default function StoreContainerPage() {
+
+
+
   const { facets, setFacets, getSelectedFilters, selectedFilters , activeFacet} =
     useFilterStore();
   const { city, query, storeType, deliveryType } = useHeaderStore();
@@ -100,7 +101,7 @@ export default function StoreContainerPage() {
     // if (currentPage === 0) {
     //   setFacets(data.facets);
     // }
-
+ 
     const storeCards: StoreCardType[] = data.hits.map((sc: any) => ({
       id: sc.id,
       imageUrl: sc.profile_image || "/OnboardingSections/qr.png",

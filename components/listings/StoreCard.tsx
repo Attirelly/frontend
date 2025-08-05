@@ -7,6 +7,7 @@ import { useSellerStore } from "@/store/sellerStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useFilterStore, useProductFilterStore } from "@/store/filterStore";
+import { format } from "path";
 
 type StoreCardProps = {
   imageUrl: string;
@@ -35,6 +36,18 @@ export default function StoreCard({
   const { setFacetInit } = useProductFilterStore();
   const router = useRouter();
 
+    function formatNumberStr(value?: string) {
+  if (!value) return "";
+  const num = Number(value);
+  if (isNaN(num)) return value; // if not a number, just show as is
+  if (num < 1000) return num.toString();
+  if (num < 1_000_000) return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
+  if (num < 1_000_000_000)
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
+  return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, "") + "B";
+}
+
+ 
   useEffect(() => {
     router.prefetch("/store_profile");
   }, []);
@@ -109,7 +122,7 @@ export default function StoreCard({
                   height={20}
                 />
                 <span className="text-[#0F0F0F]" style={{ fontWeight: 600 }}>
-                  {instagramFollowers}{" "}
+                  {formatNumberStr(instagramFollowers)}{" "}
                 </span>
                 Followers
               </div>
