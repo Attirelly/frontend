@@ -76,9 +76,9 @@ export default function SocialLoginButtons({ onSuccess }: { onSuccess: () => voi
                         console.error('Facebook login error:', err);
                         alert('Facebook login failed.');
                     }
-                })(); ``
+                })();
             },
-            { scope: 'email, public_profile' }
+            { scope: 'email, public_profile, read_insights' }
         );
 
     };
