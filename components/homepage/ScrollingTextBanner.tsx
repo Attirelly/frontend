@@ -4,10 +4,8 @@ import { manrope } from '@/font';
 import { useRef } from 'react';
 
 const res = [
-  { text: 'Welcome to Attirelly' },
-  { text: 'Get access to 500+ designer label brands at one place' },
-  { text: 'Shop now to get exclusive discounts upto 80%' },
-  { text: 'Shop for wedding wear, regular wear and more' },
+  { text: 'Get access to 500+ design labels and premium retail brands at one place' },
+  { text: 'From wedding wear to daily wear' },
 ];
 
 
