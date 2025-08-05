@@ -6,6 +6,7 @@ import Image from "next/image";
 import { playfair_display, manrope } from "@/font";
 import DynamicFilterSkeleton from "./skeleton/DynamicFilterSkeleton";
 import { Range } from "react-range";
+import { useHeaderStore } from "@/store/listing_header_store";
 
 type DynamicFilterProps = {
   context: "store" | "product";
@@ -13,12 +14,38 @@ type DynamicFilterProps = {
 
 const priceRangeOrder = [
   { name: "Affordable", text: "starts from 2000/-" },
-  { name: "Premium", text: "start from 5000/-" },
-  { name: "Luxury", text: "starts from 25000/-" },
+  { name: "Premium", text: "start from 20000/-" },
+  { name: "Luxury", text: "starts from 50000/-" },
 ];
 
+const priceStartMap: { [storeType: string]: { [priceRange: string]: string } } =
+  {
+    "Designer Label": {
+      Affordable: "starts from 2000/-",
+      Premium: "starts from 20000/-",
+      Luxury: "starts from 50000/-",
+    },
+    "Retail Store": {
+      Affordable: "starts from 500/-",
+      Premium: "starts from 2500/-",
+      Luxury: "starts from 25000/-",
+    },
+    Tailor: {
+      Affordable: "starts from 500/-",
+      Premium: "starts from 1500/-",
+      Luxury: "starts from 5000/-",
+    },
+    Stylist: {
+      Affordable: "starts from 500/-",
+      Premium: "starts from 2000/-",
+      Luxury: "starts from 5000/-",
+    },
+    // Add other store types here...
+  };
+
 const DynamicFilter = ({ context }: DynamicFilterProps) => {
-  const filterStore = context === "store" ? useFilterStore() : useProductFilterStore();
+  const filterStore =
+    context === "store" ? useFilterStore() : useProductFilterStore();
   const {
     facets,
     selectedFilters,
@@ -26,15 +53,16 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     resetFilters,
     setPriceRange,
     priceRange,
-    priceBounds
+    priceBounds,
   } = filterStore;
+  const { storeType } = useHeaderStore();
 
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [openFacets, setOpenFacets] = useState<Record<string, boolean>>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([
-    0, 0
+    0, 0,
   ]);
 
   useEffect(() => {
@@ -42,8 +70,6 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
       setLocalPriceRange(priceBounds);
     }
   }, [context, priceBounds]);
-
-
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -57,7 +83,6 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           localPriceRange[1] !== priceRange[1])
       ) {
         setPriceRange(localPriceRange);
-
       }
     }, 100); // 100ms d elay
 
@@ -76,7 +101,6 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
           localPriceRange[1] !== priceRange[1])
       ) {
         setLocalPriceRange(priceRange);
-
       }
     }, 100); // 100ms d elay
 
@@ -170,7 +194,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
               values.map((value) => (
                 <div
                   key={`${key}-${value}`}
-                  className="flex items-center gap-1 px-2 py-1 border border-[1.25px] border-[#858585] text-sm text-gray-800 rounded-full"
+                  className="flex items-center gap-1 px-2 py-1 border-[1.25px] border-[#858585] text-sm text-gray-800 rounded-full"
                 >
                   <span
                     className={`${manrope.className} text-sm`}
@@ -220,8 +244,9 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                       alt="toggle"
                       width={20}
                       height={20}
-                      className={`transition-transform ${isOpen ? "rotate-180" : ""
-                        }`}
+                      className={`transition-transform ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
                     />
                   </div>
 
@@ -251,18 +276,20 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                   className="h-1 bg-black rounded-full"
                                   style={{
                                     position: "absolute",
-                                    left: `${((localPriceRange[0] -
-                                      (priceBounds?.[0] || 0)) /
-                                      ((priceBounds?.[1] || 10000) -
-                                        (priceBounds?.[0] || 0))) *
+                                    left: `${
+                                      ((localPriceRange[0] -
+                                        (priceBounds?.[0] || 0)) /
+                                        ((priceBounds?.[1] || 10000) -
+                                          (priceBounds?.[0] || 0))) *
                                       100
-                                      }%`,
-                                    width: `${((localPriceRange[1] -
-                                      localPriceRange[0]) /
-                                      ((priceBounds?.[1] || 10000) -
-                                        (priceBounds?.[0] || 0))) *
+                                    }%`,
+                                    width: `${
+                                      ((localPriceRange[1] -
+                                        localPriceRange[0]) /
+                                        ((priceBounds?.[1] || 10000) -
+                                          (priceBounds?.[0] || 0))) *
                                       100
-                                      }%`,
+                                    }%`,
                                     top: 0,
                                     bottom: 0,
                                   }}
@@ -290,7 +317,9 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                 type="text"
                                 placeholder="Search"
                                 value={searchTerms[facetName] || ""}
-                                onChange={(e) => handleSearchChange(facetName, e.target.value)}
+                                onChange={(e) =>
+                                  handleSearchChange(facetName, e.target.value)
+                                }
                                 className="w-full px-2 py-1 text-sm text-[#AFAFAF] focus:outline-none focus:border-none"
                                 style={{ fontWeight: 400 }}
                               />
@@ -311,34 +340,50 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                 .slice() // Create a copy to avoid mutating the original array
                                 .sort((a, b) => {
                                   // Define the order of price ranges
-                                  const order: { [key: string]: number } = { 'Affordable': 1, 'Premium': 2, 'Luxury': 3 };
+                                  const order: { [key: string]: number } = {
+                                    Affordable: 1,
+                                    Premium: 2,
+                                    Luxury: 3,
+                                  };
                                   // If it's the Price Ranges facet, use our custom order
                                   if (fName === "Price Ranges") {
-                                    return (order[a.name] || 0) - (order[b.name] || 0);
+                                    return (
+                                      (order[a.name] || 0) -
+                                      (order[b.name] || 0)
+                                    );
                                   }
                                   // Otherwise maintain original order
                                   return 0;
                                 })
                                 .map((facet) => (
-                                  <label key={facet.name} className="flex items-center justify-between cursor-pointer">
+                                  <label
+                                    key={facet.name}
+                                    className="flex items-center justify-between cursor-pointer"
+                                  >
                                     <div className="flex justify-between items-center w-full space-x-2">
                                       <input
                                         type="checkbox"
                                         checked={facet.selected}
-                                        onChange={() => toggleFilter(facetName, facet.name)}
+                                        onChange={() =>
+                                          toggleFilter(facetName, facet.name)
+                                        }
                                         className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
                                       />
                                       <div className="flex justify-between w-full">
-                                        <span className="text-sm text-[#1F2937]" style={{ fontWeight: 400 }}>
+                                        <span
+                                          className="text-sm text-[#1F2937]"
+                                          style={{ fontWeight: 400 }}
+                                        >
                                           {facet.name}
                                         </span>
-                                        <span className="text-sm text-[#666666] mr-4" style={{ fontWeight: 400 }}>
+                                        <span
+                                          className="text-sm text-[#666666] mr-4"
+                                          style={{ fontWeight: 400 }}
+                                        >
                                           {fName === "Price Ranges"
-                                            ? facet.name === "Affordable"
-                                              ? "starts from 2000/-"
-                                              : facet.name === "Premium"
-                                                ? "starts from 5000/-"
-                                                : "starts from 25000/-"
+                                            ? storeType?.store_type && priceStartMap[storeType.store_type]?.[facet.name] ? 
+                                              priceStartMap[storeType.store_type][facet.name]
+                                              : ""
                                             : ""}
                                         </span>
                                       </div>
