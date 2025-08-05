@@ -1,8 +1,9 @@
+import { manrope } from "@/font";
 import Image from "next/image";
 
 export default function NoResultFound() {
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className={`${manrope.className} text-black flex flex-col items-center justify-center h-full`} style={{fontWeight: 500}}>
       <Image
         src="/ListingPageHeader/empty_cupboard.svg"
         alt="No Results Found"
@@ -10,8 +11,8 @@ export default function NoResultFound() {
         height={327}
         className="mb-4"
       />
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">No Results Found</h2>
-      <p className="text-base text-gray-600">Try adjusting your search or filter options.</p>
+      <h2 className="text-2xl">Sorry Nothing to show here</h2>
+      <p className="text-xs text-[#333333]" style={{fontWeight:400}}>Probably a wrong search or typo, please try again.</p>
     </div>
   );
 }
