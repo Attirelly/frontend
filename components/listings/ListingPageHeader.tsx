@@ -26,6 +26,7 @@ export default function ListingPageHeader() {
     setStoreType,
     setSearchFocus,
     searchFocus,
+    storeType
   } = useHeaderStore();
   const { user } = useAuthStore();
   const [signIn, setSignIn] = useState(false);
