@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 
 const STORE_TYPE_OPTIONS = [
-  { store_type: "Retail Brand", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
+  { store_type: "Retail Store", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
   { store_type: "Designer Label", id: process.env.NEXT_PUBLIC_DESIGNER_STORE_TYPE },
 ];
 
@@ -69,7 +69,7 @@ export default function ProductListPage() {
         <div className="mt-10">
           <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
-            defaultValue={matchedStoreType || "Retail Brand"} // use fuzzy match or fallback
+            defaultValue={matchedStoreType || "Retail Store"} // use fuzzy match or fallback
             context="product"
           />
         </div>

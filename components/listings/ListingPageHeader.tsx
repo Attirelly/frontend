@@ -468,7 +468,7 @@ export default function ListingPageHeader() {
         visible={showStoreType}
         onClose={() => setShowStoreType(false)}
       />
-      {signIn && <CustomerSignIn onClose={() => setSignIn(false)} />}
+      {signIn && <CustomerSignIn onClose={() => setSignIn(false)} onSuccess={() => setSignIn(false)} />}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import Testimonials from "@/components/SellerLanding/Testimonials";
 import FAQ from "@/components/SellerLanding/FAQ";
 import Footer from "@/components/SellerLanding/Footer";
 import Header from "@/components/Header";
+console.log("hi")
 
 export default function SellerOnboardingPage() {
   return (
