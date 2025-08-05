@@ -62,7 +62,7 @@ export default function ProductListPage() {
           className={`${manrope.className} text-[#101010] mt-4 text-[32px]`}
           style={{ fontWeight: 500 }}
         >
-          {results > 0 ? query : "Sorry, no result found for your search"}
+          {results > 0 ?`Showing Results for "${query}"` : "Sorry, no result found for your search"}
         </span>
 
         {/* Store Type Selection */}
