@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function NoResultFound() {
   return (
-    <div className={`${manrope.className} text-black flex flex-col items-center justify-center h-full`} style={{fontWeight: 500}}>
+    <div className={`${manrope.className} text-black flex flex-col items-center justify-start h-full`} style={{fontWeight: 500}}>
       <Image
         src="/ListingPageHeader/empty_cupboard.svg"
         alt="No Results Found"
