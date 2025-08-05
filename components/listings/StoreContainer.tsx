@@ -25,6 +25,7 @@ export default function StoreContainerPage() {
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
   const [scrollMilestones, setScrollMilestones] = useState<number[]>([]);
+  const [NoResultFound, setNoResultFound] = useState(false);
 
   const buildFacetFilters = (
   facets: Record<string, string[]>,
@@ -90,6 +91,13 @@ export default function StoreContainerPage() {
       },
     });
     const data = res.data;
+    if (data.hits.length === 0 && currentPage === 0) {
+      setNoResultFound(true);
+      setLoading(false);
+      return;
+    } else {
+      setNoResultFound(false);
+    }
     
     // setFacets(data.facets);
 
