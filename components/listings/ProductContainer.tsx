@@ -6,6 +6,7 @@ import { useProductFilterStore } from "@/store/filterStore";
 import { ProductCardType } from "@/types/ProductTypes";
 import { useHeaderStore } from "@/store/listing_header_store";
 import ProductGridSkeleton from "./skeleton/catalogue/ProductGridSkeleton";
+import NoResultFound from "./NoResultFound";
 
 interface ProductContainerProps {
   storeId?: string;
@@ -41,6 +42,7 @@ export default function ProductContainer({
   const loaderRef = useRef<HTMLDivElement>(null);
   const prevStoreTypeRef = useRef<string>("");
   const [skipFilters, setSkipFilters] = useState(false);
+  const [noResultFound, setNoResultFound] = useState(false);
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
@@ -96,6 +98,13 @@ export default function ProductContainer({
       );
 
       const data = res.data;
+      if (data.hits.length === 0 && currentPage === 0) {
+      setNoResultFound(true);
+      setLoading(false);
+      return;
+    } else {
+      setNoResultFound(false);
+    }
 
       setResults(data.hits.length);
 
@@ -216,7 +225,9 @@ export default function ProductContainer({
     };
   }, [loaderRef.current, hasMore, loading]);
 
-  return (
+  return noResultFound ? (
+    <NoResultFound />
+  ) : (
     <>
       {loading && products.length === 0 ? (
         <ProductGridSkeleton />

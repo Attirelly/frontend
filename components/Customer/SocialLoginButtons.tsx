@@ -78,7 +78,7 @@ export default function SocialLoginButtons({ onSuccess }: { onSuccess: () => voi
                     }
                 })();
             },
-            { scope: 'email, public_profile, read_insights' }
+            { scope: 'email, public_profile, commerce_account_read_settings' }
         );
 
     };

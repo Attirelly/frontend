@@ -7,6 +7,7 @@ import { BrandType, City, StoreCardType } from "@/types/SellerTypes";
 import { useFilterStore } from "@/store/filterStore";
 import { event } from "@/lib/gtag";
 import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";
+import NoResultFound from "./NoResultFound";
 
 export default function StoreContainerPage() {
 
@@ -25,6 +26,7 @@ export default function StoreContainerPage() {
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
   const [scrollMilestones, setScrollMilestones] = useState<number[]>([]);
+  const [noResultFound, setNoResultFound] = useState(false);
 
   const buildFacetFilters = (
   facets: Record<string, string[]>,
@@ -90,6 +92,13 @@ export default function StoreContainerPage() {
       },
     });
     const data = res.data;
+    if (data.hits.length === 0 && currentPage === 0) {
+      setNoResultFound(true);
+      setLoading(false);
+      return;
+    } else {
+      setNoResultFound(false);
+    }
     
     // setFacets(data.facets);
 
@@ -212,25 +221,25 @@ export default function StoreContainerPage() {
       </div>
     );
   }
-  return (
-    <div className="flex flex-col gap-4">
-      {stores.map((store, index) => (
-        <StoreCard
-          key={`${store.id}-${index}`}
-          imageUrl={store.imageUrl}
-          storeName={store.storeName}
-          location={store.location}
-          storeTypes={store.storeTypes}
-          priceRanges={store.priceRanges}
-          bestSelling={store.bestSelling}
-          discount={store.discount}
-          instagramFollowers={store.instagramFollowers}
-          id={store.id}
-        />
-      ))}
-      {hasMore && (
-      <div ref={loaderRef} className="h-10" />
-    )}
-    </div>
-  );
+  return noResultFound ? (
+  <NoResultFound />
+) : (
+  <div className="flex flex-col gap-4">
+    {stores.map((store, index) => (
+      <StoreCard
+        key={`${store.id}-${index}`}
+        imageUrl={store.imageUrl}
+        storeName={store.storeName}
+        location={store.location}
+        storeTypes={store.storeTypes}
+        priceRanges={store.priceRanges}
+        bestSelling={store.bestSelling}
+        discount={store.discount}
+        instagramFollowers={store.instagramFollowers}
+        id={store.id}
+      />
+    ))}
+    {hasMore && <div ref={loaderRef} className="h-10" />}
+  </div>
+);
 }
