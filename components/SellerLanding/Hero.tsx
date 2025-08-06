@@ -1,37 +1,48 @@
-'use client';
-import React from "react";
-import { useRouter } from 'next/navigation';
-import Link from "next/link";
+"use client";
 
+import { manrope } from "@/font";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
-  const router = useRouter();
   return (
-    <section className="relative bg-cover bg-center bg-no-repeat min-h-[90vh] flex items-center justify-center px-6"
-      style={{ backgroundImage: "url('/OnboardingSections/user_bg.png')" }}
-    >
-      {/* <div className="absolute inset-0 bg-orange- opacity-60 z-0" /> */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-white/70 rounded-lg pointer-events-none" />
-      <div className="flex flex-col items-center space-y-4 ">
-        <h1 className="text-5xl text-center  font-bold text-white mb-4">
-          Partner with Attirely <br /> and grow your business
-        </h1>
-        <p className="mb-6 text-lg text-white font-bold">
-          Become exclusive partners in select cities
+    <div className={`${manrope.className} relative w-full h-[565px]`}>
+      <Image
+        src="/SellerLanding/hero_bg_gradiant.svg"
+        alt="Gray Gradiant"
+        fill
+        className="object-cover"
+      />
+      <div className="absolute flex items-center justify-between inset-0">
+        <p className="flex flex-col gap-4 ml-[90px]">
+          <span className="text-[18px] text-white" style={{ fontWeight: 600 }}>
+            SELL EVERYWHERE
+          </span>
+          <div
+            className="flex flex-col text-[32px] justify-center"
+            style={{ fontWeight: 800 }}
+          >
+            <div className="flex gap-2">
+              <span className="text-[#959595]">Find new customers,</span>
+              <span className="text-white">sell your products</span>
+            </div>
+            <div className="flex gap-2">
+              <span className="text-white">online & offline</span>
+              <span className="text-[#959595]">through Attirelly</span>
+            </div>
+          </div>
+          <button className="text-[18px] text-white w-fit bg-black rounded px-[28px] py-[10px]">
+Get Free Credits
+          </button>
         </p>
-        <div className="flex gap-10 mt-6 flex-wrap">
-          <Link className="w-40 bg-black text-white px-6 py-3 rounded-lg font-medium "
-            href="/seller_signup">
-            Register
-          </Link>
-          <Link className="w-40 border border-white bg-none text-white px-6 py-3 rounded-lg font-medium"
-            href="/seller_signin">
-            Login
-          </Link>
+
+        <div>
+          <Image src="/SellerLanding/smallest.png" alt='Stylist shop' width={135} height={135} className="absolute w-[135px] h-[135px] object-cover rounded-full border border-white border-[5px] top-[40px] right-[418px]"/>
+          
+          <Image src="/SellerLanding/largest.png" alt='Stylist shop' width={440} height={440} className="absolute w-[440px] h-[440px] object-cover rounded-full border border-white border-[5px] top-[94px] right-[41px]"/>
+<Image src="/SellerLanding/second_largest.png" alt='Stylist shop' width={168} height={168} className="absolute w-[168px] h-[168px] object-cover rounded-full border border-white border-[5px] top-[230px] right-[454px]"/>
         </div>
-
-
       </div>
-    </section>
+    </div>
   );
 }

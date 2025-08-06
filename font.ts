@@ -1,4 +1,4 @@
-import { Manrope, Rubik , Playfair_Display, Roboto} from 'next/font/google';
+import { Manrope, Rubik , Playfair_Display, Roboto, Rosario} from 'next/font/google';
 
 export const manrope = Manrope({
   subsets: ['latin'],
@@ -19,6 +19,11 @@ export const playfair_display = Playfair_Display({
 });
 
 export const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
+export const rosario = Rosario({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   display: 'swap',
