@@ -111,10 +111,20 @@ export default function SellerSignup() {
                 try {
                     // here we will create jwt tokens
                     await api.post("/users/login", { contact_number: phone });
+
+                    try {
+                        const response = await api.get('/stores/stores_by_section', { params: { section: currSection } });
+                        const curr_section = response.data;
+                        setCurrSection(curr_section);
+                    } catch (error) {
+                        toast.error("Please complete onboarding first!")
+                        router.push('/seller_signup/sellerOnboarding')
+                    }
+                    
+                    
                     if (currSection < 5) {
                         toast.error("Please complete onboarding first!")
                         try {
-                            await api.post("/users/login", { contact_number: phone });
                             router.push('/seller_signup/sellerOnboarding')
                         } catch (error) {
                             toast.error("failed to login");
@@ -122,10 +132,9 @@ export default function SellerSignup() {
                     }
                     else {
                         router.push('/seller_dashboard');
-                        toast.success("logged in successfully");
+                        toast.success("Logged in successfully");
                     }
-                }
-                catch (error) {
+                } catch (error) {
                     console.error('Error fetching stores by section:', error);
                 }
             }
@@ -164,9 +173,6 @@ export default function SellerSignup() {
                 const response = await api.get('/users/user', { params: { phone_number: phone } });
                 
                 const user_data = response.data;
-                const curr_section_res = await api.get('/stores/get_store_section', { params: { user_id: user_data.id } })
-                console.log(curr_section_res)
-                setCurrSection(curr_section_res.data);
                 setSellerId(user_data.id);
                 setSellerName(user_data.name);
                 setSellerEmail(user_data.email);
@@ -188,7 +194,8 @@ export default function SellerSignup() {
                     return;
                 } else {
                     
-                    alert('An unexpected error occurred. Please try again.');
+                    alert( 'Please Sign-Up First.');
+                    router.push('/seller_signup');
                 }
             }
         }
