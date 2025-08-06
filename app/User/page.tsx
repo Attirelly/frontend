@@ -9,10 +9,13 @@ console.log("hi")
 
 export default function SellerOnboardingPage() {
   return (
-    <main className="bg-white text-gray-900">
+    <main className="relative bg-white text-black">
       <SellerLandingHeader/>
       <Hero />
-      <Benefits />
+      <div className="absolute w-full top-[548px] rounded-tl-4xl rounded-tr-4xl bg-white">
+<Benefits />
+      </div>
+      
       <Testimonials />
       <FAQ />
       <Footer />
