@@ -163,7 +163,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     );
   }
   return (
-    <div className="sticky top-2 z-10">
+    <div className="sticky top-2 z-10 max-h-[100vh]  overflow-y-auto scrollbar-thin">
       <div
         className={`${manrope.className} h-fit max-w-xs p-4 bg-white relative`}
         style={{ fontWeight: 600 }}

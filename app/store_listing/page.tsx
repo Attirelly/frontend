@@ -49,7 +49,7 @@ export default function StoreListingPage() {
        {/* <h1 className="text-2xl font-bold text-gray-800">{getHeading()}</h1> */}
        <h1 className={`${manrope.className} text-[32px] text-black`} style={{fontWeight:500}}>{getHeading()}</h1>
         {/* <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID || ''}/> */}
-        <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_STORES_ID || ''}/>
+        <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE || ''}/>
         <div className="border-t border-[#D9D9D9]"/>
         <div className="grid grid-cols-[1fr_3fr] gap-3">
           {/* <div className="self-start"> */}

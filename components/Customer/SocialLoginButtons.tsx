@@ -95,7 +95,7 @@ export default function SocialLoginButtons({ onSuccess }: { onSuccess: () => voi
             {/* Social login buttons */}
             <div className={`${roboto.className} flex flex-col justify-center gap-[20px]`}
                 style={{ fontWeight: 500 }}>
-                <button
+                {/* <button
                     type="button"
                     aria-label="Login with Facebook"
                     onClick={handleFacebookLogin}
@@ -103,7 +103,7 @@ export default function SocialLoginButtons({ onSuccess }: { onSuccess: () => voi
                 >
                     <Image src="/Login/facebook_all_white.svg" alt="Facebook" width={24} height={24} />
                     <span className='text-xl text-white'>Sign In with Facebook</span>
-                </button>
+                </button> */}
                 <button
                     type="button"
                     aria-label="Login with Google"
