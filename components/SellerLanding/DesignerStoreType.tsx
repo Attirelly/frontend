@@ -27,14 +27,17 @@ export default function DesignerStoreType() {
                     </div>
 
                 </div>
-
-                <Image
+                <div className="flex flex-col justify-end items-center pr-">
+                    <Image
                 src="/SellerLanding/designer_store_type.svg"
                 alt="designer store type"
                 width={473}
                 height={316}
-                className="pb-0"
                 />
+
+                </div>
+
+                
 
             </div>
 
