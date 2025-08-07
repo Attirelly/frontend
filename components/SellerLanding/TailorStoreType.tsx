@@ -1,27 +1,28 @@
 import { manrope } from "@/font";
 import Image from "next/image";
-export default function DesignerStoreType() {
+export default function TailorStoreType() {
     return (
         <div className="w-[1280px] h-[340px] bg-[#F7F9FC] rounded-4xl overflow-hidden">
             <div className="flex justify-between">
                 <div className={`${manrope.className} flex flex-col py-[94px] pl-[80px]`}>
 
                     <h2 className="text-[36px] text-[#1B1C57] mb-4" style={{fontWeight:700}}>
-                        Attirely For Designers
+                        Attirelly for Tailors
                     </h2>
                     <div>
                         <ul className="space-y-2 text-[18px] text-[#1B1C57]" style={{fontWeight:400}}>
                             <li className="flex items-center gap-2">
                                 <span className="w-[10px] h-[10px] bg-gray-700 rounded-full"></span>
-                                <span>Build your label. Get discovered by wedding shoppers & influencers.</span>
+                                <span>Get local orders online — from blouses to bridal</span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="w-[10px] h-[10px] bg-gray-700 rounded-full"></span>
-                                <span>Launch collections with zero setup. Reach across India.</span>
+                                <span>Offer fittings, showcase work, and chat via WhatsApp.</span>
                             </li>
                             <li className="flex items-center gap-2">
                                 <span className="w-[10px] h-[10px] bg-gray-700 rounded-full"></span>
-                                <span>Showcase your Instagram, not just products.</span>
+                                <span>Be found by "tailors in &#123;City&#125;" searches in your city.</span>
+
                             </li>
                         </ul>
                     </div>
@@ -29,7 +30,7 @@ export default function DesignerStoreType() {
                 </div>
                 <div className="flex flex-col justify-end items-center pr-8">
                     <Image
-                src="/SellerLanding/designer_store_type.svg"
+                src="/SellerLanding/tailor_store_type.svg"
                 alt="designer store type"
                 width={473}
                 height={316}
