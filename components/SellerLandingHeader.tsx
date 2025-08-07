@@ -15,10 +15,12 @@ export default function SellerLandingHeader() {
   const [selected, setSelected] = useState<string>("");
 
   const handleClick = (title: string, id: string) => {
-    console.log("system yadav")
-    setSelected(title);
-
+  setSelected(title);
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth" });
   }
+};
   return (
     <div
       className={`${manrope.className} grid grid-cols-[1fr_2fr_1fr] text-black py-2`}
