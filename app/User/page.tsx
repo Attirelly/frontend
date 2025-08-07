@@ -6,6 +6,8 @@ import Footer from "@/components/SellerLanding/Footer";
 import Header from "@/components/Header";
 import SellerLandingHeader from "@/components/SellerLandingHeader";
 import OurNumbers from "@/components/SellerLanding/OurNumbers";
+import CurrentLocs from "@/components/homepage/CurrentLocs";
+import ListingFooter from "@/components/listings/ListingFooter";
 console.log("hi")
 
 export default function SellerOnboardingPage() {
@@ -16,11 +18,12 @@ export default function SellerOnboardingPage() {
       <div className="absolute w-full top-[548px] rounded-tl-4xl rounded-tr-4xl bg-white">
 <Benefits />
 <OurNumbers/>
+<CurrentLocs/>
+<ListingFooter />
       </div>
+      {/* <FAQ />
+      <Footer /> */}
       
-      <Testimonials />
-      <FAQ />
-      <Footer />
     </main>
   );
 }

@@ -1,7 +1,10 @@
+"use client";
 import { manrope } from "@/font";
 import OurNumbersCard from "./OurNumbersCard";
 import Image from "next/image";
 import StoreTypeTabs from "../listings/StoreTypes";
+import { useHeaderStore } from "@/store/listing_header_store";
+import DesignerStoreType from "./DesignerStoreType";
 
 const numbers = [
   {
@@ -31,6 +34,7 @@ const numbers = [
 ];
 
 export default function OurNumbers() {
+  const {storeType} = useHeaderStore();
   return (
     <div
       className={`${manrope.className} flex flex-col items-center gap-30 pt-30`}
@@ -87,10 +91,18 @@ export default function OurNumbers() {
       </div>
       
       {/* Section 3 */}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center gap-4">
         <span className="text-[32px] text-[#1B1C57]" style={{fontWeight:700}}>Who can join?</span>
-        <span className="text-[18px] text-[#1B1C57]" style={{fontWeight:400}}>if you sell ethnic wear, ranging from affordable to luxury wear, Attirelly is for you. We work with:</span>
+        <span className="text-[18px] text-[#1B1C57] mb-8" style={{fontWeight:400}}>if you sell ethnic wear, ranging from affordable to luxury wear, Attirelly is for you. We work with:</span>
         <StoreTypeTabs defaultValue={process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE || ''}/>
+        {storeType?.store_type === 'Designer Label' 
+        ? <DesignerStoreType/> : 
+        storeType?.store_type === 'Retail Store' 
+        ? <div></div> :
+        storeType?.store_type === 'Tailor'
+        ? <div></div> :
+        storeType?.store_type === 'Stylist'
+        ? <div></div> : <div></div>}
       </div>
     </div>
   );
