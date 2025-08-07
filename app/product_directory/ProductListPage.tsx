@@ -16,16 +16,19 @@ import Fuse from "fuse.js";
 
 const STORE_TYPE_OPTIONS = [
   { store_type: "Retail Store", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
-  { store_type: "Designer Label", id: process.env.NEXT_PUBLIC_DESIGNER_STORE_TYPE },
+  {
+    store_type: "Designer Label",
+    id: process.env.NEXT_PUBLIC_DESIGNER_STORE_TYPE,
+  },
 ];
 
 export default function ProductListPage() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const search = searchParams.get("search");
- 
 
-  const { setQuery, query, city, storeType, viewType, setStoreType } = useHeaderStore();
+  const { setQuery, query, city, storeType, viewType, setStoreType } =
+    useHeaderStore();
   const { results, setCategory } = useProductFilterStore();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -40,15 +43,14 @@ export default function ProductListPage() {
     if (category) setCategory(category);
     if (search) {
       setQuery(search);
-      
+
       // Run fuzzy matching to infer store type
-      
+
       const match = fuse.search(search);
       if (match.length > 0) {
         const matchedType = match[0].item;
         setStoreType(matchedType); // update global store
         setMatchedStoreType(matchedType.store_type); // update local default for buttons
-        
       }
     }
   }, [category, search]);
@@ -62,7 +64,13 @@ export default function ProductListPage() {
           className={`${manrope.className} text-[#101010] mt-4 text-[32px]`}
           style={{ fontWeight: 500 }}
         >
-          {results > 0 ? ( query ? `Showing Results for "${query}"` : "" ) : "Sorry, no result found for your search"}
+          {results > 0
+            ? query
+              ? `Showing Results for "${query}"`
+              : category
+              ? `Showing Results for "${category}"`
+              : ""
+            : "Sorry, no result found for your search"}
         </span>
 
         {/* Store Type Selection */}

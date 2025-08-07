@@ -137,6 +137,10 @@ export default function ListingPageHeader() {
       setShowStoreType(true);
       return;
     }
+    if (tempQuery.length === 4) {
+    handleSearchQuerySuggestion();
+    return;
+  }
 
     const debounce = setTimeout(() => {
       handleSearchQuerySuggestion();
