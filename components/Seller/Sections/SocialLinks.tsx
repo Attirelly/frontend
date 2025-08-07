@@ -69,7 +69,6 @@ export default function SocialLinksComponent() {
       const encodedState = encodeURIComponent(JSON.stringify(stateData));
 
       window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${encodedState}`;
-      setIsInstagramConnected(true)
     } else {
       toast.error("Enter Valid Instagram Username");
     }
