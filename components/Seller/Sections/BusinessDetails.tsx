@@ -184,7 +184,7 @@ export default function BusinessDetailsComponent({
           api.get("/location/cities/"),
           api.get("/location/areas/"),
           api.get("/location/pincodes/"),
-          api.get("/categories/"),
+          api.get("/categories/get_category_by_level/3"),
         ]);
 
         setBrandTypes(storeTypesRes.data);
