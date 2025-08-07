@@ -1,26 +1,39 @@
 import { manrope } from "@/font";
 import Image from "next/image";
 import React from "react";
+import StepsCard from "./StepsCard";
 
-const benefits = [
+const steps = [
   {
-    title: "Attract new customers",
-    description: "Reach thousands of people visiting Attirely",
+    id:1,
+    title:"Join Attirely",
+    subtitle:"Enter your store details, integrate your instagram and you are good to go",
+    image:"/SellerLanding/signup.svg",
   },
   {
-    title: "Doorstep delivery",
-    description: "Enjoy pickup and delivery services in selected cities",
+    id:2,
+    title:"List Products and Catalogues",
+    subtitle:"Upload products directly from shopify or manually upload your catalogue",
+    image:"/SellerLanding/list_products.svg",
   },
   {
-    title: "Onboarding support",
-    description: "Get personalized help during onboarding",
+    id:3,
+    title:"Get Orders on WhatsApp",
+    subtitle:"Get interested leads and potential customers directly from Whatsapp for online + offline sales",
+    image:"/SellerLanding/whatsapp.svg",
   },
-];
+  {
+    id:4,
+    title:"Receive payment and ship",
+    subtitle:"Receive payments directly from customer(no commission) and ship directly to them to build trust.",
+    image:"/SellerLanding/payment.svg",
+  },
+]
 
 const Benefits: React.FC = () => {
   return (
     <div className="flex flex-col gap-[104px]">
-      {/* {Section 1} */}
+      {/* Section 1 */}
       <div className={`${manrope.className} flex flex-col mt-[23px] gap-40`} style={{ fontWeight: 600 }}>
       <div className="flex flex-col items-center" style={{ fontWeight: 700 }}>
         <span className="text-[32px] text-[#1B1C57] mb-4" style={{ fontWeight: 800 }}>Why Attirelly?</span>
@@ -51,7 +64,7 @@ const Benefits: React.FC = () => {
 
     </div>
 
-    {/* {Section 2} */}
+    {/* Section 2 */}
 
     <div className={`${manrope.className} flex flex-col gap-[64px]`} style={{fontWeight:700}}>
       <div className="flex flex-col items-center" style={{ fontWeight: 700 }}>
@@ -79,6 +92,23 @@ const Benefits: React.FC = () => {
       </div>
 
     </div>
+
+    {/* Section 3 */}
+
+    <div className={`${manrope.className} flex flex-col gap-[64px] bg-[#F7F9FC] rounded-tl-4xl rounded-tr-4xl`} style={{fontWeight:700}}>
+      <div className="flex flex-col items-center mt-16" style={{ fontWeight: 700 }}>
+        <span className="text-[32px] text-[#1B1C57] mb-4" style={{ fontWeight: 800 }}>How it works</span>
+        <span className="w-[641px] text-[18px] text-[#1B1C57] text-center" style={{fontWeight:400}}>Whether you run a boutique in Jaipur, a store in Chandni Chowk, or a tailor shop in Surat—Attirelly helps you grow your business online and offline.</span>
+      </div>
+
+      <div className="flex justify-center gap-[28px] mb-10">
+        {steps.map((item) => (
+<StepsCard key={item.id} id={item.id} title={item.title} subtitle={item.subtitle} image={item.image}/>
+        ))}
+      </div>
+
+    </div>
+    
     </div>
     
   );
