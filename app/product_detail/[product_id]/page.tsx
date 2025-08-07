@@ -42,7 +42,7 @@ export default function ProductDetail() {
   );
   const [isProductDetailCollapse, setProductDetailCollapse] = useState(true);
   const [isProductDescriptionCollapse, setProductDescriptionCollapse] =
-    useState(true);
+    useState(false);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const [lensPosition, setLensPosition] = useState<{
     x: number;
@@ -296,10 +296,10 @@ Could you please confirm its availability and share more details.`;
                   />
                 </div>
               )}
-              <p className="text-[32px] font-medium leading-9.5 tracking-normal">
+              <p className="text-[24px] font-medium leading-9.5 tracking-normal">
                 By {storeBasicInfo?.store_name}
               </p>
-              <h1 className="text-2xl text-[#7D7D7D] font-medium tracking-tighter mt-2">
+              <h1 className="text-[20px] text-[#7D7D7D] font-medium tracking-tighter mt-2">
   {product?.title
     ? product.title.charAt(0).toUpperCase() + product.title.slice(1)
     : ""}
@@ -307,18 +307,18 @@ Could you please confirm its availability and share more details.`;
 
               <div className="flex items-center gap-4 mt-4">
                 {selectedVariant?.mrp === selectedVariant?.price ? (
-                  <p className="text-[27px] font-medium">
+                  <p className="text-[24px] font-medium">
                     ₹{selectedVariant?.mrp.toLocaleString()}
                   </p>
                 ) : (
                   <>
-                    <p className="text-[27px] font-medium">
+                    <p className="text-[24px] font-medium">
                       ₹{selectedVariant?.price.toLocaleString()}
                     </p>
-                    <p className="text-[22px] line-through text-gray-400">
+                    <p className="text-[20px] line-through text-gray-400">
                       ₹{selectedVariant?.mrp.toLocaleString()}
                     </p>
-                    <p className="text-[20px] font-semibold text-[#00AA63] tracking-normal">
+                    <p className="text-[18px] font-semibold text-[#00AA63] tracking-normal">
                       {selectedVariant?.discount}% Off
                     </p>
                   </>

@@ -9,14 +9,14 @@ const logoutFacebook = () => {
   }
 };
 
-export const logout = async (redirectPath: string = '/login') => {
+export const logout = async (redirectPath: string = '/') => {
   
 
   try{
     await api.post('users/logout');
     googleLogout();
     logoutFacebook();
-    window.location.href = redirectPath;
+    // window.location.href = redirectPath;
   }
   catch(error){
     console.error('Logout failed:', error);

@@ -13,6 +13,8 @@ import MenWomenNavbar from "./MenWomenNavbar";
 import CustomerSignIn from "../Customer/CustomerSignIn";
 import useAuthStore from "@/store/auth";
 import customStyles from "@/utils/selectStyles";
+import Image from "next/image";
+import { logout } from "@/utils/logout";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -41,8 +43,10 @@ export default function ListingPageHeader() {
   const [categories, setCategories] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showStoreType, setShowStoreType] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // if (e.key === "Enter") {
@@ -155,6 +159,18 @@ export default function ListingPageHeader() {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [setSearchFocus]);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      setShowLogout(false);
+    }
+  };
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, []);
 
   const handleSuggestionClick = (value: string) => {
     setQuery(value);
@@ -443,12 +459,15 @@ export default function ListingPageHeader() {
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                {/* <img
+              <div className="relative" ref={dropdownRef}>
+    <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowLogout((prev) => !prev)}>
+                <Image
                   src="/ListingPageHeader/user_logo.svg"
                   alt="User"
+                  width={24}
+                  height={24}
                   className="opacity-100"
-                /> */}
+                />
                 <span
                   className={`${manrope.className} text-base text-[#373737] cursor-pointer`}
                   style={{ fontWeight: 400 }}
@@ -457,6 +476,21 @@ export default function ListingPageHeader() {
                   {user.name}
                 </span>
               </div>
+              {showLogout && (
+      <div className="absolute top-full right-0 mt-2 bg-white border rounded shadow-md z-50 p-2 w-32">
+        <button
+          className="w-full text-left text-[#373737] hover:bg-gray-100 px-2 py-1 text-sm"
+          onClick={() => {
+            logout(); // replace with your logout function
+            setShowLogout(false);
+          }}
+        >
+          Logout
+        </button>
+      </div>
+    )}
+              </div>
+
             )}
 
 
@@ -469,7 +503,8 @@ export default function ListingPageHeader() {
         visible={showStoreType}
         onClose={() => setShowStoreType(false)}
       />
-      {signIn && <CustomerSignIn onClose={() => setSignIn(false)} onSuccess={() => setSignIn(false)} />}
+      {signIn && !user?.id  && ( <CustomerSignIn onClose={() => setSignIn(false)} onSuccess={() => setSignIn(false)} /> )}
+        
     </div>
   );
 }
