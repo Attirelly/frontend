@@ -105,6 +105,7 @@ export default function SellerSignup() {
                 alert('Please enter a valid 6-digit OTP');
                 return;
             }
+            // updated code
             // send api to verify otp 
             try {
                 if(phone !== '1111111111'){
