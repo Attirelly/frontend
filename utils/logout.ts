@@ -9,7 +9,7 @@ const logoutFacebook = () => {
   }
 };
 
-export const logout = async (redirectPath: string = '/login') => {
+export const logout = async (redirectPath: string = '/') => {
   
 
   try{

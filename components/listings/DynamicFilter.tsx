@@ -13,32 +13,32 @@ type DynamicFilterProps = {
 };
 
 const priceRangeOrder = [
-  { name: "Affordable", text: "starts from 2000/-" },
-  { name: "Premium", text: "start from 20000/-" },
-  { name: "Luxury", text: "starts from 50000/-" },
+  { name: "Affordable", text: "starts from 2,000/-" },
+  { name: "Premium", text: "start from 20,000/-" },
+  { name: "Luxury", text: "starts from 50,000/-" },
 ];
 
 const priceStartMap: { [storeType: string]: { [priceRange: string]: string } } =
   {
     "Designer Label": {
-      Affordable: "starts from 2000/-",
-      Premium: "starts from 20000/-",
-      Luxury: "starts from 50000/-",
+      Affordable: "starts from 2,000/-",
+      Premium: "starts from 20,000/-",
+      Luxury: "starts from 50,000/-",
     },
     "Retail Store": {
       Affordable: "starts from 500/-",
-      Premium: "starts from 2500/-",
-      Luxury: "starts from 25000/-",
+      Premium: "starts from 2,500/-",
+      Luxury: "starts from 25,000/-",
     },
     Tailor: {
       Affordable: "starts from 500/-",
-      Premium: "starts from 1500/-",
-      Luxury: "starts from 5000/-",
+      Premium: "starts from 1,500/-",
+      Luxury: "starts from 5,000/-",
     },
     Stylist: {
       Affordable: "starts from 500/-",
-      Premium: "starts from 2000/-",
-      Luxury: "starts from 5000/-",
+      Premium: "starts from 2,000/-",
+      Luxury: "starts from 5,000/-",
     },
     // Add other store types here...
   };
@@ -218,7 +218,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
         <div className="flex flex-col gap-5">
           {Object.entries(facets).map(([facetName, values]) => {
             const fName = formatFacetName(facetName);
-            if (fName === "Store Types") return null;
+            if (fName === "Store Types" || fName === "Discount") return null;
             const isOpen = openFacets[facetName];
 
             const searchValue = searchTerms[facetName]?.toLowerCase() || "";

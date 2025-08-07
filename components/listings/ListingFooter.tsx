@@ -126,6 +126,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { manrope, roboto } from '@/font';
+import Link from 'next/link';
 
 export default function ListingFooter() {
   return (
@@ -158,10 +159,10 @@ export default function ListingFooter() {
             <span>8699892707</span>
           </div>
 
-          <div className="flex items-center gap-2 text-[#787A7C] text-base">
+          <a href='mailto:info@attirelly.com' className="flex items-center gap-2 text-[#787A7C] text-base hover:underline">
             <Image src="/ListingPageHeader/email_footer.svg" alt="email" width={16} height={16} />
             <span>info@attirelly.com</span>
-          </div>
+          </a>
 
           {/* Social Icons */}
           <div className="flex gap-3 pt-2">
@@ -185,8 +186,8 @@ export default function ListingFooter() {
         <div>
           <h3 className="mb-3 text-[#121212] text-sm" style={{fontWeight: 600}}>Selling Store</h3>
           <ul className="space-y-4 text-[#141414] text-sm" style={{fontWeight: 400}}>
-            <li>Store Sign in</li>
-            <li>Store Sign up</li>
+            <li><Link href="/seller_signin" className='hover:underline'>Store Sign in</Link></li>
+            <li><Link href="/seller_signup" className='hover:underline'>Store Sign up</Link></li>
           </ul>
         </div>
 
@@ -205,7 +206,7 @@ export default function ListingFooter() {
           <h3 className="mb-3 text-[#121212] text-sm" style={{fontWeight: 600}}>Company</h3>
           <ul className="space-y-4 text-[#141414] text-sm" style={{fontWeight: 400}}>
             <li>About us</li>
-            <li>Privacy Policy</li>
+            <li> <Link href="/privacy_policy" className='hover:underline'>Privacy Policy</Link></li>
             <li>Terms & Conditions</li>
           </ul>
         </div>
