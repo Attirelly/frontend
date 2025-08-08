@@ -19,6 +19,7 @@ export const useUpdateStore = () => {
         setStoreId,
         businessDetailsValid,
         businessDetailsData,
+        socialLinksValid,
         priceFiltersValid,
         whereToSellData,
         priceFiltersData,   
@@ -73,8 +74,13 @@ export const useUpdateStore = () => {
                     await api.put(`/stores/${storeId}`, store_payload);
                 }
                 return true;
-            } catch (error) {
+            } catch (error:any) {
+                setTimeout(()=>{
+toast.error(error.response?.data?.message);
+                }, 1500)
                 
+                // toast.error(error.response);
+                // console.log(error)
                 return false;
             }
         }
@@ -115,13 +121,16 @@ export const useUpdateStore = () => {
                 await api.put(`/stores/${storeId}`, market_payload);
                 
                 return true;
-            } catch (error) {
-                
+            } catch (error:any) {
                 return false;
             }
         }
-        if (activeSection === 'social' && socialLinksData) {
-            
+        if (activeSection === 'social' && socialLinksData ) {
+            if(!socialLinksValid){
+                // toast.error("Please fill all the required fields");
+                alert("Please fill all the required fields");
+                return false;
+            }
             const social_payload = {
                 instagram_link: socialLinksData.instagramUrl || '',
                 facebook_link: socialLinksData.facebookUrl || '',

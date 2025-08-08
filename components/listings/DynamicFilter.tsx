@@ -225,6 +225,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
             const filteredValues = values.filter((facet) =>
               facet.name.toLowerCase().includes(searchValue)
             );
+            if (filteredValues.length <= 0) return null;
 
             return (
               <React.Fragment key={facetName}>

@@ -202,7 +202,7 @@ export default function PhotosPage() {
           onClick={handleProfileClick}
           className="w-[360px] cursor-pointer border border-dashed border-gray-300 p-6 rounded-xl text-center hover:bg-gray-50 transition mx-auto"
         >
-          <h2 className="text-lg font-semibold mb-4">Upload your profile image</h2>
+          <h2 className="text-lg font-semibold mb-4">Upload your profile image<span className="text-red-500">*</span></h2>
           {profileUploading ? (
             <>
               <p className="text-gray-400 text-sm">Uploading: {profileProgress}%</p>

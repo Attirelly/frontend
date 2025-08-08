@@ -161,7 +161,7 @@ export default function PriceFiltersComponent() {
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <label className="block text-sm font-medium mb-1">
-            Average price for brand
+            Price Range of Most Sold Products<span className="text-red-500">*</span>
           </label>
           <div className="flex gap-2">
             <div className="flex w-full border border-gray-300 rounded-md overflow-hidden">
