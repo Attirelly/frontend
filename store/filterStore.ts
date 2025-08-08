@@ -31,7 +31,7 @@ interface FilterState {
 function createFilterStore() {
   return create<FilterState>((set, get) => ({
     activeFacet: null,
-    setActiveFacet: (facet) => set({ activeFacet: facet }),
+    setActiveFacet: (facet:string | null) => set({ activeFacet: facet }),
     results: 0,
     setResults: (results: number) => set({ results }),
     category: "",
@@ -53,8 +53,8 @@ function createFilterStore() {
       
       for (const [facetName, values] of Object.entries(apiFacets)) {
         if (!values || typeof values !== "object") continue;
- 
-        if (facetName.toLowerCase() === activeFacet?.toLowerCase()) continue;
+
+        if (facetName.toLowerCase() === activeFacet?.toLowerCase() && get().selectedFilters[activeFacet].length > 0) continue;
 
         const existing = currentFacets[facetName] || [];
 
