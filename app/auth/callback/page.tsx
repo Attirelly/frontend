@@ -57,7 +57,7 @@ function CallbackHandler() {
       } catch (error: any) {
         localStorage.setItem("instagram_connected", "false")
         console.error("Authentication error:", error);
-        router.push("/seller_dashboard");
+        router.push("/seller_dashboard?section=social");
         // router.push(`/?error=${encodeURIComponent(error.message)}`);
       }
     };
@@ -66,8 +66,7 @@ function CallbackHandler() {
       authenticate();
     } else {
       localStorage.setItem("instagram_connected", "false");
-      router.push("/seller_dashboard");
-      
+      router.push("/seller_dashboard?section=social");
     }
   }, [code, state, router]);
 
