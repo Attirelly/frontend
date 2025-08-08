@@ -169,7 +169,7 @@ export default function Home() {
 
       const res = await api.get(
         `/search/search_store?query=${params.query || ""}&page=${(params.page || 1) - 1
-        }&limit=${params.limit || 10}&facetFilters=${algoia_facets}&sort_by=${params.sort_by}`
+        }&limit=${params.limit || 50}&facetFilters=${algoia_facets}&sort_by=${params.sort_by}`
       );
 
       const data = res.data;

@@ -77,7 +77,7 @@ export default function StoreContainerPage() {
     const facetFilters = buildFacetFilters(selectedFilters, city, storeType);
     
     const res = await api.get(
-      `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${tempFilterStr}&facetFilters=${facetFilters}`
+      `/search/search_store?query=${query}&page=${currentPage}&limit=10&filters=${tempFilterStr}&facetFilters=${facetFilters}&activeFacet=${activeFacet}`
     );
     
     event({
