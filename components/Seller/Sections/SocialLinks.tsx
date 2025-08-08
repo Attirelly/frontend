@@ -6,6 +6,18 @@ import { encode } from "punycode";
 import { api } from "@/lib/axios";
 
 export default function SocialLinksComponent() {
+
+  if(localStorage.getItem("instagram_connected") === "true"){
+    useSellerStore.getState().setIsInstagramConnected(true);
+    toast.success("Instagram connected successfully");
+    localStorage.removeItem("instagram_connected");
+  }
+  else if(localStorage.getItem("instagram_connected") === "false"){
+    useSellerStore.getState().setIsInstagramConnected(false);
+    toast.error("Instagram connection failed");
+    localStorage.removeItem("instagram_connected");
+  }
+  
   const {
     setSocialLinksData,
     setSocialLinksValid,
@@ -74,7 +86,7 @@ setSocialLinksData({
       const encodedState = encodeURIComponent(JSON.stringify(stateData));
 
       window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${encodedState}`;
-      setIsInstagramConnected(true)
+      
     } else {
       toast.error("Enter Valid Instagram Username");
     }
@@ -84,6 +96,7 @@ setSocialLinksData({
     try {
       const response = await api.delete(`/instagram/disconnect-instagram/${storeId}/${instagramUsname}`);
       setIsInstagramConnected(false)
+      toast.success("Instagram disconnected successfully");
     } catch (error) {
       console.log(error) 
     }

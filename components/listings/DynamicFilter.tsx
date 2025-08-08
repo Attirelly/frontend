@@ -30,12 +30,12 @@ const priceStartMap: { [storeType: string]: { [priceRange: string]: string } } =
       Premium: "starts from 2,500/-",
       Luxury: "starts from 25,000/-",
     },
-    Tailor: {
+    "Tailor": {
       Affordable: "starts from 500/-",
       Premium: "starts from 1,500/-",
       Luxury: "starts from 5,000/-",
     },
-    Stylist: {
+    "Stylist": {
       Affordable: "starts from 500/-",
       Premium: "starts from 2,000/-",
       Luxury: "starts from 5,000/-",

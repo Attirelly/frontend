@@ -16,7 +16,7 @@ import { api } from "@/lib/axios";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { logout } from "@/utils/logout";
 import { useUpdateStore } from "@/utils/handleUpdate";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 // import Toast from '@/components/ui/Toast';
 
 import ProductUploadPage from "@/app/product_upload/page";
@@ -30,6 +30,10 @@ import { City, Area, Pincode } from "@/types/SellerTypes";
 // type Pincode = { id: string, code: string, city_id: string };
 
 export default function SellerDashboardContainer() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const sectionFromUrl = searchParams.get("section") || "one_product";
+
   const { handleUpdate } = useUpdateStore();
   // const [toastMessage, setToastMessage] = useState("");
   // const [toastType, setToastType] = useState<"success" | "error">("success");
@@ -54,8 +58,7 @@ export default function SellerDashboardContainer() {
     setIsInstagramConnected,
   } = useSellerStore();
   // const [activeSection, setActiveSection] = useState("");
-  const [activeSection, setActiveSection] = useState("one_product");
-  const searchParams = useSearchParams();
+  const [activeSection, setActiveSection] = useState(sectionFromUrl);
   const storeId = searchParams.get("storeId");
   console.log(sellerId);
 
@@ -86,7 +89,7 @@ export default function SellerDashboardContainer() {
         }
 
         const storeData = response?.data;
-        
+
         const curr_section = storeData.curr_section;
 
         const cityData: City[] = storeData.city ? [storeData.city] : [];
@@ -105,14 +108,14 @@ export default function SellerDashboardContainer() {
           `/instagram/connect_check/${storeData.store_id}`
         );
 
-        console.log("instagram check" , instagramCheck)
+        console.log("instagram check", instagramCheck);
 
         setIsInstagramConnected(instagramCheck?.data);
 
         const priceRangeRes = await api.get("stores/store_type_price_ranges", {
           params: { store_id: storeData.store_id },
         });
-        
+
         if (curr_section >= 1) {
           setBusinessDetailsData({
             ownerName: sellerName || fetchedSellerName || "",
@@ -179,6 +182,18 @@ export default function SellerDashboardContainer() {
     fetchInitialData();
   }, [sellerId, storeId]);
 
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    current.set("section", section);
+    router.push(`?${current.toString()}`, { scroll: false });
+  };
+
+  useEffect(() => {
+    const section = searchParams.get("section") || "one_product";
+    setActiveSection(section);
+  }, [searchParams]);
+
   const renderSection = () => {
     switch (activeSection) {
       case "brand":
@@ -205,15 +220,10 @@ export default function SellerDashboardContainer() {
   };
 
   const handleUpdateClick = async () => {
-    
     const res = await handleUpdate(activeSection, false);
     if (res) {
-      // setToastMessage("Store updated!");
-      // setToastType("success");
       toast.success("Store Updated!");
     } else {
-      // setToastMessage("Store not updated!");
-      // setToastType("error");
       toast.error("Store not updated!");
     }
   };
@@ -235,7 +245,7 @@ export default function SellerDashboardContainer() {
         <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
           <DashboardSidebar
             selected={activeSection}
-            onSelect={setActiveSection}
+            onSelect={handleSectionChange}
           />
           <div className="flex flex-col w-full md-w-2xl gap-6">
             <div className=" mt-[60px] rounded-md bg-gray-100">
