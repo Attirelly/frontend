@@ -97,7 +97,7 @@ export default function SellerSignup() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sendOTP) {
             const fullOtp = otp.join('');
@@ -105,7 +105,6 @@ export default function SellerSignup() {
                 alert('Please enter a valid 6-digit OTP');
                 return;
             }
-            // updated code
             // send api to verify otp 
             try {
                 if(phone !== '1111111111'){
@@ -114,20 +113,10 @@ export default function SellerSignup() {
                 try {
                     // here we will create jwt tokens
                     await api.post("/users/login", { contact_number: phone });
-
-                    try {
-                        const response = await api.get('/stores/stores_by_section', { params: { section: currSection } });
-                        const curr_section = response.data;
-                        setCurrSection(curr_section);
-                    } catch (error) {
-                        toast.error("Please complete onboarding first!")
-                        router.push('/seller_signup/sellerOnboarding')
-                    }
-                    
-                    
                     if (currSection < 5) {
                         toast.error("Please complete onboarding first!")
                         try {
+                            await api.post("/users/login", { contact_number: phone });
                             router.push('/seller_signup/sellerOnboarding')
                         } catch (error) {
                             toast.error("failed to login");
@@ -135,9 +124,10 @@ export default function SellerSignup() {
                     }
                     else {
                         router.push('/seller_dashboard');
-                        toast.success("Logged in successfully");
+                        toast.success("logged in successfully");
                     }
-                } catch (error) {
+                }
+                catch (error) {
                     console.error('Error fetching stores by section:', error);
                 }
             }
@@ -176,6 +166,9 @@ export default function SellerSignup() {
                 const response = await api.get('/users/user', { params: { phone_number: phone } });
                 
                 const user_data = response.data;
+                const curr_section_res = await api.get('/stores/get_store_section', { params: { user_id: user_data.id } })
+                console.log(curr_section_res)
+                setCurrSection(curr_section_res.data);
                 setSellerId(user_data.id);
                 setSellerName(user_data.name);
                 setSellerEmail(user_data.email);
@@ -204,12 +197,12 @@ export default function SellerSignup() {
                     return;
                 } else {
                     
-                    alert( 'Please Sign-Up First.');
-                    router.push('/seller_signup');
+                    alert('An unexpected error occurred. Please try again.');
                 }
             }
         }
     };
+
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
