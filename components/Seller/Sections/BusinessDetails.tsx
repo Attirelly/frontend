@@ -13,6 +13,7 @@ import {
   Category,
 } from "@/types/SellerTypes";
 import selectStyles from "@/utils/selectStyles";
+import { toast } from "sonner";
 
 const Select = dynamic(
   () => import("react-select").then((mod) => mod.default),
@@ -99,6 +100,7 @@ export default function BusinessDetailsComponent({
   const [ownerEmail, setOwnerEmail] = useState(
     businessDetailsData?.ownerEmail || ""
   );
+  const [emailError, setEmailError] = useState("");
   const [brandName, setBrandName] = useState(
     businessDetailsData?.brandName || ""
   );
@@ -111,6 +113,7 @@ export default function BusinessDetailsComponent({
   );
   // const [storeLocation, setStoreLocation] = useState(businessDetailsData?.storeLocation || '');
   const hasHydrated = useRef(false);
+
 
   useEffect(() => {
     if (sameAsOwner) {
@@ -228,7 +231,7 @@ export default function BusinessDetailsComponent({
       return;
 
     const cityFromStore = businessDetailsData.city[0];
-    
+
     const fullCity = cities.find((city) => city.id === cityFromStore.id);
     const cityOption = cityOptions.find(
       (opt) => opt.value === cityFromStore.id
@@ -276,7 +279,7 @@ export default function BusinessDetailsComponent({
     const areaOption = areaOptions.find(
       (opt) => opt.value === areaFromStore.id
     );
-    
+
     if (fullArea) setSelectedArea([fullArea]);
 
     if (areaOption) {
@@ -347,7 +350,6 @@ export default function BusinessDetailsComponent({
       selectedCategoryOptions.length <= 3 &&
       exchangeAvailable !== "" &&
       returnAvailable !== "";
-    console.log(exchangeAvailable, returnAvailable, valid);
     const categoriesForZustand = selectedCategoryOptions.map((opt) => ({
       category_id: opt.value,
       name: opt.label,
@@ -395,8 +397,8 @@ export default function BusinessDetailsComponent({
     retDays,
     excDays,
   ]);
-
   
+  console.log(businessDetailsData);
   const toggleSelection = <T extends { id: string }>(
     item: T,
     current: T[],
@@ -406,6 +408,12 @@ export default function BusinessDetailsComponent({
     setCurrent(
       exists ? current.filter((t) => t.id !== item.id) : [...current, item]
     );
+  };
+
+  const handleEmailChange = (value: string) => {
+    setOwnerEmail(value);
+    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    setEmailError(isValid ? "" : "Please enter a valid email address");
   };
   return (
     <div className="space-y-8 rounded-md w-3xl">
@@ -430,10 +438,12 @@ export default function BusinessDetailsComponent({
 
           {/* <InputField label="Brand owner number" value={sellerNumber || ''} placeholder="+91-8949389493" /> */}
           <InputField
+            type="email"
             label="Email Address"
             value={ownerEmail}
-            onChange={setOwnerEmail}
+            onChange={handleEmailChange}
             required
+            error={emailError}
           />
           <InputField
             label="Store owner name"
@@ -616,12 +626,22 @@ export default function BusinessDetailsComponent({
 
           <SelectField
             label="Area"
-            options={areaOptions}
+            options={[
+              ...areaOptions,
+              { value: "other", label: "Other" },
+
+            ]}
             value={selectedAreaOption}
             onChange={(option) => {
               setSelectedAreaOption(option);
-              const found = areas.find((a) => a.id === option?.value);
-              setSelectedArea(found ? [found] : []);
+              if (option?.value === 'option') {
+                setSelectedArea([]);
+              }
+              else {
+                const found = areas.find((a) => a.id === option?.value);
+                setSelectedArea(found ? [found] : []);
+              }
+
             }}
             isDisabled={!selectedCityOption}
           />
@@ -679,7 +699,8 @@ const InputField: FC<{
   required?: boolean;
   placeholder?: string;
   type?: string;
-}> = ({ label, value = "", onChange, required, placeholder, type }) => (
+  error?: string;
+}> = ({ label, value = "", onChange, required, placeholder, type, error }) => (
   <div>
     {required ? (
       <RequiredLabel>{label}</RequiredLabel>
@@ -693,6 +714,7 @@ const InputField: FC<{
       value={value}
       onChange={(e) => onChange?.(e.target.value)}
     />
+    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
   </div>
 );
 
@@ -784,6 +806,9 @@ const MultiSelectField: FC<{
       value={value}
       onChange={(newValue) => {
         const selected = (newValue as SelectOption[]) || [];
+        if (selected.length > 3) {
+          toast.error("Maximum 3 Entries Allowed");
+        }
         if (selected.length <= 3) {
           onChange(selected);
         }

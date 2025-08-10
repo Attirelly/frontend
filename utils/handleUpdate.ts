@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 
 export const useUpdateStore = () => {
     const router = useRouter();
-    useEffect(()=>{
-       router.prefetch("/seller_dashboard")
-    } , [])
+    useEffect(() => {
+        router.prefetch("/seller_dashboard")
+    }, [])
     const {
         sellerId,
         storeId,
@@ -19,9 +19,10 @@ export const useUpdateStore = () => {
         setStoreId,
         businessDetailsValid,
         businessDetailsData,
+        socialLinksValid,
         priceFiltersValid,
         whereToSellData,
-        priceFiltersData,   
+        priceFiltersData,
         socialLinksData,
         storePhotosData,
         storePhotosValid
@@ -31,7 +32,7 @@ export const useUpdateStore = () => {
 
     const handleUpdate = async (activeSection?: string, onBoarding?: boolean, curr_section?: number) => {
         if (activeSection === 'brand' && businessDetailsData) {
-            if( !businessDetailsValid){
+            if (!businessDetailsValid) {
                 // toast.error("Please fill all the required fields");
                 alert("Please fill all the required fields");
                 return false;
@@ -44,7 +45,7 @@ export const useUpdateStore = () => {
                 store_owner_id: sellerId,
                 store_name: businessDetailsData.brandName,
                 pincode_id: businessDetailsData.pinCode[0].id,
-                mobile:sellerNumber,
+                mobile: sellerNumber,
                 whatsapp_number: businessDetailsData.businessWpNum,
                 store_address: businessDetailsData.brandAddress,
                 // rental: businessDetailsData.rentOutfits === 'Yes',
@@ -70,18 +71,24 @@ export const useUpdateStore = () => {
                     setStoreId(response.data.store_id);
                 }
                 else {
+                    console.log("store payload",store_payload);
                     await api.put(`/stores/${storeId}`, store_payload);
                 }
                 return true;
-            } catch (error) {
-                
+            } catch (error: any) {
+                setTimeout(() => {
+                    toast.error(error.response?.data?.message);
+                }, 1500)
+
+                // toast.error(error.response);
+                // console.log(error)
                 return false;
             }
         }
 
-    
+
         if (activeSection === 'price' && priceFiltersData) {
-            if(!priceFiltersValid){
+            if (!priceFiltersValid) {
                 // toast.error("Please fill all the required fields");
                 alert("Please fill all the required fields");
                 return false;
@@ -90,59 +97,62 @@ export const useUpdateStore = () => {
                 average_price_min: priceFiltersData.avgPriceMin,
                 average_price_max: priceFiltersData.avgPriceMax,
                 store_type_price_range_links: priceFiltersData.priceRanges,
-                price_ranges:priceFiltersData.priceRangesStr,
+                price_ranges: priceFiltersData.priceRangesStr,
                 curr_section: curr_section,
             };
             try {
                 await api.put(`/stores/${storeId}`, price_payload);
-                
+
                 return true;
             } catch (error) {
-                
+
                 return false;
             }
         }
 
         if (activeSection === 'market' && whereToSellData) {
-            
-            
+
+
             const market_payload = {
-                is_online : whereToSellData.isOnline,
-                is_both : whereToSellData.isBoth,
+                is_online: whereToSellData.isOnline,
+                is_both: whereToSellData.isBoth,
                 curr_section: curr_section,
             }
             try {
                 await api.put(`/stores/${storeId}`, market_payload);
-                
+
                 return true;
-            } catch (error) {
-                
+            } catch (error: any) {
                 return false;
             }
         }
         if (activeSection === 'social' && socialLinksData) {
-            
+            if (!socialLinksValid) {
+                // toast.error("Please fill all the required fields");
+                alert("Please fill all the required fields");
+                return false;
+            }
             const social_payload = {
                 instagram_link: socialLinksData.instagramUrl || '',
                 facebook_link: socialLinksData.facebookUrl || '',
-                shopify_url : socialLinksData.websiteUrl || '',
+                shopify_url: socialLinksData.websiteUrl || '',
                 curr_section: curr_section,
             }
             try {
-                
+
                 await api.put(`/stores/${storeId}`, social_payload);
                 console.log('store updated')
                 return true;
             } catch (error) {
-                
+
                 return false;
             }
         }
         if (activeSection === 'photos' && storePhotosData) {
             console.log('storePhotosData', storePhotosData)
             const photos_payload = {
-                listing_page_image : storePhotosData.bannerUrl,
-                profile_image : storePhotosData.profileUrl,
+                listing_page_image: storePhotosData.bannerUrl,
+                profile_image: storePhotosData.profileUrl,
                 curr_section: curr_section,
             }
             try {
@@ -161,10 +171,10 @@ export const useUpdateStore = () => {
                 }
                 return true;
             } catch (error) {
-                
+
                 return false;
             }
-        }    
+        }
     };
     return { handleUpdate }
 };

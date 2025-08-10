@@ -6,6 +6,18 @@ import { encode } from "punycode";
 import { api } from "@/lib/axios";
 
 export default function SocialLinksComponent() {
+
+  if(localStorage.getItem("instagram_connected") === "true"){
+    useSellerStore.getState().setIsInstagramConnected(true);
+    toast.success("Instagram connected successfully");
+    localStorage.removeItem("instagram_connected");
+  }
+  else if(localStorage.getItem("instagram_connected") === "false"){
+    useSellerStore.getState().setIsInstagramConnected(false);
+    toast.error("Instagram connection failed");
+    localStorage.removeItem("instagram_connected");
+  }
+  
   const {
     setSocialLinksData,
     setSocialLinksValid,
@@ -38,12 +50,17 @@ export default function SocialLinksComponent() {
   };
 
   useEffect(() => {
-    setSocialLinksData({
+    const isValid = instagramUsname.trim() !== "";
+    setSocialLinksValid(isValid);
+    if(isValid){
+setSocialLinksData({
       instagramUsname,
       instagramUrl: `https://instagram.com/${instagramUsname}`,
       facebookUrl,
       websiteUrl,
     });
+    }
+    
   }, [instagramUsname, websiteUrl, facebookUrl, setSocialLinksData]);
 
   function validateInstagramUrl(url: string): boolean {
@@ -69,6 +86,7 @@ export default function SocialLinksComponent() {
       const encodedState = encodeURIComponent(JSON.stringify(stateData));
 
       window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${encodedState}`;
+      
     } else {
       toast.error("Enter Valid Instagram Username");
     }
@@ -78,6 +96,7 @@ export default function SocialLinksComponent() {
     try {
       const response = await api.delete(`/instagram/disconnect-instagram/${storeId}/${instagramUsname}`);
       setIsInstagramConnected(false)
+      toast.success("Instagram disconnected successfully");
     } catch (error) {
       console.log(error) 
     }
@@ -97,7 +116,7 @@ export default function SocialLinksComponent() {
         {/* Instagram Username Input */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Instagram username
+            Instagram username<span className="text-red-500">*</span>
           </label>
           <div className="flex border border-gray-300 rounded-md overflow-hidden">
             <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">

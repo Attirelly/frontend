@@ -139,7 +139,8 @@ export default function DashboardSidebar({
               )} */}
               {/* Render section items */}
               {group.ids.map((id) => {
-                const section = sections.find((s) => s.id === id);
+                const 
+                section = sections.find((s) => s.id === id);
                 if (!section) return null;
                 return (
                   <div
