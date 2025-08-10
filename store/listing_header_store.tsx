@@ -12,6 +12,8 @@ const defaultCity: City = {
 
 
 type HeaderState = {
+    ambassadorType: string;
+    setAmbassadorType:(ambassadorType:string) => void;
     city: City|null;
     setCity: (city: City|null) => void;
     query: string;
@@ -46,6 +48,8 @@ type HeaderState = {
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
+    ambassadorType: 'Students',
+    setAmbassadorType: (ambassadorType: string) => set({ ambassadorType }),
     city: null,
     setCity: (city) => set({ city }),
     query: '',

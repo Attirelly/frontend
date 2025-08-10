@@ -11,7 +11,7 @@ const res = [
   { title: "FAQ", id: "FAQ" },
 ];
 
-export default function SellerLandingHeader() {
+export default function AmbassadorHeader() {
   const [selected, setSelected] = useState<string>("");
 
   const handleClick = (title: string, id: string) => {
@@ -26,7 +26,7 @@ export default function SellerLandingHeader() {
       className={`${manrope.className} grid grid-cols-[1fr_2fr_1fr] text-black py-2`}
       style={{ fontWeight: 600 }}
     >
-        <div className="flex justify-center"><span className={`${rosario.className} text-[34px]`}>Attirelly</span></div>
+        <div className="flex justify-center"><span className={`${manrope.className} text-[34px]`}>Attirelly</span></div>
       
       <div className="flex gap-[24px] justify-center items-center">
         {res.map((item) => {
@@ -46,7 +46,7 @@ export default function SellerLandingHeader() {
       </div>
       <div className="flex justify-center">
 <Link href="/seller_signin" className="text-[18px] text-white w-fit bg-black rounded px-[28px] py-[10px]">
-        Seller Login
+        Join Attirelly
       </Link>
       </div>
       
