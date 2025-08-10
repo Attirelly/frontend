@@ -8,6 +8,7 @@ import getCroppedImg from "@/lib/cropImage";
 import Modal from "react-modal";
 import { Area } from "react-easy-crop";
 import { FiTrash2 } from "react-icons/fi";
+import { toast } from "sonner";
 
 interface UploadResponse {
   upload_url: string;
@@ -70,7 +71,7 @@ export default function PhotosPage() {
         file_name: file.name,
       });
       const { upload_url, file_url } = response.data;
-      await axios.put(upload_url, file, {
+      await api.put(upload_url, file, {
         headers: { "Content-Type": file.type || "application/octet-stream" },
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
@@ -80,8 +81,8 @@ export default function PhotosPage() {
         },
       });
       return file_url;
-    } catch (error) {
-      console.error("Upload failed:", error);
+    } catch (error:any) {
+      toast.error(error.message || "Upload failed. Please try again.");
       return null;
     } finally {
       setProfileUploading(false);
