@@ -97,7 +97,7 @@ export default function SellerSignup() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sendOTP) {
             const fullOtp = otp.join('');
@@ -202,6 +202,7 @@ export default function SellerSignup() {
             }
         }
     };
+
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">

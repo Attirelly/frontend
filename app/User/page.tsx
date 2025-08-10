@@ -3,7 +3,7 @@ import Benefits from "@/components/SellerLanding/Benefits";
 import Testimonials from "@/components/SellerLanding/Testimonials";
 import FAQ from "@/components/SellerLanding/FAQ";
 import Footer from "@/components/SellerLanding/Footer";
-import SellerLandingHeader from "@/components/SellerLandingHeader";
+import SellerLandingHeader from "@/components/SellerLanding/SellerLandingHeader";
 import OurNumbers from "@/components/SellerLanding/OurNumbers";
 import CurrentLocs from "@/components/homepage/CurrentLocs";
 import ListingFooter from "@/components/listings/ListingFooter";

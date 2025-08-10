@@ -50,12 +50,17 @@ export default function SocialLinksComponent() {
   };
 
   useEffect(() => {
-    setSocialLinksData({
+    const isValid = instagramUsname.trim() !== "";
+    setSocialLinksValid(isValid);
+    if(isValid){
+setSocialLinksData({
       instagramUsname,
       instagramUrl: `https://instagram.com/${instagramUsname}`,
       facebookUrl,
       websiteUrl,
     });
+    }
+    
   }, [instagramUsname, websiteUrl, facebookUrl, setSocialLinksData]);
 
   function validateInstagramUrl(url: string): boolean {
@@ -111,7 +116,7 @@ export default function SocialLinksComponent() {
         {/* Instagram Username Input */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Instagram username
+            Instagram username<span className="text-red-500">*</span>
           </label>
           <div className="flex border border-gray-300 rounded-md overflow-hidden">
             <span className="bg-gray-100 px-3 py-2 text-gray-500 select-none border-r border-gray-300">
