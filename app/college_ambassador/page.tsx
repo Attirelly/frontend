@@ -1,21 +1,18 @@
 import Hero from "@/components/SellerLanding/Hero";
 import Benefits from "@/components/SellerLanding/Benefits";
-import Testimonials from "@/components/SellerLanding/Testimonials";
 import FAQ from "@/components/SellerLanding/FAQ";
-import Footer from "@/components/SellerLanding/Footer";
-import SellerLandingHeader from "@/components/SellerLanding/SellerLandingHeader";
 import OurNumbers from "@/components/SellerLanding/OurNumbers";
 import CurrentLocs from "@/components/homepage/CurrentLocs";
 import ListingFooter from "@/components/listings/ListingFooter";
 import Roadmap from "@/components/SellerLanding/Roadmap";
 import SellerForm from "@/components/SellerLanding/SellerForm";
 import HowItWorks from "@/components/SellerLanding/HowItWorks";
-console.log("hi")
+import AmbassadorHeader from "@/components/CollegeAmbassador/AmbassadorHeader";
 
 export default function SellerOnboardingPage() {
   return (
     <main className="relative bg-white text-black">
-      <SellerLandingHeader />
+      <AmbassadorHeader />
       <Hero />
       <div className="absolute w-full top-[548px] rounded-tl-4xl rounded-tr-4xl bg-white">
         <section id="Why Attirelly?"><Benefits /></section>
