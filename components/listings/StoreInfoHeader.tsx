@@ -47,7 +47,7 @@ export default function StoreInfoPage({
   };
 
   const handlePhoneClick = () => {
-    window.open(`tel:${phone_number}`, "_blank", "noopener,noreferrer");
+    // window.open(`tel:${phone_number}`, "_blank", "noopener,noreferrer");
     setShowPhone(!showPhone);
   };
 
@@ -127,7 +127,7 @@ export default function StoreInfoPage({
   />
   {showPhone && (
     <span className="text-black text-sm" style={{ fontWeight: 400 }}>
-     {phone_number}
+     {phone_number.startsWith("11111",0) ? "9915916707" : phone_number}
     </span>
   )}
 </button>

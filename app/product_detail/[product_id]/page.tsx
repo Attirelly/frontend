@@ -36,6 +36,7 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [startIndex, setStartIndex] = useState(0);
   const [storeBasicInfo, setStoreBasicInfo] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
@@ -192,10 +193,16 @@ Could you please confirm its availability and share more details.`;
 
 
   const nextImage = () => {
+    if(activeIndex - startIndex === 5 ){
+      setStartIndex((prev) => Math.min(prev + 1, images.length - 1));
+    }
     setActiveIndex((prev) => (prev + 1) % images.length);
   };
 
   const prevImage = () => {
+    if(activeIndex - startIndex > 0){
+      setStartIndex((prev) => Math.max(prev - 1, 0));
+    }
     setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
@@ -251,7 +258,7 @@ Could you please confirm its availability and share more details.`;
                 </button>
 
                 <div className="flex gap-2 overflow-x-auto">
-                  {images.map((src, idx) => (
+                  {images.slice(startIndex, startIndex + 5).map((src, idx) => (
                     <div
                       key={idx}
                       className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${idx === activeIndex ? "border-black" : "border-gray-300"

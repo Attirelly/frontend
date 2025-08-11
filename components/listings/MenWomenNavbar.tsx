@@ -107,6 +107,7 @@ export default function MenWomenNavbar() {
                             href={`/product_directory?category=${encodeURIComponent(subcat3.name)}`}
                             className={`${manrope.className} text-sm text-[#464646] hover:text-black whitespace-nowrap`}
                             style={{ fontWeight: 400 }}
+                            onClick={() => setHoveredGender(null)}
                           >
                             {subcat3.name}
                           </Link>
