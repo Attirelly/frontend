@@ -21,6 +21,7 @@ import ShowMoreProducts from "@/components/curations/ShowMoreProducts";
 import { roboto, manrope } from "@/font";
 import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 import useAuthStore from "@/store/auth";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function ProductDetail() {
   const { user } = useAuthStore();
@@ -210,7 +211,7 @@ Could you please confirm its availability and share more details.`;
   };
 
   if (!product) {
-    return <div className="p-4">Loading...</div>;
+    return <div className="p-4"><LoadingSpinner/></div>;
   }
 
   return (
