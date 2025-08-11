@@ -15,6 +15,7 @@ import useAuthStore from "@/store/auth";
 import customStyles from "@/utils/selectStyles";
 import Image from "next/image";
 import { logout } from "@/utils/logout";
+import { useProductFilterStore } from "@/store/filterStore";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -30,6 +31,7 @@ export default function ListingPageHeader() {
     searchFocus,
     storeType
   } = useHeaderStore();
+  const {setCategory} = useProductFilterStore() ;
   const { user } = useAuthStore();
   const [signIn, setSignIn] = useState(false);
   const [cities, setCities] = useState<City[]>([]);
@@ -58,6 +60,7 @@ export default function ListingPageHeader() {
       setQuery(trimmed);
       setShowDropdown(false);
       setShowStoreType(false);
+      setCategory("");
       if(trimmed !== '' ) {
         router.push("/product_directory?search=" + encodeURIComponent(trimmed));
       }
@@ -172,12 +175,14 @@ export default function ListingPageHeader() {
     setQuery(value);
     setSearchFocus(false);
     setShowDropdown(false);
+    setCategory("");
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
   const handleCategoryClick = (category: string) => {
     setSearchFocus(false);
     setShowDropdown(false);
+    setQuery("");
     router.push(`/product_directory?category=${encodeURIComponent(category)}`);
   };
   const handleProductClick = (value: string) => {
