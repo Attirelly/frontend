@@ -222,24 +222,31 @@ export default function ListingPageHeader() {
       }
       : cityOptions[0];
 
-  function highlightMatch(text: string, query: string) {
-    if (!query) return text;
-
-    const index = text.toLowerCase().indexOf(query.toLowerCase());
-    if (index === -1) return text;
-
-    return (
-      <div className={`${manrope.className} text-base text-gray-400`} style={{fontWeight: 400}}>
-        {text.slice(0, index)}
-        <span className="text-black">
-          {text.slice(index, index + query.length)}
-        </span>
-        <span className="text-gray-400">
-          {text.slice(index + query.length)}
-        </span>
-      </div>
-    );
+function highlightMatch(text: string, query: string) {
+  const defaultClasses = `${manrope.className} text-base text-gray-400`;
+  
+  if (!query) {
+    return <div className={defaultClasses} style={{ fontWeight: 400 }}>{text}</div>;
   }
+
+  const index = text.toLowerCase().indexOf(query.toLowerCase());
+  if (index === -1) {
+    return <div className={defaultClasses} style={{ fontWeight: 400 }}>{text}</div>;
+  }
+
+  return (
+    <div className={defaultClasses} style={{ fontWeight: 400 }}>
+      {text.slice(0, index)}
+      <span className="text-black">
+        {text.slice(index, index + query.length)}
+      </span>
+      <span className="text-gray-400">
+        {text.slice(index + query.length)}
+      </span>
+    </div>
+  );
+}
+
 
   return (
     <div>
