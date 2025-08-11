@@ -35,11 +35,11 @@ export default function ApifyPostGallery({ posts }: Props) {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-[2px]">
+      <div className="grid grid-cols-3 gap-1">
         {posts.map((post, index) => (
           <div
             key={post.id}
-            className="relative aspect-square overflow-hidden bg-black"
+            className="relative w-[300px] h-[400px] overflow-hidden bg-black"
             onClick={() => openDialog(index)}
           >
             {/* {post.media_type === 'Image' || post.media_type === 'Sidecar' ? (

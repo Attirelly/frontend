@@ -45,7 +45,7 @@ export default function StoreProfilePage() {
 
         {viewType === 'Posts' && (
           <div className="mt-8 flex justify-center w-full">
-            <div className="w-full max-w-[926px] px-4">
+            <div className="w-full max-w-[950px] px-4">
               <PostGalleryContainer />
             </div>
           </div>

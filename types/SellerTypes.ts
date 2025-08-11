@@ -63,9 +63,18 @@ export interface StoreInfoType {
   phone_number: string
 }
 
+export interface CorouselImagesType {
+  id:string,
+  media_type:string,
+  media_url:string,
+  thumbnail_url:string,
+  username:string,
+}
 export interface instaMediaType {
   id: string,
   media_type: string,
+  carousel_images:CorouselImagesType[],
+
   media_url: string,
   permalink: string,
   timestamp: string,

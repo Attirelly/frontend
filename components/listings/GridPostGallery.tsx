@@ -35,11 +35,11 @@ export default function GridPostGallery({ posts, storeName }: Props) {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-[2px]">
+      <div className="grid grid-cols-3 gap-1">
         {posts.map((post, index) => (
           <div
             key={post.id}
-            className="relative aspect-square overflow-hidden bg-black"
+            className="relative w-[300px] h-[400px] overflow-hidden bg-black"
             onClick={() => openDialog(index)}
           >
             {post.media_type === 'IMAGE' || post.media_type === 'CAROUSEL_ALBUM' ? (
