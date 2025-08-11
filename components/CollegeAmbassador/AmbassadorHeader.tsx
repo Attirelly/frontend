@@ -26,7 +26,7 @@ export default function AmbassadorHeader() {
       className={`${manrope.className} grid grid-cols-[1fr_2fr_1fr] text-black py-2`}
       style={{ fontWeight: 600 }}
     >
-        <div className="flex justify-center"><span className={`${manrope.className} text-[34px]`}>Attirelly</span></div>
+        <div className="flex justify-center"><span className={`${rosario.className} text-[34px]`}>Attirelly</span></div>
       
       <div className="flex gap-[24px] justify-center items-center">
         {res.map((item) => {

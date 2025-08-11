@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { api } from "@/lib/axios";
 import { City, SelectOption } from "@/types/SellerTypes";
 import { useHeaderStore } from "@/store/listing_header_store";
-import { rubik, manrope } from "@/font";
+import { rubik, manrope, rosario } from "@/font";
 import StoreSearchType from "./StoreSearchType";
 import { useRouter } from "next/navigation";
 import MenWomenNavbar from "./MenWomenNavbar";
@@ -256,10 +256,10 @@ function highlightMatch(text: string, query: string) {
         <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-[83px] h-full">
           <div className="flex justify-center items-center">
             <div
-              className={`${rubik.className} text-[27px] text-[#373737] font-bold cursor-pointer`}
+              className={`${rosario.className} text-[34px] text-[#373737] font-bold cursor-pointer`}
               // onClick={() => router.push("/homepage")}
               onClick={() => {setQuery("") ; router.push("/")}}
-              style={{ fontWeight: 700 }}
+              style={{ fontWeight: 600 }}
             >
               Attirelly
             </div>
