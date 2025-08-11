@@ -21,6 +21,7 @@ import ShowMoreProducts from "@/components/curations/ShowMoreProducts";
 import { roboto, manrope } from "@/font";
 import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 import useAuthStore from "@/store/auth";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function ProductDetail() {
   const { user } = useAuthStore();
@@ -36,6 +37,8 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [startIndex, setStartIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(4);
   const [storeBasicInfo, setStoreBasicInfo] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
@@ -118,7 +121,7 @@ export default function ProductDetail() {
   const sendToWhatsApp = async () => {
     setSignIn(true);
     try {
-      const phoneNumber = storeBasicInfo?.whatsapp_number;
+      const phoneNumber = (storeBasicInfo?.whatsapp_number).substring(0,5) === "11111" ? "9915916707": storeBasicInfo?.whatsapp_number;
       const storeName = storeBasicInfo?.store_name || "Store"; // fallback if not available
       const productName = product?.title || "";
       const variant = "color : " +  selectedColor?.color_name + " " + "size : " + selectedSize?.size_name || "";
@@ -192,15 +195,23 @@ Could you please confirm its availability and share more details.`;
 
 
   const nextImage = () => {
-    setActiveIndex((prev) => (prev + 1) % images.length);
+     if(activeIndex === endIndex){
+      setEndIndex((prev) => Math.min(prev + 1, images.length)); 
+      setStartIndex((prev) => Math.min(prev + 1, images.length - 1));
+     }
+     setActiveIndex((prev) => (prev + 1) % images.length);
   };
 
   const prevImage = () => {
+    if(activeIndex === startIndex){
+      setStartIndex((prev) => Math.max(prev - 1, 0));
+      setEndIndex((prev) => Math.max(prev - 1, 4));
+    }
     setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
   if (!product) {
-    return <div className="p-4">Loading...</div>;
+    return <div className="p-4"><LoadingSpinner/></div>;
   }
 
   return (
@@ -246,17 +257,18 @@ Could you please confirm its availability and share more details.`;
                 <button
                   className="p-2 rounded-xl bg-gray-50 "
                   onClick={prevImage}
+                  disabled={startIndex === 0 && activeIndex === 0}
                 >
                   <ChevronLeft size={16} />
                 </button>
 
                 <div className="flex gap-2 overflow-x-auto">
-                  {images.map((src, idx) => (
+                  {images.slice(startIndex, startIndex + 5).map((src, idx) => (
                     <div
                       key={idx}
-                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${idx === activeIndex ? "border-black" : "border-gray-300"
+                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${startIndex + idx === activeIndex ? "border-black" : "border-gray-300"
                         }`}
-                      onClick={() => setActiveIndex(idx)}
+                      onClick={() => setActiveIndex(startIndex + idx)}
                     >
                       <Image
                         src={src}
@@ -269,8 +281,9 @@ Could you please confirm its availability and share more details.`;
                 </div>
 
                 <button
-                  className="p-2 rounded-xlbg-gray-100"
+                  className="p-2 rounded-xl bg-gray-100"
                   onClick={nextImage}
+                  disabled={activeIndex === endIndex && endIndex === images.length - 1}
                 >
                   <ChevronRight size={20} />
                 </button>

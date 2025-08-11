@@ -81,7 +81,7 @@ export default function ProductContainer({
     return encodeURIComponent(JSON.stringify(filters));
   };
 
-  const fetchProducts = async (currentPage: number) => {
+  const fetchProducts = async (currentPage: number , controller: AbortController) => {
     setLoading(true);
     const facetFilters = buildFacetFilters(
       selectedFilters,
@@ -94,7 +94,8 @@ export default function ProductContainer({
       const filterParam = skipFilters ? "" : filters;
 
       const res = await api.get(
-        `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`
+        `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=12&filters=${filterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`,
+        {signal:controller.signal}
       );
 
       const data = res.data;
@@ -168,8 +169,10 @@ export default function ProductContainer({
       setHasMore(currentPage < (data.total_pages || 1) - 1);
 
       if (skipFilters) setSkipFilters(false);
-    } catch (error) {
-      console.error("Error fetching products:", error);
+    } catch (error:any) {
+      if (error.name !== "CanceledError" && error.name !== "AbortError") {
+        console.error("Error fetching products:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -194,7 +197,11 @@ export default function ProductContainer({
 
   useEffect(() => {
     setPage(0);
-    fetchProducts(0);
+    const controller = new AbortController();
+    fetchProducts(0, controller);
+    return () => {
+      controller.abort();
+    };
   }, [
     selectedFilters,
     filters,
@@ -206,7 +213,11 @@ export default function ProductContainer({
   ]);
 
   useEffect(() => {
-    if (page !== 0) fetchProducts(page);
+    if (page !== 0) {
+      const controller = new AbortController();
+      fetchProducts(page, controller);
+      return () => controller.abort();
+    }
   }, [page]);
 
   useEffect(() => {

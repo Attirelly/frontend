@@ -230,6 +230,8 @@ export default function MediaAssets() {
       }
       toast.error(error.message || "Upload failed. Please try again.");
     } finally {
+      setIsUploading((prev) => ({ ...prev, main: false }));
+      setIsUploading((prev) => ({ ...prev, variants: { ...prev.variants, [sku]: false } }));
       URL.revokeObjectURL(tempPreview);
     }
   };

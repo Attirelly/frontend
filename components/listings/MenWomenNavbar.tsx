@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { api } from '@/lib/axios';
-import { Category, SubCat1, SubCat2 } from '@/types/CategoryTypes';
-import { manrope } from '@/font';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { api } from "@/lib/axios";
+import { Category, SubCat1, SubCat2 } from "@/types/CategoryTypes";
+import { manrope } from "@/font";
+import Link from "next/link";
+import { useHeaderStore } from "@/store/listing_header_store";
 
 // Utility to split subcat2 into N columns
 const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
@@ -18,16 +19,21 @@ const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
 
 export default function MenWomenNavbar() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [hoveredGender, setHoveredGender] = useState<"Men" | "Women" | null>(null);
+  const [hoveredGender, setHoveredGender] = useState<"Men" | "Women" | null>(
+    null
+  );
+  const { setQuery } = useHeaderStore();
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await api.get('categories/descendants/');
+        const res = await api.get("categories/descendants/");
         const data: Category[] = res.data;
 
         const menAndWomen = data.filter(
-          (cat) => cat.name.toLowerCase() === "men" || cat.name.toLowerCase() === "women"
+          (cat) =>
+            cat.name.toLowerCase() === "men" ||
+            cat.name.toLowerCase() === "women"
         );
 
         const result: Category[] = menAndWomen.map((genderCat) => {
@@ -56,7 +62,9 @@ export default function MenWomenNavbar() {
 
   // Dynamically determine number of columns (max 5)
   const columnCount = category ? Math.min(category.children.length, 5) : 0;
-  const columns = category ? chunkIntoColumns(category.children, columnCount) : [];
+  const columns = category
+    ? chunkIntoColumns(category.children, columnCount)
+    : [];
 
   return (
     <nav className="relative z-50 h-full">
@@ -70,7 +78,10 @@ export default function MenWomenNavbar() {
             className="h-full flex items-center px-4 cursor-pointer hover:bg-gray-100"
             onMouseEnter={() => setHoveredGender(gender as "Men" | "Women")}
           >
-            <span className={`${manrope.className}`} style={{ fontWeight: 400 }}>
+            <span
+              className={`${manrope.className}`}
+              style={{ fontWeight: 400 }}
+            >
               {gender}
             </span>
           </div>
@@ -87,13 +98,19 @@ export default function MenWomenNavbar() {
             {columns.map((column, colIndex) => (
               <div
                 key={colIndex}
-                className={`p-4 w-full ${colIndex === 0 ? 'rounded-bl-xl' : colIndex === Math.min(category.children.length-1, 4) ? 'rounded-br-xl' : ''}`}
+                className={`p-4 w-full ${
+                  colIndex === 0
+                    ? "rounded-bl-xl"
+                    : colIndex === Math.min(category.children.length - 1, 4)
+                    ? "rounded-br-xl"
+                    : ""
+                }`}
                 style={{
-                  backgroundColor: colIndex % 2 === 0 ? '#f9f9f9' : '#ffffff',
+                  backgroundColor: colIndex % 2 === 0 ? "#f9f9f9" : "#ffffff",
                 }}
               >
                 {column.map((subcat2: SubCat2) => (
-                  <div key={subcat2.category_id} className='p-4'>
+                  <div key={subcat2.category_id} className="p-4">
                     <h3
                       className={`${manrope.className} text-sm mb-2 text-[#121212]`}
                       style={{ fontWeight: 700 }}
@@ -104,9 +121,15 @@ export default function MenWomenNavbar() {
                       {subcat2.children.map((subcat3) => (
                         <li key={subcat3.category_id}>
                           <Link
-                            href={`/product_directory?category=${encodeURIComponent(subcat3.name)}`}
+                            href={`/product_directory?category=${encodeURIComponent(
+                              subcat3.name
+                            )}`}
                             className={`${manrope.className} text-sm text-[#464646] hover:text-black whitespace-nowrap`}
                             style={{ fontWeight: 400 }}
+                            onClick={() => {
+                              setHoveredGender(null);
+                              setQuery("");
+                            }}
                           >
                             {subcat3.name}
                           </Link>

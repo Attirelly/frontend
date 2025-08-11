@@ -49,14 +49,6 @@ export default function ListingPageHeader() {
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // if (e.key === "Enter") {
-    //   e.preventDefault();
-    //   setQuery(tempQuery);
-    //   setShowDropdown(false);
-    //   setShowStoreType(false);
-    //   router.push("/product_directory?search=" + encodeURIComponent(tempQuery));
-    // }
-
     if (e.key === "Enter") {
     e.preventDefault();
     const trimmed = tempQuery.trim();
@@ -144,7 +136,7 @@ export default function ListingPageHeader() {
 
     const debounce = setTimeout(() => {
       handleSearchQuerySuggestion();
-    }, 400);
+    }, 100);
 
     return () => clearTimeout(debounce);
   }, [tempQuery]);
@@ -179,26 +171,31 @@ export default function ListingPageHeader() {
   const handleSuggestionClick = (value: string) => {
     setQuery(value);
     setSearchFocus(false);
+    setShowDropdown(false);
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
   const handleCategoryClick = (category: string) => {
     setSearchFocus(false);
+    setShowDropdown(false);
     router.push(`/product_directory?category=${encodeURIComponent(category)}`);
   };
   const handleProductClick = (value: string) => {
     setSearchFocus(false);
+    setShowDropdown(false);
     router.push(`product_detail/${value}`);
   };
 
   const handleStoreClick = (storeID: string) => {
     setSearchFocus(false);
+    setShowDropdown(false);
     router.push("/store_profile/" + storeID);
   };
 
   const handleStoreListRoute = ()=>{
     setSearchFocus(false) ; 
     setQuery(tempQuery) ; 
+    setShowDropdown(false) ;
     router.push("/store_listing") ; 
   }
 
@@ -222,24 +219,31 @@ export default function ListingPageHeader() {
       }
       : cityOptions[0];
 
-  function highlightMatch(text: string, query: string) {
-    if (!query) return text;
-
-    const index = text.toLowerCase().indexOf(query.toLowerCase());
-    if (index === -1) return text;
-
-    return (
-      <div className={`${manrope.className} text-base text-gray-400`} style={{fontWeight: 400}}>
-        {text.slice(0, index)}
-        <span className="text-black">
-          {text.slice(index, index + query.length)}
-        </span>
-        <span className="text-gray-400">
-          {text.slice(index + query.length)}
-        </span>
-      </div>
-    );
+function highlightMatch(text: string, query: string) {
+  const defaultClasses = `${manrope.className} text-base text-gray-400`;
+  
+  if (!query) {
+    return <div className={defaultClasses} style={{ fontWeight: 400 }}>{text}</div>;
   }
+
+  const index = text.toLowerCase().indexOf(query.toLowerCase());
+  if (index === -1) {
+    return <div className={defaultClasses} style={{ fontWeight: 400 }}>{text}</div>;
+  }
+
+  return (
+    <div className={defaultClasses} style={{ fontWeight: 400 }}>
+      {text.slice(0, index)}
+      <span className="text-black">
+        {text.slice(index, index + query.length)}
+      </span>
+      <span className="text-gray-400">
+        {text.slice(index + query.length)}
+      </span>
+    </div>
+  );
+}
+
 
   return (
     <div>

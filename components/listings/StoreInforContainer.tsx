@@ -91,7 +91,7 @@ export default function StoreInfoContainer({ storeId }: StoreInfoContainerProps)
             product_count: productCountRes.data.toString(),
             bio: instaData.biography,
             storeTypes: storeData.store_types.map((item: any) => item.store_type),
-            priceRanges: storeData.price_ranges.map((item: any) => item.label),
+            priceRanges: [...new Set(storeData.price_ranges.map((item: any) => item.label))] as string[],
             instagramFollowers: instaData.followers_count,
             city: storeData.city.name,
             area: storeData.area.name,
