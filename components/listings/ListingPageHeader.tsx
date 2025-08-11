@@ -49,14 +49,6 @@ export default function ListingPageHeader() {
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // if (e.key === "Enter") {
-    //   e.preventDefault();
-    //   setQuery(tempQuery);
-    //   setShowDropdown(false);
-    //   setShowStoreType(false);
-    //   router.push("/product_directory?search=" + encodeURIComponent(tempQuery));
-    // }
-
     if (e.key === "Enter") {
     e.preventDefault();
     const trimmed = tempQuery.trim();
@@ -144,7 +136,7 @@ export default function ListingPageHeader() {
 
     const debounce = setTimeout(() => {
       handleSearchQuerySuggestion();
-    }, 400);
+    }, 100);
 
     return () => clearTimeout(debounce);
   }, [tempQuery]);
@@ -179,26 +171,31 @@ export default function ListingPageHeader() {
   const handleSuggestionClick = (value: string) => {
     setQuery(value);
     setSearchFocus(false);
+    setShowDropdown(false);
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
   const handleCategoryClick = (category: string) => {
     setSearchFocus(false);
+    setShowDropdown(false);
     router.push(`/product_directory?category=${encodeURIComponent(category)}`);
   };
   const handleProductClick = (value: string) => {
     setSearchFocus(false);
+    setShowDropdown(false);
     router.push(`product_detail/${value}`);
   };
 
   const handleStoreClick = (storeID: string) => {
     setSearchFocus(false);
+    setShowDropdown(false);
     router.push("/store_profile/" + storeID);
   };
 
   const handleStoreListRoute = ()=>{
     setSearchFocus(false) ; 
     setQuery(tempQuery) ; 
+    setShowDropdown(false) ;
     router.push("/store_listing") ; 
   }
 
