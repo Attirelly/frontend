@@ -37,6 +37,7 @@ export default function ProductDetail() {
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [startIndex, setStartIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(4);
   const [storeBasicInfo, setStoreBasicInfo] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
@@ -193,15 +194,17 @@ Could you please confirm its availability and share more details.`;
 
 
   const nextImage = () => {
-    if(activeIndex - startIndex === 5 ){
+     if(activeIndex === endIndex){
+      setEndIndex((prev) => Math.min(prev + 1, images.length)); 
       setStartIndex((prev) => Math.min(prev + 1, images.length - 1));
-    }
-    setActiveIndex((prev) => (prev + 1) % images.length);
+     }
+     setActiveIndex((prev) => (prev + 1) % images.length);
   };
 
   const prevImage = () => {
-    if(activeIndex - startIndex > 0){
+    if(activeIndex === startIndex){
       setStartIndex((prev) => Math.max(prev - 1, 0));
+      setEndIndex((prev) => Math.max(prev - 1, 4));
     }
     setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
   };
@@ -253,6 +256,7 @@ Could you please confirm its availability and share more details.`;
                 <button
                   className="p-2 rounded-xl bg-gray-50 "
                   onClick={prevImage}
+                  disabled={startIndex === 0 && activeIndex === 0}
                 >
                   <ChevronLeft size={16} />
                 </button>
@@ -261,9 +265,9 @@ Could you please confirm its availability and share more details.`;
                   {images.slice(startIndex, startIndex + 5).map((src, idx) => (
                     <div
                       key={idx}
-                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${idx === activeIndex ? "border-black" : "border-gray-300"
+                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${startIndex + idx === activeIndex ? "border-black" : "border-gray-300"
                         }`}
-                      onClick={() => setActiveIndex(idx)}
+                      onClick={() => setActiveIndex(startIndex + idx)}
                     >
                       <Image
                         src={src}
@@ -276,8 +280,9 @@ Could you please confirm its availability and share more details.`;
                 </div>
 
                 <button
-                  className="p-2 rounded-xlbg-gray-100"
+                  className="p-2 rounded-xl bg-gray-100"
                   onClick={nextImage}
+                  disabled={activeIndex === endIndex && endIndex === images.length - 1}
                 >
                   <ChevronRight size={20} />
                 </button>
