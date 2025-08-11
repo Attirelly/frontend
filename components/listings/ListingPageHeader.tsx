@@ -472,7 +472,7 @@ function highlightMatch(text: string, query: string) {
                 </span>
               </div>
             ) : (
-              <div className="relative" ref={dropdownRef}>
+              <div className="relative" ref={userMenuRef}>
     <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowLogout((prev) => !prev)}>
                 <Image
                   src="/ListingPageHeader/user_logo.svg"
