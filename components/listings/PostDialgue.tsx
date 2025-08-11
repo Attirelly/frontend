@@ -6,6 +6,8 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { manrope, roboto } from '@/font';
 import dynamic from "next/dynamic";
+import SidecarCarousel from './SidecarCarousel';
+import CorouselImages from './CorouselImages';
 
 // const CustomVideoPlayer = dynamic(() => import("../ui/CustomVideoPlayer"), {
 //   ssr: false,
@@ -35,6 +37,7 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+  console.log(post);
 
   return (
     <div className="fixed inset-0 z-50 bg-neutral-900/70 flex justify-center items-center ">
@@ -43,13 +46,19 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
         className="relative flex max-w-[70vw] max-h-[90vh]"
       >
         <div className='grid grid-cols-[1.5fr_1fr] rounded-2xl overflow-hidden'>
-          {post.media_type === 'VIDEO' ? (
+          {post.media_type === 'CAROUSEL_ALBUM' ? (
+            <CorouselImages mediaUrls={post.carousel_images} />
+          ) : 
+          post.media_type === 'VIDEO' ? (
           //  <CustomVideoPlayer src={post.media_url} />
            <video
               src={post.media_url}
               controls
               autoPlay
               muted
+              controlsList="nodownload noplaybackrate noremoteplayback"
+              disablePictureInPicture
+              // controlsList="nodownload"
               className="max-w-full max-h-full object-contain"
             />
           ) : (

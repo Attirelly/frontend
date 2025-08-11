@@ -35,11 +35,11 @@ export default function GridPostGallery({ posts, storeName }: Props) {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-[2px]">
+      <div className="grid grid-cols-3 gap-1">
         {posts.map((post, index) => (
           <div
             key={post.id}
-            className="relative aspect-square overflow-hidden bg-black"
+            className="relative w-[300px] h-[400px] overflow-hidden bg-black"
             onClick={() => openDialog(index)}
           >
             {post.media_type === 'IMAGE' || post.media_type === 'CAROUSEL_ALBUM' ? (
@@ -71,6 +71,16 @@ export default function GridPostGallery({ posts, storeName }: Props) {
                 />
               </div>
             )}
+            {post.media_type === 'CAROUSEL_ALBUM' && (
+                <div className="absolute top-1 right-1">
+                  <Image
+                    src="/ListingPageHeader/carousel_logo.png"  // Make sure this image exists
+                    alt="carousel"
+                    width={36}
+                    height={36}
+                  />
+                </div>
+              )}
           </div>
         ))}
       </div>

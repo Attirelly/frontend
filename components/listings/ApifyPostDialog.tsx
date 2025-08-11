@@ -45,9 +45,11 @@ export default function ApifyPostDialog({ isOpen, post, onClose, onNext, onPrev,
             ) : post.media_type === 'Video' ? (
               <video
                 src={post.media_urls[0].media_url}
-                // controls
-                autoPlay
-                muted
+                controls
+              autoPlay
+              muted
+              controlsList="nodownload noplaybackrate noremoteplayback"
+              disablePictureInPicture
                 className="max-w-full max-h-full object-contain"
               />
             ) : (
