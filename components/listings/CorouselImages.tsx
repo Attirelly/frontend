@@ -8,7 +8,7 @@ type Props = {
   mediaUrls: CorouselImagesType[];
 };
 
-export default function SidecarCarousel({ mediaUrls }: Props) {
+export default function CarouselImages({ mediaUrls }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentMedia = mediaUrls[currentIndex];
 

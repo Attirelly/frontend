@@ -71,6 +71,16 @@ export default function GridPostGallery({ posts, storeName }: Props) {
                 />
               </div>
             )}
+            {post.media_type === 'CAROUSEL_ALBUM' && (
+                <div className="absolute top-1 right-1">
+                  <Image
+                    src="/ListingPageHeader/carousel_logo.png"  // Make sure this image exists
+                    alt="carousel"
+                    width={36}
+                    height={36}
+                  />
+                </div>
+              )}
           </div>
         ))}
       </div>
