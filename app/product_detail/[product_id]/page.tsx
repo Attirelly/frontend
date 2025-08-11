@@ -36,9 +36,9 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [startIndex, setStartIndex] = useState(0);
-  const [endIndex, setEndIndex] = useState(4);
+  const [activeIndex, setActiveIndex] = useState(0); // k 
+  const [startIndex, setStartIndex] = useState(0);  //  i 
+  const [endIndex, setEndIndex] = useState(4);     //   j 
   const [storeBasicInfo, setStoreBasicInfo] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
@@ -360,7 +360,7 @@ Could you please confirm its availability and share more details.`;
                         onClick={() =>
                           updateVariantBySelection(selectedColor, size)
                         }
-                        className={`border rounded-sm w-19 h-10 ${selectedSize?.size_id === size.size_id
+                        className={`border rounded-sm min-w-19 min-h-10 px-1 ${selectedSize?.size_id === size.size_id
                           ? "border-black font-semibold bg-[#EBEBEB]"
                           : "border-gray-300"
                           }`}
