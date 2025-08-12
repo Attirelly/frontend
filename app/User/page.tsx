@@ -1,3 +1,4 @@
+"use client"
 import Hero from "@/components/SellerLanding/Hero";
 import Benefits from "@/components/SellerLanding/Benefits";
 import Testimonials from "@/components/SellerLanding/Testimonials";
@@ -10,9 +11,21 @@ import ListingFooter from "@/components/listings/ListingFooter";
 import Roadmap from "@/components/SellerLanding/Roadmap";
 import SellerForm from "@/components/SellerLanding/SellerForm";
 import HowItWorks from "@/components/SellerLanding/HowItWorks";
+import { useEffect } from "react";
 console.log("hi")
 
 export default function SellerOnboardingPage() {
+
+  useEffect(() => {
+  if (window.location.hash) {
+    const id = window.location.hash.substring(1); // remove "#"
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+}, []);
+
   return (
     <main className="relative bg-white text-black">
       <SellerLandingHeader />

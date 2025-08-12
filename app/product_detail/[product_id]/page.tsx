@@ -329,17 +329,46 @@ Could you please confirm its availability and share more details.`;
             <div className="text-[#111] font-sans w-full max-w-xl">
               {/* ✅ Magnifier Preview Inside Description */}
               {lensPosition && (
-          <div
-            className="border border-gray-300 overflow-hidden"
-           style={{
+  //         <div
+  //           className="border border-gray-300 overflow-hidden"
+  //          style={{
+  //   width: LENS_WIDTH * ZOOM_FACTOR * 2,
+  //   height: LENS_HEIGHT * ZOOM_FACTOR * 2,
+  //   backgroundImage: `url(${images[activeIndex]})`,
+  //   backgroundRepeat: "no-repeat",
+  //   // backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
+  //   // backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
+  //   backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
+  // }}
+  //         />
+  <div
+            className="border border-gray-300 overflow-hidden">
+           {/* style={{
     width: LENS_WIDTH * ZOOM_FACTOR * 2,
     height: LENS_HEIGHT * ZOOM_FACTOR * 2,
     backgroundImage: `url(${images[activeIndex]})`,
     backgroundRepeat: "no-repeat",
-    backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
-    backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
+    // backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
+    // backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
+    backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
+  }} */}
+  <Image
+  src={images[activeIndex]}
+  alt="zoomed image"
+  width={600}
+  height={400}
+  className="object-cover"
+  style={{
+    width: LENS_WIDTH * ZOOM_FACTOR * 2,
+    height: LENS_HEIGHT * ZOOM_FACTOR * 2,
+    backgroundImage: `url(${images[activeIndex]})`,
+    backgroundRepeat: "no-repeat",
+    // backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
+    // backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
+    backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
   }}
-          />
+  />
+          </div>
         )}
               <p className="text-[24px] font-medium leading-9.5 tracking-normal">
                 By {storeBasicInfo?.store_name}
