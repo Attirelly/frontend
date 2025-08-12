@@ -16,15 +16,30 @@ export default function ProductCard({
   discountPercentage,
 }: ProductCardType) {
   const [imageIndex, setImageIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   // ✅ Preload all product images immediately on mount
+  // useEffect(() => {
+  //   if (!imageUrl || imageUrl.length === 0) return;
+  //   imageUrl.forEach((url) => {
+  //     const img = new window.Image();
+  //     img.src = url;
+  //   });
+  // }, [imageUrl]);
+
   useEffect(() => {
-    if (!imageUrl || imageUrl.length === 0) return;
-    imageUrl.forEach((url) => {
-      const img = new window.Image();
-      img.src = url;
+    if (!isHovered || imageUrl.length <= 1) return;
+
+    const nextIndex = (imageIndex + 1) % imageUrl.length;
+    const prevIndex = (imageIndex - 1 + imageUrl.length) % imageUrl.length;
+
+    [nextIndex, prevIndex].forEach(idx => {
+      // if (!loadedImages[idx]) {
+        const img = new window.Image();
+        img.src = imageUrl[idx];
+      // }
     });
-  }, [imageUrl]);
+  }, [isHovered, imageIndex, imageUrl]);
 
   const handleNext = () => {
     setImageIndex((prevIndex) =>
@@ -45,7 +60,9 @@ export default function ProductCard({
       rel="noopener noreferrer"
       className="block w-full"
     >
-      <div className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2">
+      <div className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}>
         
         {/* Product Image Carousel */}
         <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group">
