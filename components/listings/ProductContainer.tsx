@@ -220,21 +220,32 @@ export default function ProductContainer({
     }
   }, [page]);
 
+//   useEffect(() => {
+//   if (page > 0 && page < totalPages - 1 && !loading) {
+//     const nextPage = page + 1;
+//     const controller = new AbortController();
+//     fetchProducts(nextPage, controller);
+//     return () => controller.abort();
+//   }
+// }, [page, totalPages, loading]);
+
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
-          setPage((prev) => prev + 1);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    const currentRef = loaderRef.current;
-    if (currentRef) observer.observe(currentRef);
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
-  }, [loaderRef.current, hasMore, loading]);
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && hasMore && !loading) {
+        setPage((prev) => prev + 1);
+      }
+    },
+    { rootMargin: '200px' } // Trigger earlier
+  );
+  
+  const currentRef = loaderRef.current;
+  if (currentRef) observer.observe(currentRef);
+  
+  return () => {
+    if (currentRef) observer.unobserve(currentRef);
+  };
+}, [ loaderRef.current ,hasMore, loading]);
 
   return noResultFound ? (
     <NoResultFound />
