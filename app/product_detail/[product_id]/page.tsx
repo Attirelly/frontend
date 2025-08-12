@@ -338,6 +338,7 @@ Could you please confirm its availability and share more details.`;
     backgroundRepeat: "no-repeat",
     backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
     backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
+    
     // backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
   }}
           />
