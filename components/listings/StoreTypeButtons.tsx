@@ -11,11 +11,16 @@ interface StoreTypesButtonProps {
   context: string;
 }
 
-const StoreTypeImage = [
-  { name: 'Designer Labels', url: '/ListingPageHeader/designer_labels.svg' },
-  { name: 'Retail Stores', url: '/ListingPageHeader/retail_stores.svg' },
-  { name: 'Boutiques', url: '/ListingPageHeader/boutiques.svg' },
-];
+const StoreTypeImages = {
+  'Retail Store': {
+    selected: '/ListingPageHeader/white_retail.svg',
+    unselected: '/ListingPageHeader/black_retail.svg',
+  },
+  'Designer Label': {
+    selected: '/ListingPageHeader/white_designer.svg',
+    unselected: '/ListingPageHeader/black_designer.svg',
+  },
+};
 
 export default function StoreTypeButtons({
   options,
@@ -47,11 +52,13 @@ export default function StoreTypeButtons({
   return (
     <div className="flex space-x-2">
       {options.map((option) => {
-        const storeImage = StoreTypeImage.find(
-          (item) => item.name.toLowerCase() === option.store_type.toLowerCase()
-        );
-
         const isSelected = selected?.store_type === option.store_type;
+
+        // Choose the correct image path
+        const imagePath =
+          StoreTypeImages[option.store_type as keyof typeof StoreTypeImages]?.[
+            isSelected ? 'selected' : 'unselected'
+          ];
 
         return (
           <button
@@ -61,13 +68,13 @@ export default function StoreTypeButtons({
               px-4 py-2 rounded-full transition text-base flex items-center gap-2
               ${isSelected
                 ? 'bg-black text-white font-semibold'
-                : 'bg-white text-black border-[#878787] font-normal'}
+                : 'bg-white text-black border border-[#878787] font-normal'}
             `}
             onClick={() => setSelected(option)}
           >
-            {storeImage && (
+            {imagePath && (
               <Image
-                src={storeImage.url}
+                src={imagePath}
                 alt={option.store_type}
                 width={18}
                 height={18}
