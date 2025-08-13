@@ -385,8 +385,8 @@ export default function ProductsPage({
     const fetchInitialData = async () => {
       try {
         const url = batchId
-          ? `/products/products_by_store_async/${storeId}?batch_id=${batchId}`
-          : `/products/products_by_store_async/${storeId}`;
+          ? `/products/products_by_store/${storeId}?batch_id=${batchId}`
+          : `/products/products_by_store/${storeId}`;
         const res = await api.get(url); // Adjust this to your actual endpoint
         const json = res.data;
         setFilteredData(json.table_data);
