@@ -23,6 +23,7 @@ import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 import useAuthStore from "@/store/auth";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
+
 export default function ProductDetail() {
   const { user } = useAuthStore();
   const params = useParams();
@@ -51,17 +52,49 @@ export default function ProductDetail() {
     x: number;
     y: number;
   } | null>(null);
+  
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setLensPosition({ x, y });
-  };
+  const ZOOM_FACTOR = 2; // Adjust this value as needed
+const LENS_WIDTH = 150;
+const LENS_HEIGHT = 100;
+const ORIGINAL_IMAGE_WIDTH = 600;
+const ORIGINAL_IMAGE_HEIGHT = 600; // your image container size
 
+const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  // Ensure lens stays within image bounds
+  const boundedX = Math.max(0, Math.min(x - LENS_WIDTH/2, rect.width - LENS_WIDTH));
+  const boundedY = Math.max(0, Math.min(y - LENS_HEIGHT/2, rect.height - LENS_HEIGHT));
+  
+  setLensPosition({ x: boundedX, y: boundedY });
+};
   const handleMouseLeave = () => {
     setLensPosition(null);
   };
+
+  const imageRef = useRef<HTMLImageElement>(null);
+const [ratio, setRatio] = useState<number>(1);
+
+  const handleImageLoad = () => {
+  if (imageRef.current) {
+    const naturalWidth = imageRef.current.naturalWidth;
+    const naturalHeight = imageRef.current.naturalHeight;
+
+    
+    const containerWidth = 600;
+    const containerHeight = 600;
+    const ratioio = naturalWidth/naturalHeight;
+   console.log(ratio);
+   setRatio(ratioio);
+    // const displayedWidth = naturalWidth * ratioWidth;
+    // const displayedHeight = naturalHeight * ratioHeight;
+  }
+};
+
+
 
   useEffect(() => {
     async function fetchProductDetails() {
@@ -229,29 +262,31 @@ Could you please confirm its availability and share more details.`;
                 className="w-[600px] h-[600px] relative rounded overflow-hidden"
               >
                 <Image
+                ref={imageRef}
                   src={images[activeIndex]}
                   alt={`Product Image ${activeIndex + 1}`}
                   fill
                   className="object-contain rounded-xl object-top"
+                  onLoad={handleImageLoad}
                 />
               </div>
 
               {lensPosition && (
-                <div
-                  className="absolute pointer-events-none transition-all duration-75 ease-linear"
-                  style={{
-                    width: 100,
-                    height: 100,
-                    top: Math.floor(lensPosition.y / 100) * 100,
-                    left: Math.floor(lensPosition.x / 100) * 100,
-                    backgroundColor: "transparent",
-                    border: "1px solid rgba(0, 123, 255, 0.6)",
-                    borderRadius: 4,
-                    boxShadow: "0 0 4px rgba(0, 123, 255, 0.3)",
-                    zIndex: 20,
-                  }}
-                />
-              )}
+          <div
+            className="absolute pointer-events-none transition-all duration-75 ease-linear"
+            style={{
+              width: LENS_WIDTH,
+              height: LENS_HEIGHT,
+              top: lensPosition.y,
+              left: lensPosition.x,
+              backgroundColor: "transparent",
+              border: "1px solid rgba(0, 123, 255, 0.6)",
+              borderRadius: 4,
+              boxShadow: "0 0 4px rgba(0, 123, 255, 0.3)",
+              zIndex: 20,
+            }}
+          />
+        )}
 
               <div className="mt-4 flex items-center gap-2">
                 <button
@@ -294,21 +329,39 @@ Could you please confirm its availability and share more details.`;
             <div className="text-[#111] font-sans w-full max-w-xl">
               {/* ✅ Magnifier Preview Inside Description */}
               {lensPosition && (
-                <div>
-                  <div
-                    className="border border-gray-300"
-                    style={{
-                      width: 600,
-                      height: 600,
-                      backgroundImage: `url(${images[activeIndex]})`,
-                      backgroundRepeat: "no-repeat",
-                      backgroundSize: `${600 * 2}px ${600 * 2}px`,
-                      backgroundPosition: `-${lensPosition.x * 2 - 150}px -${lensPosition.y * 2 - 150
-                        }px`,
-                    }}
-                  />
-                </div>
-              )}
+          <div
+            className="border border-gray-300 overflow-hidden"
+           style={{
+    width: LENS_WIDTH * ZOOM_FACTOR * 2,
+    height: LENS_HEIGHT * ZOOM_FACTOR * 2,
+    backgroundImage: `url(${images[activeIndex]})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
+    backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
+    
+    // backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
+  }}
+          />
+  // <div
+  //           className="border border-gray-300 overflow-hidden">
+  // <Image
+  // src={images[activeIndex]}
+  // alt="zoomed image"
+  // width={600}
+  // height={400}
+  // className="object-cover"
+  // style={{
+  //   width: LENS_WIDTH * ZOOM_FACTOR * 2,
+  //   height: LENS_HEIGHT * ZOOM_FACTOR * 2,
+  //   backgroundImage: `url(${images[activeIndex]})`,
+  //   backgroundRepeat: "no-repeat",
+  //   // backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
+  //   // backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
+  //   backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
+  // }}
+  // />
+  //         </div>
+        )}
               <p className="text-[24px] font-medium leading-9.5 tracking-normal">
                 By {storeBasicInfo?.store_name}
               </p>

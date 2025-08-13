@@ -16,6 +16,7 @@ export default function SellerLandingHeader() {
 
   const handleClick = (title: string, id: string) => {
   setSelected(title);
+  window.history.pushState(null, "", `#${id}`);
   const el = document.getElementById(id);
   if (el) {
     el.scrollIntoView({ behavior: "smooth" });

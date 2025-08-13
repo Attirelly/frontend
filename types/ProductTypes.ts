@@ -79,4 +79,5 @@ export interface ProductCardType {
   price: number;
   originalPrice: number;
   discountPercentage: number;
+  loading?:boolean;
 }
