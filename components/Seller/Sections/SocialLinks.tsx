@@ -4,6 +4,7 @@ import { useSellerStore } from "@/store/sellerStore";
 import { toast } from "sonner";
 import { encode } from "punycode";
 import { api } from "@/lib/axios";
+import { redirect } from "next/dist/server/api-utils";
 
 export default function SocialLinksComponent() {
 
@@ -79,6 +80,7 @@ setSocialLinksData({
       const stateData = {
         instagram_url: instagramUrl,
         store_id: storeId,
+        redirect_uri: redirectUri,
       };
 
       
