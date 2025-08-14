@@ -51,6 +51,8 @@ export default function ListingPageHeader() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showStoreType, setShowStoreType] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
+  const [locationSearchInput, setLocationSearchInput] = useState("");
+  
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
@@ -321,14 +323,14 @@ function highlightMatch(text: string, query: string) {
           </div>
           <div className="flex justify-center">
             <div className="flex border border-gray-300 rounded-full items-center gap-4 w-full max-w-[611px] px-4 relative">
-              <div className="flex items-center gap-2 w-[250px] h-[24px]">
+              <div className="flex items-center gap-2 w-[280px] h-[24px]">
                 <img
                   src="/ListingPageHeader/location_pin.svg"
                   alt="Location"
                   className="opacity-100"
                 />
                 <Select
-                  options={groupedOptions}
+                  options={locationSearchInput.trim() === "" ? groupedOptions.slice(0,6) : groupedOptions}
                   value={selectedOption}
                   onChange={(val) => {
                     const v = val as SelectOption | null;
@@ -337,6 +339,7 @@ function highlightMatch(text: string, query: string) {
                     const area = areas.find((a) => a.id === v?.value);
                     setSelectedArea(area || null);
                   }}
+                  onInputChange={(value) => setLocationSearchInput(value)} // capture search text
                   getOptionValue={(e) => e.value}
                   formatOptionLabel={(data: SelectOption, { context }) =>
                     context === "menu" ? (
