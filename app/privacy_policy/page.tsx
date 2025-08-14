@@ -451,7 +451,8 @@ const PrivacyPolicyPage = () => {
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">15. HOW CAN YOU DELETE INSTAGRAM INTEGRATION DATA?</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             To delete Instagram integration data, please follow steps mentioned here -{' '}
-            <a href="https://attirelly.com/vendor/data_deletion_instagram" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://attirelly.com/vendor/data_deletion_instagram</a>
+            <br></br>
+            <a href="/insta_data_delete" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://attirelly.com/insta_data_delete</a>
           </p>
         </section>
       </div>
