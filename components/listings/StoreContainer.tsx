@@ -257,7 +257,7 @@ const REFETCH_THRESHOLD = Math.round(BUFFER_SIZE * 0.2);
 
 export default function StoreContainerPage() {
   const { facets, setFacets, selectedFilters, activeFacet } = useFilterStore();
-  const { city, query, storeType, deliveryType } = useHeaderStore();
+  const { city, area, query, storeType, deliveryType } = useHeaderStore();
 
   const [stores, setStores] = useState<StoreCardType[]>([]);
   const [buffer, setBuffer] = useState<StoreCardType[]>([]);
@@ -282,6 +282,9 @@ export default function StoreContainerPage() {
     }
     if (city) {
       filters.push([`city:${city.name}`]);
+    }
+    if(area){
+      filters.push([`area:${area.name}`]);
     }
     if (storeType) {
       filters.push([`store_types:${storeType.store_type}`]);
@@ -384,7 +387,7 @@ export default function StoreContainerPage() {
     setStores([]);
     setBuffer([]);
     fetchStores(0);
-  }, [query, storeType, selectedFilters, city, filters]);
+  }, [query, storeType, selectedFilters, city,area, filters]);
 
   // Handle delivery type filter
   useEffect(() => {

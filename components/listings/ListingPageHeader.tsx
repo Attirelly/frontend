@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { api } from "@/lib/axios";
-import { City, SelectOption } from "@/types/SellerTypes";
+import { Area, City, SelectOption } from "@/types/SellerTypes";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { rubik, manrope, rosario } from "@/font";
 import StoreSearchType from "./StoreSearchType";
@@ -16,6 +16,8 @@ import customStyles from "@/utils/selectStyles";
 import Image from "next/image";
 import { logout } from "@/utils/logout";
 import { useProductFilterStore } from "@/store/filterStore";
+import { validateHeaderValue } from "http";
+import { group } from "console";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -24,7 +26,8 @@ export default function ListingPageHeader() {
   const {
     city,
     setCity,
-    query,
+    area,
+    setArea,    query,
     setQuery,
     setStoreType,
     setSearchFocus,
@@ -35,7 +38,9 @@ export default function ListingPageHeader() {
   const { user } = useAuthStore();
   const [signIn, setSignIn] = useState(false);
   const [cities, setCities] = useState<City[]>([]);
+  const [areas , setAreas] = useState<Area[]>([]);  
   const [selectedCity, setSelectedCity] = useState<City | null>(city || null);
+  const [selectedArea, setSelectedArea] = useState<Area | null>(area || null);
   const [tempQuery, setTempQuery] = useState<string>(query || "");
 
   const [storeSuggestions, setStoreSuggestions] = useState<string[]>([]);
@@ -114,6 +119,19 @@ export default function ListingPageHeader() {
     fetchCities();
   }, []);
 
+    useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const res = await api.get("/location/areas/");
+        console.log("areas data" , res.data)
+        setAreas(res.data);
+      } catch {
+        toast.error("Failed to fetch areas");
+      }
+    };
+    fetchAreas();
+  }, []);
+
   useEffect(() => {
     if (selectedCity) {
       setCity(selectedCity);
@@ -121,6 +139,14 @@ export default function ListingPageHeader() {
       setCity(null);
     }
   }, [selectedCity]);
+  
+  useEffect(() => {
+    if (selectedArea) {
+      setArea(selectedArea);
+    } else {
+      setArea(null);
+    }
+  }, [selectedArea]);
 
   useEffect(() => {
     if (tempQuery.length < 4) {
@@ -204,15 +230,34 @@ export default function ListingPageHeader() {
     router.push("/store_listing") ; 
   }
 
-  const cityOptions: SelectOption[] = [
+  // const cityOptions: SelectOption[] = [
+  //   { value: "", label: "All Cities", name: "All Cities", country: "" },
+  //   ...cities.map((c) => ({
+  //     value: c.id,
+  //     label: c.name,
+  //     name: c.name,
+  //     country: "India",
+  //   })),
+  // ];
+
+  const groupedOptions :SelectOption[] = [
     { value: "", label: "All Cities", name: "All Cities", country: "" },
     ...cities.map((c) => ({
       value: c.id,
       label: c.name,
       name: c.name,
       country: "India",
+      type: "city"
     })),
-  ];
+    ...areas.map((a) => ({
+      value: a.id,
+      label: a.name,
+      name: a.name,
+      country: "India",
+      type: "area",
+      city: a.city_name
+    }))
+  ]
 
   const selectedOption: SelectOption =
     selectedCity != null
@@ -221,8 +266,15 @@ export default function ListingPageHeader() {
         label: selectedCity.name,
         name: selectedCity.name,
         country: "India",
+      } : selectedArea != null
+      ? {
+        value: selectedArea.id,
+        label: selectedArea.name,
+        name: selectedArea.name,
+        city: selectedArea.city_name,
       }
-      : cityOptions[0];
+      // : cityOptions[0];
+      :groupedOptions[0];
 
 function highlightMatch(text: string, query: string) {
   const defaultClasses = `${manrope.className} text-base text-gray-400`;
@@ -276,22 +328,24 @@ function highlightMatch(text: string, query: string) {
                   className="opacity-100"
                 />
                 <Select
-                  options={cityOptions}
+                  options={groupedOptions}
                   value={selectedOption}
                   onChange={(val) => {
                     const v = val as SelectOption | null;
                     const city = cities.find((c) => c.id === v?.value);
                     setSelectedCity(city || null);
+                    const area = areas.find((a) => a.id === v?.value);
+                    setSelectedArea(area || null);
                   }}
                   getOptionValue={(e) => e.value}
-                  formatOptionLabel={(data, { context }) =>
+                  formatOptionLabel={(data: SelectOption, { context }) =>
                     context === "menu" ? (
                       <div>
                         <div className="font-semibold text-base text-[#0F0F0F]">
                           {data.name}
                         </div>
                         <div className="text-[#646464] text-sm">
-                          {data.country}
+                          { data.type === "city" ? data.country : data.city }
                         </div>
                       </div>
                     ) : (

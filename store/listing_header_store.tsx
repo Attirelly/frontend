@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { City, BrandType, instaMediaType, PriceRangeType, MediaResponseType, MediaItemType } from '@/types/SellerTypes'
+import { City, BrandType, instaMediaType, PriceRangeType, MediaResponseType, MediaItemType, Area } from '@/types/SellerTypes'
 
 // Replace with actual Ludhiana city object from your database
 const defaultCity: City = {
@@ -14,6 +14,8 @@ const defaultCity: City = {
 type HeaderState = {
     ambassadorType: string;
     setAmbassadorType:(ambassadorType:string) => void;
+    area:Area|null;
+    setArea: (area: Area|null) => void;
     city: City|null;
     setCity: (city: City|null) => void;
     query: string;
@@ -52,6 +54,8 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     setAmbassadorType: (ambassadorType: string) => set({ ambassadorType }),
     city: null,
     setCity: (city) => set({ city }),
+    area: null,
+    setArea: (area) => set({ area }),
     query: '',
     setQuery: (query) => set({ query }),
     searchFocus: false,
