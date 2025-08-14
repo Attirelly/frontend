@@ -68,7 +68,7 @@ export default function StoreCard({
 
   return (
     <div
-      className="relative border border-[#F1F1F1] rounded-xl p-4 flex gap-4 bg-[#FFFFFF] hover:[box-shadow:0px_4px_20px_rgba(0,0,0,0.15)] transition-all cursor-pointer"
+      className="w-[912px] relative border border-[#F1F1F1] rounded-xl p-4 flex gap-4 bg-[#FFFFFF] hover:[box-shadow:0px_4px_20px_rgba(0,0,0,0.15)] transition-all cursor-pointer"
       onClick={handleCardClick}
     >
       {/* Store Image */}
@@ -135,7 +135,7 @@ export default function StoreCard({
               width={14}
               height={14}
             />
-            <p className="text-[9px] text-[#5F5F5F]">{location}</p>
+            <p className="text-[14px] text-[#5F5F5F]">{location}</p>
           </div>
 
           <div className="flex flex-wrap gap-2 mt-2">

@@ -14,19 +14,6 @@ interface CardData {
   description?: string;
 }
 
-const cards: CardData[] = [
-  { id: '1', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-  { id: '2', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-  { id: '3', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-  { id: '4', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-  { id: '5', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-  { id: '6', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-  { id: '7', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-  { id: '8', imageUrl: '/Homepage/CardTypeTwo.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-  { id: '9', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-  { id: '10', imageUrl: '/Homepage/CardTypeOne.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana' },
-];
-
 const SECTION_NUMBER = 12;
 
 export default function SectionTwelveContainer() {
@@ -34,8 +21,6 @@ export default function SectionTwelveContainer() {
   const visibleCount = 6;
   const cardWidth = 184; // Width of each card
   const gap = 20; // Tailwind gap-5 = 1.25rem = 20px
-  const maxIndex = cards.length - visibleCount;
-
   const [stores, setStores] = useState<CardData[]>([]);
   const [viewAll, setViewAll] = useState('');
   const [name, setName] = useState('');
@@ -45,8 +30,8 @@ export default function SectionTwelveContainer() {
       try {
         const res = await api.get(`homepage/stores_by_section_number/${SECTION_NUMBER}`);
         const storeData = res.data;
-        
-        const formattedStores: CardData[] = storeData.map((store) => ({
+
+        const formattedStores: CardData[] = storeData.map((store: any) => ({
           id: store.store_id,
           imageUrl: store.profile_image,
           title: store.store_name,
@@ -60,21 +45,30 @@ export default function SectionTwelveContainer() {
         setName(sectionData.section_name);
 
       } catch (error) {
-
+        console.error(error);
       }
-    }
+    };
     fetchStoresBySection()
   }, []);
 
+  const totalCards = stores.length;
+
   const handleNext = () => {
-    setStartIndex((prev) => Math.min(prev + 1, maxIndex));
+    if (totalCards > 0) {
+      setStartIndex((prev) => (prev + 1) % totalCards);
+    }
   };
 
   const handlePrev = () => {
-    setStartIndex((prev) => Math.max(prev - 1, 0));
+    if (totalCards > 0) {
+      setStartIndex((prev) => (prev - 1 + totalCards) % totalCards);
+    }
   };
 
-  const translateX = startIndex * (cardWidth + gap);
+  const visibleCards = Array.from({ length: visibleCount }, (_, i) => {
+    const realIndex = (startIndex + i) % totalCards;
+    return stores[realIndex];
+  });
 
   return (
     <div className='w-[1242px]  mx-auto space-y-8'>
@@ -100,8 +94,8 @@ export default function SectionTwelveContainer() {
         {/* Navigation Arrows */}
         <button
           onClick={handlePrev}
-          disabled={startIndex === 0}
-          className="absolute z-10 -left-15 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+          // disabled={startIndex === 0}
+          className="absolute z-50 -left-15 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
         >
           <Image
             src="/Homepage/left_arrow.svg"
@@ -113,26 +107,21 @@ export default function SectionTwelveContainer() {
 
         <div className="overflow-hidden">
           <div
-            className="flex gap-6 transition-transform duration-500 ease-in-out"
-            style={{
-              transform: `translateX(-${translateX}px)`,
-            }}
-          >
-            {stores.map((card) => (
+            className="flex gap-6 transition-transform duration-500 ease-in-out">
+            {visibleCards.map((card) => (
               <div
-                key={card.id}
+                key={card?.id}
                 style={{ minWidth: `${cardWidth}px` }}
-                onClick={() => console.log(card.id)}
               >
                 <a
-                  href={`/store_profile/${card.id}`}
+                  href={`/store_profile/${card?.id}`}
                   target="_blank"
                   rel="noopener noreferrer">
 
                   <CardTypeFour
-                    imageUrl={card.imageUrl}
-                    title={card.title}
-                    description={card.description || ''}
+                    imageUrl={card?.imageUrl}
+                    title={card?.title}
+                    description={card?.description || ''}
                   />
                 </a>
 
@@ -143,8 +132,8 @@ export default function SectionTwelveContainer() {
 
         <button
           onClick={handleNext}
-          disabled={startIndex === maxIndex}
-          className="absolute  -right-10 translate-x-1/2 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+          // disabled={startIndex === maxIndex}
+          className="absolute z-10  -right-10 translate-x-1/2 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
         >
           <Image
             src="/Homepage/right_arrow.svg"

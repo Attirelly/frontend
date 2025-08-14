@@ -33,7 +33,7 @@ export default function HeroSection() {
         <div className="relative w-full h-118">
             <button
                 onClick={handlePrev}
-                disabled={currIndex === 0}
+                // disabled={currIndex === 0}
                 className="absolute z-10 -left-5 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
             >
                 <Image
@@ -55,7 +55,7 @@ export default function HeroSection() {
 
             <button
                 onClick={handleNext}
-                disabled={currIndex === maxIndex}
+                // disabled={currIndex === maxIndex}
                 className="absolute z-10 -right-5 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
             >
                 <Image

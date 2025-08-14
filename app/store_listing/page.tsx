@@ -45,13 +45,13 @@ export default function StoreListingPage() {
   return (
     <div className="bg-[#FFFFFF]">
       <ListingPageHeader />
-      <div className="mx-[81px] mt-8 gap-10 flex flex-col">
+      <div className="mx-[85px] mt-8 gap-10 flex flex-col">
        {/* <h1 className="text-2xl font-bold text-gray-800">{getHeading()}</h1> */}
        <h1 className={`${manrope.className} text-[32px] text-black`} style={{fontWeight:500}}>{getHeading()}</h1>
         {/* <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID || ''}/> */}
-        <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE || ''}/>
+        <StoreTypeTabs defaultValue={process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE || ''}/>
         <div className="border-t border-[#D9D9D9]"/>
-        <div className="grid grid-cols-[1fr_3fr] gap-3">
+        <div className="grid grid-cols-[1fr_3fr] gap-[40px]">
           {/* <div className="self-start"> */}
           <div>
             <DynamicFilter context="store"/>
@@ -65,34 +65,8 @@ export default function StoreListingPage() {
 
 
         </div>
-
-        {/* <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-3 relative">
-          <div
-            className={`z-50 bg-white shadow-lg border-r border-gray-200 transform transition-transform duration-300 fixed top-0 left-0 h-full w-80 p-4 ${
-              showFilters ? "translate-x-0" : "-translate-x-full"
-            }`}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-lg font-semibold">Refine</h1>
-              <button onClick={() => setShowFilters(false)}>
-                <img
-                  src="/ListingPageHeader/left_pointing_arrow.svg"
-                  alt="close"
-                  className="w-5 h-5 rotate-180"
-                />
-              </button>
-            </div>
-            <DynamicFilter />
-          </div>
-
-          <div className="flex flex-col gap-5 w-full">
-            <TwoOptionToggle options={["In Store", "Home Delivery"]} />
-            <StoreContainerPage />
-          </div>
-        </div> */}
       </div>
 
-      {/* Other components or content for the store listing page */}
     </div>
   );
 }

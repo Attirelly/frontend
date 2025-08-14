@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import CardTypeOne from '../cards/CardTypeOne';
 import { api } from '@/lib/axios';
@@ -14,31 +14,18 @@ interface CardData {
     description?: string;
 }
 
-const cards: CardData[] = [
-    { id: '1', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-    { id: '2', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-    { id: '3', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-    { id: '4', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-    { id: '5', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-    { id: '6', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-    { id: '7', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-    { id: '8', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-    { id: '9', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-    { id: '10', imageUrl: '/Homepage/CardTypeOne.svg', discountText: '23', title: 'Embroidary Kurta' },
-];
-
 const SECTION_NUMBER = 4;
 
 export default function CardStack() {
-    const [centerIndex, setCenterIndex] = useState(2); // Start with third card centered
+    const [centerIndex, setCenterIndex] = useState(2);
     const [viewAll, setViewAll] = useState('');
     const [name, setName] = useState('');
     const [products, setProducts] = useState<CardData[]>([]);
 
+    // Fetch data
     useEffect(() => {
         const fetchSegmentInfo = async () => {
             try {
-
                 const res = await api.get(`homepage/get_products_by_section_number/${SECTION_NUMBER}`);
                 const productData = res.data;
                 
@@ -54,31 +41,55 @@ export default function CardStack() {
                 const sectionData = resSection.data;
                 setViewAll(sectionData.section_url);
                 setName(sectionData.section_name);
-
-
+            } catch (error) {
+                console.error(error);
             }
-            catch (error) {
-                
-            }
-        }
-
-
+        };
         fetchSegmentInfo();
-    }, [])
+    }, []);
 
+    // Handle infinite navigation
+    const handleNext = useCallback(() => {
+        setCenterIndex(prev => (prev + 1) % products.length);
+    }, [products.length]);
 
-    const handleNext = () => {
-        setCenterIndex((prev) => Math.min(prev + 1, cards.length - 1));
-    };
+    const handlePrev = useCallback(() => {
+        setCenterIndex(prev => (prev - 1 + products.length) % products.length);
+    }, [products.length]);
 
-    const handlePrev = () => {
-        setCenterIndex((prev) => Math.max(prev - 1, 0));
-    };
+    // Get visible cards with wrap-around logic
+    const getVisibleCards = useCallback(() => {
+        if (products.length === 0) return [];
+        
+        const visibleIndices = [];
+        const totalCards = products.length;
+        
+        // Always show 5 cards (2 left, center, 2 right)
+        for (let i = -2; i <= 2; i++) {
+            let index = centerIndex + i;
+            
+            // Handle wrap-around for negative indices
+            if (index < 0) {
+                index += totalCards;
+            } 
+            // Handle wrap-around for indices beyond array length
+            else if (index >= totalCards) {
+                index -= totalCards;
+            }
+            
+            visibleIndices.push(index);
+        }
+        
+        return visibleIndices.map(index => ({
+            ...products[index],
+            originalIndex: index,
+            offset: (index - centerIndex + totalCards) % totalCards > totalCards / 2 
+                ? (index - centerIndex + totalCards) % totalCards - totalCards
+                : (index - centerIndex + totalCards) % totalCards
+        }));
+    }, [centerIndex, products]);
 
-    const start = Math.max(0, centerIndex - 2);
-    const end = Math.min(cards.length, centerIndex + 3);
-    const visibleCards = products.slice(start, end);
-    const centerOffset = centerIndex - start;
+    const visibleCards = getVisibleCards();
 
     return (
         <div className='flex flex-col gap-8 items-center'>
@@ -87,8 +98,7 @@ export default function CardStack() {
                 {/* Left Arrow */}
                 <button
                     onClick={handlePrev}
-                    disabled={centerIndex === 0}
-                    className="absolute left-4 z-30 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="absolute left-4 z-30 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
                 >
                     <Image
                         src="/Homepage/left_arrow.svg"
@@ -98,11 +108,10 @@ export default function CardStack() {
                     />
                 </button>
 
-
                 {/* Card Stack */}
                 <div className="relative flex items-center justify-center w-full h-[588px]">
-                    {visibleCards.map((card, i) => {
-                        const offset = i - centerOffset;
+                    {visibleCards.map((card) => {
+                        const offset = card.offset;
                         const zIndex = 10 - Math.abs(offset);
                         const cardWidth = 392;
                         const overlap = cardWidth * 0.3;
@@ -116,7 +125,7 @@ export default function CardStack() {
 
                         return (
                             <div
-                                key={card.id}
+                                key={`${card.id}-${card.originalIndex}`}
                                 className={`absolute w-[392px] ${heightClass}`}
                                 style={{
                                     transform: `translateX(${translateX}px) scale(${scale})`,
@@ -132,12 +141,10 @@ export default function CardStack() {
                                 >
                                     <CardTypeOne
                                         imageUrl={card.imageUrl}
-                                        // discountText={card.discountText || ""}
                                         title={card.title}
                                         description={card.description}
                                     />
                                 </a>
-
                             </div>
                         );
                     })}
@@ -146,59 +153,16 @@ export default function CardStack() {
                 {/* Right Arrow */}
                 <button
                     onClick={handleNext}
-                    disabled={centerIndex === cards.length - 1}
-                    className="absolute right-4 z-30 bg-[#D9D9D9] shadow-md rounded-full p-2 w-10 h-10 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="absolute right-4 z-30 bg-[#D9D9D9] shadow-md rounded-full p-2 w-10 h-10 flex items-center justify-center cursor-pointer"
                 >
                     <Image
                         src="/Homepage/right_arrow.svg"
-                        alt="Left arrow"
+                        alt="Right arrow"
                         width={7}
                         height={7}
                     />
                 </button>
             </div>
         </div>
-
     );
 }
-
-
-
-
-// import CardTypeFive from "../cards/CardTypeFive";
-
-// interface CardData {
-//     id: string;
-//     imageUrl: string;
-//     discountText?: string;
-//     title: string;
-//     description?: string;
-//     price: number;
-//     mrp: number;
-//     discount: number;
-// }
-
-// const cards: CardData[] = [
-//     { id: '1', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana', price: 5000, mrp: 6000, discount: 15 },
-//     { id: '2', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana', price: 5000, mrp: 6000, discount: 15 },
-//     { id: '3', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana', price: 5000, mrp: 6000, discount: 15 },
-//     { id: '4', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana', price: 5000, mrp: 6000, discount: 15 },
-//     { id: '5', imageUrl: '/Homepage/CardImage.svg', title: 'Label Parampara by Archit', description: 'Modal Town, Ludhiana', price: 5000, mrp: 6000, discount: 15 },
-// ];
-
-// export default function SectionFiveContainer() {
-//     return (
-//         <div className="flex gap-[23px] justify-center">
-//             {cards.map((card) => (
-//                 <CardTypeFive
-//                     imageUrl={card.imageUrl}
-//                     title="Embroidary Kurta"
-//                     description="The new men's collection, 100% Jaipuri cotton"
-//                     price={50000}
-//                     mrp={65000}
-//                     discount={15} />
-//             ))}
-
-//         </div>
-//     )
-// }

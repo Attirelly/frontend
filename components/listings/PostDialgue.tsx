@@ -102,15 +102,15 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
 
 
         {/* Close Button */}
-        {/* <button
+        <button
           onClick={(e) => {
             e.stopPropagation();
             onClose();
           }}
-          className="absolute top-[-40px] right-[-40px] text-white bg-black/70 rounded-full p-2"
+          className="absolute top-[-40px] right-[-40px] text-black bg-white bg-black/70 rounded-full p-2"
         >
           <X size={22} />
-        </button> */}
+        </button>
 
         {/* Navigation Arrows */}
         {!isFirst && (
