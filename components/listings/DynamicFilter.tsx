@@ -238,7 +238,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                       className={`${manrope.className} text-base uppercase text-[#1F2937]`}
                       style={{ fontWeight: 600 }}
                     >
-                      {fName === "Area" ? "Location" : fName}
+                      {fName === "Area" ? "Location" : fName === "Primary Category" ? "Category" : fName}
                     </h2>
                     <Image
                       src="/ListingPageHeader/dropdown.svg"

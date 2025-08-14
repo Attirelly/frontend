@@ -336,7 +336,7 @@ export default function ProductContainer({
       }
     }
     if (category) {
-      filters.push([`categories:${category}`]);
+      filters.push([`primary_category:${category}`]);
     }
     if (storeTypeString) {
       filters.push([`store_types:${storeTypeString}`]);
