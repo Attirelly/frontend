@@ -24,8 +24,7 @@ const customStyles: StylesConfig<any, false, GroupBase<any>> = {
     '.dark &::-webkit-scrollbar-thumb': {
       background: '#B0B0B0',
     },
-  }),
-  // Add more overrides (control, option, etc) if needed
+  })
 };
 
 export default customStyles;

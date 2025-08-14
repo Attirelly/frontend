@@ -352,7 +352,7 @@ function highlightMatch(text: string, query: string) {
                       <span className="text-[#0F0F0F]">{data.name}</span>
                     )
                   }
-                  className={`${manrope.className} w-full scrollbar-thin`}
+                  className={`${manrope.className} w-full scrollbar-thin `}
                   styles={customStyles}
                   classNamePrefix="city-select"
                   placeholder="City Name"
