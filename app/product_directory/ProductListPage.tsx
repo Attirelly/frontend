@@ -29,7 +29,7 @@ export default function ProductListPage() {
 
   const { setQuery, query, city, storeType, viewType, setStoreType } =
     useHeaderStore();
-  const { results, setCategory } = useProductFilterStore();
+  const { results, toggleFilter , setCategory } = useProductFilterStore();
 
   const [showFilters, setShowFilters] = useState(false);
   const [matchedStoreType, setMatchedStoreType] = useState<string | null>(null);
@@ -40,7 +40,10 @@ export default function ProductListPage() {
   });
 
   useEffect(() => {
-    if (category) setCategory(category);
+    if (category){
+         setCategory(category)
+         toggleFilter("primary_category", category)
+    } 
     if (search) {
       setQuery(search);
 

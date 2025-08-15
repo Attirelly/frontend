@@ -374,14 +374,12 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                         }
                                         // className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
                                         // className="h-4 w-4 rounded border-gray-300 dark:border-black dark:bg-white accent-white dark:accent-white"
-                                        className="
-    h-4 w-4 rounded
-    border border-gray-300
-    bg-white
-    checked:bg-black checked:border-black
-    accent-black
-    transition-colors duration-200
-  "
+g                                        className=" h-4 w-4 rounded
+                                                    border border-gray-300
+                                                    bg-white
+                                                    checked:bg-black checked:border-black
+                                                    accent-black
+                                                    transition-colors duration-200"
                                       />
                                       <div className="flex justify-between w-full">
                                         <span
