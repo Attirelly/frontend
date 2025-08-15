@@ -16,8 +16,7 @@ import customStyles from "@/utils/selectStyles";
 import Image from "next/image";
 import { logout } from "@/utils/logout";
 import { useProductFilterStore } from "@/store/filterStore";
-import { validateHeaderValue } from "http";
-import { group } from "console";
+
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -27,18 +26,20 @@ export default function ListingPageHeader() {
     city,
     setCity,
     area,
-    setArea,    query,
+    setArea,
+    query,
     setQuery,
     setStoreType,
     setSearchFocus,
     searchFocus,
-    storeType
+    storeType,
   } = useHeaderStore();
-  const {setCategory} = useProductFilterStore() ;
+
+  const { setCategory } = useProductFilterStore();
   const { user } = useAuthStore();
   const [signIn, setSignIn] = useState(false);
   const [cities, setCities] = useState<City[]>([]);
-  const [areas , setAreas] = useState<Area[]>([]);  
+  const [areas, setAreas] = useState<Area[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(city || null);
   const [selectedArea, setSelectedArea] = useState<Area | null>(area || null);
   const [tempQuery, setTempQuery] = useState<string>(query || "");
@@ -52,50 +53,53 @@ export default function ListingPageHeader() {
   const [showStoreType, setShowStoreType] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
   const [locationSearchInput, setLocationSearchInput] = useState("");
-  
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
-  
+
+
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-    e.preventDefault();
-    const trimmed = tempQuery.trim();
+      e.preventDefault();
+      const trimmed = tempQuery.trim();
 
-    // Only search if query is not empty
-    
+      // Only search if query is not empty
+
       setQuery(trimmed);
       setShowDropdown(false);
       setShowStoreType(false);
       setCategory("");
-      if(trimmed !== '' ) {
+      if (trimmed !== "") {
         router.push("/product_directory?search=" + encodeURIComponent(trimmed));
       }
-    
-  }};
+    }
+  };
 
   const handleSearchQuerySuggestion = async () => {
     try {
       let tempStr = "";
-      console.log("selectedcity", selectedCity)
+      console.log("selectedcity", selectedCity);
       if (selectedCity) {
         tempStr = `city:${selectedCity.name}`;
       }
+      if(selectedArea){
+        tempStr = `area:${selectedArea.name}`;
+      }
       const response = await api.post(`/search/search_suggestion`, {
         query: tempQuery,
-        filters: tempStr
+        filters: tempStr,
       });
 
       const data = response.data;
-      setShowStoreType(false)
-      
+      setShowStoreType(false);
+
       setStoreSuggestions(data.store_search_suggestion || []);
       setProductSuggestions(data.product_search_suggestion || []);
       setCategories(data.categories || []);
       setStores(data.stores || []);
       setProducts(data.products || []);
       setShowDropdown(true);
-      
     } catch (error) {
       toast.error("Failed to fetch search suggestions");
     }
@@ -112,7 +116,7 @@ export default function ListingPageHeader() {
     const fetchCities = async () => {
       try {
         const res = await api.get("/location/cities/");
-        console.log("cities data" , res.data)
+        console.log("cities data", res.data);
         setCities(res.data);
       } catch {
         toast.error("Failed to fetch cities");
@@ -121,11 +125,11 @@ export default function ListingPageHeader() {
     fetchCities();
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchAreas = async () => {
       try {
         const res = await api.get("/location/areas/");
-        console.log("areas data" , res.data)
+        console.log("areas data", res.data);
         setAreas(res.data);
       } catch {
         toast.error("Failed to fetch areas");
@@ -141,7 +145,7 @@ export default function ListingPageHeader() {
       setCity(null);
     }
   }, [selectedCity]);
-  
+
   useEffect(() => {
     if (selectedArea) {
       setArea(selectedArea);
@@ -160,10 +164,10 @@ export default function ListingPageHeader() {
       setShowStoreType(true);
       return;
     }
-    if (tempQuery.length === 4) {
-    handleSearchQuerySuggestion();
-    return;
-  }
+    if (tempQuery.length >= 4) {
+      handleSearchQuerySuggestion();
+      return;
+    }
 
     const debounce = setTimeout(() => {
       handleSearchQuerySuggestion();
@@ -179,25 +183,28 @@ export default function ListingPageHeader() {
         !dropdownRef.current.contains(e.target as Node)
       ) {
         setShowDropdown(false);
-        // setShowStoreType(false);
+        setShowStoreType(false);
         setSearchFocus(false);
       }
     };
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
-  }, [setSearchFocus]);
+  }, [searchFocus]);
 
   useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
-      setShowLogout(false);
-    }
-  };
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  };
-}, []);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowLogout(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleSuggestionClick = (value: string) => {
     setQuery(value);
@@ -225,12 +232,12 @@ export default function ListingPageHeader() {
     router.push("/store_profile/" + storeID);
   };
 
-  const handleStoreListRoute = ()=>{
-    setSearchFocus(false) ; 
-    setQuery(tempQuery) ; 
-    setShowDropdown(false) ;
-    router.push("/store_listing") ; 
-  }
+  const handleStoreListRoute = () => {
+    setSearchFocus(false);
+    setQuery(tempQuery);
+    setShowDropdown(false);
+    router.push("/store_listing");
+  };
 
   // const cityOptions: SelectOption[] = [
   //   { value: "", label: "All Cities", name: "All Cities", country: "" },
@@ -242,14 +249,14 @@ export default function ListingPageHeader() {
   //   })),
   // ];
 
-  const groupedOptions :SelectOption[] = [
+  const groupedOptions: SelectOption[] = [
     { value: "", label: "All Cities", name: "All Cities", country: "" },
     ...cities.map((c) => ({
       value: c.id,
       label: c.name,
       name: c.name,
       country: "India",
-      type: "city"
+      type: "city",
     })),
     ...areas.map((a) => ({
       value: a.id,
@@ -257,51 +264,60 @@ export default function ListingPageHeader() {
       name: a.name,
       country: "India",
       type: "area",
-      city: a.city_name
-    }))
-  ]
+      city: a.city_name,
+    })),
+  ];
 
   const selectedOption: SelectOption =
     selectedCity != null
       ? {
-        value: selectedCity.id,
-        label: selectedCity.name,
-        name: selectedCity.name,
-        country: "India",
-      } : selectedArea != null
+          value: selectedCity.id,
+          label: selectedCity.name,
+          name: selectedCity.name,
+          country: "India",
+        }
+      : selectedArea != null
       ? {
-        value: selectedArea.id,
-        label: selectedArea.name,
-        name: selectedArea.name,
-        city: selectedArea.city_name,
-      }
-      // : cityOptions[0];
-      :groupedOptions[0];
+          value: selectedArea.id,
+          label: selectedArea.name,
+          name: selectedArea.name,
+          city: selectedArea.city_name,
+        }
+      : // : cityOptions[0];
+        groupedOptions[0];
 
-function highlightMatch(text: string, query: string) {
-  const defaultClasses = `${manrope.className} text-base text-gray-400`;
-  
-  if (!query) {
-    return <div className={defaultClasses} style={{ fontWeight: 400 }}>{text}</div>;
+  function highlightMatch(text: string, query: string) {
+    const defaultClasses = `${manrope.className} text-base text-gray-400`;
+
+    if (!query) {
+      return (
+        <div className={defaultClasses} style={{ fontWeight: 400 }}>
+          {text}
+        </div>
+      );
+    }
+
+    const index = text.toLowerCase().indexOf(query.toLowerCase());
+    if (index === -1) {
+      return (
+        <div className={defaultClasses} style={{ fontWeight: 400 }}>
+          {text}
+        </div>
+      );
+    }
+
+    return (
+      <div className={defaultClasses} style={{ fontWeight: 400 }}>
+        {text.slice(0, index)}
+        <span className="text-black">
+          {text.slice(index, index + query.length)}
+        </span>
+        <span className="text-gray-400">
+          {text.slice(index + query.length)}
+        </span>
+      </div>
+    );
   }
-
-  const index = text.toLowerCase().indexOf(query.toLowerCase());
-  if (index === -1) {
-    return <div className={defaultClasses} style={{ fontWeight: 400 }}>{text}</div>;
-  }
-
-  return (
-    <div className={defaultClasses} style={{ fontWeight: 400 }}>
-      {text.slice(0, index)}
-      <span className="text-black">
-        {text.slice(index, index + query.length)}
-      </span>
-      <span className="text-gray-400">
-        {text.slice(index + query.length)}
-      </span>
-    </div>
-  );
-}
 
 
   return (
@@ -312,7 +328,10 @@ function highlightMatch(text: string, query: string) {
             <div
               className={`${rosario.className} text-[34px] text-[#373737] font-bold cursor-pointer`}
               // onClick={() => router.push("/homepage")}
-              onClick={() => {setQuery("") ; router.push("/")}}
+              onClick={() => {
+                setQuery("");
+                router.push("/");
+              }}
               style={{ fontWeight: 600 }}
             >
               Attirelly
@@ -330,7 +349,11 @@ function highlightMatch(text: string, query: string) {
                   className="opacity-100"
                 />
                 <Select
-                  options={locationSearchInput.trim() === "" ? groupedOptions.slice(0,6) : groupedOptions}
+                  options={
+                    locationSearchInput.trim() === ""
+                      ? groupedOptions.slice(0, 6)
+                      : groupedOptions
+                  }
                   value={selectedOption}
                   onChange={(val) => {
                     const v = val as SelectOption | null;
@@ -348,7 +371,7 @@ function highlightMatch(text: string, query: string) {
                           {data.name}
                         </div>
                         <div className="text-[#646464] text-sm">
-                          { data.type === "city" ? data.country : data.city }
+                          {data.type === "city" ? data.country : data.city}
                         </div>
                       </div>
                     ) : (
@@ -384,7 +407,13 @@ function highlightMatch(text: string, query: string) {
                     setTempQuery(e.target.value);
                   }}
                   onKeyDown={handleKeyDown}
-                  onFocus={() => setSearchFocus(true)}
+                  onFocus={() => {
+                    if (tempQuery.length == 0) {
+                      setShowStoreType(true);
+                    }
+                    setShowDropdown(true);
+                    setSearchFocus(true);
+                  }}
                 />
 
                 {showDropdown && (
@@ -412,11 +441,17 @@ function highlightMatch(text: string, query: string) {
 
                     {/* categories */}
                     {categories.length > 0 && (
-                      <div className={`${manrope.className} px-4 py-3`} style={{fontWeight:600}}>
+                      <div
+                        className={`${manrope.className} px-4 py-3`}
+                        style={{ fontWeight: 600 }}
+                      >
                         <div className="text-[#1F2937] text-base mb-2">
                           CATEGORY
                         </div>
-                        <div className="flex gap-2 flex-wrap" style={{fontWeight:400}}>
+                        <div
+                          className="flex gap-2 flex-wrap"
+                          style={{ fontWeight: 400 }}
+                        >
                           {categories.map((cat, i) => (
                             <button
                               key={i}
@@ -468,13 +503,24 @@ function highlightMatch(text: string, query: string) {
                     )} */}
 
                     {stores.length > 0 && (
-                      <div className={`${manrope.className} p-4`} style={{fontWeight:500}}>
+                      <div
+                        className={`${manrope.className} p-4`}
+                        style={{ fontWeight: 500 }}
+                      >
                         <div className="flex justify-between mb-1">
-                        <span className="text-base text-[#1F2937]" style={{fontWeight:600}}>STORES</span>
-                        <span 
-                        className="text-sm text-[#3A3A3A] cursor-pointer" style={{fontWeight:400}} 
-                        onClick={handleStoreListRoute}>View all</span>
-                          
+                          <span
+                            className="text-base text-[#1F2937]"
+                            style={{ fontWeight: 600 }}
+                          >
+                            STORES
+                          </span>
+                          <span
+                            className="text-sm text-[#3A3A3A] cursor-pointer"
+                            style={{ fontWeight: 400 }}
+                            onClick={handleStoreListRoute}
+                          >
+                            View all
+                          </span>
                         </div>
                         {stores.map((store, i) => (
                           <div
@@ -530,40 +576,40 @@ function highlightMatch(text: string, query: string) {
               </div>
             ) : (
               <div className="relative" ref={userMenuRef}>
-    <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowLogout((prev) => !prev)}>
-                <Image
-                  src="/ListingPageHeader/user_logo.svg"
-                  alt="User"
-                  width={24}
-                  height={24}
-                  className="opacity-100"
-                />
-                <span
-                  className={`${manrope.className} text-base text-[#373737] cursor-pointer`}
-                  style={{ fontWeight: 400 }}
-                  onClick={() => setSignIn(true)}
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => setShowLogout((prev) => !prev)}
                 >
-                  {user.name}
-                </span>
+                  <Image
+                    src="/ListingPageHeader/user_logo.svg"
+                    alt="User"
+                    width={24}
+                    height={24}
+                    className="opacity-100"
+                  />
+                  <span
+                    className={`${manrope.className} text-base text-[#373737] cursor-pointer`}
+                    style={{ fontWeight: 400 }}
+                    onClick={() => setSignIn(true)}
+                  >
+                    {user.name}
+                  </span>
+                </div>
+                {showLogout && (
+                  <div className="absolute top-full right-0 mt-2 bg-white border rounded shadow-md z-50 p-2 w-32">
+                    <button
+                      className="w-full text-left text-[#373737] hover:bg-gray-100 px-2 py-1 text-sm"
+                      onClick={() => {
+                        logout(); // replace with your logout function
+                        setShowLogout(false);
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
               </div>
-              {showLogout && (
-      <div className="absolute top-full right-0 mt-2 bg-white border rounded shadow-md z-50 p-2 w-32">
-        <button
-          className="w-full text-left text-[#373737] hover:bg-gray-100 px-2 py-1 text-sm"
-          onClick={() => {
-            logout(); // replace with your logout function
-            setShowLogout(false);
-          }}
-        >
-          Logout
-        </button>
-      </div>
-    )}
-              </div>
-
             )}
-
-
           </div>
           {/* </div> */}
         </div>
@@ -573,9 +619,12 @@ function highlightMatch(text: string, query: string) {
         visible={showStoreType}
         onClose={() => setShowStoreType(false)}
       />
-      {signIn && !user?.id  && ( <CustomerSignIn onClose={() => setSignIn(false)} onSuccess={() => setSignIn(false)} /> )}
-        
+      {signIn && !user?.id && (
+        <CustomerSignIn
+          onClose={() => setSignIn(false)}
+          onSuccess={() => setSignIn(false)}
+        />
+      )}
     </div>
   );
 }
-

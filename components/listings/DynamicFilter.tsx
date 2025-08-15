@@ -30,12 +30,12 @@ const priceStartMap: { [storeType: string]: { [priceRange: string]: string } } =
       Premium: "starts from 2,500/-",
       Luxury: "starts from 25,000/-",
     },
-    "Tailor": {
+    Tailor: {
       Affordable: "starts from 500/-",
       Premium: "starts from 1,500/-",
       Luxury: "starts from 5,000/-",
     },
-    "Stylist": {
+    Stylist: {
       Affordable: "starts from 500/-",
       Premium: "starts from 2,000/-",
       Luxury: "starts from 5,000/-",
@@ -141,34 +141,34 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
   if (loading) return <DynamicFilterSkeleton />;
 
-  if (isCollapsed) {
-    return (
-      <div className="sticky top-2 z-10">
-        <div className="w-fit px-3 py-2 bg-white flex items-center">
-          <button
-            className="flex items-center gap-2 text-sm font-medium text-gray-700"
-            onClick={() => setIsCollapsed(false)}
-          >
-            <span>Refine</span>
-            <Image
-              src="/ListingPageHeader/left_pointing_arrow.svg"
-              alt="expand"
-              width={16}
-              height={16}
-              className="rotate-180"
-            />
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (isCollapsed) {
+  //   return (
+  //     <div className="sticky top-2 z-10">
+  //       <div className="w-fit px-3 py-2 bg-white flex items-center">
+  //         <button
+  //           className="flex items-center gap-2 text-sm font-medium text-gray-700"
+  //           onClick={() => setIsCollapsed(false)}
+  //         >
+  //           <span>Refine</span>
+  //           <Image
+  //             src="/ListingPageHeader/left_pointing_arrow.svg"
+  //             alt="expand"
+  //             width={16}
+  //             height={16}
+  //             className="rotate-180"
+  //           />
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
   return (
     <div className="sticky top-2 z-10 max-h-[100vh]  overflow-y-auto scrollbar-thin">
       <div
         className={`${manrope.className} h-fit max-w-xs p-4 bg-white relative`}
         style={{ fontWeight: 600 }}
       >
-        <div className="flex items-center justify-between mb-3">
+        {/* <div className="flex items-center justify-between mb-3">
           <h1 className="text-[#1F2937]">Refine</h1>
           <button onClick={() => setIsCollapsed(true)}>
             <Image
@@ -178,7 +178,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
               height={20}
             />
           </button>
-        </div>
+        </div> */}
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-[#1F2937]">FILTERS</h1>
@@ -238,7 +238,11 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                       className={`${manrope.className} text-base uppercase text-[#1F2937]`}
                       style={{ fontWeight: 600 }}
                     >
-                      {fName === "Area" ? "Location" : fName === "Primary Category" ? "Category" : fName}
+                      {fName === "Area"
+                        ? "Location"
+                        : fName === "Primary Category"
+                        ? "Category"
+                        : fName}
                     </h2>
                     <Image
                       src="/ListingPageHeader/dropdown.svg"
@@ -368,7 +372,16 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                         onChange={() =>
                                           toggleFilter(facetName, facet.name)
                                         }
-                                        className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
+                                        // className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
+                                        // className="h-4 w-4 rounded border-gray-300 dark:border-black dark:bg-white accent-white dark:accent-white"
+                                        className="
+    h-4 w-4 rounded
+    border border-gray-300
+    bg-white
+    checked:bg-black checked:border-black
+    accent-black
+    transition-colors duration-200
+  "
                                       />
                                       <div className="flex justify-between w-full">
                                         <span
@@ -382,8 +395,13 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                           style={{ fontWeight: 400 }}
                                         >
                                           {fName === "Price Ranges"
-                                            ? storeType?.store_type && priceStartMap[storeType.store_type]?.[facet.name] ? 
-                                              priceStartMap[storeType.store_type][facet.name]
+                                            ? storeType?.store_type &&
+                                              priceStartMap[
+                                                storeType.store_type
+                                              ]?.[facet.name]
+                                              ? priceStartMap[
+                                                  storeType.store_type
+                                                ][facet.name]
                                               : ""
                                             : ""}
                                         </span>

@@ -61,7 +61,6 @@ export default function BusinessDetailsComponent({
   });
   const [exchangeAvailable, setExchangeAvailable] = useState<string | null>("");
 
-
   const [cities, setCities] = useState<City[]>([]);
   const [cityOptions, setCityOptions] = useState<SelectOption[]>([]);
   const [selectedCity, setSelectedCity] = useState<City[]>([]);
@@ -114,7 +113,6 @@ export default function BusinessDetailsComponent({
   // const [storeLocation, setStoreLocation] = useState(businessDetailsData?.storeLocation || '');
   const hasHydrated = useRef(false);
 
-
   useEffect(() => {
     if (sameAsOwner) {
       setBusinessWpNum(sellerNumber || "");
@@ -127,19 +125,30 @@ export default function BusinessDetailsComponent({
     if (exchangeAvailable === "No") {
       setExcDays(0);
     }
-
   }, [returnAvailable, exchangeAvailable]);
 
   useEffect(() => {
     if (!businessDetailsData) return;
 
     // Only set if it's still at initial empty state
-    setReturnAvailable(prev =>
-      prev === "" ? (businessDetailsData.returnDays === 0 ? "No" : businessDetailsData.returnDays > 0 ? "Yes" : "") : prev
+    setReturnAvailable((prev) =>
+      prev === ""
+        ? businessDetailsData.returnDays === 0
+          ? "No"
+          : businessDetailsData.returnDays > 0
+          ? "Yes"
+          : ""
+        : prev
     );
 
-    setExchangeAvailable(prev =>
-      prev === "" ? (businessDetailsData.exchangeDays === 0 ? "No" : businessDetailsData.exchangeDays > 0 ? "Yes" : "") : prev
+    setExchangeAvailable((prev) =>
+      prev === ""
+        ? businessDetailsData.exchangeDays === 0
+          ? "No"
+          : businessDetailsData.exchangeDays > 0
+          ? "Yes"
+          : ""
+        : prev
     );
   }, [businessDetailsData]);
 
@@ -205,9 +214,14 @@ export default function BusinessDetailsComponent({
         setCityOptions(
           citiesRes.data.map((c: City) => ({ value: c.id, label: c.name }))
         );
-        setAreaOptions(
-          areasRes.data.map((a: Area) => ({ value: a.id, label: a.name }))
-        );
+        
+        const mapped = areasRes.data.map((a: Area) => ({
+          value: a.id,
+          label: a.name,
+        }));
+        setAreaOptions(mapped);
+        
+       
       } catch (error) {
         console.error("Error fetching initial data:", error);
       }
@@ -215,6 +229,7 @@ export default function BusinessDetailsComponent({
 
     fetchInitialData();
   }, []);
+
 
   const cityInitializedRef = useRef(false);
   const areaInitializedRef = useRef(false);
@@ -252,10 +267,13 @@ export default function BusinessDetailsComponent({
   }, [businessDetailsData, cities, cityOptions]);
 
   useEffect(() => {
+    
     if (selectedCityOption?.value) {
+      
       const filteredAreas = areas
         .filter((area) => area.city_id === selectedCityOption.value)
         .map((area) => ({ value: area.id, label: area.name }));
+      
       setAreaOptions(filteredAreas);
     } else {
       setAreaOptions([]); // Reset if no city selected
@@ -397,8 +415,7 @@ export default function BusinessDetailsComponent({
     retDays,
     excDays,
   ]);
-  
-  console.log(businessDetailsData);
+
   const toggleSelection = <T extends { id: string }>(
     item: T,
     current: T[],
@@ -533,7 +550,8 @@ export default function BusinessDetailsComponent({
 
       <Section
         title="Return & Exchange"
-        subtitle="Customers will see these details on Attirelly">
+        subtitle="Customers will see these details on Attirelly"
+      >
         <div className="flex items-center gap-4">
           <RadioGroup
             label="Return Available"
@@ -544,7 +562,9 @@ export default function BusinessDetailsComponent({
           />
           {returnAvailable === "Yes" && (
             <div className="ml-4">
-              <label className="block text-sm font-medium mb-2 text-black">Return Days</label>
+              <label className="block text-sm font-medium mb-2 text-black">
+                Return Days
+              </label>
               <input
                 type="number"
                 value={retDays || ""}
@@ -560,7 +580,6 @@ export default function BusinessDetailsComponent({
                 placeholder="Days"
               />
             </div>
-
           )}
         </div>
         <div className="flex items-center gap-4 mt-4">
@@ -573,7 +592,9 @@ export default function BusinessDetailsComponent({
           />
           {exchangeAvailable === "Yes" && (
             <div className="ml-4">
-              <label className="block text-sm font-medium mb-2 text-black">Exchange Days</label>
+              <label className="block text-sm font-medium mb-2 text-black">
+                Exchange Days
+              </label>
               <input
                 type="number"
                 value={excDays || ""}
@@ -591,7 +612,6 @@ export default function BusinessDetailsComponent({
             </div>
           )}
         </div>
-
       </Section>
 
       {/* Brand Location Section */}
@@ -626,22 +646,16 @@ export default function BusinessDetailsComponent({
 
           <SelectField
             label="Area"
-            options={[
-              ...areaOptions,
-              { value: "other", label: "Other" },
-
-            ]}
+            options={[...areaOptions]}
             value={selectedAreaOption}
             onChange={(option) => {
               setSelectedAreaOption(option);
-              if (option?.value === 'option') {
+              if (option?.value === "option") {
                 setSelectedArea([]);
-              }
-              else {
+              } else {
                 const found = areas.find((a) => a.id === option?.value);
                 setSelectedArea(found ? [found] : []);
               }
-
             }}
             isDisabled={!selectedCityOption}
           />
@@ -705,7 +719,9 @@ const InputField: FC<{
     {required ? (
       <RequiredLabel>{label}</RequiredLabel>
     ) : (
-      <label className="block text-sm font-medium mb-1 text-black">{label}</label>
+      <label className="block text-sm font-medium mb-1 text-black">
+        {label}
+      </label>
     )}
     <input
       type={type || "text"}
@@ -734,8 +750,9 @@ const ToggleChips: FC<{
           <label
             key={item.id}
             // onClick={() => toggle(item)}
-            className={`px-3 py-2 border border-gray-500 rounded cursor-pointer ${isSelected ? "bg-gray-100" : "bg-white"
-              }`}
+            className={`px-3 py-2 border border-gray-500 rounded cursor-pointer ${
+              isSelected ? "bg-gray-100" : "bg-white"
+            }`}
           >
             <input
               type="checkbox"
@@ -744,8 +761,9 @@ const ToggleChips: FC<{
               className="accent-black"
             />
             <span
-              className={`text-md font-medium ${isSelected ? "text-black" : "text-gray-500"
-                }`}
+              className={`text-md font-medium ${
+                isSelected ? "text-black" : "text-gray-500"
+              }`}
             >
               {" "}
               {text}
@@ -840,8 +858,9 @@ const RadioGroup: FC<{
       {options.map((opt) => (
         <label
           key={opt}
-          className={`px-4 py-2 border border-gray-500 rounded text-gray-500 cursor-pointer ${selected === opt ? "bg-gray-100" : "bg-white"
-            }`}
+          className={`px-4 py-2 border border-gray-500 rounded text-gray-500 cursor-pointer ${
+            selected === opt ? "bg-gray-100" : "bg-white"
+          }`}
         >
           <input
             type="radio"
@@ -852,8 +871,9 @@ const RadioGroup: FC<{
             onChange={() => onChange(opt)}
           />
           <span
-            className={`text-sm font-medium ${selected === opt ? "text-black" : "text-gray-500"
-              }`}
+            className={`text-sm font-medium ${
+              selected === opt ? "text-black" : "text-gray-500"
+            }`}
           >
             {" "}
             {opt}
