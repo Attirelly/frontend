@@ -70,8 +70,8 @@ export default function ProductCard({
             src={imageUrl[imageIndex]}
             alt={title}
             fill
-            unoptimized 
-            priority={imageIndex === 0} 
+            // unoptimized 
+            // priority={imageIndex === 0} 
             loading={imageIndex === 0 ? 'eager' : 'lazy'} 
             className="object-cover object-top transition-all duration-300"
           />

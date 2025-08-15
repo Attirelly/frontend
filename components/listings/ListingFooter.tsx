@@ -187,7 +187,8 @@ export default function ListingFooter() {
           <h3 className="mb-3 text-[#121212] text-sm" style={{fontWeight: 600}}>Selling Store</h3>
           <ul className="space-y-4 text-[#141414] text-sm" style={{fontWeight: 400}}>
             <li><Link href="/seller_signin" className='hover:underline'>Store Sign in</Link></li>
-            <li><Link href="/seller_signup" className='hover:underline'>Store Sign up</Link></li>
+            <li><Link href="/User" className='hover:underline'>Store Sign up</Link></li>
+            <li><Link href="/attirelly_ambassador" className='hover:underline'>Ambassador Program</Link></li>
           </ul>
         </div>
 
@@ -205,9 +206,9 @@ export default function ListingFooter() {
         <div>
           <h3 className="mb-3 text-[#121212] text-sm" style={{fontWeight: 600}}>Company</h3>
           <ul className="space-y-4 text-[#141414] text-sm" style={{fontWeight: 400}}>
-            <li>About us</li>
+            <li> <Link href="/aboutus" className='hover:underline'>About us</Link></li>
             <li> <Link href="/privacy_policy" className='hover:underline'>Privacy Policy</Link></li>
-            <li>Terms & Conditions</li>
+            <li><Link href="/term_and_condition" className='hover:underline'>Terms & Conditions</Link></li>
           </ul>
         </div>
       </div>
