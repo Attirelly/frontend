@@ -17,7 +17,6 @@ import Image from "next/image";
 import { logout } from "@/utils/logout";
 import { useProductFilterStore } from "@/store/filterStore";
 
-
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
 export default function ListingPageHeader() {
@@ -57,19 +56,21 @@ export default function ListingPageHeader() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
 
-
-
+  useEffect(() => {
+    console.log("showDropdown changed:", showDropdown);
+  }, [showDropdown]);
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       const trimmed = tempQuery.trim();
 
       // Only search if query is not empty
-
-      setQuery(trimmed);
+      
       setShowDropdown(false);
       setShowStoreType(false);
       setCategory("");
+      setQuery("");
+      setSearchFocus(false);
       if (trimmed !== "") {
         router.push("/product_directory?search=" + encodeURIComponent(trimmed));
       }
@@ -83,7 +84,7 @@ export default function ListingPageHeader() {
       if (selectedCity) {
         tempStr = `city:${selectedCity.name}`;
       }
-      if(selectedArea){
+      if (selectedArea) {
         tempStr = `area:${selectedArea.name}`;
       }
       const response = await api.post(`/search/search_suggestion`, {
@@ -164,7 +165,7 @@ export default function ListingPageHeader() {
       setShowStoreType(true);
       return;
     }
-    if (tempQuery.length >= 4) {
+    if (tempQuery.length === 4) {
       handleSearchQuerySuggestion();
       return;
     }
@@ -211,6 +212,7 @@ export default function ListingPageHeader() {
     setSearchFocus(false);
     setShowDropdown(false);
     setCategory("");
+    setQuery("");
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
@@ -234,9 +236,9 @@ export default function ListingPageHeader() {
 
   const handleStoreListRoute = () => {
     setSearchFocus(false);
-    setQuery(tempQuery);
+    setQuery("");
     setShowDropdown(false);
-    router.push("/store_listing");
+    router.push("/store_listing?search=" + encodeURIComponent(tempQuery));
   };
 
   // const cityOptions: SelectOption[] = [
@@ -318,7 +320,6 @@ export default function ListingPageHeader() {
       </div>
     );
   }
-
 
   return (
     <div>
