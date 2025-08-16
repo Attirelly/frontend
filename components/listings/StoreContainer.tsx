@@ -346,7 +346,7 @@ export default function StoreContainerPage() {
         id: sc.id,
         imageUrl: sc.profile_image || "/OnboardingSections/qr.png",
         storeName: sc.store_name,
-        location: `${sc.area}, ${sc.city}`,
+        location: sc.area?.toLowerCase()  === "others" ? `${sc.city}` : `${sc.area}, ${sc.city}`,
         storeTypes: sc.store_types || [],
         priceRanges: [
           ...new Set(

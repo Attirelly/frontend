@@ -296,7 +296,7 @@ export default function ProductContainer({
     setResults,
     category,
     activeFacet,
-    priceRange
+    priceRange,
   } = useProductFilterStore();
 
   const { query, city, area, storeTypeString, sortBy } = useHeaderStore();
@@ -385,25 +385,27 @@ export default function ProductContainer({
       setResults(data.hits.length);
       setFacets(data.facets, activeFacet);
 
-      const formattedProducts: ProductCardType[] = data.hits.map((item: any) => {
-        const price = item.price || 500;
-        const originalPrice = item.mrp || item.price || 500;
-        const desc = item.title;
-        const discount =
-          originalPrice > price
-            ? Math.round(((originalPrice - price) / originalPrice) * 100)
-            : 0;
+      const formattedProducts: ProductCardType[] = data.hits.map(
+        (item: any) => {
+          const price = item.price || 500;
+          const originalPrice = item.mrp || item.price || 500;
+          const desc = item.title;
+          const discount =
+            originalPrice > price
+              ? Math.round(((originalPrice - price) / originalPrice) * 100)
+              : 0;
 
-        return {
-          id: item.id,
-          imageUrl: item.image || [],
-          title: item.store_name || "Untitled Product",
-          description: desc,
-          price,
-          originalPrice,
-          discountPercentage: discount.toString(),
-        };
-      });
+          return {
+            id: item.id,
+            imageUrl: item.image || [],
+            title: item.store_name || "Untitled Product",
+            description: desc,
+            price,
+            originalPrice,
+            discountPercentage: discount.toString(),
+          };
+        }
+      );
 
       if (currentPage === 0) {
         setProducts(formattedProducts.slice(0, ITEMS_PER_PAGE));
@@ -413,9 +415,7 @@ export default function ProductContainer({
       }
 
       // Check if we've fetched all available pages
-      if (
-        currentPage >= data.total_pages - 1
-      ) {
+      if (currentPage >= data.total_pages - 1) {
         setHasMore(false);
       }
 
@@ -465,16 +465,14 @@ export default function ProductContainer({
     sortBy,
     category,
     city,
-    area
+    area,
   ]);
-
 
   useEffect(() => {
     if (buffer.length <= REFETCH_THRESHOLD && !loading && hasMore) {
       setPage((prev) => prev + 1);
     }
   }, [buffer, loading, hasMore]);
-
 
   useEffect(() => {
     if (page !== 0) {

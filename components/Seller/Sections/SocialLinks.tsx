@@ -4,20 +4,17 @@ import { useSellerStore } from "@/store/sellerStore";
 import { toast } from "sonner";
 import { api } from "@/lib/axios";
 
-
 export default function SocialLinksComponent() {
-
-  if(localStorage.getItem("instagram_connected") === "true"){
+  if (localStorage.getItem("instagram_connected") === "true") {
     useSellerStore.getState().setIsInstagramConnected(true);
     toast.success("Instagram connected successfully");
     localStorage.removeItem("instagram_connected");
-  }
-  else if(localStorage.getItem("instagram_connected") === "false"){
+  } else if (localStorage.getItem("instagram_connected") === "false") {
     useSellerStore.getState().setIsInstagramConnected(false);
     toast.error("Instagram connection failed");
     localStorage.removeItem("instagram_connected");
   }
-  
+
   const {
     setSocialLinksData,
     setSocialLinksValid,
@@ -26,7 +23,7 @@ export default function SocialLinksComponent() {
     isInstagramConnected,
     setIsInstagramConnected,
   } = useSellerStore();
-  
+
   const [instagramUsname, setInstagramUsname] = useState(
     socialLinksData?.instagramUsname || ""
   );
@@ -40,6 +37,29 @@ export default function SocialLinksComponent() {
     socialLinksData?.facebookUrl || ""
   );
 
+  useEffect(() => {
+  const fetchInstaDetails = async () => {
+    try {
+      const response = await api.get(`stores/${storeId}`);
+      const storeData = response?.data;
+
+      const instagramUsername = storeData?.instagram_link
+        ? new URL(storeData.instagram_link).pathname
+            .split("/")
+            .filter(Boolean)[0]
+        : "";
+
+      setInstagramUsname(instagramUsername);
+    } catch (error) {
+      console.error("Failed to fetch Instagram username", error);
+      setInstagramUsname("");
+    }
+  };
+
+  fetchInstaDetails();
+}, [storeId]);
+
+
   const handleInstagramChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const username = e.target.value
       .replace(/^@/, "") // Remove leading @
@@ -52,15 +72,14 @@ export default function SocialLinksComponent() {
   useEffect(() => {
     const isValid = instagramUsname.trim() !== "";
     setSocialLinksValid(isValid);
-    if(isValid){
-setSocialLinksData({
-      instagramUsname,
-      instagramUrl: `https://instagram.com/${instagramUsname}`,
-      facebookUrl,
-      websiteUrl,
-    });
+    if (isValid) {
+      setSocialLinksData({
+        instagramUsname,
+        instagramUrl: `https://instagram.com/${instagramUsname}`,
+        facebookUrl,
+        websiteUrl,
+      });
     }
-    
   }, [instagramUsname, websiteUrl, facebookUrl, setSocialLinksData]);
 
   function validateInstagramUrl(url: string): boolean {
@@ -69,38 +88,37 @@ setSocialLinksData({
   }
 
   const handleInstagramConnect = () => {
-    if (validateInstagramUrl(instagramUrl)) {
+    // if (validateInstagramUrl(instagramUrl)) {
+    try {
       let appId = process.env.NEXT_INSTAGRAM_APP_ID || "548897007892754";
-      const redirectUri = `${window.location.origin}/auth/callback`
+      const redirectUri = `${window.location.origin}/auth/callback`;
 
       // encoding the state
-      
       const stateData = {
         instagram_url: instagramUrl,
         store_id: storeId,
         redirect_uri: redirectUri,
       };
 
-      
-
       const encodedState = encodeURIComponent(JSON.stringify(stateData));
 
       window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic&response_type=code&state=${encodedState}`;
-      
-    } else {
-      toast.error("Enter Valid Instagram Username");
+    } catch (error: any) {
+      console.log(error.message);
     }
   };
 
-  const handleInstagramDisConnect = async()=>{
+  const handleInstagramDisConnect = async () => {
     try {
-      const response = await api.delete(`/instagram/disconnect-instagram/${storeId}/${instagramUsname}`);
-      setIsInstagramConnected(false)
+      const response = await api.delete(
+        `/instagram/disconnect-instagram/${storeId}/${instagramUsname}`
+      );
+      setIsInstagramConnected(false);
       toast.success("Instagram disconnected successfully");
     } catch (error) {
-      console.log(error) 
+      console.log(error);
     }
-  }
+  };
 
   return (
     <div className="space-y-8 rounded-md overflow-hidden w-3xl text-black placeholder-gray-400">
@@ -128,6 +146,7 @@ setSocialLinksData({
               value={instagramUsname}
               onChange={handleInstagramChange}
               className="flex-1 px-3 py-2 outline-none text-sm"
+              disabled = {isInstagramConnected} 
             />
           </div>
         </div>

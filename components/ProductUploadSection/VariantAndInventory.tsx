@@ -23,8 +23,8 @@ interface ColorOption {
 
 interface Variant {
   sku: string;
-  size: SizeOption;
-  color: ColorOption;
+  size?: SizeOption;
+  color?: ColorOption;
 }
 
 export interface VaraintFormState {
@@ -41,25 +41,31 @@ export default function VariantAndInventory() {
 
   const colorArray: ColorOption[] = Array.from(
     new Map(
-      globalVariants?.variants.map((v) => [v.color.color_id, v.color])
+      globalVariants?.variants.map((v) => [v.color?.color_id, v.color])
     ).values()
   );
   const sizeArray: SizeOption[] = Array.from(
     new Map(
-      globalVariants?.variants.map((v) => [v.size.size_id, v.size])
+      globalVariants?.variants.map((v) => [v.size?.size_id, v.size])
     ).values()
   );
   const { updateFormData, setStepValidation, setLoading } = useFormActions();
   const currentStep = useCurrentStep();
   const isLoading = useIsLoading();
 
-  const [selectedSizes, setSelectedSizes] = useState<SizeOption[]>(sizeArray || []);
-  const [selectedColors, setSelectedColors] = useState<ColorOption[]>(colorArray || []);
-  const [variantsList, setVariantsList] = useState<Variant[]>(globalVariants?.variants || []);
-  const [excludedVariants, setExcludedVariants] = useState<
-    { size_id: string; color_id: string }[]
-  >([]);
-  
+  const [selectedSizes, setSelectedSizes] = useState<SizeOption[]>(
+    sizeArray || []
+  );
+  const [selectedColors, setSelectedColors] = useState<ColorOption[]>(
+    colorArray || []
+  );
+  const [variantsList, setVariantsList] = useState<Variant[]>(
+    globalVariants?.variants || []
+  );
+  // const [excludedVariants, setExcludedVariants] = useState<
+  //   { size_id: string; color_id: string }[]
+  // >([]);
+
   const [availableSizes, setAvailableSizes] = useState<SizeOption[]>([]);
   const [availableColors, setAvailableColors] = useState<ColorOption[]>([]);
   const [showSizeDropdown, setShowSizeDropdown] = useState(false);
@@ -103,20 +109,20 @@ export default function VariantAndInventory() {
     .filter((c) => !selectedColors.find((sc) => sc.color_id === c.color_id));
 
   useEffect(() => {
+    const newVariants: Variant[] = [];
     if (selectedSizes.length > 0 && selectedColors.length > 0) {
-      const newVariants: Variant[] = [];
       selectedSizes.forEach((size) => {
         selectedColors.forEach((color) => {
-          const isExcluded = excludedVariants.some(
-            (ex) =>
-              ex.size_id === size.size_id && ex.color_id === color.color_id
-          );
-          if (isExcluded) return;
+          // const isExcluded = excludedVariants.some(
+          //   (ex) =>
+          //     ex.size_id === size.size_id && ex.color_id === color.color_id
+          // );
+          // if (isExcluded) return;
 
           const existing = variantsList.find(
             (v) =>
-              v.size.size_id === size.size_id &&
-              v.color.color_id === color.color_id
+              v.size?.size_id === size.size_id &&
+              v.color?.color_id === color.color_id
           );
           if (existing) {
             newVariants.push(existing);
@@ -125,8 +131,31 @@ export default function VariantAndInventory() {
           }
         });
       });
-      setVariantsList(newVariants);
+    } else if (selectedSizes.length > 0) {
+      selectedSizes.forEach((size) => {
+        const existing = variantsList.find(
+          (v) => v.size?.size_id === size.size_id
+        );
+        if (existing) {
+          newVariants.push(existing);
+        } else {
+          newVariants.push({ sku: "", size });
+        }
+      });
+    } else if (selectedColors.length > 0) {
+      selectedColors.forEach((color) => {
+        const existing = variantsList.find(
+          (v) => v.color?.color_id === color.color_id
+        );
+        if (existing) {
+          newVariants.push(existing);
+        } else {
+          newVariants.push({ sku: "", size: undefined, color });
+        }
+      });
     }
+
+    setVariantsList(newVariants);
   }, [selectedSizes, selectedColors]);
 
   const closeAllDropdowns = () => {
@@ -135,18 +164,20 @@ export default function VariantAndInventory() {
   };
 
   const handleClickOutside = (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest(".size-dropdown-container") &&
-          !(e.target as HTMLElement).closest(".color-dropdown-container")) {
-        closeAllDropdowns();
-      }
+    if (
+      !(e.target as HTMLElement).closest(".size-dropdown-container") &&
+      !(e.target as HTMLElement).closest(".color-dropdown-container")
+    ) {
+      closeAllDropdowns();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  
-    useEffect(() => {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, []);
+  }, []);
 
   const handleSkuChange = (index: number, val: string) => {
     setVariantsList((prev) => {
@@ -156,13 +187,16 @@ export default function VariantAndInventory() {
     });
   };
 
-  const handleRemoveVariant = (size_id: string, color_id: string) => {
+  const handleRemoveVariant = (size_id?: string, color_id?: string) => {
     setVariantsList((prev) =>
-      prev.filter(
-        (v) => !(v.size.size_id === size_id && v.color.color_id === color_id)
-      )
+      prev.filter((v) => {
+        const matchSize = size_id ? v.size?.size_id === size_id : true;
+        const matchColor = color_id ? v.color?.color_id === color_id : true;
+
+        // remove only if BOTH conditions match
+        return !(matchSize && matchColor);
+      })
     );
-    // setExcludedVariants((prev) => [...prev, { size_id, color_id }]);
   };
 
   const handleSizeSelect = (size: SizeOption) => {
@@ -350,7 +384,9 @@ export default function VariantAndInventory() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {variantsList.map((variant, index) => (
                     <tr
-                      key={`${variant.size.size_id}-${variant.color.color_id}`}
+                      key={`${variant.size?.size_id || ""}-${
+                        variant.color?.color_id || ""
+                      }`}
                     >
                       <td className="px-4 py-2">
                         <input
@@ -364,21 +400,23 @@ export default function VariantAndInventory() {
                         />
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
-                        {variant.size.size_name}
+                        {variant.size?.size_name || ""}
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap flex items-center gap-2">
                         <div
                           className="w-3 h-3 rounded-full border border-gray-300"
-                          style={{ backgroundColor: variant.color.hex_code }}
+                          style={{
+                            backgroundColor: variant.color?.hex_code || "grey",
+                          }}
                         />
-                        {variant.color.color_name}
+                        {variant.color?.color_name}
                       </td>
                       <td className="px-4 py-2 text-right">
                         <button
                           onClick={() =>
                             handleRemoveVariant(
-                              variant.size.size_id,
-                              variant.color.color_id
+                              variant.size?.size_id,
+                              variant.color?.color_id
                             )
                           }
                           className="text-red-500 hover:text-red-700"

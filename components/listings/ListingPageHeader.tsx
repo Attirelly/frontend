@@ -70,6 +70,7 @@ export default function ListingPageHeader() {
       setShowStoreType(false);
       setCategory("");
       setQuery("");
+      setTempQuery("")
       setSearchFocus(false);
       if (trimmed !== "") {
         router.push("/product_directory?search=" + encodeURIComponent(trimmed));
@@ -220,6 +221,7 @@ export default function ListingPageHeader() {
     setSearchFocus(false);
     setShowDropdown(false);
     setQuery("");
+    setTempQuery("") ;
     router.push(`/product_directory?category=${encodeURIComponent(category)}`);
   };
   const handleProductClick = (value: string) => {
@@ -237,6 +239,7 @@ export default function ListingPageHeader() {
   const handleStoreListRoute = () => {
     setSearchFocus(false);
     setQuery("");
+    setTempQuery("") ;
     setShowDropdown(false);
     router.push("/store_listing?search=" + encodeURIComponent(tempQuery));
   };
@@ -331,6 +334,7 @@ export default function ListingPageHeader() {
               // onClick={() => router.push("/homepage")}
               onClick={() => {
                 setQuery("");
+                setTempQuery("") ;
                 router.push("/");
               }}
               style={{ fontWeight: 600 }}

@@ -342,7 +342,9 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                             {filteredValues.length > 0 ? (
                               // Sort the filteredValues array based on a predefined order
                               filteredValues
-                                .slice() // Create a copy to avoid mutating the original array
+                                .filter((tempFilter)=>{
+                                  return tempFilter.name.toLowerCase() !== "others"
+                                }).slice() // Create a copy to avoid mutating the original array
                                 .sort((a, b) => {
                                   // Define the order of price ranges
                                   const order: { [key: string]: number } = {
@@ -374,7 +376,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                         }
                                         // className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
                                         // className="h-4 w-4 rounded border-gray-300 dark:border-black dark:bg-white accent-white dark:accent-white"
-g                                        className=" h-4 w-4 rounded
+                                        className=" h-4 w-4 rounded
                                                     border border-gray-300
                                                     bg-white
                                                     checked:bg-black checked:border-black
