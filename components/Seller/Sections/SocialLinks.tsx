@@ -52,6 +52,7 @@ export default function SocialLinksComponent() {
           : "";
 
         setInstagramUsname(instagramUsername);
+        setInstagramUrl(`https://instagram.com/${instagramUsername}`);
       } catch (error) {
         console.error("Failed to fetch Instagram username", error);
         setInstagramUsname("");
