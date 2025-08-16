@@ -5,16 +5,6 @@ import { toast } from "sonner";
 import { api } from "@/lib/axios";
 
 export default function SocialLinksComponent() {
-  if (localStorage.getItem("instagram_connected") === "true") {
-    useSellerStore.getState().setIsInstagramConnected(true);
-    toast.success("Instagram connected successfully");
-    localStorage.removeItem("instagram_connected");
-  } else if (localStorage.getItem("instagram_connected") === "false") {
-    useSellerStore.getState().setIsInstagramConnected(false);
-    toast.error("Instagram connection failed");
-    localStorage.removeItem("instagram_connected");
-  }
-
   const {
     setSocialLinksData,
     setSocialLinksValid,
@@ -36,6 +26,18 @@ export default function SocialLinksComponent() {
   const [facebookUrl, setFacebookUrl] = useState(
     socialLinksData?.facebookUrl || ""
   );
+
+  useEffect(() => {
+    if (localStorage.getItem("instagram_connected") === "true") {
+      useSellerStore.getState().setIsInstagramConnected(true);
+      toast.success("Instagram connected successfully");
+      localStorage.removeItem("instagram_connected");
+    } else if (localStorage.getItem("instagram_connected") === "false") {
+      useSellerStore.getState().setIsInstagramConnected(false);
+      toast.error("Instagram connection failed");
+      localStorage.removeItem("instagram_connected");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchInstaDetails = async () => {
