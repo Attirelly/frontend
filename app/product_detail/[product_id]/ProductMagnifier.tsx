@@ -60,7 +60,7 @@ export default function ProductMagnifier({
           alt="Product"
           width={width}
           height={height}
-          className="object-cover"
+          className="object-cover object-top"
         />
       </div>
 

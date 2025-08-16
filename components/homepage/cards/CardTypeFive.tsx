@@ -26,7 +26,7 @@ export default function CardTypeFive({
           src={imageUrl}
           alt="Card Type Two Image"
           fill
-          className="object-cover rounded-xl"
+          className="object-cover object-top rounded-xl"
         />
       </div>
 

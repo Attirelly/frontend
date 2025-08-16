@@ -47,13 +47,13 @@ export default function GridPostGallery({ posts, storeName }: Props) {
                 src={post.media_url}
                 alt="Instagram post"
                 fill
-                className="object-cover"
+                className="object-cover object-top"
                 unoptimized
               />
             ) : post.media_type === 'VIDEO' ? (
               <video
                 src={post.media_url}
-                className="object-cover w-full h-full"
+                className="object-cover object-top w-full h-full"
                 autoPlay
                 muted
                 loop

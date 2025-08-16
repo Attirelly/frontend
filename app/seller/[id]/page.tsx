@@ -22,7 +22,7 @@ export default async function SellerPage({ params }: { params: { id: string } })
                   alt="Profile Picture"
                   width={128}
                   height={128}
-                  className="object-cover w-full h-full"
+                  className="object-cover w-full h-full ibject-top"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">

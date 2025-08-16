@@ -14,7 +14,7 @@ export default function StepsCard({id, title, subtitle, image} : StepsCardProps)
         alt={title}
         width={97}
         height={97}
-        className="rounded-full object-cover"
+        className="rounded-full object-cover object-top"
       />
       <div className={`${manrope.className} w-[263px] h-[105px] mt-4 text-center`}>
         <h3 className="text-[24px] font-semibold" style={{fontWeight:600}}>{title}</h3>

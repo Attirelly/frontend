@@ -72,7 +72,7 @@ export default function StoreInfoPage({
             src={imageUrl}
             alt={storeName}
             fill
-            className="rounded-full object-cover"
+            className="rounded-full object-cover object-top"
           />
 
           {/* Verified Badge */}

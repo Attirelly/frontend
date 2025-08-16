@@ -376,7 +376,7 @@ export default function AddStoreProduct() {
                         <img
                           src={option.image}
                           alt={option.label}
-                          className="w-8 h-8 object-cover rounded"
+                          className="w-8 h-8 object-cover rounded object-top"
                         />
                       )}
                       <div className="flex flex-col">

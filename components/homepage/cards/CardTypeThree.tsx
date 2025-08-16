@@ -18,7 +18,7 @@ const CardTypeThree: React.FC<CardProps> = ({ imageUrl, discountText, title, des
           src={imageUrl}
           alt={title}
           fill
-          className="object-cover"
+          className="object-cover object-top"
           priority
         />
       </div>

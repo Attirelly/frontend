@@ -11,7 +11,7 @@ export default function AmbassadorHero() {
         src="/SellerLanding/hero_bg_gradiant.svg"
         alt="Gray Gradiant"
         fill
-        className="object-cover"
+        className="object-cover object-top"
       />
       <div className="absolute flex items-center justify-between inset-0">
         <p className="flex flex-col gap-4 ml-[90px]">
@@ -32,10 +32,10 @@ Start Earning
         </p>
 
         <div>
-          <Image src="/CollegeAmbassador/smallest.svg" alt='Stylist shop' width={135} height={135} className="absolute w-[135px] h-[135px] object-cover rounded-full top-[40px] right-[418px]"/>
+          <Image src="/CollegeAmbassador/smallest.svg" alt='Stylist shop' width={135} height={135} className="absolute w-[135px] h-[135px] object-cover object-top rounded-full top-[40px] right-[418px]"/>
           
-          <Image src="/CollegeAmbassador/largest.svg" alt='Stylist shop' width={440} height={440} className="absolute w-[440px] h-[440px] object-cover rounded-full top-[94px] right-[41px]"/>
-<Image src="/CollegeAmbassador/second_largest.svg" alt='Stylist shop' width={168} height={168} className="absolute w-[168px] h-[168px] object-cover rounded-full top-[230px] right-[454px]"/>
+          <Image src="/CollegeAmbassador/largest.svg" alt='Stylist shop' width={440} height={440} className="absolute w-[440px] h-[440px] object-cover object-top rounded-full top-[94px] right-[41px]"/>
+<Image src="/CollegeAmbassador/second_largest.svg" alt='Stylist shop' width={168} height={168} className="absolute w-[168px] h-[168px] object-cover object-top rounded-full top-[230px] right-[454px]"/>
         </div>
       </div>
     </div>

@@ -507,7 +507,7 @@ export default function ProductsPage({
             alt="product_image"
             width={60}
             height={60}
-            style={{ objectFit: "cover", borderRadius: "4px" }}
+            style={{ objectFit: "cover", borderRadius: "4px" , objectPosition :"top" }}
           />
         );
       },

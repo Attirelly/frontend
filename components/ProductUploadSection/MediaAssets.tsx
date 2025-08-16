@@ -527,7 +527,7 @@ export default function MediaAssets() {
                     <img
                       src={imageUrl}
                       alt={`Variant ${sku} image ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                      className="w-full h-32 object-cover object-top rounded-lg border border-gray-200"
                     />
                     <button
                       onClick={() => removeVariantImage(sku, imageUrl)}

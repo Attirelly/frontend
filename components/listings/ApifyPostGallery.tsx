@@ -66,7 +66,7 @@ export default function ApifyPostGallery({ posts }: Props) {
                 src={`/api/proxy-image?url=${encodeURIComponent(post.display_url)}`}
                 alt="Instagram post"
                 fill
-                className="object-cover"
+                className="object-cover object-top"
                 unoptimized
             />
             {post.media_type === 'Video' && (

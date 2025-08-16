@@ -219,7 +219,7 @@ export default function PhotosPage() {
               <img
                 src={profileUrl}
                 alt="Profile Preview"
-                className="w-[300px] h-[300px] object-cover rounded-lg mx-auto"
+                className="w-[300px] h-[300px] object-cover object-top rounded-lg mx-auto"
               />
               <button
                 onClick={(e) => {

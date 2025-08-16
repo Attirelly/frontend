@@ -17,7 +17,7 @@ const CardTypeSix: React.FC<CardProps> = ({ imageUrl, title, description }) => {
           src={imageUrl}
           alt={title}
           fill
-          className="object-cover"
+          className="object-cover object-top"
           priority
         />
       </div>
