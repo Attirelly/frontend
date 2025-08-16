@@ -15,11 +15,13 @@ function CallbackHandler() {
 
   let instagramUrl = "";
   let storeId = "";
+  let redirect_uri = "" ; 
 
   try {
     const parsedState = JSON.parse(decodeURIComponent(state || ""));
     instagramUrl = parsedState.instagram_url;
     storeId = parsedState.store_id;
+    redirect_uri = parsedState.redirect_uri;
   } catch (err) {
     console.error("Invalid state param:", err);
   }
@@ -41,6 +43,7 @@ function CallbackHandler() {
             code,
             instagram_url: instagramUrl,
             seller_id: storeId,
+            redirect_uri:redirect_uri
           },
           {
             headers: {

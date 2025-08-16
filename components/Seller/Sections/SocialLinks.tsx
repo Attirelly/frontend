@@ -74,7 +74,7 @@ setSocialLinksData({
       const redirectUri = `${window.location.origin}/auth/callback`
 
       // encoding the state
-      console.log("redirect" , redirectUri)
+      
       const stateData = {
         instagram_url: instagramUrl,
         store_id: storeId,
