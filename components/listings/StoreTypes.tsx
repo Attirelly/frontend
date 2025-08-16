@@ -1,94 +1,200 @@
+// 'use client';
+
+// import React, { use, useEffect, useState } from 'react';
+// import clsx from 'clsx';
+// import { SelectOption, BrandType } from '@/types/SellerTypes';
+// import { api } from '@/lib/axios';
+// import { toast } from 'sonner';
+// import { useHeaderStore } from '@/store/listing_header_store';
+// import { event } from '@/lib/gtag';
+// import { manrope } from '@/font';
+// import StoreTypeTabsSkeleton from './skeleton/StoreTypeHeaderSkeleton';
+
+
+
+
+// interface StoreTypeTabsProps {
+//     //   tabs: SelectOption[];
+//     //   onChange: (value: string) => void;
+//     defaultValue?: string;
+// }
+
+// export default function StoreTypeTabs({
+//     //   tabs,
+//     //   onChange,
+//     defaultValue,
+// }: StoreTypeTabsProps) {
+//     const { setStoreType, storeType } = useHeaderStore();
+//     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
+//     const [tabs, setTabs] = useState<SelectOption[]>([]);
+//     const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
+//     const [loading, setLoading] = useState(true);
+//     const handleTabClick = (value: SelectOption) => {
+//         const storeType: BrandType = {
+//             id: value.value,
+//             store_type: value.label
+//         }
+//         event({
+//             action: "Store Type Select",
+//             params: {
+//                 "Store Type": value.label
+//             }
+//         });
+//         setSelectedStoreType(storeType);
+//         setStoreType(storeType);
+//         // onChange(value);
+//     };
+//     // 
+
+//     useEffect(() => {
+//     const fetchStoreTypes = async () => {
+//         try {
+//             setLoading(true);
+//             const res = await api.get("stores/store_types");
+            
+//             setStoreTypes(res.data);
+//             const options: SelectOption[] = res.data.map((t: BrandType) => ({
+//                 label: t.store_type,
+//                 value: t.id
+//             }));
+//             setTabs(options);
+
+//             // Prefer storeType from Zustand, fallback to defaultValue
+//             const initialId = storeType?.id ?? defaultValue;
+
+//             if (initialId) {
+//                 const initialOption = res.data.find((t: BrandType) => t.id === initialId);
+//                 if (initialOption) {
+//                     const storeTypeObj: BrandType = {
+//                         id: initialOption.id,
+//                         store_type: initialOption.store_type,
+//                     };
+//                     setSelectedStoreType(storeTypeObj);
+//                     setStoreType(storeTypeObj); // update Zustand
+//                 }
+//             }
+//         }
+//         catch (error) {
+//             toast.error("Failed to fetch store types");
+//         }
+//         finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     fetchStoreTypes();
+// }, [defaultValue, storeType?.id, setStoreType]);
+
+
+//     if(loading){
+//         return <StoreTypeTabsSkeleton/>
+//     }
+//     return (
+//         <div className="flex bg-[#F5F5F5] rounded-full overflow-hidden w-fit px-2 py-2">
+//             {tabs.map((tab, index) => (
+//                 <div key={tab.value} className="flex items-center">
+//                     <button
+//                         className={clsx(
+//                             manrope.className,
+//                             'px-4 py-2 rounded-full transition-all duration-200 mx-2 text-base',
+//                             selectedStoreType?.id === tab.value
+//                                 ? 'bg-white shadow text-black'
+//                                 : 'text-[#565656] hover:text-black'
+//                         )}
+//                         style={{fontWeight:500}}
+//                         onClick={() => handleTabClick(tab)}
+//                     >
+//                         {tab.label}
+//                     </button>
+
+//                     {index !== tabs.length - 1 && (
+//                         <div className="h-6 border-r border-gray-300 mx-2" />
+//                     )}
+//                 </div>
+//             ))}
+//         </div>
+//     );
+// }
+
+
 'use client';
 
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { SelectOption, BrandType } from '@/types/SellerTypes';
-import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { event } from '@/lib/gtag';
 import { manrope } from '@/font';
 import StoreTypeTabsSkeleton from './skeleton/StoreTypeHeaderSkeleton';
 
-
-
-
 interface StoreTypeTabsProps {
-    //   tabs: SelectOption[];
-    //   onChange: (value: string) => void;
     defaultValue?: string;
 }
 
-export default function StoreTypeTabs({
-    //   tabs,
-    //   onChange,
-    defaultValue,
-}: StoreTypeTabsProps) {
+const HARD_CODED_STORE_TYPES: BrandType[] = [
+    { id: "f923d739-4c06-4472-9bfd-bb848b32594b", store_type: "Retail Store" },
+    { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" },
+    { id: "33f514c5-4896-46b7-ae74-139aece3d295", store_type: "Tailor" },
+    { id: "7339638e-e60a-4547-9c68-2c46169ea480", store_type: "Stylist" },
+    
+];
+
+export default function StoreTypeTabs({ defaultValue }: StoreTypeTabsProps) {
     const { setStoreType, storeType } = useHeaderStore();
     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
     const [tabs, setTabs] = useState<SelectOption[]>([]);
     const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
     const [loading, setLoading] = useState(true);
+
     const handleTabClick = (value: SelectOption) => {
-        const storeType: BrandType = {
+        const storeTypeObj: BrandType = {
             id: value.value,
-            store_type: value.label
-        }
+            store_type: value.label,
+        };
+
         event({
             action: "Store Type Select",
-            params: {
-                "Store Type": value.label
-            }
+            params: { "Store Type": value.label }
         });
-        setSelectedStoreType(storeType);
-        setStoreType(storeType);
-        // onChange(value);
+
+        setSelectedStoreType(storeTypeObj);
+        setStoreType(storeTypeObj);
     };
-    // 
 
     useEffect(() => {
-    const fetchStoreTypes = async () => {
         try {
             setLoading(true);
-            const res = await api.get("stores/store_types");
-            
-            setStoreTypes(res.data);
-            const options: SelectOption[] = res.data.map((t: BrandType) => ({
+            setStoreTypes(HARD_CODED_STORE_TYPES);
+
+            const options: SelectOption[] = HARD_CODED_STORE_TYPES.map(t => ({
                 label: t.store_type,
                 value: t.id
             }));
             setTabs(options);
 
-            // Prefer storeType from Zustand, fallback to defaultValue
+            // Set initial selected store type
             const initialId = storeType?.id ?? defaultValue;
-
             if (initialId) {
-                const initialOption = res.data.find((t: BrandType) => t.id === initialId);
+                const initialOption = HARD_CODED_STORE_TYPES.find(t => t.id === initialId);
                 if (initialOption) {
                     const storeTypeObj: BrandType = {
                         id: initialOption.id,
-                        store_type: initialOption.store_type,
+                        store_type: initialOption.store_type
                     };
                     setSelectedStoreType(storeTypeObj);
-                    setStoreType(storeTypeObj); // update Zustand
+                    setStoreType(storeTypeObj);
                 }
             }
-        }
-        catch (error) {
-            toast.error("Failed to fetch store types");
-        }
-        finally {
+        } catch (err) {
+            toast.error("Failed to load store types");
+        } finally {
             setLoading(false);
         }
-    };
+    }, [defaultValue, storeType?.id, setStoreType]);
 
-    fetchStoreTypes();
-}, [defaultValue, storeType?.id, setStoreType]);
+    if (loading) return <StoreTypeTabsSkeleton />;
 
-
-    if(loading){
-        return <StoreTypeTabsSkeleton/>
-    }
     return (
         <div className="flex bg-[#F5F5F5] rounded-full overflow-hidden w-fit px-2 py-2">
             {tabs.map((tab, index) => (
@@ -101,12 +207,11 @@ export default function StoreTypeTabs({
                                 ? 'bg-white shadow text-black'
                                 : 'text-[#565656] hover:text-black'
                         )}
-                        style={{fontWeight:500}}
+                        style={{ fontWeight: 500 }}
                         onClick={() => handleTabClick(tab)}
                     >
                         {tab.label}
                     </button>
-
                     {index !== tabs.length - 1 && (
                         <div className="h-6 border-r border-gray-300 mx-2" />
                     )}

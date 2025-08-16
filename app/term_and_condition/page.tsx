@@ -62,7 +62,7 @@ const termsAndConditionsData = [
   },
   {
     title: "15. PRIVACY POLICY",
-    content: "We care about data privacy and security. Please review our Privacy Policy: [LINK TO PRIVACY POLICY]. By using the Services, you agree to be bound by our Privacy Policy, which is incorporated into these Legal Terms. Please be advised the Services are hosted in India. If you access the Services from any other region of the world with laws or other requirements governing personal data collection, use, or disclosure that differ from applicable laws in India, then through your continued use of the Services, you are transferring your data to India, and you expressly consent to have your data transferred to and processed in India. Further, we do not knowingly accept, request, or solicit information from children or knowingly market to children. Therefore, in accordance with the Indian laws, if we receive actual knowledge that anyone under the age of 18 has provided personal information to us without the requisite and verifiable parental consent, we will delete that information from the Services as quickly as is reasonably practical."
+    content: "We care about data privacy and security. Please review our Privacy Policy: [LINK TO PRIVACY POLICY](https://attirelly.com/privacy_policy). By using the Services, you agree to be bound by our Privacy Policy, which is incorporated into these Legal Terms. Please be advised the Services are hosted in India. If you access the Services from any other region of the world with laws or other requirements governing personal data collection, use, or disclosure that differ from applicable laws in India, then through your continued use of the Services, you are transferring your data to India, and you expressly consent to have your data transferred to and processed in India. Further, we do not knowingly accept, request, or solicit information from children or knowingly market to children. Therefore, in accordance with the Indian laws, if we receive actual knowledge that anyone under the age of 18 has provided personal information to us without the requisite and verifiable parental consent, we will delete that information from the Services as quickly as is reasonably practical."
   },
   {
     title: "16. TERM AND TERMINATION",
@@ -74,7 +74,7 @@ const termsAndConditionsData = [
   },
   {
     title: "18. GOVERNING LAW",
-    content: "These Legal Terms shall be governed by and defined in accordance with the laws of India. Ango24 Services Private Limited and yourself irrevocably consent that the courts of India shall have exclusive jurisdiction to resolve any dispute which may arise in connection with these Legal Terms."
+    content: "These Legal Terms shall be governed by and defined in accordance with the laws of India. Attirelly Technologies Private Limited and yourself irrevocably consent that the courts of India shall have exclusive jurisdiction to resolve any dispute which may arise in connection with these Legal Terms."
   },
   {
     title: "19. DISPUTE RESOLUTION",
@@ -122,11 +122,11 @@ const termsAndConditionsData = [
   },
   {
     title: "30. GRIEVANCE OFFICER",
-    content: "In accordance with the Information Technology Act, 2000 and the rules made thereunder, the name and contact details of the Grievance Officer are provided below:\n\nAngo24 Services Private Limited\n97, Guru Gobind Singh Nagar, Samrala Chowk\nLudhiana, Punjab, India 141008 \nPhone: (+91)9915916707\nEmail: info@attirelly.com\n"
+    content: "In accordance with the Information Technology Act, 2000 and the rules made thereunder, the name and contact details of the Grievance Officer are provided below:\n\nAttirelly Technologies Private Limited\n97, Guru Gobind Singh Nagar, Samrala Chowk\nLudhiana, Punjab, India 141008 \nPhone: (+91)9915916707\nEmail: info@attirelly.com\n"
   },
   {
     title: "31. CONTACT US",
-    content: "In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services, please contact us at:\n\nAngo24 Services Private Limited\n97, Guru Gobind Singh Nagar, Samrala Chowk\nLudhiana, Punjab, India 141008 \nPhone: (+91)9915916707\nEmail: info@attirelly.com"
+    content: "In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services, please contact us at:\n\nAttirelly Technologies Private Limited\n97, Guru Gobind Singh Nagar, Samrala Chowk\nLudhiana, Punjab, India 141008 \nPhone: (+91)9915916707\nEmail: info@attirelly.com"
   },
 ];
 
@@ -171,7 +171,7 @@ export default function App() {
       <div className="container mx-auto p-4 md:p-8 max-w-6xl">
         <header className="mb-8 text-center">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">TERMS AND CONDITIONS</h1>
-          <p className="text-gray-500 mt-2">Last updated November 08, 2024</p>
+          <p className="text-gray-500 mt-2">Last updated August 15, 2025</p>
         </header>
 
         <main className="grid lg:grid-cols-3 gap-8">
@@ -197,12 +197,12 @@ export default function App() {
           {/* Main Content - Right Column */}
           <article className="lg:col-span-2">
             <p className="text-gray-600 mb-6 leading-relaxed">
-              We are Ango24 Services Private Limited ("Company," "we," "us," "our"), a company registered in India at 97, Guru Gobind Singh Nagar, Samrala Chowk, Ludhiana, Punjab 141008. We operate the website <a href="https://www.attirelly.com" className="text-blue-500 hover:underline">https://www.attirelly.com</a> (the "Site"), as well as any other related products and services that refer or link to these legal terms (the "Legal Terms") (collectively, the "Services").
+              We are Attirelly Technologies Private Limited ("Company," "we," "us," "our"), a company registered in India at 97, Guru Gobind Singh Nagar, Samrala Chowk, Ludhiana, Punjab 141008. We operate the website <a href="https://www.attirelly.com" className="text-blue-500 hover:underline">https://www.attirelly.com</a> (the "Site"), as well as any other related products and services that refer or link to these legal terms (the "Legal Terms") (collectively, the "Services").
             </p>
 
             <h3 className="text-xl font-semibold text-gray-800 mb-4">AGREEMENT TO OUR LEGAL TERMS</h3>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              These Legal Terms constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you"), and Ango24 Services Private Limited, concerning your access to and use of the Services. You agree that by accessing the Services, you have read, understood, and agreed to be bound by all of these Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.
+              These Legal Terms constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you"), and Attirelly Technologies Private Limited, concerning your access to and use of the Services. You agree that by accessing the Services, you have read, understood, and agreed to be bound by all of these Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.
             </p>
 
             {/* Accordion for individual sections */}

@@ -145,7 +145,7 @@ export default function SectionSevenContainer() {
                 const formattedProducts: CardData[] = productData.map((p: any) => ({
                     id: p.product_id,
                     imageUrl: p.images?.[0]?.image_url || '/Homepage/CardTypeOne.svg',
-                    title: p.product_name,
+                    title: p.title,
                     description: p.stores?.store_name || '',
                     price: p.variants?.[0]?.price || 0,
                     mrp: p.variants?.[0]?.mrp || 0,

@@ -11,14 +11,14 @@ const PrivacyPolicyPage = () => {
             PRIVACY POLICY
           </h1>
           <p className="text-sm sm:text-base text-gray-500">
-            Last updated <span className="font-semibold">November 08, 2024</span>
+            Last updated <span className="font-semibold">August 15, 2025</span>
           </p>
         </div>
 
         {/* Introduction */}
         <div className="mb-8 text-gray-700 leading-relaxed text-base">
           <p className="mb-4">
-            This Privacy Notice for <span className="font-semibold">Ango24 Services Private Limited</span> (
+            This Privacy Notice for <span className="font-semibold">Attirelly Technologies Private Limited</span> (
             <span className="font-semibold">"we"</span>, <span className="font-semibold">"us"</span>, or <span className="font-semibold">"our"</span>
             ), describes how and why we might access, collect, store, use, and/or share (
             <span className="font-semibold">"process"</span>) your personal information when you use our services (
@@ -397,7 +397,7 @@ const PrivacyPolicyPage = () => {
             <a href="mailto:info@attirelly.com" className="text-blue-600 hover:underline">info@attirelly.com</a> or contact us by post at:
           </p>
           <address className="not-italic text-gray-700 leading-relaxed mb-4">
-            Ango24 Services Private Limited<br />
+            Attirelly Technologies Private Limited<br />
             97, Guru Gobind Singh Nagar, Samrala Chowk<br />
             Ludhiana, Punjab 141008<br />
             India
