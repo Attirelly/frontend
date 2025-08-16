@@ -11,11 +11,10 @@ function CallbackHandler() {
 
   const code = searchParams.get("code");
   const state = searchParams.get("state");
-  
 
   let instagramUrl = "";
   let storeId = "";
-  let redirect_uri = "" ; 
+  let redirect_uri = "";
 
   try {
     const parsedState = JSON.parse(decodeURIComponent(state || ""));
@@ -26,51 +25,54 @@ function CallbackHandler() {
     console.error("Invalid state param:", err);
   }
 
-
   useEffect(() => {
     const authenticate = async () => {
       try {
+        // Clean up query params from URL
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
         );
 
-        
-        const response = await api.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/instagram/auth`,
-          {
-            code,
-            instagram_url: instagramUrl,
-            seller_id: storeId,
-            redirect_uri:redirect_uri
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
+        if (code && state) {
+          const response = await api.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/instagram/auth`,
+            {
+              code,
+              instagram_url: instagramUrl,
+              seller_id: storeId,
+              redirect_uri: redirect_uri,
             },
-            withCredentials: true,
-          }
-        );
-        console.log("response" , response) 
-        const { user_id } = response.data;
-        
-        localStorage.setItem("instagram_connected", "true");
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              withCredentials: true,
+            }
+          );
+
+          console.log("response", response);
+          const { user_id } = response.data;
+
+          localStorage.setItem("instagram_connected", "true");
+        } else {
+          localStorage.setItem("instagram_connected", "false");
+        }
+
+        // ✅ Redirect only after success/failure is handled
+        router.push("/seller_dashboard?section=social");
       } catch (error: any) {
-        localStorage.setItem("instagram_connected", "false")
+        localStorage.setItem("instagram_connected", "false");
         console.error("Authentication error:", error);
         router.push("/seller_dashboard?section=social");
-        // router.push(`/?error=${encodeURIComponent(error.message)}`);
       }
     };
 
-    if (code && state) {
-      authenticate();
-      router.push(`/seller_dashboard?section=social`);
-    } else {
-      localStorage.setItem("instagram_connected", "false");
-      router.push("/seller_dashboard?section=social");
-    }
+    // Immediately invoke the async flow
+    (async () => {
+      await authenticate();
+    })();
   }, [code, state, router]);
 
   return (
