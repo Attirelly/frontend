@@ -38,27 +38,26 @@ export default function SocialLinksComponent() {
   );
 
   useEffect(() => {
-  const fetchInstaDetails = async () => {
-    try {
-      const response = await api.get(`stores/${storeId}`);
-      const storeData = response?.data;
+    const fetchInstaDetails = async () => {
+      try {
+        const response = await api.get(`stores/${storeId}`);
+        const storeData = response?.data;
 
-      const instagramUsername = storeData?.instagram_link
-        ? new URL(storeData.instagram_link).pathname
-            .split("/")
-            .filter(Boolean)[0]
-        : "";
+        const instagramUsername = storeData?.instagram_link
+          ? new URL(storeData.instagram_link).pathname
+              .split("/")
+              .filter(Boolean)[0]
+          : "";
 
-      setInstagramUsname(instagramUsername);
-    } catch (error) {
-      console.error("Failed to fetch Instagram username", error);
-      setInstagramUsname("");
-    }
-  };
+        setInstagramUsname(instagramUsername);
+      } catch (error) {
+        console.error("Failed to fetch Instagram username", error);
+        setInstagramUsname("");
+      }
+    };
 
-  fetchInstaDetails();
-}, [storeId]);
-
+    fetchInstaDetails();
+  }, [storeId]);
 
   const handleInstagramChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const username = e.target.value
@@ -145,8 +144,9 @@ export default function SocialLinksComponent() {
               placeholder="your_username"
               value={instagramUsname}
               onChange={handleInstagramChange}
-              className="flex-1 px-3 py-2 outline-none text-sm"
-              disabled = {isInstagramConnected} 
+              className="flex-1 px-3 py-2 outline-none text-sm 
+               disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              disabled={isInstagramConnected}
             />
           </div>
         </div>
