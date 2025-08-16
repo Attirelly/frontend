@@ -56,12 +56,10 @@ function CallbackHandler() {
           const { user_id } = response.data;
 
           localStorage.setItem("instagram_connected", "true");
-        } else {
-          localStorage.setItem("instagram_connected", "false");
+          router.push("/seller_dashboard?section=social");
         }
 
-        // ✅ Redirect only after success/failure is handled
-        router.push("/seller_dashboard?section=social");
+        
       } catch (error: any) {
         localStorage.setItem("instagram_connected", "false");
         console.error("Authentication error:", error);
