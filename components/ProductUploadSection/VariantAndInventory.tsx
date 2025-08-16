@@ -76,7 +76,7 @@ export default function VariantAndInventory() {
   useEffect(() => {
     const isValid =
       variantsList.length > 0 &&
-      variantsList.every((v) => v.sku && v.size?.size_id && v.color?.color_id);
+      variantsList.every((v) => v.sku );
     setStepValidation(currentStep, isValid);
   }, [variantsList, currentStep]);
 
