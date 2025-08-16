@@ -71,11 +71,10 @@ setSocialLinksData({
   const handleInstagramConnect = () => {
     if (validateInstagramUrl(instagramUrl)) {
       let appId = process.env.NEXT_INSTAGRAM_APP_ID || "548897007892754";
-      const redirectUri = encodeURIComponent(
-        `${window.location.origin}/auth/callback`
-      );
+      const redirectUri = `${window.location.origin}/auth/callback`
 
       // encoding the state
+      console.log("redirect" , redirectUri)
       const stateData = {
         instagram_url: instagramUrl,
         store_id: storeId,
