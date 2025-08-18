@@ -14,6 +14,13 @@ const defaultCity: City = {
 type HeaderState = {
     ambassadorType: string;
     setAmbassadorType:(ambassadorType:string) => void;
+
+    allArea:Area[] | null ; 
+    setAllArea: (areas : Area[] | null) => void ;
+    
+    allCity:City[] | null ; 
+    setAllCity:(cities : City[] | null)=>void ; 
+
     area:Area|null;
     setArea: (area: Area|null) => void;
     city: City|null;
@@ -46,12 +53,15 @@ type HeaderState = {
     setProfilePic: (pic: string) => void;
     storeName: string;
     setStoreName: (name: string) => void;
-
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
     ambassadorType: 'Students',
     setAmbassadorType: (ambassadorType: string) => set({ ambassadorType }),
+    allArea:null , 
+    setAllArea:(allArea)=>set({allArea}),
+    allCity:null ,
+    setAllCity:(allCity)=>set({allCity}),
     city: null,
     setCity: (city) => set({ city }),
     area: null,

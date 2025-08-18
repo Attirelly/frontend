@@ -12,9 +12,7 @@ interface FilterState {
   activeFacet: string | null;
   results: number;
   setResults: (results: number) => void;
-  category: string;
-  setCategory: (category: string) => void;
-  priceRange: [number, number];
+  selectedPriceRange: [number, number] | null;
   setPriceRange: (range: [number, number]) => void;
   priceBounds: [number, number];
   setPriceBounds: (bounds: [number, number]) => void;
@@ -22,22 +20,27 @@ interface FilterState {
   setFacetInit: (loading: boolean) => void;
   facets: Facets;
   selectedFilters: Record<string, string[]>;
-  setFacets: (apiFacets: Record<string, Record<string, number>> , activeFacet : string|null ) => void;
+  setFacets: (
+    apiFacets: Record<string, Record<string, number>>,
+    activeFacet: string | null
+  ) => void;
   toggleFilter: (facetName: string, value: string) => void;
   resetFilters: () => void;
   getSelectedFilters: () => Record<string, string[]>;
+  initializeFilters: (initialState: {
+    selectedFilters?: Record<string, string[]>;
+    priceRange?: [number, number] | null;
+  }) => void;
 }
 
 function createFilterStore() {
   return create<FilterState>((set, get) => ({
     activeFacet: null,
-    setActiveFacet: (facet:string | null) => set({ activeFacet: facet }),
+    setActiveFacet: (facet: string | null) => set({ activeFacet: facet }),
     results: 0,
     setResults: (results: number) => set({ results }),
-    category: "",
-    setCategory: (category: string) => set({ category }),
-    priceRange: [0, 0],
-    setPriceRange: (range: [number, number]) => set({ priceRange: range }),
+    selectedPriceRange: null,
+    setPriceRange: (range) => set({ selectedPriceRange: range }),
     priceBounds: [0, 100000],
     setPriceBounds: (bounds: [number, number]) => set({ priceBounds: bounds }),
     facetInit: false,
@@ -45,16 +48,43 @@ function createFilterStore() {
     facets: {},
     selectedFilters: {},
 
-   
+    initializeFilters: (initialState) => {
+      const newSelectedFilters = initialState.selectedFilters || {};
+      const currentFacets = get().facets;
+
+      // Update the 'selected' status in the main facets array for UI consistency
+      const updatedFacets: Facets = {};
+      Object.keys(currentFacets).forEach((facetName) => {
+        const selectedValues = newSelectedFilters[facetName] || [];
+        updatedFacets[facetName] = currentFacets[facetName].map((value) => ({
+          ...value,
+          selected: selectedValues.includes(value.name),
+        }));
+      });
+
+      set({
+        selectedFilters: newSelectedFilters,
+        // category: initialState.category || "",
+        facets: updatedFacets, // Set the updated facets
+        activeFacet: null,
+        selectedPriceRange: initialState.priceRange || null,
+      });
+    },
+
     setFacets: (apiFacets, activeFacet) => {
       const currentFacets = get().facets;
 
       const updatedFacets: Facets = { ...currentFacets };
-      
+
       for (const [facetName, values] of Object.entries(apiFacets)) {
         if (!values || typeof values !== "object") continue;
 
-        if (facetName.toLowerCase() === activeFacet?.toLowerCase() && get().selectedFilters[activeFacet].length > 0) continue;
+        if (
+          activeFacet &&
+          facetName.toLowerCase() === activeFacet?.toLowerCase() &&
+          get().selectedFilters[activeFacet].length > 0
+        )
+          continue;
 
         const existing = currentFacets[facetName] || [];
 
@@ -90,8 +120,6 @@ function createFilterStore() {
         updatedSelectedFilters[facetName] = updatedFacets[facetName]
           .filter((f) => f.selected)
           .map((f) => f.name);
-        
-        
 
         return {
           activeFacet: facetName,
@@ -117,9 +145,11 @@ function createFilterStore() {
         return {
           facets: resetFacets,
           selectedFilters: resetSelectedFilters,
+          selectedPriceRange: null, 
+          activeFacet:null
         };
       });
-    },
+    },  
 
     getSelectedFilters: () => {
       return get().selectedFilters;
