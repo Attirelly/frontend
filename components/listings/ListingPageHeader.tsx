@@ -113,7 +113,6 @@ export default function ListingPageHeader() {
     const fetchCities = async () => {
       try {
         const res = await api.get("/location/cities/");
-        console.log("cities data", res.data);
         setCities(res.data);
         setAllCity(res.data);
       } catch {
@@ -127,7 +126,6 @@ export default function ListingPageHeader() {
     const fetchAreas = async () => {
       try {
         const res = await api.get("/location/areas/");
-        console.log("areas data", res.data);
         setAreas(res.data);
         setAllArea(res.data);
       } catch {

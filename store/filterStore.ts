@@ -66,7 +66,6 @@ function createFilterStore() {
         selectedFilters: newSelectedFilters,
         // category: initialState.category || "",
         facets: updatedFacets, // Set the updated facets
-        activeFacet: null,
         selectedPriceRange: initialState.priceRange || null,
       });
     },
@@ -79,10 +78,11 @@ function createFilterStore() {
       for (const [facetName, values] of Object.entries(apiFacets)) {
         if (!values || typeof values !== "object") continue;
 
+        console.log("activeFacet" , activeFacet)
         if (
           activeFacet &&
           facetName.toLowerCase() === activeFacet?.toLowerCase() &&
-          get().selectedFilters[activeFacet].length > 0
+          get().selectedFilters[activeFacet]?.length > 0
         )
           continue;
 
@@ -120,7 +120,7 @@ function createFilterStore() {
         updatedSelectedFilters[facetName] = updatedFacets[facetName]
           .filter((f) => f.selected)
           .map((f) => f.name);
-
+      
         return {
           activeFacet: facetName,
           facets: updatedFacets,
@@ -145,7 +145,7 @@ function createFilterStore() {
         return {
           facets: resetFacets,
           selectedFilters: resetSelectedFilters,
-          selectedPriceRange: null, 
+          selectedPriceRange: null,
           activeFacet:null
         };
       });

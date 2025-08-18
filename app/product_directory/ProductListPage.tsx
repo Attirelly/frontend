@@ -26,7 +26,7 @@ export default function ProductListPage() {
   const searchParams = useSearchParams();
 
   const { setQuery, query, setStoreType , area , allArea , city , allCity , setArea , setCity  } = useHeaderStore();
-  const { results, initializeFilters, selectedFilters, selectedPriceRange } =
+  const { results, initializeFilters, selectedFilters, selectedPriceRange , activeFacet} =
     useProductFilterStore();
   const [matchedStoreType, setMatchedStoreType] = useState<string | null>(null);
 

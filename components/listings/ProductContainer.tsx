@@ -114,7 +114,7 @@ export default function ProductContainer({
       } else {
         setNoResultFound(false);
       }
-
+      console.log("activeFacet" , activeFacet)
       setResults(data.total_hits);
       setFacets(data.facets, activeFacet);
 
