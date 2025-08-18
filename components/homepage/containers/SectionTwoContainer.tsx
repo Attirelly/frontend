@@ -131,14 +131,14 @@ export default function SectionTwoContainer() {
     useEffect(() => {
         const fetchSegmentInfo = async () => {
             try {
-                const res = await api.get(`homepage/get_products_by_section_number/${SECTION_NUMBER}`);
+                const res = await api.get(`homepage/categories_by_section_number/${SECTION_NUMBER}`);
                 const productData = res.data;
 
                 const formattedProducts: CardData[] = productData.map((p: any) => ({
-                    id: p.product_id,
-                    imageUrl: p.images?.[0]?.image_url || '/Homepage/CardTypeOne.svg',
-                    title: p.title,
-                    description: `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
+                    id: p.category_id,
+                    imageUrl: p.image_url,
+                    title: p.name,
+                    // description: `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
                 }));
                 setProducts(formattedProducts);
 

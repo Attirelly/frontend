@@ -17,6 +17,12 @@ interface Store {
   area: Area;
 }
 
+interface Category {
+  category_id: string;
+  name: string;
+  image_url: string;
+}
+
 interface Product {
   product_id: string;
   product_name: string;
@@ -43,6 +49,10 @@ export default function AddStoreProduct() {
   const [curationName, setCurationName] = useState('');
   const [viewAllUrl, setViewAllUrl] = useState('');
   const [storesFromSection, setStoresFromSection] = useState<Store[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<Category[]>([]);
+  const [categorySelections, setCategorySelections] = useState<{ category_id: string, image_url: string }[]>(Array(TOTAL_INPUTS).fill({ category_id: '', image_url: '' }));
+
   const router = useRouter();
 
 
@@ -84,46 +94,102 @@ export default function AddStoreProduct() {
       }
     };
 
+    const fetchCategoriesBySection = async () => {
+  try {
+    const response = await api.get(`/homepage/categories_by_section/${curation_id}`);
+    const fetchedSelections: { category_id: string; image_url: string }[] = response.data;
+
+    // preload into selections
+    const updatedSelections = [...categorySelections];
+    for (let i = 0; i < fetchedSelections.length && i < updatedSelections.length; i++) {
+      updatedSelections[i] = fetchedSelections[i];
+    }
+    setCategorySelections(updatedSelections);
+  } catch (error) {
+    console.error('Error fetching categories by section:', error);
+  }
+};
+
     if (curation_type === 'product') {
       fetchStoresAndProductsBySection();
     }
-    else {
+    else if (curation_type === 'store') {
       fetchStoresBySection();
+    }
+    else {
+      fetchCategoriesBySection();
     }
 
   }, [curation_id]);
+  console.log(categories, "categories"); 
+
+  // useEffect(() => {
+  //   api
+  //     .get('/stores/')
+  //     .then((response) => {
+  //       setStores(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching stores:', error);
+  //     });
+  // }, []);
 
   useEffect(() => {
-    api
-      .get('/stores/')
-      .then((response) => {
-        setStores(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching stores:', error);
-      });
-  }, []);
 
-  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get('/products/');
+        const fetchedProducts: Product[] = response.data;
+        setProducts(fetchedProducts);
+        const grouped = fetchedProducts.reduce<Record<string, Product[]>>((acc, product) => {
+          if (!acc[product.store_id]) acc[product.store_id] = [];
+          acc[product.store_id].push(product);
+          return acc;
+        }, {});
+        setProductsByStore(grouped);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    const fetchStores = async () => {
+      api
+        .get('/stores/')
+        .then((response) => {
+          setStores(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching stores:', error);
+        });
+
+    };
+
+    const fetchSubCat = async (level: number) => {
+  try {
+    const response = await api.get(`categories/get_category_by_level/${level}`);
+    const fetchedOptions: Category[] = response.data;
+    setCategoryOptions(fetchedOptions);   // 👈 separate options state
+  } catch (error) {
+    console.error('Error fetching sub categories', error);
+  }
+};
+
+
     if (curation_type === 'product') {
-      const fetchProducts = async () => {
-        try {
-          const response = await api.get('/products/');
-          const fetchedProducts: Product[] = response.data;
-          setProducts(fetchedProducts);
-          const grouped = fetchedProducts.reduce<Record<string, Product[]>>((acc, product) => {
-            if (!acc[product.store_id]) acc[product.store_id] = [];
-            acc[product.store_id].push(product);
-            return acc;
-          }, {});
-          setProductsByStore(grouped);
-        } catch (error) {
-          console.error('Error fetching products:', error);
-        }
-      };
-
+      fetchStores();
       fetchProducts();
     }
+    else if (curation_type === 'store') {
+      fetchStores();
+    }
+    else if (curation_type === 'subcat 3') {
+      fetchSubCat(3);
+    }
+    else {
+      fetchSubCat(4);
+    }
+
+
   }, [curation_type]);
 
 
@@ -135,10 +201,13 @@ export default function AddStoreProduct() {
     }
 
     const selectedStoreIds = storeSelections.filter((id) => id);
-    if (selectedStoreIds.length === 0) {
-      alert('At least one valid store must be selected.');
-      return;
+    if (curation_type === 'product' || curation_type === 'store') {
+      if (selectedStoreIds.length === 0) {
+        alert('At least one valid store must be selected.');
+        return;
+      }
     }
+
     const selectedProductIds = productSelections.filter((id) => id);
     if (curation_type === 'product') {
       if (selectedProductIds.length === 0) {
@@ -151,6 +220,14 @@ export default function AddStoreProduct() {
       }
 
     }
+
+    if (curation_type === 'subcat 3' || curation_type === 'subcat 4') {
+      const validCategories = categorySelections.filter(c => c.category_id && c.image_url);
+      if (validCategories.length === 0) {
+        alert('At least one valid category with image must be selected.');
+        return;
+      }
+    }
     const payload = {
       section_name: curationName,
       section_number: Number(curation_number) || 1,
@@ -158,17 +235,15 @@ export default function AddStoreProduct() {
       section_url: viewAllUrl,
       store_ids: storeSelections.filter((id) => id),
       product_ids: productSelections.filter((id) => id),
+      categories: categorySelections.filter(c => c.category_id && c.image_url)
     };
 
     try {
       await api.put(`/homepage/section/${curation_id}`, payload);
-      // alert('Section Updated successfully!');
       toast.success("Curation submitted successfully!");
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      console.error('Failed to update section:', error);
       toast.error(err.response?.data?.message || 'Failed to update section.');
-      // alert(err.response?.data?.message || 'Failed to update section.');
     }
   };
 
@@ -179,9 +254,11 @@ export default function AddStoreProduct() {
     }
 
     const selectedStoreIds = storeSelections.filter((id) => id);
-    if (selectedStoreIds.length === 0) {
-      alert('At least one valid store must be selected.');
-      return;
+    if (curation_type === 'product' || curation_type === 'store') {
+      if (selectedStoreIds.length === 0) {
+        alert('At least one valid store must be selected.');
+        return;
+      }
     }
     const selectedProductIds = productSelections.filter((id) => id);
     if (curation_type === 'product') {
@@ -195,6 +272,14 @@ export default function AddStoreProduct() {
       }
 
     }
+    if (curation_type === 'subcat 3' || curation_type === 'subcat 4') {
+      const validCategories = categorySelections.filter(c => c.category_id && c.image_url);
+      if (validCategories.length === 0) {
+        alert('At least one valid category with image must be selected.');
+        return;
+      }
+    }
+
 
     const payload = {
       section_name: curationName,
@@ -203,56 +288,23 @@ export default function AddStoreProduct() {
       section_url: viewAllUrl,
       store_ids: selectedStoreIds,
       product_ids: productSelections.filter((id) => id),
+      categories: categorySelections.filter(c => c.category_id && c.image_url)
     };
 
     // return;
 
     try {
-      const response = await api.post('/homepage/section', payload);
-      // alert('Section created successfully!');
+      await api.post('/homepage/section', payload);
       toast.success("Curation submitted successfully!");
       router.replace("/admin/curationModule/createCuration");
 
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      console.error('Failed to create section:', error);
       toast.error(err.response?.data?.message || "Failed to create section.");
-      // alert(err.response?.data?.message || 'Failed to create section.');
     }
   };
 
-  const handleStoreChange = (index: number, value: string) => {
-    const match = value.match(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/);
-    const storeId = match ? match[0] : '';
-    const found = stores.find((store) => store.store_id === storeId);
-    const updatedStoreSelections = [...storeSelections];
-    updatedStoreSelections[index] = found ? found.store_id : '';
 
-    const updatedProductSelections = [...productSelections];
-    // Reset the product field for this index whenever store changes
-    updatedProductSelections[index] = '';
-
-    setStoreSelections(updatedStoreSelections);
-    setProductSelections(updatedProductSelections);
-    // const updated = [...storeSelections];
-    // updated[index] = found ? found.store_id : '';
-    // console.log
-    // setStoreSelections(updated);
-  };
-
-  const handleProductChange = (index: number, value: string) => {
-    // console.log(value)
-    const match = value.match(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/);
-    const productId = match ? match[0] : '';
-    const selectedStoreId = storeSelections[index];
-    const productList = productsByStore[selectedStoreId] || [];
-    const found = productList.find((product) => product.product_id === productId);
-    const updated = [...productSelections];
-
-    updated[index] = found ? found.product_id : '';
-    setProductSelections(updated);
-
-  };
 
   const storeOptions = stores.map((store) => ({
     label: `${store.store_name} : ${store.city?.name}, ${store.area?.name} (ID: ${store.store_id.slice(0, 6)})`,
@@ -260,19 +312,45 @@ export default function AddStoreProduct() {
   }));
 
 
-
-  // const getProductOptions = (storeId: string) =>
-  //   (productsByStore[storeId] || []).map((product) => ({
-  //     label: product.product_name,
-  //     value: product.product_id,
-  //   }));
-
   const getProductOptions = (storeId: string) =>
     (productsByStore[storeId] || []).map((product) => ({
       label: product.product_name,
       value: product.product_id,          // include SKU
       image: product.images.length > 0 ? product.images[0].image_url : 'https://picsum.photos/200',      // include product image URL
     }));
+
+  // ✅ Move this helper inside your component
+  const uploadCategoryImage = async (file: File): Promise<string | null> => {
+    try {
+      const response = await api.post<{
+        upload_url: string;
+        file_url: string;
+      }>("/stores/upload", {
+        file_name: file.name,
+      });
+
+      const { upload_url, file_url } = response.data;
+
+      await api.put(upload_url, file, {
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            // optional: add per-category progress state
+            console.log(`Upload progress: ${percentCompleted}%`);
+          }
+        },
+      });
+
+      return file_url;
+    } catch (err: any) {
+      toast.error(err.message || "Image upload failed.");
+      return null;
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-white p-8">
@@ -303,104 +381,174 @@ export default function AddStoreProduct() {
       <div className="space-y-4 mb-12">
         {rows.map((_, index) => {
           const storeId = storeSelections[index];
-          // 
-          const storeName = stores.find((s) => s.store_id === storeId)?.store_name;
-          const selectedStoreId = storeSelections[index];
-          const productList = productsByStore[selectedStoreId] || [];
           const selectedProductId = productSelections[index];
-          const productName = products.find((p) => p.product_id === selectedProductId)?.product_name;
+          const categoryId = categorySelections?.[index]?.category_id || "";
+          const categoryImage = categorySelections?.[index]?.image_url || "";
 
           return (
-            <div key={index} className="flex gap-4">
-              <div className="w-64">
-                {/* <input
-                  list="store-options"
-                  placeholder="Select or type store"
-                  className={`border rounded px-4 py-2 w-full ${storeId ? 'border-green-400' : 'border-gray-300'}`}
-                  // value={storeId ? `${storeName} (ID: ${storeId})` : ''}
-                  value={storeName}
-                  id={storeId}
-                  onChange={(e) => handleStoreChange(index, e.target.value)}
-                /> */}
-                <Select
-                  className={`border rounded w-64 ${storeId ? 'border-green-400' : 'border-gray-300'} text-black`}
-                  placeholder="Select Store"
-                  styles={customStyles}
-                  options={storeOptions}
-                  isClearable
-                  value={storeOptions.find(opt => opt.value === storeSelections[index]) || null}
-                  onChange={(selectedOption) => {
-                    const updatedStoreSelections = [...storeSelections];
-                    const updatedProductSelections = [...productSelections];
-                    updatedStoreSelections[index] = selectedOption?.value || '';
-                    updatedProductSelections[index] = ''; // Reset product on store change
-                    setStoreSelections(updatedStoreSelections);
-                    setProductSelections(updatedProductSelections);
-                  }}
-                />
-              </div>
+            <div key={index} className="flex gap-4 items-center">
+              {/* Store / Product Section */}
+              {curation_type === "store" || curation_type === "product" ? (
+                <>
+                  {/* Store Dropdown */}
+                  <div className="w-64">
+                    <Select
+                      className={`border rounded w-64 ${storeId ? "border-green-400" : "border-gray-300"
+                        } text-black`}
+                      placeholder="Select Store"
+                      styles={customStyles}
+                      options={storeOptions}
+                      isClearable
+                      value={
+                        storeOptions.find((opt) => opt.value === storeId) || null
+                      }
+                      onChange={(selectedOption) => {
+                        const updatedStoreSelections = [...storeSelections];
+                        const updatedProductSelections = [...productSelections];
+                        updatedStoreSelections[index] = selectedOption?.value || "";
+                        updatedProductSelections[index] = ""; // Reset product on store change
+                        setStoreSelections(updatedStoreSelections);
+                        setProductSelections(updatedProductSelections);
+                      }}
+                    />
+                  </div>
 
-              {/* {curation_type === 'product' ? (
-                <input
-                  list={`product-options-${index}`}
-                  placeholder="Select or type product"
-                  className={`border rounded px-4 py-2 w-64 ${!storeId ? 'opacity-50 cursor-not-allowed' : ''} ${selectedProductId ? 'border-green-400' : 'border-gray-300'}`}
-                  disabled={!storeId}
-                  value={productName}
-                  onChange={(e) => handleProductChange(index, e.target.value)}
-                />
-              ) : (
-                <input
-                  className="border rounded px-4 py-2 w-64 opacity-50"
-                  disabled
-                  style={{ visibility: 'hidden' }}
-                  placeholder="Select Product"
-                />
-              )} */}
-              {curation_type === 'product' ? (
-                <Select
-                  className="w-64 text-black"
-                  options={getProductOptions(storeSelections[index])}
-                  styles={customStyles}
-                  isClearable
-                  isDisabled={!storeSelections[index]}
-                  value={getProductOptions(storeSelections[index]).find(opt => opt.value === productSelections[index]) || null}
-                  onChange={(selectedOption) => {
-                    const updated = [...productSelections];
-                    updated[index] = selectedOption?.value || '';
-                    setProductSelections(updated);
-                  }}
-                  formatOptionLabel={(option) => (
-                    <div className="flex items-center gap-2">
-                      {option.image && (
-                        <img
-                          src={option.image}
-                          alt={option.label}
-                          className="w-8 h-8 object-cover rounded object-top"
-                        />
+                  {/* Product Dropdown */}
+                  {curation_type === "product" && (
+                    <Select
+                      className="w-64 text-black"
+                      options={getProductOptions(storeId)}
+                      styles={customStyles}
+                      isClearable
+                      isDisabled={!storeId}
+                      value={
+                        getProductOptions(storeId).find(
+                          (opt) => opt.value === selectedProductId
+                        ) || null
+                      }
+                      onChange={(selectedOption) => {
+                        const updated = [...productSelections];
+                        updated[index] = selectedOption?.value || "";
+                        setProductSelections(updated);
+                      }}
+                      formatOptionLabel={(option) => (
+                        <div className="flex items-center gap-2">
+                          {option.image && (
+                            <img
+                              src={option.image}
+                              alt={option.label}
+                              className="w-8 h-8 object-cover rounded object-top"
+                            />
+                          )}
+                          <span className="font-medium text-sm text-black">
+                            {option.label}
+                          </span>
+                        </div>
                       )}
-                      <div className="flex flex-col">
-                        <span className="font-medium text-sm text-black">{option.label}</span>
-                        {/* <span className="text-xs text-gray-500">{option.sku}</span> */}
-                      </div>
-                    </div>
+                    />
                   )}
-                  filterOption={(option, inputValue) =>
-                    option.label.toLowerCase().includes(inputValue.toLowerCase())
-                  }
-                />
-              ) : (
-                <input
-                  className="border rounded px-4 py-2 w-64 opacity-50 text-black"
-                  disabled
-                  style={{ visibility: 'hidden' }}
-                  placeholder="Select Product"
-                />
+                </>
+              ) : null}
+
+              {/* Category + Image Section */}
+              {(curation_type === "subcat 3" || curation_type === "subcat 4") && (
+                <>
+                  {/* Category Dropdown */}
+                  <div className="w-64">
+                    <Select
+  className="w-64 text-black"
+  styles={customStyles}
+  placeholder="Select Category"
+  options={categoryOptions.map((cat) => ({
+    label: cat.name,
+    value: cat.category_id,
+  }))}
+  value={
+    categoryOptions.find((c) => c.category_id === categorySelections[index]?.category_id)
+      ? {
+          label: categoryOptions.find(
+            (c) => c.category_id === categorySelections[index]?.category_id
+          )?.name,
+          value: categorySelections[index]?.category_id,
+        }
+      : null
+  }
+  onChange={(selectedOption) => {
+    const updated = [...categorySelections];
+    updated[index] = {
+      ...updated[index],
+      category_id: selectedOption?.value || "",
+    };
+    setCategorySelections(updated);
+  }}
+/>
+                  </div>
+                  {/* Image Upload */}
+                  <div className="flex flex-col items-start gap-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+
+                        const uploadedUrl = await uploadCategoryImage(file);
+                        if (!uploadedUrl) return;
+
+                        const updated = [...categorySelections];
+                        updated[index] = {
+                          ...updated[index],
+                          image_url: uploadedUrl,
+                        };
+                        setCategorySelections(updated);
+
+                        toast.success("Image uploaded successfully!");
+                      }}
+                    />
+
+                    {categoryImage && (
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={categoryImage}
+                          alt="Uploaded"
+                          className="w-16 h-16 object-cover rounded border"
+                        />
+                        {/* Delete button */}
+                        <button
+                          className="text-red-500 text-sm underline"
+                          onClick={async () => {
+                            try {
+                              await api.delete("/s3/delete-file", {
+                                data: { fileUrl: categoryImage },
+                              });
+
+                              const updated = [...categorySelections];
+                              updated[index] = {
+                                ...updated[index],
+                                image_url: "",
+                              };
+                              setCategorySelections(updated);
+
+                              toast.success("Image deleted successfully!");
+                            } catch (err: any) {
+                              toast.error(err.message || "Failed to delete image");
+                            }
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+
+                </>
               )}
 
+              {/* Order Field */}
               <input
                 type="text"
-                className="border rounded px-4 py-2 w-64 text-black placeholder:text-gray-400"
+                className="border rounded px-4 py-2 w-32 text-black placeholder:text-gray-400"
                 placeholder="Order"
               />
             </div>
@@ -408,23 +556,6 @@ export default function AddStoreProduct() {
         })}
       </div>
 
-      {/* <datalist id="store-options">
-        {stores.map((store) => (
-          <option key={store.store_id} value={`${store.store_name} (ID: ${store.store_id})`} />
-        ))}
-      </datalist>
-
-      {rows.map((_, index) => {
-        const selectedStoreId = storeSelections[index];
-        const productList = productsByStore[selectedStoreId] || [];
-        return (
-          <datalist id={`product-options-${index}`} key={`product-list-${index}`}>
-            {productList.map((product: Product) => (
-              <option key={product.product_id} value={`${product.product_name} (ID: ${product.product_id})`} />
-            ))}
-          </datalist>
-        );
-      })} */}
 
       <div className="flex justify-between">
         <button className="bg-gray-300 text-black rounded-full px-6 py-2">Back</button>

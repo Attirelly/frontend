@@ -48,7 +48,7 @@ export default function HeroSection() {
                 src={res[currIndex].image}
                 alt="Homepage Image"
                 fill
-                className="object-cover object-top cursor-pointer"
+                className="object-cover cursor-pointer"
                 onClick={() => handleClick(res[currIndex].url)}
             />
             

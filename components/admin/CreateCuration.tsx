@@ -71,6 +71,8 @@ export default function CreateCurationPage() {
             <option value="">Select Type</option>
             <option value="store">store</option>
             <option value="product">product</option>
+            <option value="subcat 3">subcat 3</option>
+            <option value="subcat 4">subcat 4</option>
           </select>
         </div>
 
@@ -96,7 +98,6 @@ export default function CreateCurationPage() {
         </div>
       </div>
 
-      {/* Bottom Right Button */}
       <div className="flex justify-end mt-12">
         <button
           onClick={handleNext}
