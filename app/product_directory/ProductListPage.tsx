@@ -1,16 +1,14 @@
 "use client";
-
 import DynamicFilter from "@/components/listings/DynamicFilter";
 import ListingFooter from "@/components/listings/ListingFooter";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
-import PriceRangeTabs from "@/components/listings/PriceRangeTypes";
 import ProductContainer from "@/components/listings/ProductContainer";
 import SortByDropdown from "@/components/listings/SortByDropdown";
 import StoreTypeButtons from "@/components/listings/StoreTypeButtons";
 import { manrope } from "@/font";
 import { useProductFilterStore } from "@/store/filterStore";
 import { useHeaderStore } from "@/store/listing_header_store";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 
@@ -23,45 +21,111 @@ const STORE_TYPE_OPTIONS = [
 ];
 
 export default function ProductListPage() {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
-  const search = searchParams.get("search");
 
-  const { setQuery, query, city, storeType, viewType, setStoreType } =
-    useHeaderStore();
-  const { results, toggleFilter , setCategory } = useProductFilterStore();
-
-  const [showFilters, setShowFilters] = useState(false);
+  const { setQuery, query, setStoreType , area , allArea , city , allCity , setArea , setCity  } = useHeaderStore();
+  const { results, initializeFilters, selectedFilters, selectedPriceRange } =
+    useProductFilterStore();
   const [matchedStoreType, setMatchedStoreType] = useState<string | null>(null);
 
   const fuse = new Fuse(STORE_TYPE_OPTIONS, {
     keys: ["store_type"],
-    threshold: 0.4, // Adjust sensitivity as needed
+    threshold: 0.4,
   });
 
+
+  //  initialise the state using url 
   useEffect(() => {
-    if (category){
-         setCategory(category)
-         toggleFilter("primary_category", category)
-    } 
-    if (search) {
-      setQuery(search);
+    const params = new URLSearchParams(searchParams);
+    const initialSelectedFilters: Record<string, string[]> = {};
+    const search = params.get("search") || "";
+    const cityName = params.get("city");
+    const areaName = params.get("area");
 
-      // Run fuzzy matching to infer store type
+    params.forEach((value, key) => {
+      if (key !== "search" && key !== "sortBy" && key !== "price" && key !== "city" && key !== "area") {
+        initialSelectedFilters[key] = value.split(",");
+      }
+    });
 
-      const match = fuse.search(search);
-      if (match.length > 0) {
-        const matchedType = match[0].item;
-        setStoreType(matchedType); // update global store
-        setMatchedStoreType(matchedType.store_type); // update local default for buttons
+
+    // Only perform the lookup if the master lists have been loaded
+    if (allCity && allCity.length > 0 && cityName) {
+      const cityObject = allCity.find(c => c.name === cityName);
+      console.log("url_city" , cityObject)
+      if (cityObject) setCity(cityObject);
+    }
+    
+    if (allArea && allArea.length > 0 && areaName) {
+      const areaObject = allArea.find(a => a.name === areaName);
+      console.log(areaObject)
+      if (areaObject) setArea(areaObject);
+    }
+    let initialPriceRange: [number, number] | null = null;
+    const priceParam = params.get("price");
+    if (priceParam) {
+      const [min, max] = priceParam.split("-").map(Number);
+      if (!isNaN(min) && !isNaN(max)) {
+        initialPriceRange = [min, max];
       }
     }
-  }, [category, search]);
+
+    setQuery(search);
+    initializeFilters({
+      selectedFilters: initialSelectedFilters,
+      priceRange: initialPriceRange,
+    });
+
+    // C. Perform fuzzy search based on the search term
+    const match = fuse.search(search);
+    if (match.length > 0) {
+      const matchedType = match[0].item;
+      setStoreType(matchedType);
+      setMatchedStoreType(matchedType.store_type);
+    }
+  }, [searchParams, initializeFilters, setQuery, area , city ,  setStoreType]);
+
+  useEffect(() => {
+    const oldparams = new URLSearchParams(searchParams);
+    const newparams = new URLSearchParams();
+    if (query) {
+      newparams.set("search", query);
+    }
+    if (oldparams.get("categories")) {
+      newparams.set("categories", oldparams.get("categories") || "");
+    }
+    // if (sortBy) {
+    //   params.set("sortBy", sortBy);
+    // }
+    console.log("select filter" , selectedFilters)
+    Object.entries(selectedFilters).forEach(([key, values]) => {
+      if (values && values.length > 0) {
+        newparams.set(key, values.join(","));
+      }
+    });
+    
+    if(city){
+      newparams.set("city" , city.name) ; 
+    }
+    if(area){
+      newparams.set("area" , area.name)
+    }
+
+    if (selectedPriceRange) {
+      const [min, max] = selectedPriceRange;
+      newparams.set("price", `${min}-${max}`);
+    }
+    console.log("params" , newparams.toString())
+    router.replace(`${pathname}?${newparams.toString()}`);
+  }, [selectedFilters, selectedPriceRange ,pathname, router]);
+
+  const displayCategory = selectedFilters.categories?.[0] || "";
 
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
       <ListingPageHeader />
-
       <div className="flex flex-col mx-20">
         <span
           className={`${manrope.className} text-[#101010] mt-4 text-[32px]`}
@@ -70,8 +134,8 @@ export default function ProductListPage() {
           {results > 0
             ? query
               ? `Showing Results for "${query}"`
-              : category
-              ? `Showing Results for "${category}"`
+              : displayCategory
+              ? `Showing Results for "${displayCategory}"`
               : ""
             : "Sorry, no result found for your search"}
         </span>
@@ -80,15 +144,14 @@ export default function ProductListPage() {
         <div className="mt-10">
           <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
-            // defaultValue={matchedStoreType || "Retail Store"} // use fuzzy match or fallback
             context="product"
+            // defaultValue={matchedStoreType || "Retail Store"}
           />
         </div>
 
         {/* Content Section */}
         <div className="flex flex-col mt-5 items-center">
           <hr className="border border-[#D9D9D9] w-full mt-5 mb-4" />
-
           <div className="flex flex-col items-center w-full mt-8">
             <div className="w-full px-4">
               <div className="w-full grid grid-cols-[300px_1fr] gap-6">
@@ -97,9 +160,6 @@ export default function ProductListPage() {
                 </div>
                 <div>
                   <div className="flex justify-between items-center">
-                    {/* {storeType?.id && (
-                      <PriceRangeTabs storeTypeId={storeType.id} />
-                    )} */}
                     <SortByDropdown />
                   </div>
                   <div className="overflow-y-auto scrollbar-none h-498 scrollbar-thin">
@@ -111,7 +171,6 @@ export default function ProductListPage() {
           </div>
         </div>
       </div>
-
       <div className="mt-10">
         <ListingFooter />
       </div>

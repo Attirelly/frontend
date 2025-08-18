@@ -26,7 +26,7 @@ export default function StoreTypeSelection() {
     const router = useRouter();
     useEffect(() => {
         router.prefetch('/store_listing')
-    })
+    },[router])
     const handleTabClick = (value: SelectOption) => {
         const storeType: BrandType = {
             id: value.value,

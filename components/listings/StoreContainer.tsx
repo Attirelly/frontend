@@ -283,7 +283,7 @@ export default function StoreContainerPage() {
     if (city) {
       filters.push([`city:${city.name}`]);
     }
-    if(area){
+    if (area) {
       filters.push([`area:${area.name}`]);
     }
     if (storeType) {
@@ -292,7 +292,7 @@ export default function StoreContainerPage() {
     return encodeURIComponent(JSON.stringify(filters));
   };
 
-  const fetchStores = async (currentPage: number) => {
+  const fetchStores = async (currentPage: number , controller :AbortController) => {
     setLoading(true);
 
     let discountArray = selectedFilters["discount"] || [];
@@ -312,7 +312,7 @@ export default function StoreContainerPage() {
 
     try {
       const res = await api.get(
-        `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${tempFilterStr}&facetFilters=${facetFilters}&activeFacet=${activeFacet}`
+        `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${tempFilterStr}&facetFilters=${facetFilters}&activeFacet=${activeFacet}`,{ signal: controller.signal }
       );
 
       event({
@@ -340,13 +340,16 @@ export default function StoreContainerPage() {
       }
 
       setFacets(data.facets, activeFacet);
-      setTotalPages(data.total_pages || 1);
+      setTotalPages(data.total_pages);
 
       const storeCards: StoreCardType[] = data.hits.map((sc: any) => ({
         id: sc.id,
         imageUrl: sc.profile_image || "/OnboardingSections/qr.png",
         storeName: sc.store_name,
-        location: sc.area?.toLowerCase()  === "others" ? `${sc.city}` : `${sc.area}, ${sc.city}`,
+        location:
+          sc.area?.toLowerCase() === "others"
+            ? `${sc.city}`
+            : `${sc.area}, ${sc.city}`,
         storeTypes: sc.store_types || [],
         priceRanges: [
           ...new Set(
@@ -367,10 +370,11 @@ export default function StoreContainerPage() {
         setBuffer((prev) => [...prev, ...storeCards]);
       }
 
-      if (
-        currentPage >= data.total_pages
-      ) {
+      if (currentPage >= data.total_pages - 1) {
         setHasMore(false);
+      }
+      else{
+        setPage((prev)=>prev+1)
       }
     } catch (error) {
       console.error("Failed to fetch stores:", error);
@@ -382,12 +386,16 @@ export default function StoreContainerPage() {
 
   // Trigger initial fetch or re-fetch on filter/search changes
   useEffect(() => {
+    const controller = new AbortController();
     setPage(0);
     setHasMore(true);
     setStores([]);
     setBuffer([]);
-    fetchStores(0);
-  }, [query, storeType, selectedFilters, city,area, filters]);
+    fetchStores(0 , controller);
+    return () => {
+      controller.abort();
+    };
+  }, [query, storeType, selectedFilters, city, area, filters]);
 
   // Handle delivery type filter
   useEffect(() => {
@@ -399,12 +407,13 @@ export default function StoreContainerPage() {
       setFilters("");
     }
   }, [deliveryType]);
-  
 
   // retrigger api when 80% of buffer is reached
   useEffect(() => {
-    if (buffer.length <= REFETCH_THRESHOLD && !loading && hasMore) {
-      setPage((prev) => prev + 1);
+    if (page > 0 && buffer.length <= REFETCH_THRESHOLD && !loading && hasMore) {
+      const controller = new AbortController();
+      setLoading(true);
+      fetchStores(page, controller);
     }
   }, [buffer, loading, hasMore]);
 

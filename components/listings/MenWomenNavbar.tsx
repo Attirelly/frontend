@@ -7,6 +7,7 @@ import { Category, SubCat1, SubCat2 } from "@/types/CategoryTypes";
 import { manrope } from "@/font";
 import Link from "next/link";
 import { useHeaderStore } from "@/store/listing_header_store";
+import { useProductFilterStore } from "@/store/filterStore";
 
 // Utility to split subcat2 into N columns
 const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
@@ -18,6 +19,7 @@ const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
 };
 
 export default function MenWomenNavbar() {
+  const {resetFilters} = useProductFilterStore();
   const [categories, setCategories] = useState<Category[]>([]);
   const [hoveredGender, setHoveredGender] = useState<"Men" | "Women" | null>(
     null
@@ -121,14 +123,13 @@ export default function MenWomenNavbar() {
                       {subcat2.children.map((subcat3) => (
                         <li key={subcat3.category_id}>
                           <Link
-                            href={`/product_directory?category=${encodeURIComponent(
+                            href={`/product_directory?categories=${encodeURIComponent(
                               subcat3.name
                             )}`}
                             className={`${manrope.className} text-sm text-[#464646] hover:text-black whitespace-nowrap`}
                             style={{ fontWeight: 400 }}
-                            onClick={() => {
+                            onClick={() => { 
                               setHoveredGender(null);
-                              setQuery("");
                             }}
                           >
                             {subcat3.name}

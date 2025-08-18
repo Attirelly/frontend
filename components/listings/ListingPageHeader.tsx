@@ -15,7 +15,7 @@ import useAuthStore from "@/store/auth";
 import customStyles from "@/utils/selectStyles";
 import Image from "next/image";
 import { logout } from "@/utils/logout";
-import { useProductFilterStore } from "@/store/filterStore";
+import { useFilterStore, useProductFilterStore } from "@/store/filterStore";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
@@ -26,22 +26,23 @@ export default function ListingPageHeader() {
     setCity,
     area,
     setArea,
-    query,
-    setQuery,
-    setStoreType,
     setSearchFocus,
     searchFocus,
-    storeType,
+    allCity,
+    setAllCity,
+    allArea,
+    setAllArea,
+    setQuery
   } = useHeaderStore();
+  const { resetFilters } = useProductFilterStore();
 
-  const { setCategory } = useProductFilterStore();
   const { user } = useAuthStore();
   const [signIn, setSignIn] = useState(false);
   const [cities, setCities] = useState<City[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(city || null);
   const [selectedArea, setSelectedArea] = useState<Area | null>(area || null);
-  const [tempQuery, setTempQuery] = useState<string>(query || "");
+  const [tempQuery, setTempQuery] = useState<string>("");
 
   const [storeSuggestions, setStoreSuggestions] = useState<string[]>([]);
   const [productSuggestions, setProductSuggestions] = useState<string[]>([]);
@@ -57,22 +58,25 @@ export default function ListingPageHeader() {
   const userMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    console.log("showDropdown changed:", showDropdown);
-  }, [showDropdown]);
+    router.prefetch("/store_listing");
+    router.prefetch("/product_directory");
+    router.prefetch("/homepage");
+    router.prefetch("/");
+  }, [router]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       const trimmed = tempQuery.trim();
+      console.log(trimmed);
 
-      // Only search if query is not empty
-      
       setShowDropdown(false);
       setShowStoreType(false);
-      setCategory("");
-      setQuery("");
-      setTempQuery("")
+      setTempQuery("");
       setSearchFocus(false);
+
       if (trimmed !== "") {
+        setQuery("")
         router.push("/product_directory?search=" + encodeURIComponent(trimmed));
       }
     }
@@ -81,7 +85,6 @@ export default function ListingPageHeader() {
   const handleSearchQuerySuggestion = async () => {
     try {
       let tempStr = "";
-      console.log("selectedcity", selectedCity);
       if (selectedCity) {
         tempStr = `city:${selectedCity.name}`;
       }
@@ -95,7 +98,6 @@ export default function ListingPageHeader() {
 
       const data = response.data;
       setShowStoreType(false);
-
       setStoreSuggestions(data.store_search_suggestion || []);
       setProductSuggestions(data.product_search_suggestion || []);
       setCategories(data.categories || []);
@@ -108,18 +110,12 @@ export default function ListingPageHeader() {
   };
 
   useEffect(() => {
-    router.prefetch("/store_listing");
-    router.prefetch("/product_directory");
-    router.prefetch("/homepage");
-    router.prefetch("/");
-  }, [router]);
-
-  useEffect(() => {
     const fetchCities = async () => {
       try {
         const res = await api.get("/location/cities/");
         console.log("cities data", res.data);
         setCities(res.data);
+        setAllCity(res.data);
       } catch {
         toast.error("Failed to fetch cities");
       }
@@ -133,6 +129,7 @@ export default function ListingPageHeader() {
         const res = await api.get("/location/areas/");
         console.log("areas data", res.data);
         setAreas(res.data);
+        setAllArea(res.data);
       } catch {
         toast.error("Failed to fetch areas");
       }
@@ -209,20 +206,20 @@ export default function ListingPageHeader() {
   }, []);
 
   const handleSuggestionClick = (value: string) => {
-    setQuery(value);
     setSearchFocus(false);
     setShowDropdown(false);
-    setCategory("");
-    setQuery("");
+    setTempQuery("");
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
   const handleCategoryClick = (category: string) => {
     setSearchFocus(false);
     setShowDropdown(false);
-    setQuery("");
-    setTempQuery("") ;
-    router.push(`/product_directory?category=${encodeURIComponent(category)}`);
+    setTempQuery("");
+
+    router.push(
+      `/product_directory?categories=${encodeURIComponent(category)}`
+    );
   };
   const handleProductClick = (value: string) => {
     setSearchFocus(false);
@@ -238,10 +235,9 @@ export default function ListingPageHeader() {
 
   const handleStoreListRoute = () => {
     setSearchFocus(false);
-    setQuery("");
-    setTempQuery("") ;
     setShowDropdown(false);
-    router.push("/store_listing?search=" + encodeURIComponent(tempQuery));
+    const value = tempQuery; 
+    router.push("/store_listing?search=" + encodeURIComponent(value));
   };
 
   // const cityOptions: SelectOption[] = [
@@ -331,10 +327,7 @@ export default function ListingPageHeader() {
           <div className="flex justify-center items-center">
             <div
               className={`${rosario.className} text-[34px] text-[#373737] font-bold cursor-pointer`}
-              // onClick={() => router.push("/homepage")}
               onClick={() => {
-                setQuery("");
-                setTempQuery("") ;
                 router.push("/");
               }}
               style={{ fontWeight: 600 }}

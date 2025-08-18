@@ -52,18 +52,17 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
     toggleFilter,
     resetFilters,
     setPriceRange,
-    priceRange,
+    selectedPriceRange,
     priceBounds,
   } = filterStore;
   const { storeType } = useHeaderStore();
 
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [openFacets, setOpenFacets] = useState<Record<string, boolean>>({});
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>([
-    0, 0,
-  ]);
+  const [localPriceRange, setLocalPriceRange] = useState(
+    selectedPriceRange || priceBounds
+  );
 
   useEffect(() => {
     if (context === "product" && priceBounds) {
@@ -72,40 +71,39 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
   }, [context, priceBounds]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      console.log(context);
-      console.log(localPriceRange);
-      console.log(priceRange);
+    const currentGlobalPrice = selectedPriceRange || priceBounds;
+    if (
+      currentGlobalPrice[0] !== localPriceRange[0] ||
+      currentGlobalPrice[1] !== localPriceRange[1]
+    ) {
+      setLocalPriceRange(currentGlobalPrice);
+    }
+  }, [selectedPriceRange, priceBounds]);
+
+  useEffect(() => {
+    if (context !== "product") return;
+
+    const handler = setTimeout(() => {
+      const currentGlobalPrice = selectedPriceRange || priceBounds;
+
       if (
-        context === "product" &&
-        priceRange &&
-        (localPriceRange[0] !== priceRange[0] ||
-          localPriceRange[1] !== priceRange[1])
+        localPriceRange[0] !== currentGlobalPrice[0] ||
+        localPriceRange[1] !== currentGlobalPrice[1]
       ) {
         setPriceRange(localPriceRange);
       }
-    }, 100); // 100ms d elay
+    }, 500);
 
-    return () => clearTimeout(timeout);
-  }, [localPriceRange]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      console.log(context);
-      console.log(localPriceRange);
-      console.log(priceRange);
-      if (
-        context === "product" &&
-        priceRange &&
-        (localPriceRange[0] !== priceRange[0] ||
-          localPriceRange[1] !== priceRange[1])
-      ) {
-        setLocalPriceRange(priceRange);
-      }
-    }, 100); // 100ms d elay
-
-    return () => clearTimeout(timeout);
-  }, [priceRange]);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [
+    localPriceRange,
+    selectedPriceRange,
+    priceBounds,
+    setPriceRange,
+    context,
+  ]);
 
   useEffect(() => {
     const defaultOpen: Record<string, boolean> = {};
@@ -265,8 +263,8 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
                           <Range
                             step={100}
-                            min={0}
-                            max={priceBounds?.[1] || 10000}
+                            min={priceBounds[0]}
+                            max={priceBounds[1]}
                             values={localPriceRange}
                             onChange={(values) =>
                               setLocalPriceRange([values[0], values[1]])
@@ -282,17 +280,14 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                   style={{
                                     position: "absolute",
                                     left: `${
-                                      ((localPriceRange[0] -
-                                        (priceBounds?.[0] || 0)) /
-                                        ((priceBounds?.[1] || 10000) -
-                                          (priceBounds?.[0] || 0))) *
+                                      ((localPriceRange[0] - priceBounds[0]) /
+                                        (priceBounds[1] - priceBounds[0])) *
                                       100
                                     }%`,
                                     width: `${
                                       ((localPriceRange[1] -
                                         localPriceRange[0]) /
-                                        ((priceBounds?.[1] || 10000) -
-                                          (priceBounds?.[0] || 0))) *
+                                        (priceBounds[1] - priceBounds[0])) *
                                       100
                                     }%`,
                                     top: 0,
@@ -342,9 +337,12 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                             {filteredValues.length > 0 ? (
                               // Sort the filteredValues array based on a predefined order
                               filteredValues
-                                .filter((tempFilter)=>{
-                                  return tempFilter.name.toLowerCase() !== "others"
-                                }).slice() // Create a copy to avoid mutating the original array
+                                .filter((tempFilter) => {
+                                  return (
+                                    tempFilter.name.toLowerCase() !== "others"
+                                  );
+                                })
+                                .slice() // Create a copy to avoid mutating the original array
                                 .sort((a, b) => {
                                   // Define the order of price ranges
                                   const order: { [key: string]: number } = {
