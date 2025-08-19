@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import CardTypeThree from '../cards/CardTypeThree';
-import { manrope } from '@/font';
-import { useRouter } from 'next/navigation';
-import { api } from '@/lib/axios';
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import CardTypeThree from "../cards/CardTypeThree";
+import { manrope } from "@/font";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/axios";
 
 interface CardData {
   id: string;
@@ -22,8 +22,8 @@ export default function SectionFiveContainer() {
   const visibleCount = 5;
   const cardWidth = 232; // card width in px
   const gap = 20; // 20px gap
-  const [viewAll, setViewAll] = useState('');
-  const [name, setName] = useState('');
+  const [viewAll, setViewAll] = useState("");
+  const [name, setName] = useState("");
   const [products, setProducts] = useState<CardData[]>([]);
   const router = useRouter();
 
@@ -37,7 +37,7 @@ export default function SectionFiveContainer() {
 
         const formattedProducts: CardData[] = productData.map((p: any) => ({
           id: p.product_id,
-          imageUrl: p.images[0]?.image_url || '/Homepage/CardTypeOne.svg',
+          imageUrl: p.images[0]?.image_url || "/Homepage/CardTypeOne.svg",
           title: p.product_name,
           description: `${p.stores.area.name}, ${p.stores.city.name}`,
         }));
@@ -78,6 +78,9 @@ export default function SectionFiveContainer() {
     return products[realIndex];
   });
 
+  if (!products || products.length == 0) {
+    return <div></div>;
+  }
   return (
     <div className="w-[1242px] mx-auto space-y-8">
       {/* Section header */}
@@ -128,10 +131,7 @@ export default function SectionFiveContainer() {
         <div className="overflow-hidden">
           <div className="flex gap-5 transition-transform duration-500 ease-in-out">
             {visibleCards.map((card) => (
-              <div
-                key={card?.id}
-                style={{ minWidth: `${cardWidth}px` }}
-              >
+              <div key={card?.id} style={{ minWidth: `${cardWidth}px` }}>
                 <a
                   href={`/product_detail/${card?.id}`}
                   target="_blank"
@@ -140,7 +140,7 @@ export default function SectionFiveContainer() {
                   <CardTypeThree
                     imageUrl={card?.imageUrl}
                     title={card?.title}
-                    description={card?.description || ''}
+                    description={card?.description || ""}
                   />
                 </a>
               </div>

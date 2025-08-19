@@ -69,7 +69,9 @@ export default function SectionElevenContainer() {
     const realIndex = (startIndex + i) % totalCards;
     return stores[realIndex];
   });
-
+  if(!stores || stores.length == 0  ){
+   return <div></div>
+  }
   return (
     <div className='w-[1242px]  mx-auto space-y-8'>
       <div className='flex justify-between'>
