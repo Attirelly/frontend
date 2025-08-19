@@ -117,7 +117,7 @@ export default function ProductCard({
               : ''}
           </p>
           <div className="flex items-center gap-2 font-medium">
-            <span className="text-sm text-black">₹{price.toLocaleString()}</span>
+            <span className="text-sm text-black">₹{price?.toLocaleString()}</span>
             {price !== originalPrice && (
               <span className="line-through text-gray-400 text-[11px]">
                 ₹{originalPrice.toLocaleString()}

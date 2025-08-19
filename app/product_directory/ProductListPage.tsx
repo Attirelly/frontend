@@ -164,7 +164,7 @@ export default function ProductListPage() {
                   <div className="flex justify-between items-center">
                     <SortByDropdown />
                   </div>
-                  <div className="overflow-y-auto scrollbar-none h-498 scrollbar-thin">
+                  <div className="h-full">
                     <ProductContainer colCount={4} />
                   </div>
                 </div>
