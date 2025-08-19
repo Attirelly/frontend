@@ -54,11 +54,10 @@ export default function ApifyPostDialog({ isOpen, post, onClose, onNext, onPrev,
                 className="max-w-full max-h-full object-contain"
               />
             ) : (
-              <Image
+              <img
                 src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(post.media_urls[0].media_url)}`}
                 alt="Instagram post"
                 className="max-w-full max-h-full object-contain"
-                unoptimized
               />
             )}
           </div>
