@@ -119,7 +119,7 @@ export default function ProductListPage() {
     }
     console.log("params" , newparams.toString())
     router.replace(`${pathname}?${newparams.toString()}`);
-  }, [selectedFilters, selectedPriceRange ,pathname, router]);
+  }, [selectedFilters, selectedPriceRange ,pathname, city, area, router]);
 
   const displayCategory = selectedFilters.categories?.[0] || "";
 
