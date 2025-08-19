@@ -33,7 +33,7 @@ export default function SidecarCarousel({ mediaUrls }: Props) {
       ) : (
         <img
           // src={currentMedia.media_url}
-          src={`/api/proxy-image?url=${encodeURIComponent(currentMedia.media_url)}`}
+          src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(currentMedia.media_url)}`}
           alt="Instagram post media"
           className="max-w-full max-h-full object-contain"
         />
