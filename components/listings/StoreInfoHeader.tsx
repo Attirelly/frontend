@@ -69,7 +69,7 @@ export default function StoreInfoPage({
       <div className="flex flex-col items-center justify-center">
         <div className="relative w-32 h-32">
           <Image
-            src={imageUrl}
+            src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(imageUrl)}`}
             alt={storeName}
             fill
             className="rounded-full object-cover object-top"
