@@ -63,8 +63,8 @@ export default function ApifyPostGallery({ posts }: Props) {
             ) : null} */}
 
             <Image
-                src={`/api/proxy-image?url=${encodeURIComponent(post.display_url)}`}
-                // src={post.display_url}
+                // src={`/api/proxy-image?url=${encodeURIComponent(post.display_url)}`}
+                src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(post.display_url)}`}
                 alt="Instagram post"
                 fill
                 className="object-cover object-top"
