@@ -6,6 +6,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { manrope, roboto } from '@/font';
 import SidecarCarousel from './SidecarCarousel';
+import Image from 'next/image';
 
 type Props = {
   isOpen: boolean;
@@ -53,10 +54,11 @@ export default function ApifyPostDialog({ isOpen, post, onClose, onNext, onPrev,
                 className="max-w-full max-h-full object-contain"
               />
             ) : (
-              <img
+              <Image
                 src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(post.media_urls[0].media_url)}`}
                 alt="Instagram post"
                 className="max-w-full max-h-full object-contain"
+                unoptimized
               />
             )}
           </div>
