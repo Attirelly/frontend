@@ -143,7 +143,7 @@ export default function SectionEightContainer() {
           id: store.store_id,
           imageUrl: store.profile_image || "/Homepage/CardImage.svg",
           title: store.store_name,
-          description: `${store.area?.name || ""}, ${store.city?.name || ""}`,
+          description: store.area && store.area.name.toLowerCase() === "others"? `${store.city.name}` : `${store.area.name}, ${store.city.name}`,
         }));
         setStores(formattedStores);
 

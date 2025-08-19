@@ -139,7 +139,7 @@ export default function SectionSixContainer() {
                     id: p.product_id,
                     imageUrl: p.images?.[0]?.image_url || '/Homepage/CardTypeOne.svg',
                     title: p.title,
-                    description: `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
+                    description: p.stores && p.stores.area && p.stores.area.name.toLowerCase() === "others" ?  `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
                 }));
                 setProducts(formattedProducts);
 
