@@ -85,7 +85,7 @@ export default function ProductListPage() {
       setStoreType(matchedType);
       setMatchedStoreType(matchedType.store_type);
     }
-  }, [searchParams, initializeFilters, setQuery, area , city ,  setStoreType]);
+  }, [searchParams, initializeFilters, setQuery ,  setStoreType]);
 
   useEffect(() => {
     const oldparams = new URLSearchParams(searchParams);
@@ -100,11 +100,13 @@ export default function ProductListPage() {
     //   params.set("sortBy", sortBy);
     // }
     console.log("select filter" , selectedFilters)
+    console.log("city and area", city, area);
     Object.entries(selectedFilters).forEach(([key, values]) => {
       if (values && values.length > 0) {
         newparams.set(key, values.join(","));
       }
     });
+    
     
     if(city){
       newparams.set("city" , city.name) ; 
@@ -119,7 +121,7 @@ export default function ProductListPage() {
     }
     console.log("params" , newparams.toString())
     router.replace(`${pathname}?${newparams.toString()}`);
-  }, [selectedFilters, selectedPriceRange ,pathname, router]);
+  }, [selectedFilters, selectedPriceRange ,pathname, city, area, router]);
 
   const displayCategory = selectedFilters.categories?.[0] || "";
 

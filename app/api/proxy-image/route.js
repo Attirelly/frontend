@@ -26,8 +26,8 @@
 //   }
 // }
 
-console.log("aman log");
 
+export const runtime = 'nodejs';
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
@@ -36,11 +36,16 @@ export async function GET(request) {
   }
 
   try {
-    const imageResp = await fetch(url);
+    const imageResp = await fetch(url, {
+      headers: {
+        'User-Agent': 'Next.js Proxy',
+        'Accept': 'image/*',
+      },
+      redirect: 'follow',
+    });
     if (!imageResp.ok) {
       return new Response('Failed to fetch image', { status: imageResp.status });
     }
-
     const contentType = imageResp.headers.get('content-type') || 'image/jpeg';
     
     // Instead of buffering, use the response body directly as a readable stream
@@ -52,6 +57,7 @@ export async function GET(request) {
       },
     });
   } catch (e) {
+    console.log('image fetch error', e);
     return new Response('Failed to fetch image', { status: 500 });
   }
 }
