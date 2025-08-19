@@ -155,6 +155,11 @@ export default function SectionSixContainer() {
         fetchSegmentInfo();
     }, []);
 
+
+  if (!products || products.length == 0) {
+    return <div></div>;
+  }
+
     return (
         <div className='w-[1242px] mx-auto space-y-8'>
             <div className='flex justify-between'>
