@@ -97,7 +97,9 @@ export default function ProductContainer({
       filterParam += priceFilterString;
 
       let encodedFilterParam = encodeURIComponent(filterParam);
-
+      
+      // console.log("ajsdf sdjf ",currentPage, BUFFER_SIZE, controller.signal);
+      // if(currentPage === 1 )return;
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${encodedFilterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`,
         { signal: controller.signal }
@@ -114,7 +116,6 @@ export default function ProductContainer({
       } else {
         setNoResultFound(false);
       }
-      console.log("activeFacet" , activeFacet)
       setResults(data.total_hits);
       setFacets(data.facets, activeFacet);
 
@@ -163,12 +164,6 @@ export default function ProductContainer({
     }
   };
 
-  // useEffect(() => {
-  //   if (prevStoreTypeRef.current !== storeTypeString) {
-  //     setSkipFilters(true);
-  //     prevStoreTypeRef.current = storeTypeString;
-  //   }
-  // }, [storeTypeString]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -183,6 +178,7 @@ export default function ProductContainer({
   }, [selectedFilters, filters, query, storeTypeString, sortBy, city, area]);
 
   useEffect(() => {
+    console.log("buffer, page", buffer.length, page);
     if (page > 0 && buffer.length <= REFETCH_THRESHOLD && !loading && hasMore) {
       const controller = new AbortController();
       setLoading(true);
@@ -191,9 +187,9 @@ export default function ProductContainer({
         controller.abort();
       };
     }
-  }, [buffer, loading, hasMore]);
+  }, [buffer.length, page, hasMore]);
+  
 
-  // Existing scroll observer logic (now only consumes from buffer)
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
