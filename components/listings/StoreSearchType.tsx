@@ -101,11 +101,12 @@ export default function StoreSearchType({
                   className="flex items-center gap-3 bg-[#F8F8F8] hover:bg-[#e7e7e7] py-3 px-4 rounded-2xl cursor-pointer transition-all"
                   onClick={() => handleSearchTypeClick(type)}
                 >
-                  <div className="relative w-[24px] h-[24px] flex-shrink-0">
+                  <div className="relative w-8 h-8 flex-shrink-0">
                     <Image
                       src={storeImage?.url || "/Homepage/tailor.svg"}
                       alt="Store Type"
                       fill
+                      sizes="32px"
                     />
                   </div>
                   <span className="text-base text-black" style={{fontWeight:400}}>

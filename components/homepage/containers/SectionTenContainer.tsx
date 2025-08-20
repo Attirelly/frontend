@@ -140,7 +140,7 @@ export default function SectionTenContainer() {
                     id: store.store_id,
                     imageUrl: store.profile_image || '/Homepage/CardImage.svg',
                     title: store.store_name,
-                    description: `${store.area?.name || ''}, ${store.city?.name || ''}`,
+                    description: store.area && store.area.name.toLowerCase() === "others"? `${store.city.name}` : `${store.area.name}, ${store.city.name}`
                 }));
                 setStores(formattedStores);
 
@@ -154,7 +154,9 @@ export default function SectionTenContainer() {
         };
         fetchStoresBySection();
     }, []);
-
+      if (!stores || stores.length == 0) {
+    return <div></div>;
+  }
     return (
         <div className='w-[1242px] mx-auto space-y-8'>
             <div className='flex justify-between'>

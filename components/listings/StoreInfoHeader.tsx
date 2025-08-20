@@ -5,9 +5,11 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const StoreTypeImage = [
-  { name: "Designer Label", url: "/ListingPageHeader/designer_labels.svg" },
-  { name: "Retail Brands", url: "/ListingPageHeader/retail_stores.svg" },
+  { name: "Designer Label", url: "/Homepage/designer_labels.svg" },
+  { name: "Retail Store", url: "/Homepage/retail_stores.svg" },
   { name: "Boutiques", url: "/ListingPageHeader/boutiques.svg" },
+  { name: "Tailor", url: "/Homepage/tailor.svg" },
+  { name: "Stylist", url: "/Homepage/styler.svg" },
 ];
 
 // ✅ Utility: safely parse and format number strings into K / M / B
@@ -200,14 +202,14 @@ export default function StoreInfoPage({
                     className="bg-[#F8F8F8] px-2 py-1 rounded-full text-black flex gap-1"
                     style={{ fontWeight: 400 }}
                   >
-                    {imageObj && (
+                    {/* {imageObj && (
                       <Image
                         src={imageObj.url}
                         alt="Store Type"
                         width={18}
                         height={18}
                       />
-                    )}
+                    )} */}
                     {type}
                   </span>
                 );

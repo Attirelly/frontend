@@ -171,6 +171,10 @@ export default function SectionSevenContainer() {
     return <div></div>;
   }
 
+  if (!products || products.length == 0) {
+    return <div></div>;
+  }
+
   return (
     <div className="w-fit mx-auto space-y-8">
       <div className="flex justify-between">
