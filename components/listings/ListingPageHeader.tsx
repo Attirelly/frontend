@@ -338,7 +338,7 @@ export default function ListingPageHeader() {
           </div>
           <div className="flex justify-center">
             <div className="flex border border-gray-300 rounded-full items-center gap-4 w-full max-w-[611px] px-4 relative">
-              <div className="flex items-center gap-2 w-[280px] h-[24px]">
+              <div className="flex items-center w-[380px] h-[24px]">
                 <img
                   src="/ListingPageHeader/location_pin.svg"
                   alt="Location"
@@ -413,9 +413,9 @@ export default function ListingPageHeader() {
                 />
 
                 {showDropdown && (
-                  <div className="absolute top-10 mt-2 bg-white rounded-md shadow-lg max-h-[480px] overflow-y-auto z-50 max-w-[500px] w-full">
+                  <div className="absolute top-10 transform -translate-x-10 mt-2 bg-white rounded-md shadow-lg max-h-[480px] overflow-y-auto z-50 max-w-[500px] w-[400px]">
                     <div className="flex flex-col gap-1">
-                      {[...storeSuggestions, ...productSuggestions].map(
+                      {[...storeSuggestions, ...productSuggestions].map(  
                         (suggestion, i) => (
                           <div
                             key={i}
@@ -459,11 +459,11 @@ export default function ListingPageHeader() {
                               }
                             >
                               {cat?.subcategory3}
-                              <img
+                              {/* <img
                                 src="/SuggestionBox/top_right_arrow.svg"
                                 alt="Arrow"
                                 className="w-3 h-3"
-                              />
+                              /> */}
                             </button>
                           ))}
                         </div>

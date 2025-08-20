@@ -98,7 +98,8 @@ export default function OurNumbers() {
       <div className="flex flex-col items-center gap-4">
         <span className="text-[32px] text-[#1B1C57]" style={{fontWeight:700}}>Who can join?</span>
         <span className="text-[18px] text-[#1B1C57] mb-8" style={{fontWeight:400}}>if you sell ethnic wear, ranging from affordable to luxury wear, Attirelly is for you. We work with:</span>
-        <StoreTypeTabs defaultValue={process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE || ''}/>
+        {/* <StoreTypeTabs defaultValue={process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE || ''}/> */}
+        <StoreTypeTabs/>
         {storeType?.store_type === 'Designer Label' 
         ? <DesignerStoreType/> : 
         storeType?.store_type === 'Retail Store' 

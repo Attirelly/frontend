@@ -11,13 +11,22 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
+import StoreTypeTabs from "@/components/listings/StoreTypes";
+import { BrandType } from "@/types/SellerTypes";
 
-const STORE_TYPE_OPTIONS = [
-  { store_type: "Retail Store", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
-  {
-    store_type: "Designer Label",
-    id: process.env.NEXT_PUBLIC_DESIGNER_STORE_TYPE,
-  },
+// const STORE_TYPE_OPTIONS = [
+//   { store_type: "Retail Store", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
+//   {
+//     store_type: "Designer Label",
+//     id: process.env.NEXT_PUBLIC_DESIGNER_STORE_TYPE,
+//   },
+// ];
+
+const STORE_TYPE_OPTIONS: BrandType[] = [
+  { id: "f923d739-4c06-4472-9bfd-bb848b32594b", store_type: "Retail Store" },
+  { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" },
+  { id: "33f514c5-4896-46b7-ae74-139aece3d295", store_type: "Tailor" },
+  { id: "7339638e-e60a-4547-9c68-2c46169ea480", store_type: "Stylist" },
 ];
 
 export default function ProductListPage() {
@@ -25,9 +34,26 @@ export default function ProductListPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const { setQuery, query, setStoreType , area , allArea , city , allCity , setArea , setCity  } = useHeaderStore();
-  const { results, initializeFilters, selectedFilters, selectedPriceRange , activeFacet} =
-    useProductFilterStore();
+  const {
+    setQuery,
+    query,
+    setStoreType,
+    area,
+    allArea,
+    city,
+    allCity,
+    setArea,
+    setCity,
+    storeType,
+    allStoreType,
+  } = useHeaderStore();
+  const {
+    results,
+    initializeFilters,
+    selectedFilters,
+    selectedPriceRange,
+    activeFacet,
+  } = useProductFilterStore();
   const [matchedStoreType, setMatchedStoreType] = useState<string | null>(null);
 
   const fuse = new Fuse(STORE_TYPE_OPTIONS, {
@@ -35,32 +61,37 @@ export default function ProductListPage() {
     threshold: 0.4,
   });
 
-
-  //  initialise the state using url 
+  //  initialise the state using url
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
     const initialSelectedFilters: Record<string, string[]> = {};
     const search = params.get("search") || "";
     const cityName = params.get("city");
     const areaName = params.get("area");
+    const storeTypeName = params.get("store_type");
 
     params.forEach((value, key) => {
-      if (key !== "search" && key !== "sortBy" && key !== "price" && key !== "city" && key !== "area") {
+      if (
+        key !== "search" &&
+        key !== "sortBy" &&
+        key !== "price" &&
+        key !== "city" &&
+        key !== "area"
+      ) {
         initialSelectedFilters[key] = value.split(",");
       }
     });
 
-
     // Only perform the lookup if the master lists have been loaded
     if (allCity && allCity.length > 0 && cityName) {
-      const cityObject = allCity.find(c => c.name === cityName);
-      console.log("url_city" , cityObject)
+      const cityObject = allCity.find((c) => c.name === cityName);
+      console.log("url_city", cityObject);
       if (cityObject) setCity(cityObject);
     }
-    
+
     if (allArea && allArea.length > 0 && areaName) {
-      const areaObject = allArea.find(a => a.name === areaName);
-      console.log(areaObject)
+      const areaObject = allArea.find((a) => a.name === areaName);
+      console.log(areaObject);
       if (areaObject) setArea(areaObject);
     }
     let initialPriceRange: [number, number] | null = null;
@@ -69,6 +100,14 @@ export default function ProductListPage() {
       const [min, max] = priceParam.split("-").map(Number);
       if (!isNaN(min) && !isNaN(max)) {
         initialPriceRange = [min, max];
+      }
+    }
+    if (storeTypeName) {
+      const storeTypeObject = allStoreType.find(
+        (st) => st.store_type === storeTypeName
+      );
+      if (storeTypeObject) {
+        setStoreType(storeTypeObject);
       }
     }
 
@@ -85,7 +124,7 @@ export default function ProductListPage() {
       setStoreType(matchedType);
       setMatchedStoreType(matchedType.store_type);
     }
-  }, [searchParams, initializeFilters, setQuery ,  setStoreType]);
+  }, [searchParams, initializeFilters, setQuery, setStoreType]);
 
   useEffect(() => {
     const oldparams = new URLSearchParams(searchParams);
@@ -99,29 +138,31 @@ export default function ProductListPage() {
     // if (sortBy) {
     //   params.set("sortBy", sortBy);
     // }
-    console.log("select filter" , selectedFilters)
+    console.log("select filter", selectedFilters);
     console.log("city and area", city, area);
     Object.entries(selectedFilters).forEach(([key, values]) => {
       if (values && values.length > 0) {
         newparams.set(key, values.join(","));
       }
     });
-    
-    
-    if(city){
-      newparams.set("city" , city.name) ; 
+
+    if (city) {
+      newparams.set("city", city.name);
     }
-    if(area){
-      newparams.set("area" , area.name)
+    if (area) {
+      newparams.set("area", area.name);
     }
 
     if (selectedPriceRange) {
       const [min, max] = selectedPriceRange;
       newparams.set("price", `${min}-${max}`);
     }
-    console.log("params" , newparams.toString())
+    if (storeType) {
+      newparams.set("store_type", storeType.store_type);
+    }
+
     router.replace(`${pathname}?${newparams.toString()}`);
-  }, [selectedFilters, selectedPriceRange ,pathname, city, area, router]);
+  }, [selectedFilters, selectedPriceRange, pathname, city, area, storeType, router]);
 
   const displayCategory = selectedFilters.categories?.[0] || "";
 
@@ -144,11 +185,13 @@ export default function ProductListPage() {
 
         {/* Store Type Selection */}
         <div className="mt-10">
-          <StoreTypeButtons
+          {/* <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
             context="product"
             // defaultValue={matchedStoreType || "Retail Store"}
-          />
+          /> */}
+
+          <StoreTypeTabs context={"products"} />
         </div>
 
         {/* Content Section */}

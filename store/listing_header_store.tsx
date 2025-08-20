@@ -10,8 +10,18 @@ const defaultCity: City = {
 };
 
 
+const HARD_CODED_STORE_TYPES: BrandType[] = [
+    { id: "f923d739-4c06-4472-9bfd-bb848b32594b", store_type: "Retail Store" },
+    { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" },
+    { id: "33f514c5-4896-46b7-ae74-139aece3d295", store_type: "Tailor" },
+    { id: "7339638e-e60a-4547-9c68-2c46169ea480", store_type: "Stylist" },
+    
+];
+
 
 type HeaderState = {
+
+    allStoreType:BrandType[];
     ambassadorType: string;
     setAmbassadorType:(ambassadorType:string) => void;
 
@@ -56,6 +66,7 @@ type HeaderState = {
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
+    allStoreType : HARD_CODED_STORE_TYPES,
     ambassadorType: 'Students',
     setAmbassadorType: (ambassadorType: string) => set({ ambassadorType }),
     allArea:null , 

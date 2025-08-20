@@ -415,7 +415,7 @@ export default function StoreContainerPage() {
       setLoading(true);
       fetchStores(page, controller);
     }
-  }, [buffer, loading, hasMore]);
+  }, [buffer, hasMore]);
 
   // Logic for infinite scrolling
   useEffect(() => {

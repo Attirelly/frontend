@@ -19,6 +19,8 @@ export default function StoreListingPage() {
     query,
     city,
     storeType,
+    setStoreType,
+    allStoreType ,
     setQuery,
     area,
     setCity,
@@ -37,9 +39,15 @@ export default function StoreListingPage() {
     const search = params.get("search") || "";
     const cityName = params.get("city");
     const areaName = params.get("area");
+    const storeTypeName = params.get("store_type") ; 
 
     params.forEach((value, key) => {
-      if (key !== "search" && key !== "sortBy" &&  key !== "city" && key !== "area") {
+      if (
+        key !== "search" &&
+        key !== "sortBy" &&
+        key !== "city" &&
+        key !== "area"
+      ) {
         initialSelectedFilters[key] = value.split(",");
       }
     });
@@ -57,7 +65,14 @@ export default function StoreListingPage() {
     }
     if (search) {
       setQuery(search);
-      console.log("query1", search)
+      console.log("query1", search);
+    }
+    if(storeTypeName){
+      const storeTypeObject = allStoreType.find((st)=> st.store_type === storeTypeName)
+      if(storeTypeObject){
+        setStoreType(storeTypeObject);
+      }
+
     }
     initializeFilters({
       selectedFilters: initialSelectedFilters,
@@ -68,7 +83,7 @@ export default function StoreListingPage() {
 
   useEffect(() => {
     const newparams = new URLSearchParams();
-    console.log("query2" , query) 
+    console.log("query2", query);
     if (query) {
       newparams.set("search", query);
     }
@@ -85,8 +100,11 @@ export default function StoreListingPage() {
     if (area) {
       newparams.set("area", area.name);
     }
+    if(storeType){
+      newparams.set("store_type" , storeType.store_type)
+    }
     router.replace(`${pathname}?${newparams.toString()}`);
-  }, [selectedFilters, query, city, area, pathname, router]);
+  }, [selectedFilters, query, city, area, storeType,  pathname, router]);
 
   const getHeading = () => {
     // if (storeType && query && city) {
@@ -127,7 +145,8 @@ export default function StoreListingPage() {
         </h1>
         {/* <StoreTypeTabs defaultValue={storeType?.id || process.env.NEXT_PUBLIC_RETAIL_BRANDS_ID || ''}/> */}
         <StoreTypeTabs
-          defaultValue={process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE || ""}
+          // defaultValue={process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE || ""}
+          context="stores"
         />
         <div className="border-t border-[#D9D9D9]" />
         <div className="grid grid-cols-[1fr_3fr] gap-[40px]">

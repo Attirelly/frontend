@@ -187,7 +187,7 @@ export default function ProductContainer({
         controller.abort();
       };
     }
-  }, [buffer.length, page, hasMore]);
+  }, [buffer.length, hasMore]);
   
 
   useEffect(() => {

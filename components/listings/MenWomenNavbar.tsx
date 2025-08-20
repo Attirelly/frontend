@@ -8,6 +8,7 @@ import { manrope } from "@/font";
 import Link from "next/link";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { useProductFilterStore } from "@/store/filterStore";
+import { useRouter } from "next/navigation";
 
 // Utility to split subcat2 into N columns
 const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
@@ -19,7 +20,8 @@ const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
 };
 
 export default function MenWomenNavbar() {
-  const {resetFilters} = useProductFilterStore();
+  const router = useRouter();
+  const { resetFilters } = useProductFilterStore();
   const [categories, setCategories] = useState<Category[]>([]);
   const [hoveredGender, setHoveredGender] = useState<"Men" | "Women" | null>(
     null
@@ -92,7 +94,7 @@ export default function MenWomenNavbar() {
 
       {hoveredGender && category && (
         <div
-          className="absolute left-0 top-full bg-white shadow-xl rounded-bl-xl rounded-br-xl border-t z-40 w-max max-w-screen-xl"
+          className="absolute left-0 top-full bg-white shadow-xl rounded-bl-xl rounded-br-xl border-t z-40 w-max max-w-screen-xl cursor-pointer"
           onMouseEnter={() => setHoveredGender(hoveredGender)}
           onMouseLeave={() => setHoveredGender(null)}
         >
@@ -116,6 +118,13 @@ export default function MenWomenNavbar() {
                     <h3
                       className={`${manrope.className} text-sm mb-2 text-[#121212]`}
                       style={{ fontWeight: 700 }}
+                      onClick={() => {
+                        router.push(
+                          `/product_directory?categories=${encodeURIComponent(
+                            subcat2.name
+                          )}`
+                        );
+                      }}
                     >
                       {subcat2.name}
                     </h3>
@@ -128,7 +137,7 @@ export default function MenWomenNavbar() {
                             )}`}
                             className={`${manrope.className} text-sm text-[#464646] hover:text-black whitespace-nowrap`}
                             style={{ fontWeight: 400 }}
-                            onClick={() => { 
+                            onClick={() => {
                               setHoveredGender(null);
                             }}
                           >
