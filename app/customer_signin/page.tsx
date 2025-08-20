@@ -105,7 +105,7 @@ export default function SellerSignup() {
 
       setSendOTP(true);
       // Handle sending OTP
-      alert(`OTP sent to ${phone}`);
+      // alert(`OTP sent to ${phone}`);
     }
   };
 

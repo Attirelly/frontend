@@ -174,7 +174,7 @@ export default function SellerSignup() {
                 setSellerEmail(user_data.email);
                 if(phone === '1111111111'){
                     setSendOTP(true);
-                    alert(`OTP sent to ${phone}`);
+                    // alert(`OTP sent to ${phone}`);
                     setSellerNumber(phone);
                     return;
                     
@@ -182,7 +182,7 @@ export default function SellerSignup() {
                 try {
                     await api.post('/otp/send_otp', null, { params: { phone_number: phone, otp_template: "UserLoginOTP" } })
                     setSendOTP(true);
-                    alert(`OTP sent to ${phone}`);
+                    // alert(`OTP sent to ${phone}`);
                     setSellerNumber(phone);
                 }
                 catch {
@@ -211,7 +211,6 @@ export default function SellerSignup() {
                 title="Attirelly"
                 actions={
                     <Link
-                        className="border border-gray-600 px-4 py-1 shadow-lg text-sm rounded hover:bg-blue-100 text-black"
                         href="/seller_signup" >
                         Sign Up
                     </Link>

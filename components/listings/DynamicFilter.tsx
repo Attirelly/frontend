@@ -337,11 +337,11 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                             {filteredValues.length > 0 ? (
                               // Sort the filteredValues array based on a predefined order
                               filteredValues
-                                .filter((tempFilter) => {
-                                  return (
-                                    tempFilter.name.toLowerCase() !== "others"
-                                  );
-                                })
+                                // .filter((tempFilter) => {
+                                //   return (
+                                //     tempFilter.name.toLowerCase() !== "others"
+                                //   );
+                                // })
                                 .slice() // Create a copy to avoid mutating the original array
                                 .sort((a, b) => {
                                   // Define the order of price ranges

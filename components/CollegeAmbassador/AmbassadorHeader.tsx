@@ -1,6 +1,7 @@
 "use client";
 import { manrope, rosario } from "@/font";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 const res = [
   { title: "Why Attirelly", id: "Why Attirelly?" },
@@ -13,7 +14,7 @@ const res = [
 
 export default function AmbassadorHeader() {
   const [selected, setSelected] = useState<string>("");
-
+  const router = useRouter();
   const handleClick = (title: string, id: string) => {
     setSelected(title);
     const el = document.getElementById(id);
@@ -26,8 +27,8 @@ export default function AmbassadorHeader() {
       className={`${manrope.className} grid grid-cols-[1fr_2fr_1fr] text-black py-2`}
       style={{ fontWeight: 600 }}
     >
-      <div className="flex justify-center">
-        <span className={`${rosario.className} text-[34px]`}>Attirelly</span>
+      <div className="flex justify-center" onClick={()=>{router.push('/')}}>
+        <span className={`${rosario.className} text-[34px] text-[#373737] cursor-pointer font-[600px]`}>Attirelly</span>
       </div>
 
       <div className="flex gap-[24px] justify-center items-center">

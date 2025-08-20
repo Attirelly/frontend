@@ -235,8 +235,7 @@ export default function SellerDashboardContainer() {
           title="Attirelly"
           actions={
             <button
-              className="bg-white text-black rounded-2xl shadow-md p-2 cursor-pointer border transition hover:bg-gray-200"
-              onClick={() => logout("/seller_signin")}
+             onClick={() => logout("/seller_signin")}
             >
               Log Out
             </button>

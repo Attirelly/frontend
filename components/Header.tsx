@@ -1,5 +1,5 @@
 // components/Header.tsx
-import { rubik } from '@/font';
+import { rosario, rubik } from '@/font';
 import React from 'react';
 
 interface HeaderProps {
@@ -9,9 +9,15 @@ interface HeaderProps {
 
 export default function Header({ title, actions }: HeaderProps) {
   return (
-    <header className="flex justify-between items-center px-6 py-4 border-b bg-white">
-      <h1 className={`${rubik.className} text-[27px] font-bold text-[#373737]`} style={{fontWeight:700}}>{title}</h1>
-      <div>{actions}</div>
+          
+    <header className="flex justify-between items-center px-6 py-4 bg-white">
+      <h1 className={`${rosario.className} text-[34px] text-[#373737] cursor-pointer font-[600px]`}>{title}</h1>
+      <div className="px-6 py-2 rounded-full 
+             bg-white border border-gray-300 
+             text-gray-800 font-medium text-sm
+             hover:border-gray-400 hover:cursor-pointer
+             active:scale-95
+             focus:outline-none focus:ring-2 focus:ring-offset-2">{actions}</div>
     </header>
   );
 }

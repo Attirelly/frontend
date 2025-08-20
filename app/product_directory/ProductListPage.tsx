@@ -24,9 +24,7 @@ import { BrandType } from "@/types/SellerTypes";
 
 const STORE_TYPE_OPTIONS: BrandType[] = [
   { id: "f923d739-4c06-4472-9bfd-bb848b32594b", store_type: "Retail Store" },
-  { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" },
-  { id: "33f514c5-4896-46b7-ae74-139aece3d295", store_type: "Tailor" },
-  { id: "7339638e-e60a-4547-9c68-2c46169ea480", store_type: "Stylist" },
+  { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" }
 ];
 
 export default function ProductListPage() {
@@ -185,18 +183,18 @@ export default function ProductListPage() {
 
         {/* Store Type Selection */}
         <div className="mt-10">
-          {/* <StoreTypeButtons
+          <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
             context="product"
-            // defaultValue={matchedStoreType || "Retail Store"}
-          /> */}
+            defaultValue={matchedStoreType || "Retail Store"}
+          />
 
-          <StoreTypeTabs context={"products"} />
+          {/* <StoreTypeTabs context={"products"} /> */}
         </div>
 
         {/* Content Section */}
         <div className="flex flex-col mt-5 items-center">
-          <hr className="border border-[#D9D9D9] w-full mt-5 mb-4" />
+          <hr className="border-t border-[#D9D9D9] w-full mt-5 mb-4" />
           <div className="flex flex-col items-center w-full mt-8">
             <div className="w-full px-4">
               <div className="w-full grid grid-cols-[300px_1fr] gap-6">

@@ -9,6 +9,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { api } from '@/lib/axios';
 import { useEffect } from 'react';
 import { roboto } from '@/font';
+import { toast } from 'sonner';
 
 type FacebookLoginResponse = {
     status: string;
@@ -40,7 +41,7 @@ export default function SocialLoginButtons({ onSuccess }: { onSuccess: () => voi
                 // router.push('/customer_dashboard');
             } catch (err) {
                 console.error('Google login error:', err);
-                alert('Google login failed.');
+                toast.error('Google login failed.');
             }
         },
         onError: () => {
