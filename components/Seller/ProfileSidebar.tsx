@@ -12,7 +12,7 @@ export default function ProfileSidebar({
     {
       id: 'brand',
       title: 'Business details',
-      desc: 'Enter your brand address and owner name.',
+      desc: 'Enter your store address and owner name.',
       iconUrl: '/OnboardingSections/business_details.png',
     },
     {

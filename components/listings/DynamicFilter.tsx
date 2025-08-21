@@ -374,7 +374,7 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                       />
                                       <div className="flex justify-between w-full">
                                         <div className="flex-grow">
-                                          {fName === "Area" || fName === "City" ? (
+                                          {fName === "Area" || fName === "City" || fName === "Primary Category" ? (
                                             // Case 1: Display name and count with special styling
                                             <div className="flex items-center justify-between">
                                               <span

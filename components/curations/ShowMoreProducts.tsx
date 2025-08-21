@@ -31,8 +31,8 @@ export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductPro
                 return {
                     id:item.id,
                     imageUrl: item.image || [],
-                    title: item.title || 'Untitled Product',
-                    description: item.description || '',
+                    title: item.store_name || 'Untitled Product',
+                    description: item.title || '',
                     price,
                     originalPrice,
                     discountPercentage: discount.toString(), // If needed as a string

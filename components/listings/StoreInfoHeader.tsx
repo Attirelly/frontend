@@ -113,7 +113,7 @@ export default function StoreInfoPage({
       {/* Right: Store Info */}
       <div className={`${manrope.className} flex flex-col`}>
         <div className="flex justify-between items-start flex-wrap">
-          <h2 className="text-xl text-black mb-2 max-w-[60%]" style={{ fontWeight: 500 }}>
+          <h2 className="text-xl text-black mb-2 max-w-[60%] " style={{ fontWeight: 500, wordSpacing: "2px" }}>
             {storeName}
           </h2>
           <div className="flex gap-2.5 flex-shrink-0">

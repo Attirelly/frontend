@@ -97,6 +97,7 @@ export default function ListingPageHeader() {
       });
 
       const data = response.data;
+      console.log("data", data);
       setShowStoreType(false);
       setStoreSuggestions(data.store_search_suggestion || []);
       setProductSuggestions(data.product_search_suggestion || []);
@@ -413,7 +414,7 @@ export default function ListingPageHeader() {
                 />
 
                 {showDropdown && (
-                  <div className="absolute top-10 transform -translate-x-10 mt-2 bg-white rounded-md shadow-lg max-h-[480px] overflow-y-auto z-50 max-w-[500px] w-[400px]">
+                  <div className="absolute top-10 transform -translate-x-10 mt-2 bg-white rounded-md shadow-lg max-h-[480px] overflow-y-auto scrollbar-none z-50 max-w-[500px] w-[400px]">
                     <div className="flex flex-col gap-1">
                       {[...storeSuggestions, ...productSuggestions].map(  
                         (suggestion, i) => (
@@ -458,7 +459,7 @@ export default function ListingPageHeader() {
                                 handleCategoryClick(cat.subcategory3)
                               }
                             >
-                              {cat?.subcategory3}
+                              {cat?.subcategory3.includes("Kurta") ? `${cat?.subcategory3} (${cat?.category})` : cat?.subcategory3}
                               {/* <img
                                 src="/SuggestionBox/top_right_arrow.svg"
                                 alt="Arrow"

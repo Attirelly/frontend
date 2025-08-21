@@ -115,6 +115,7 @@ export default function ProductContainer({
         setLoading(false);
         setProducts([]);
         setBuffer([]);
+        setResults(0);
         return;
       } else {
         setNoResultFound(false);

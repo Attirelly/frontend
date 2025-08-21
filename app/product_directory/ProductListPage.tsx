@@ -167,6 +167,10 @@ export default function ProductListPage() {
 
   const displayCategory = selectedFilters.categories?.[0] || "";
 
+  useEffect(() => {
+    console.log("results changed", results);
+  },[results]);
+
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
       <ListingPageHeader />
