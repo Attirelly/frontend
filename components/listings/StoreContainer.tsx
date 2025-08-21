@@ -374,9 +374,9 @@ export default function StoreContainerPage() {
       if (currentPage >= data.total_pages - 1) {
         setHasMore(false);
       }
-      else{
-        setPage((prev)=>prev+1)
-      }
+      // else{
+      //   setPage((prev)=>prev+1)
+      // }
     } catch (error) {
       console.error("Failed to fetch stores:", error);
       // Handle error state
@@ -440,7 +440,7 @@ export default function StoreContainerPage() {
           }
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.5 }
     );
 
     const currentLoader = loaderRef.current;
@@ -449,7 +449,7 @@ export default function StoreContainerPage() {
     return () => {
       observer.unobserve(currentLoader);
     };
-  }, [loaderRef, hasMore, loading, buffer]);
+  }, [loaderRef, loading, buffer]);
 
   // Fetch next page when page state changes
   useEffect(() => {

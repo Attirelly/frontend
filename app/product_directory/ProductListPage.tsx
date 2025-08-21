@@ -187,7 +187,7 @@ export default function ProductListPage() {
           <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
             context="product"
-            defaultValue={matchedStoreType || "Retail Store"}
+            // defaultValue={matchedStoreType || "Retail Store"}
           />
 
           {/* <StoreTypeTabs context={"products"} /> */}

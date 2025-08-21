@@ -7,7 +7,7 @@ import { manrope } from '@/font';
 
 interface StoreTypesButtonProps {
   options: { store_type: string; id: string }[];
-  defaultValue: string;
+  defaultValue?: string;
   context: string;
 }
 
