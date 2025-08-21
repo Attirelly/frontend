@@ -39,8 +39,10 @@ export default function StoreInfoPage({
   area,
   phone_number,
 }: StoreInfoType) {
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const TRUNCATE_LENGTH = 111;
 
   const handleLocationRoute = () => {
     if (typeof locationUrl === "string" && locationUrl) {
@@ -103,7 +105,7 @@ export default function StoreInfoPage({
             className={`${manrope.className} text-sm text-black`}
             style={{ fontWeight: 400 }}
           >
-            {area}, {city}
+            {area === 'Others' ? '' : `${area},`} {city}
           </span>
         </div>
       </div>
@@ -116,23 +118,22 @@ export default function StoreInfoPage({
           </h2>
           <div className="flex gap-2.5 flex-shrink-0">
             <button
-  className={`flex border border-black rounded-full items-center justify-center gap-2 px-4 transition-all duration-300 ${
-    showPhone ? "bg-gray-100" : ""
-  }`}
-  onClick={handlePhoneClick}
->
-  <Image
-    src="/ListingPageHeader/phone.svg"
-    alt="call"
-    width={18}
-    height={18}
-  />
-  {showPhone && (
-    <span className="text-black text-sm" style={{ fontWeight: 400 }}>
-     {phone_number.startsWith("11111",0) ? "9915916707" : phone_number}
-    </span>
-  )}
-</button>
+              className={`flex border border-black rounded-full items-center justify-center gap-2 px-4 transition-all duration-300 ${showPhone ? "bg-gray-100" : ""
+                }`}
+              onClick={handlePhoneClick}
+            >
+              <Image
+                src="/ListingPageHeader/phone.svg"
+                alt="call"
+                width={18}
+                height={18}
+              />
+              {showPhone && (
+                <span className="text-black text-sm" style={{ fontWeight: 400 }}>
+                  {phone_number.startsWith("11111", 0) ? "9915916707" : phone_number}
+                </span>
+              )}
+            </button>
             <button
               className="flex border border-black rounded-full items-center justify-center gap-2 px-4"
               onClick={handleCopyUrl}
@@ -185,9 +186,24 @@ export default function StoreInfoPage({
               )}
             </div>
 
-            {/* Bio with line breaks */}
+            {/* Bio */}
             {bio && (
-              <p className="text-black" style={{ fontWeight: 400, whiteSpace: "pre-line" }}>{bio}</p>
+              <p className={`text-black ${bio.length > TRUNCATE_LENGTH ? "cursor-pointer" : ""}`}  style={{ fontWeight: 400, whiteSpace: "pre-line" }}
+              onClick={() => setIsBioExpanded(!isBioExpanded)}>
+                {isBioExpanded || bio.length <= TRUNCATE_LENGTH
+                  ? bio
+                  : `${bio.substring(0, TRUNCATE_LENGTH)}...`}
+
+                {/* more button */}
+                {bio.length > TRUNCATE_LENGTH && !isBioExpanded && (
+                  <button
+                    className="text-gray-500 ml-1 cursor-pointer bg-transparent border-none p-0"
+                    style={{ fontWeight: 500 }}
+                  >
+                    more
+                  </button>
+                )}
+              </p>
             )}
           </div>
 

@@ -5,13 +5,7 @@ import { instaMediaType } from '@/types/SellerTypes';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useHeaderStore } from '@/store/listing_header_store';
 import { manrope, roboto } from '@/font';
-import dynamic from "next/dynamic";
-import SidecarCarousel from './SidecarCarousel';
 import CorouselImages from './CorouselImages';
-
-// const CustomVideoPlayer = dynamic(() => import("../ui/CustomVideoPlayer"), {
-//   ssr: false,
-// });
 
 type Props = {
   isOpen: boolean;
@@ -47,7 +41,7 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
       >
         <div className='grid grid-cols-[1.5fr_1fr] rounded-2xl overflow-hidden'>
           {post.media_type === 'CAROUSEL_ALBUM' ? (
-            <CorouselImages mediaUrls={post.carousel_images} />
+            <CorouselImages key={post.id} mediaUrls={post.carousel_images} />
           ) : 
           post.media_type === 'VIDEO' ? (
           //  <CustomVideoPlayer src={post.media_url} />
