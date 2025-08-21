@@ -79,7 +79,7 @@ export default function ProductContainer({
 
   const fetchProducts = async (
     currentPage: number,
-    controller: AbortController
+    controller?: AbortController
   ) => {
     const facetFilters = buildFacetFilters(selectedFilters, storeTypeString);
 
@@ -102,7 +102,7 @@ export default function ProductContainer({
       // if(currentPage === 1 )return;
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${encodedFilterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`,
-        { signal: controller.signal }
+        controller? { signal: controller.signal } : {}
       );
 
       const data = res.data;
@@ -164,8 +164,11 @@ export default function ProductContainer({
     }
   };
 
-
+//   useEffect(() => {
+// fetchProducts(0);
+//   }, []);
   useEffect(() => {
+    console.log("changes",selectedFilters, filters, query, storeTypeString, sortBy, city, area );
     const controller = new AbortController();
     setPage(0);
     setProducts([]);
@@ -178,8 +181,8 @@ export default function ProductContainer({
   }, [selectedFilters, filters, query, storeTypeString, sortBy, city, area]);
 
   useEffect(() => {
-    console.log("buffer, page", buffer.length, page);
     if (page > 0 && buffer.length <= REFETCH_THRESHOLD && !loading && hasMore) {
+      console.log("buffer, page", buffer.length, page);
       const controller = new AbortController();
       setLoading(true);
       fetchProducts(page, controller);

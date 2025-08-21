@@ -10,11 +10,13 @@ import Catalogue from "@/components/listings/Catalogue";
 import DynamicFilter from "@/components/listings/DynamicFilter";
 import { useParams, useSearchParams } from "next/navigation";
 import { useProductFilterStore } from "@/store/filterStore";
+import ProductContainer from "@/components/listings/ProductContainer";
+import SortByDropdown from "@/components/listings/SortByDropdown";
 
 
 export default function StoreProfilePage() {
   const { query, city, storeType, viewType } = useHeaderStore();
-  const {setFacetInit, setFacets, setPriceBounds, setPriceRange} = useProductFilterStore();
+  const {setFacetInit} = useProductFilterStore();
   const [showFilters, setShowFilters] = useState(false);
 
   const params = useParams();
@@ -25,7 +27,6 @@ export default function StoreProfilePage() {
 
   useEffect(() => {
   setFacetInit(false);
-  setPriceRange([0,0]);
 }, []);
 
 
@@ -55,13 +56,18 @@ export default function StoreProfilePage() {
           <div className="mt-8 w-full px-4">
             <div className="px-20 w-full grid grid-cols-[300px_1fr] gap-6">
               <div>
-                {/* {isFacetLoading && (
-
-                )  } */}
                 <DynamicFilter context="product" />
               </div>
+              <div>
+                  <div className="flex justify-between items-center">
+                    <SortByDropdown />
+                  </div>
+                  <div className="h-full">
+                    <ProductContainer colCount={4} />
+                  </div>
+                </div>
 
-              <Catalogue storeId={storeId} />
+              {/* <Catalogue storeId={storeId} /> */}
             </div>
           </div>
         )}
