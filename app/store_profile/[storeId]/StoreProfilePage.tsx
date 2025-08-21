@@ -58,16 +58,16 @@ export default function StoreProfilePage() {
               <div>
                 <DynamicFilter context="product" />
               </div>
-              <div>
+              {/* <div>
                   <div className="flex justify-between items-center">
                     <SortByDropdown />
                   </div>
                   <div className="h-full">
                     <ProductContainer colCount={4} />
                   </div>
-                </div>
+                </div> */}
 
-              {/* <Catalogue storeId={storeId} /> */}
+              <Catalogue storeId={storeId} />
             </div>
           </div>
         )}
