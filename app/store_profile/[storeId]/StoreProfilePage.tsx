@@ -36,7 +36,12 @@ export default function StoreProfilePage() {
     allStoreType,
     viewType,
   } = useHeaderStore();
-  const { initializeFilters, selectedFilters, selectedPriceRange , setFacetInit }  = useProductFilterStore();
+  const {
+    initializeFilters,
+    selectedFilters,
+    selectedPriceRange,
+    setFacetInit,
+  } = useProductFilterStore();
 
   const [showFilters, setShowFilters] = useState(false);
 
@@ -65,7 +70,7 @@ export default function StoreProfilePage() {
         key !== "price" &&
         key !== "city" &&
         key !== "area" &&
-        key !== "store_type"&&
+        key !== "store_type" &&
         key !== "defaultButton"
       ) {
         initialSelectedFilters[key] = value.split(",");
@@ -195,7 +200,9 @@ export default function StoreProfilePage() {
                   </div>
                 </div> */}
 
-              <Catalogue storeId={storeId} />
+              <div className="h-full">
+                <ProductContainer storeId={storeId} colCount={4} />
+              </div>
             </div>
           </div>
         )}

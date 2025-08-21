@@ -42,6 +42,7 @@ export default function ProductContainer({
   const isObserverTriggered = useRef(false);
   const [skipFilters, setSkipFilters] = useState(false);
   const [noResultFound, setNoResultFound] = useState(false);
+  const [apiHasMore , setApiHasMore] = useState(true) ; 
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
@@ -109,6 +110,7 @@ export default function ProductContainer({
       const data = res.data;
       if (data.total_hits === 0 && currentPage == 0) {
         setNoResultFound(true);
+        setApiHasMore(false);
         setHasMore(false);
         setLoading(false);
         setProducts([]);
@@ -150,7 +152,7 @@ export default function ProductContainer({
       }
 
       if (currentPage >= data.total_pages - 1) {
-        setHasMore(false);
+        setApiHasMore(false);
       } else if (currentPage < data.total_pages - 1) {
         setPage((prev) => prev + 1);
       }
@@ -191,7 +193,7 @@ export default function ProductContainer({
   }, [selectedFilters, filters, query, storeTypeString, sortBy, city, area]);
 
   useEffect(() => {
-    if (page > 0 && buffer.length <= REFETCH_THRESHOLD && !loading && hasMore) {
+    if (page > 0 && buffer.length <= REFETCH_THRESHOLD && !loading && apiHasMore) {
       console.log("buffer, page", buffer.length, page);
       const controller = new AbortController();
       setLoading(true);
@@ -200,7 +202,7 @@ export default function ProductContainer({
         controller.abort();
       };
     }
-  }, [buffer.length, hasMore]);
+  }, [buffer.length, apiHasMore]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -245,6 +247,13 @@ export default function ProductContainer({
     // Run the check after the initial render and whenever products are added
     fillViewport();
   }, [products, buffer, loading])
+
+  useEffect(() => {
+
+    if (!apiHasMore && buffer.length === 0) {
+      setHasMore(false);
+    }
+  }, [apiHasMore, buffer]); 
 
 
   return noResultFound ? (
