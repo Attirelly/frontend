@@ -6,7 +6,7 @@ type StoreInfoContainerProps = {
 export default function Catalogue({ storeId }: StoreInfoContainerProps) {
   return (
     <div className="h-full">
-      <ProductContainer colCount={4} />
+      <ProductContainer storeId = {storeId} colCount={4} />
     </div>
   );
 }
