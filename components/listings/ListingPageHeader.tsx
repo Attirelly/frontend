@@ -534,7 +534,10 @@ export default function ListingPageHeader() {
                                 {store.store_name}
                               </span>
                               <span className="text-sm text-[#A6A6A6]">
-                                {store.area}, {store.city}
+                                {
+                                  store.area && store.area.toLowerCase() === "others" ? `${store.city}` : 
+                                  `${store.area}, ${store.city}`
+                               }
                               </span>
                             </div>
                           </div>
