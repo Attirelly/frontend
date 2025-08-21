@@ -116,6 +116,7 @@ interface CardData {
   discountText?: string;
   title: string;
   description?: string;
+  categoryLandingUrl?: string;
 }
 
 const SECTION_NUMBER = 2;
@@ -137,6 +138,7 @@ export default function SectionTwoContainer() {
           id: p.category_id,
           imageUrl: p.image_url,
           title: p.name,
+          categoryLandingUrl: p.category_landing_url || "",
           // description: `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
         }));
         setProducts(formattedProducts);
@@ -194,7 +196,7 @@ export default function SectionTwoContainer() {
           {products.map((card) => (
             <a
               key={card.id}
-              href={`/product_detail/${card.id}`}
+              href={card?.categoryLandingUrl || "#"}
               target="_blank"
               rel="noopener noreferrer"
             >

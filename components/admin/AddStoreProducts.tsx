@@ -21,6 +21,7 @@ interface Category {
   category_id: string;
   name: string;
   image_url: string;
+  category_landing_url: string;
 }
 
 interface Product {
@@ -51,7 +52,7 @@ export default function AddStoreProduct() {
   const [storesFromSection, setStoresFromSection] = useState<Store[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<Category[]>([]);
-  const [categorySelections, setCategorySelections] = useState<{ category_id: string, image_url: string }[]>(Array(TOTAL_INPUTS).fill({ category_id: '', image_url: '' }));
+  const [categorySelections, setCategorySelections] = useState<{ category_id: string, image_url: string, category_landing_url: string }[]>(Array(TOTAL_INPUTS).fill({ category_id: '', image_url: '', category_landing_url: '' }));
 
   const router = useRouter();
 
@@ -97,7 +98,8 @@ export default function AddStoreProduct() {
     const fetchCategoriesBySection = async () => {
       try {
         const response = await api.get(`/homepage/categories_by_section/${curation_id}`);
-        const fetchedSelections: { category_id: string; image_url: string }[] = response.data;
+        const fetchedSelections: { category_id: string; image_url: string, category_landing_url: string }[] = response.data;
+        console.log(fetchedSelections, "fetchedSelections");
 
         // preload into selections
         const updatedSelections = [...categorySelections];
@@ -235,7 +237,7 @@ export default function AddStoreProduct() {
       section_url: viewAllUrl,
       store_ids: storeSelections.filter((id) => id),
       product_ids: productSelections.filter((id) => id),
-      categories: categorySelections.filter(c => c.category_id && c.image_url)
+      categories: categorySelections.filter(c => c.category_id && c.image_url && c.category_landing_url)
     };
 
     try {
@@ -288,7 +290,7 @@ export default function AddStoreProduct() {
       section_url: viewAllUrl,
       store_ids: selectedStoreIds,
       product_ids: productSelections.filter((id) => id),
-      categories: categorySelections.filter(c => c.category_id && c.image_url)
+      categories: categorySelections.filter(c => c.category_id && c.image_url && c.category_landing_url)
     };
 
     // return;
@@ -394,6 +396,7 @@ export default function AddStoreProduct() {
           const selectedProductId = productSelections[index];
           const categoryId = categorySelections?.[index]?.category_id || "";
           const categoryImage = categorySelections?.[index]?.image_url || "";
+          const categoryLandingUrl = categorySelections?.[index]?.category_landing_url || "";
 
           return (
             <div key={index} className="flex gap-4 items-center">
@@ -460,7 +463,7 @@ export default function AddStoreProduct() {
                 </>
               ) : null}
 
-              {/* Category + Image Section */}
+              {/* Category + Image Section + Landing URL */}
               {(curation_type === "subcat 3" || curation_type === "subcat 4") && (
                 <>
                   {/* Category Dropdown */}
@@ -551,6 +554,22 @@ export default function AddStoreProduct() {
                         </button>
                       </div>
                     )}
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      className="border rounded px-4 py-2 w-64 text-black placeholder:text-gray-400"
+                      placeholder="Category Landing URL"
+                      value={categoryLandingUrl}
+                      onChange={(e) => {
+                        const updated = [...categorySelections];
+                        updated[index] = {
+                          ...updated[index],
+                          category_landing_url: e.target.value,
+                        };
+                        setCategorySelections(updated);
+                      }}
+                    />
                   </div>
 
 

@@ -13,6 +13,7 @@ interface CardData {
   discountText?: string;
   title: string;
   description?: string;
+  categoryLandingUrl?: string;
 }
 
 const SECTION_NUMBER = 1;
@@ -39,6 +40,7 @@ export default function SectionOneContainer() {
           id: p.category_id,
           imageUrl: p.image_url,
           title: p.name,
+          categoryLandingUrl: p.category_landing_url || "",
           // description: `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
         }));
         setProducts(formattedProducts);
@@ -130,7 +132,7 @@ export default function SectionOneContainer() {
             {visibleCards.map((card) => (
               <div key={card?.id} style={{ minWidth: `${cardWidth}px` }}>
                 <a
-                  href={`/product_detail/${card?.id}`}
+                  href={card?.categoryLandingUrl || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
