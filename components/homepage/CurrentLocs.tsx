@@ -7,7 +7,7 @@ const locs = [
     { location: "Patiala" },
     { location: "Chandigarh" },
     { location: "New Delhi" },
-    { location: "Manali" },
+    { location: "Mohali" },
 ];
 
 export default function CurrentLocs() {
