@@ -70,7 +70,7 @@ export default function StoreSearchType({
   }, [onClose]);
 
   if (!visible) return null;
-  console.log("StoreSearchType rendered");
+
 
   const handleSearchTypeClick = (type: StoreType) => {
     let redirect_url = type && type.store_type ? "/store_listing?store_type="+ type.store_type : "/store_listing"
