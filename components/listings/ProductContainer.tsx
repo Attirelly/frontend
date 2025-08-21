@@ -39,8 +39,10 @@ export default function ProductContainer({
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement>(null);
   const prevStoreTypeRef = useRef<string>("");
+  const isObserverTriggered = useRef(false);
   const [skipFilters, setSkipFilters] = useState(false);
   const [noResultFound, setNoResultFound] = useState(false);
+  const [apiHasMore, setApiHasMore] = useState(true);
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
@@ -97,17 +99,18 @@ export default function ProductContainer({
       filterParam += priceFilterString;
 
       let encodedFilterParam = encodeURIComponent(filterParam);
-      
+
       // console.log("ajsdf sdjf ",currentPage, BUFFER_SIZE, controller.signal);
       // if(currentPage === 1 )return;
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${encodedFilterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`,
-        controller? { signal: controller.signal } : {}
+        controller ? { signal: controller.signal } : {}
       );
 
       const data = res.data;
       if (data.total_hits === 0 && currentPage == 0) {
         setNoResultFound(true);
+        setApiHasMore(false);
         setHasMore(false);
         setLoading(false);
         setProducts([]);
@@ -149,7 +152,7 @@ export default function ProductContainer({
       }
 
       if (currentPage >= data.total_pages - 1) {
-        setHasMore(false);
+        setApiHasMore(false);
       } else if (currentPage < data.total_pages - 1) {
         setPage((prev) => prev + 1);
       }
@@ -164,11 +167,20 @@ export default function ProductContainer({
     }
   };
 
-//   useEffect(() => {
-// fetchProducts(0);
-//   }, []);
+  //   useEffect(() => {
+  // fetchProducts(0);
+  //   }, []);
   useEffect(() => {
-    console.log("changes",selectedFilters, filters, query, storeTypeString, sortBy, city, area );
+    console.log(
+      "changes",
+      selectedFilters,
+      filters,
+      query,
+      storeTypeString,
+      sortBy,
+      city,
+      area
+    );
     const controller = new AbortController();
     setPage(0);
     setProducts([]);
@@ -181,8 +193,12 @@ export default function ProductContainer({
   }, [selectedFilters, filters, query, storeTypeString, sortBy, city, area]);
 
   useEffect(() => {
-    if (page > 0 && buffer.length <= REFETCH_THRESHOLD && !loading && hasMore) {
-      console.log("buffer, page", buffer.length, page);
+    if (
+      page > 0 &&
+      buffer.length <= REFETCH_THRESHOLD &&
+      !loading &&
+      apiHasMore
+    ) {
       const controller = new AbortController();
       setLoading(true);
       fetchProducts(page, controller);
@@ -190,8 +206,7 @@ export default function ProductContainer({
         controller.abort();
       };
     }
-  }, [buffer.length, hasMore]);
-  
+  }, [buffer.length, apiHasMore]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -211,7 +226,31 @@ export default function ProductContainer({
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, [loaderRef.current, loading, buffer]);
+  }, [buffer, loading]);
+
+  useEffect(() => {
+
+    const fillViewport = () => {
+      if (loaderRef.current && buffer.length > 0 && !loading) {
+        const { top } = loaderRef.current.getBoundingClientRect();
+        const isLoaderVisible = top <= window.innerHeight;
+
+        // If loader is visible and we have items in buffer, load them
+        if (isLoaderVisible) {
+          const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
+          setProducts((prev) => [...prev, ...nextItems]);
+          setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
+        }
+      }
+    };
+    fillViewport();
+  }, [products, buffer, loading]);
+
+  useEffect(() => {
+    if (!apiHasMore && buffer.length === 0) {
+      setHasMore(false);
+    }
+  }, [apiHasMore, buffer]);
 
   return noResultFound ? (
     <NoResultFound />

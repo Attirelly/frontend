@@ -102,10 +102,12 @@ export default function ProductListPage() {
       }
     }
     if (storeTypeName) {
+      console.log(storeTypeName)
       const storeTypeObject = allStoreType.find(
         (st) => st.store_type === storeTypeName
       );
       if (storeTypeObject) {
+        console.log("storetypeobject" , storeTypeObject);
         setStoreType(storeTypeObject);
       }
     }
@@ -187,7 +189,7 @@ export default function ProductListPage() {
           <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
             context="product"
-            defaultValue={matchedStoreType || "Retail Store"}
+            defaultValue={ storeType?.store_type || matchedStoreType }
           />
 
           {/* <StoreTypeTabs context={"products"} /> */}
