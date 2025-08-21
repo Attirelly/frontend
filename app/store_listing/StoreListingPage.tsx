@@ -48,7 +48,8 @@ export default function StoreListingPage() {
         key !== "search" &&
         key !== "sortBy" &&
         key !== "city" &&
-        key !== "area"
+        key !== "area" && 
+        key !== "store_type"
       ) {
         initialSelectedFilters[key] = value.split(",");
       }

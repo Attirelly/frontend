@@ -292,7 +292,7 @@ export default function StoreContainerPage() {
     return encodeURIComponent(JSON.stringify(filters));
   };
 
-  const fetchStores = async (currentPage: number , controller :AbortController) => {
+  const fetchStores = async (currentPage: number , controller? :AbortController) => {
     setLoading(true);
 
     let discountArray = selectedFilters["discount"] || [];
@@ -312,7 +312,8 @@ export default function StoreContainerPage() {
 
     try {
       const res = await api.get(
-        `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${tempFilterStr}&facetFilters=${facetFilters}&activeFacet=${activeFacet}`,{ signal: controller.signal }
+        `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${tempFilterStr}&facetFilters=${facetFilters}&activeFacet=${activeFacet}`,
+        controller ? { signal: controller.signal } : {}
       );
 
       event({
@@ -470,9 +471,11 @@ export default function StoreContainerPage() {
   }
 
   return noResultFound ? (
+    <div className="min-h-screen">
     <NoResultFound />
+  </div>
   ) : (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 min-h-screen">
       {stores.map((store, index) => (
         <StoreCard
           key={`${store.id}-${index}`}
