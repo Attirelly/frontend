@@ -95,20 +95,20 @@ export default function AddStoreProduct() {
     };
 
     const fetchCategoriesBySection = async () => {
-  try {
-    const response = await api.get(`/homepage/categories_by_section/${curation_id}`);
-    const fetchedSelections: { category_id: string; image_url: string }[] = response.data;
+      try {
+        const response = await api.get(`/homepage/categories_by_section/${curation_id}`);
+        const fetchedSelections: { category_id: string; image_url: string }[] = response.data;
 
-    // preload into selections
-    const updatedSelections = [...categorySelections];
-    for (let i = 0; i < fetchedSelections.length && i < updatedSelections.length; i++) {
-      updatedSelections[i] = fetchedSelections[i];
-    }
-    setCategorySelections(updatedSelections);
-  } catch (error) {
-    console.error('Error fetching categories by section:', error);
-  }
-};
+        // preload into selections
+        const updatedSelections = [...categorySelections];
+        for (let i = 0; i < fetchedSelections.length && i < updatedSelections.length; i++) {
+          updatedSelections[i] = fetchedSelections[i];
+        }
+        setCategorySelections(updatedSelections);
+      } catch (error) {
+        console.error('Error fetching categories by section:', error);
+      }
+    };
 
     if (curation_type === 'product') {
       fetchStoresAndProductsBySection();
@@ -121,7 +121,7 @@ export default function AddStoreProduct() {
     }
 
   }, [curation_id]);
-  console.log(categories, "categories"); 
+  console.log(categories, "categories");
 
   // useEffect(() => {
   //   api
@@ -165,14 +165,14 @@ export default function AddStoreProduct() {
     };
 
     const fetchSubCat = async (level: number) => {
-  try {
-    const response = await api.get(`categories/get_category_by_level/${level}`);
-    const fetchedOptions: Category[] = response.data;
-    setCategoryOptions(fetchedOptions);   // 👈 separate options state
-  } catch (error) {
-    console.error('Error fetching sub categories', error);
-  }
-};
+      try {
+        const response = await api.get(`categories/get_category_by_level/${level}`);
+        const fetchedOptions: Category[] = response.data;
+        setCategoryOptions(fetchedOptions);   // 👈 separate options state
+      } catch (error) {
+        console.error('Error fetching sub categories', error);
+      }
+    };
 
 
     if (curation_type === 'product') {
@@ -351,6 +351,16 @@ export default function AddStoreProduct() {
     }
   };
 
+  async function deleteImageFromS3(imageUrl: string) {
+      try {
+        await api.delete(`/products/delete_image`, {
+          data: { file_url: imageUrl },
+        });
+      } catch (error) {
+        console.error("Error deleting image from S3:", error);
+      }
+    }
+
 
   return (
     <div className="min-h-screen bg-white p-8">
@@ -456,32 +466,33 @@ export default function AddStoreProduct() {
                   {/* Category Dropdown */}
                   <div className="w-64">
                     <Select
-  className="w-64 text-black"
-  styles={customStyles}
-  placeholder="Select Category"
-  options={categoryOptions.map((cat) => ({
-    label: cat.name,
-    value: cat.category_id,
-  }))}
-  value={
-    categoryOptions.find((c) => c.category_id === categorySelections[index]?.category_id)
-      ? {
-          label: categoryOptions.find(
-            (c) => c.category_id === categorySelections[index]?.category_id
-          )?.name,
-          value: categorySelections[index]?.category_id,
-        }
-      : null
-  }
-  onChange={(selectedOption) => {
-    const updated = [...categorySelections];
-    updated[index] = {
-      ...updated[index],
-      category_id: selectedOption?.value || "",
-    };
-    setCategorySelections(updated);
-  }}
-/>
+                      className="w-64 text-black"
+                      styles={customStyles}
+                      placeholder="Select Category"
+                      isClearable
+                      options={categoryOptions.map((cat) => ({
+                        label: cat.name,
+                        value: cat.category_id,
+                      }))}
+                      value={
+                        categoryOptions.find((c) => c.category_id === categorySelections[index]?.category_id)
+                          ? {
+                            label: categoryOptions.find(
+                              (c) => c.category_id === categorySelections[index]?.category_id
+                            )?.name,
+                            value: categorySelections[index]?.category_id,
+                          }
+                          : null
+                      }
+                      onChange={(selectedOption) => {
+                        const updated = [...categorySelections];
+                        updated[index] = {
+                          ...updated[index],
+                          category_id: selectedOption?.value || "",
+                        };
+                        setCategorySelections(updated);
+                      }}
+                    />
                   </div>
                   {/* Image Upload */}
                   <div className="flex flex-col items-start gap-2">
@@ -518,9 +529,10 @@ export default function AddStoreProduct() {
                           className="text-red-500 text-sm underline"
                           onClick={async () => {
                             try {
-                              await api.delete("/s3/delete-file", {
-                                data: { fileUrl: categoryImage },
-                              });
+                              // await api.delete("/s3/delete-file", {
+                              //   data: { fileUrl: categoryImage },
+                              // });
+                              await deleteImageFromS3(categoryImage);
 
                               const updated = [...categorySelections];
                               updated[index] = {
