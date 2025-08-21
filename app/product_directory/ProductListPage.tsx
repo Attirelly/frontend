@@ -74,7 +74,8 @@ export default function ProductListPage() {
         key !== "sortBy" &&
         key !== "price" &&
         key !== "city" &&
-        key !== "area"
+        key !== "area" && 
+        key !== "store_type"
       ) {
         initialSelectedFilters[key] = value.split(",");
       }
