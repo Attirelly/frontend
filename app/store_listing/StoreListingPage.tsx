@@ -34,6 +34,8 @@ export default function StoreListingPage() {
 
   // url to state update
   useEffect(() => {
+    // return;
+    console.log(searchParams);
     const params = new URLSearchParams(searchParams);
     const initialSelectedFilters: Record<string, string[]> = {};
     const search = params.get("search") || "";
@@ -53,6 +55,7 @@ export default function StoreListingPage() {
     });
     // Only perform the lookup if the master lists have been loaded
     if (allCity && allCity.length > 0 && cityName) {
+      console.log("all city", allCity, cityName);
       const cityObject = allCity.find((c) => c.name === cityName);
       console.log("url_city", cityObject);
       if (cityObject) setCity(cityObject);
@@ -83,7 +86,6 @@ export default function StoreListingPage() {
 
   useEffect(() => {
     const newparams = new URLSearchParams();
-    console.log("query2", query);
     if (query) {
       newparams.set("search", query);
     }

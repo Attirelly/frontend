@@ -77,8 +77,6 @@ function createFilterStore() {
 
       for (const [facetName, values] of Object.entries(apiFacets)) {
         if (!values || typeof values !== "object") continue;
-
-        console.log("activeFacet" , activeFacet)
         if (
           activeFacet &&
           facetName.toLowerCase() === activeFacet?.toLowerCase() &&
