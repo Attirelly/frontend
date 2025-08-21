@@ -39,6 +39,7 @@ export default function ProductContainer({
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement>(null);
   const prevStoreTypeRef = useRef<string>("");
+  const isObserverTriggered = useRef(false);
   const [skipFilters, setSkipFilters] = useState(false);
   const [noResultFound, setNoResultFound] = useState(false);
 
@@ -97,12 +98,12 @@ export default function ProductContainer({
       filterParam += priceFilterString;
 
       let encodedFilterParam = encodeURIComponent(filterParam);
-      
+
       // console.log("ajsdf sdjf ",currentPage, BUFFER_SIZE, controller.signal);
       // if(currentPage === 1 )return;
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${encodedFilterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`,
-        controller? { signal: controller.signal } : {}
+        controller ? { signal: controller.signal } : {}
       );
 
       const data = res.data;
@@ -164,11 +165,20 @@ export default function ProductContainer({
     }
   };
 
-//   useEffect(() => {
-// fetchProducts(0);
-//   }, []);
+  //   useEffect(() => {
+  // fetchProducts(0);
+  //   }, []);
   useEffect(() => {
-    console.log("changes",selectedFilters, filters, query, storeTypeString, sortBy, city, area );
+    console.log(
+      "changes",
+      selectedFilters,
+      filters,
+      query,
+      storeTypeString,
+      sortBy,
+      city,
+      area
+    );
     const controller = new AbortController();
     setPage(0);
     setProducts([]);
@@ -191,7 +201,6 @@ export default function ProductContainer({
       };
     }
   }, [buffer.length, hasMore]);
-  
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -201,6 +210,7 @@ export default function ProductContainer({
             const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
             setProducts((prev) => [...prev, ...nextItems]);
             setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
+            isObserverTriggered.current = true;
           }
         }
       },
@@ -211,7 +221,31 @@ export default function ProductContainer({
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, [loaderRef.current, loading, buffer]);
+  }, [buffer , loading]);
+
+
+  useEffect(() => {
+    console.log("buffer" , buffer)
+    console.log("loadref" , loaderRef.current)
+    const fillViewport = () => {
+      if (loaderRef.current && buffer.length > 0 && !loading) {
+        console.log("jagah hai") ; 
+        const { top } = loaderRef.current.getBoundingClientRect();
+        const isLoaderVisible = top <= window.innerHeight;
+
+        // If loader is visible and we have items in buffer, load them
+        if (isLoaderVisible) {
+          const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
+          setProducts((prev) => [...prev, ...nextItems]);
+          setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
+        }
+      }
+    };
+
+    // Run the check after the initial render and whenever products are added
+    fillViewport();
+  }, [products, buffer, loading])
+
 
   return noResultFound ? (
     <NoResultFound />
