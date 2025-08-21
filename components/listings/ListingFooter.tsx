@@ -25,7 +25,7 @@ const socialPlatforms = [
     hoverColor: 'hover:bg-[#E4405F]',
   },
   {
-    name: 'LinkedIn',
+    name: 'linkedin',
     href: 'https://www.linkedin.com/company/attirelly', // Replace with your Twitter/X URL
     hoverColor: 'hover:bg-[#1DA1F2]',
   },
