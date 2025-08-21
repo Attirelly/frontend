@@ -42,7 +42,7 @@ export default function ProductContainer({
   const isObserverTriggered = useRef(false);
   const [skipFilters, setSkipFilters] = useState(false);
   const [noResultFound, setNoResultFound] = useState(false);
-  const [apiHasMore , setApiHasMore] = useState(true) ; 
+  const [apiHasMore, setApiHasMore] = useState(true);
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
@@ -193,8 +193,12 @@ export default function ProductContainer({
   }, [selectedFilters, filters, query, storeTypeString, sortBy, city, area]);
 
   useEffect(() => {
-    if (page > 0 && buffer.length <= REFETCH_THRESHOLD && !loading && apiHasMore) {
-      console.log("buffer, page", buffer.length, page);
+    if (
+      page > 0 &&
+      buffer.length <= REFETCH_THRESHOLD &&
+      !loading &&
+      apiHasMore
+    ) {
       const controller = new AbortController();
       setLoading(true);
       fetchProducts(page, controller);
@@ -212,7 +216,6 @@ export default function ProductContainer({
             const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
             setProducts((prev) => [...prev, ...nextItems]);
             setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
-            isObserverTriggered.current = true;
           }
         }
       },
@@ -223,15 +226,12 @@ export default function ProductContainer({
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, [buffer , loading]);
-
+  }, [buffer, loading]);
 
   useEffect(() => {
-    console.log("buffer" , buffer)
-    console.log("loadref" , loaderRef.current)
+
     const fillViewport = () => {
       if (loaderRef.current && buffer.length > 0 && !loading) {
-        console.log("jagah hai") ; 
         const { top } = loaderRef.current.getBoundingClientRect();
         const isLoaderVisible = top <= window.innerHeight;
 
@@ -243,18 +243,14 @@ export default function ProductContainer({
         }
       }
     };
-
-    // Run the check after the initial render and whenever products are added
     fillViewport();
-  }, [products, buffer, loading])
+  }, [products, buffer, loading]);
 
   useEffect(() => {
-
     if (!apiHasMore && buffer.length === 0) {
       setHasMore(false);
     }
-  }, [apiHasMore, buffer]); 
-
+  }, [apiHasMore, buffer]);
 
   return noResultFound ? (
     <NoResultFound />
