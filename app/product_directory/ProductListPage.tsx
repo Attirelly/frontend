@@ -186,11 +186,15 @@ export default function ProductListPage() {
 
         {/* Store Type Selection */}
         <div className="mt-10">
-          <StoreTypeButtons
+          <StoreTypeTabs
+                    defaultValue={ storeType?.store_type ?? matchedStoreType ?? "" }
+                    context="products"
+                  />
+          {/* <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
             context="product"
-            defaultValue={ storeType?.store_type || matchedStoreType }
-          />
+            defaultValue={ storeType?.store_type ?? matchedStoreType ?? "" }
+          /> */}
 
           {/* <StoreTypeTabs context={"products"} /> */}
         </div>

@@ -44,6 +44,7 @@ export default function SocialLinksComponent() {
       try {
         const response = await api.get(`stores/${storeId}`);
         const storeData = response?.data;
+        
 
         const instagramUsername = storeData?.instagram_link
           ? new URL(storeData.instagram_link).pathname

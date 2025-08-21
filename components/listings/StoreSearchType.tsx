@@ -72,8 +72,9 @@ export default function StoreSearchType({
   if (!visible) return null;
 
   const handleSearchTypeClick = (type: StoreType) => {
-    setStoreType({ id: type.id, store_type: type.store_type });
-    router.push("/store_listing");
+    let redirect_url = type && type.store_type ? "/store_listing?store_type="+ type.store_type : "/store_listing"
+    console.log(redirect_url) ;
+    router.push(redirect_url);
   };
 
   return (
