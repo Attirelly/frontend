@@ -189,7 +189,7 @@ export default function ProductListPage() {
           <StoreTypeButtons
             options={STORE_TYPE_OPTIONS}
             context="product"
-            defaultValue={matchedStoreType || storeType?.store_type}
+            defaultValue={ storeType?.store_type || matchedStoreType }
           />
 
           {/* <StoreTypeTabs context={"products"} /> */}
