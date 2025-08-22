@@ -123,8 +123,7 @@ export default function StoreProfilePage() {
     // if (sortBy) {
     //   params.set("sortBy", sortBy);
     // }
-    console.log("select filter", selectedFilters);
-    console.log("city and area", city, area);
+
     Object.entries(selectedFilters).forEach(([key, values]) => {
       if (values && values.length > 0) {
         newparams.set(key, values.join(","));
@@ -195,7 +194,7 @@ export default function StoreProfilePage() {
         {viewType === "Posts" && (
           <div className="mt-8 flex justify-center w-full">
             <div className="w-full max-w-[950px] px-4">
-              <PostGalleryContainer />
+              <PostGalleryContainer storeId={storeId} />
             </div>
           </div>
         )}
