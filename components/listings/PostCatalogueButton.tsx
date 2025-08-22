@@ -11,7 +11,7 @@ type PostCatalogueButtonProps = {
   storeId: string;
 };
 
-export default function PostCatalogueButton({
+export default function   PostCatalogueButton({
   defaultValue = 'Posts',
   storeId,
 }: PostCatalogueButtonProps) {

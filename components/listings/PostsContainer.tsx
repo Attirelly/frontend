@@ -6,8 +6,11 @@ import GridPostGallerySkeleton from './skeleton/store_desc/GridPostGallerySkelet
 import InstagramFeed from '../InstagramFeed';
 import ApifyPostGallery from './ApifyPostGallery';
 
+interface IdProp {
+  storeId : string
+}
 
-export default function PostGalleryContainer() {
+export default function PostGalleryContainer({storeId}:IdProp) {
 
   const { instaMedia, instaMediaLoading, instaUsername, instaMediaApify, storeName } = useHeaderStore();
 
@@ -18,7 +21,7 @@ export default function PostGalleryContainer() {
       {instaMediaLoading ? (
         <GridPostGallerySkeleton />
       ) : instaMedia?.length > 0 ? (
-        <GridPostGallery posts={instaMedia} storeName={storeName}/>
+        <GridPostGallery sellerId={storeId} />
       ) : instaMediaApify ?(
         <ApifyPostGallery posts={instaMediaApify} />
       )
