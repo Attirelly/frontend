@@ -22,6 +22,7 @@ import { roboto, manrope } from "@/font";
 import CustomerSignIn from "@/components/Customer/CustomerSignIn";
 import useAuthStore from "@/store/auth";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import Link from "next/link";
 
 
 export default function ProductDetail() {
@@ -290,7 +291,7 @@ Could you please confirm its availability and share more details.`;
 
               <div className="mt-4 flex items-center gap-2">
                 <button
-                  className="p-2 rounded-xl bg-gray-50 "
+                  className="p-2 rounded-xl bg-black disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   onClick={prevImage}
                   disabled={startIndex === 0 && activeIndex === 0}
                 >
@@ -316,7 +317,7 @@ Could you please confirm its availability and share more details.`;
                 </div>
 
                 <button
-                  className="p-2 rounded-xl bg-gray-100"
+                  className="p-2 rounded-xl bg-black disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   onClick={nextImage}
                   disabled={activeIndex === endIndex && endIndex === images.length - 1}
                 >
@@ -363,7 +364,7 @@ Could you please confirm its availability and share more details.`;
   //         </div>
         )}
               <p className="text-[24px] font-medium leading-9.5 tracking-normal">
-                By {storeBasicInfo?.store_name}
+                By <Link href={`/store_profile/${product?.store_id}`} className="hover:text-gray-500">{storeBasicInfo?.store_name}</Link>
               </p>
               <h1 className="text-[20px] text-[#7D7D7D] font-medium tracking-tighter mt-2">
   {product?.title

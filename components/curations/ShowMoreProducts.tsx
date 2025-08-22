@@ -4,48 +4,6 @@ import { ProductCardType } from '@/types/ProductTypes';
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { toast } from "sonner";
-// const prods: ProductCardType[] = [
-//     {
-//         title: 'dasads',
-//         price: 13,
-//         originalPrice: 12,
-//         imageUrl: ['https://picsum.photos/200/300'],
-//         discountPercentage: 23,
-//         description: 'asdasd',
-//     },
-//     {
-//         title: 'dasads',
-//         price: 13,
-//         originalPrice: 12,
-//         imageUrl: ['https://picsum.photos/200/300'],
-//         discountPercentage: 23,
-//         description: 'asdasd',
-//     },
-//     {
-//         title: 'dasads',
-//         price: 13,
-//         originalPrice: 12,
-//         imageUrl: ['https://picsum.photos/200/300'],
-//         discountPercentage: 23,
-//         description: 'asdasd',
-//     },
-//     {
-//         title: 'dasads',
-//         price: 13,
-//         originalPrice: 12,
-//         imageUrl: ['https://picsum.photos/200/300'],
-//         discountPercentage: 23,
-//         description: 'asdasd',
-//     },
-//     {
-//         title: 'dasads',
-//         price: 13,
-//         originalPrice: 12,
-//         imageUrl: ['https://picsum.photos/200/300'],
-//         discountPercentage: 23,
-//         description: 'asdasd',
-//     },
-// ];
 
 interface ShowMoreProductProps {
     store_id: string,
@@ -73,8 +31,8 @@ export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductPro
                 return {
                     id:item.id,
                     imageUrl: item.image || [],
-                    title: item.title || 'Untitled Product',
-                    description: item.description || '',
+                    title: item.store_name || 'Untitled Product',
+                    description: item.title || '',
                     price,
                     originalPrice,
                     discountPercentage: discount.toString(), // If needed as a string
@@ -92,7 +50,7 @@ export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductPro
         }
     }, []);
     return (
-        <div className="flex gap-5 overflow-x-auto scrollbar-thin">
+        <div className="flex gap-5 overflow-x-auto scrollbar-none">
 
             {products.map((product, index) => (
                 <div key={index} className="w-[240px] flex-shrink-0">

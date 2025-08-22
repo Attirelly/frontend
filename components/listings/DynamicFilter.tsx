@@ -19,29 +19,29 @@ const priceRangeOrder = [
 ];
 
 const priceStartMap: { [storeType: string]: { [priceRange: string]: string } } =
-  {
-    "Designer Label": {
-      Affordable: "starts from 2,000/-",
-      Premium: "starts from 20,000/-",
-      Luxury: "starts from 50,000/-",
-    },
-    "Retail Store": {
-      Affordable: "starts from 500/-",
-      Premium: "starts from 2,500/-",
-      Luxury: "starts from 25,000/-",
-    },
-    Tailor: {
-      Affordable: "starts from 500/-",
-      Premium: "starts from 1,500/-",
-      Luxury: "starts from 5,000/-",
-    },
-    Stylist: {
-      Affordable: "starts from 500/-",
-      Premium: "starts from 2,000/-",
-      Luxury: "starts from 5,000/-",
-    },
-    // Add other store types here...
-  };
+{
+  "Designer Label": {
+    Affordable: "starts from 2,000/-",
+    Premium: "starts from 20,000/-",
+    Luxury: "starts from 50,000/-",
+  },
+  "Retail Store": {
+    Affordable: "starts from 500/-",
+    Premium: "starts from 2,500/-",
+    Luxury: "starts from 25,000/-",
+  },
+  Tailor: {
+    Affordable: "starts from 500/-",
+    Premium: "starts from 1,500/-",
+    Luxury: "starts from 5,000/-",
+  },
+  Stylist: {
+    Affordable: "starts from 500/-",
+    Premium: "starts from 2,000/-",
+    Luxury: "starts from 5,000/-",
+  },
+  // Add other store types here...
+};
 
 const DynamicFilter = ({ context }: DynamicFilterProps) => {
   const filterStore =
@@ -239,17 +239,16 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                       {fName === "Area"
                         ? "Location"
                         : fName === "Primary Category"
-                        ? "Category"
-                        : fName}
+                          ? "Category"
+                          : fName}
                     </h2>
                     <Image
                       src="/ListingPageHeader/dropdown.svg"
                       alt="toggle"
                       width={20}
                       height={20}
-                      className={`transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform ${isOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </div>
 
@@ -279,17 +278,15 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                   className="h-1 bg-black rounded-full"
                                   style={{
                                     position: "absolute",
-                                    left: `${
-                                      ((localPriceRange[0] - priceBounds[0]) /
-                                        (priceBounds[1] - priceBounds[0])) *
+                                    left: `${((localPriceRange[0] - priceBounds[0]) /
+                                      (priceBounds[1] - priceBounds[0])) *
                                       100
-                                    }%`,
-                                    width: `${
-                                      ((localPriceRange[1] -
-                                        localPriceRange[0]) /
-                                        (priceBounds[1] - priceBounds[0])) *
+                                      }%`,
+                                    width: `${((localPriceRange[1] -
+                                      localPriceRange[0]) /
+                                      (priceBounds[1] - priceBounds[0])) *
                                       100
-                                    }%`,
+                                      }%`,
                                     top: 0,
                                     bottom: 0,
                                   }}
@@ -335,14 +332,8 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
 
                           <div className="space-y-2 max-h-40 overflow-y-auto pr-2 scrollbar-thin">
                             {filteredValues.length > 0 ? (
-                              // Sort the filteredValues array based on a predefined order
                               filteredValues
-                                // .filter((tempFilter) => {
-                                //   return (
-                                //     tempFilter.name.toLowerCase() !== "others"
-                                //   );
-                                // })
-                                .slice() // Create a copy to avoid mutating the original array
+                                .slice()
                                 .sort((a, b) => {
                                   // Define the order of price ranges
                                   const order: { [key: string]: number } = {
@@ -382,12 +373,37 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                                     transition-colors duration-200"
                                       />
                                       <div className="flex justify-between w-full">
-                                        <span
-                                          className="text-sm text-[#1F2937]"
-                                          style={{ fontWeight: 400 }}
-                                        >
-                                          {facet.name}
-                                        </span>
+                                        <div className="flex-grow">
+                                          {fName === "Area" || fName === "City" || fName === "Primary Category" ? (
+                                            // Case 1: Display name and count with special styling
+                                            <div className="flex items-center justify-between">
+                                              <span
+                                                className="text-sm text-[#1F2937]"
+                                                style={{ fontWeight: 400 }}
+                                              >
+                                                {facet.name}
+                                              </span>
+                                              <span
+                                                className="
+                                                  flex items-center justify-center 
+                                                  h-5 min-w-[1.25rem] px-1.5 
+                                                  bg-gray-200 rounded-full 
+                                                  text-xs font-medium text-gray-700
+                                                "
+                                              >
+                                                {facet.count}
+                                              </span>
+                                            </div>
+                                          ) : (
+                                            // Case 2: Display only the name
+                                            <span
+                                              className="text-sm text-[#1F2937]"
+                                              style={{ fontWeight: 400 }}
+                                            >
+                                              {facet.name}
+                                            </span>
+                                          )}
+                                        </div>
                                         <span
                                           className="text-sm text-[#666666] mr-4"
                                           style={{ fontWeight: 400 }}
@@ -395,11 +411,11 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                           {fName === "Price Ranges"
                                             ? storeType?.store_type &&
                                               priceStartMap[
-                                                storeType.store_type
+                                              storeType.store_type
                                               ]?.[facet.name]
                                               ? priceStartMap[
-                                                  storeType.store_type
-                                                ][facet.name]
+                                              storeType.store_type
+                                              ][facet.name]
                                               : ""
                                             : ""}
                                         </span>
