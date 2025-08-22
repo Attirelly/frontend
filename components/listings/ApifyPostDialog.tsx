@@ -37,9 +37,10 @@ export default function ApifyPostDialog({ isOpen, post, onClose, onNext, onPrev,
     <div className="fixed inset-0 z-50 bg-neutral-900/70 flex justify-center items-center">
       <div
         ref={wrapperRef}
-        className="relative flex w-[1000px] h-[600px]"
+        className="relative flex max-w-[957px] max-h-[621px]"
       >
-        <div className='grid grid-cols-[1.5fr_1fr] w-full h-full rounded-2xl overflow-hidden'>
+        {/* <div className='grid grid-cols-[1.5fr_1fr] rounded-2xl overflow-hidden'> */}
+        <div className='flex rounded-2xl overflow-hidden'>
           <div className="flex justify-center items-center w-full h-full bg-black overflow-hidden">
             {post.media_type === 'Sidecar' ? (
               <SidecarCarousel mediaUrls={post.media_urls} />
@@ -63,7 +64,7 @@ export default function ApifyPostDialog({ isOpen, post, onClose, onNext, onPrev,
           </div>
 
 
-          <div className={`${manrope.className} bg-white px-3 flex flex-col gap-3`}
+          <div className={`${manrope.className} max-w-[519px] bg-white px-3 flex flex-col gap-[25px]`}
             style={{ fontWeight: 600 }}>
             <div className='flex pt-2 gap-4 items-center'>
               <img
@@ -73,7 +74,7 @@ export default function ApifyPostDialog({ isOpen, post, onClose, onNext, onPrev,
               <span className='text-[20px] text-black' style={{fontWeight:700}}>{storeName}  x  Attirelly</span>
             </div>
 
-            {/* <hr className='border border-gray-300 '/> */}
+            <hr className='border border-[#E8E8E8]'/>
             <span className='text-sm text-black' style={{ fontWeight: 400 }}>{post.caption || ''}</span>
             {/* <div className='text-sm flex gap-3'>
               <div className='flex flex-col items-center'>

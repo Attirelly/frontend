@@ -19,74 +19,67 @@ import ListingPageHeader from "@/components/listings/ListingPageHeader";
 
 export default function HomePage() {
     return (
-        <div className="flex flex-col bg-white">
-            <ListingPageHeader />
+        // Remove the background color from the outermost container
+        <div className="flex flex-col">
 
-            <div className="px-20">
-                <HeroSection />
+            {/* --- 1. WHITE BACKGROUND AREA --- */}
+            <div className="bg-white">
+                <ListingPageHeader />
+
+                <div className="px-20">
+                    <HeroSection />
+                </div>
+
+                <div className="mt-16 mx-auto mb-16">
+                    <StoreTypeSelection />
+                </div>
+
+                <div className="space-y-16">
+                    {/* section 1 - 5 images scollable */}
+                    <div className="px-11">
+                        <SectionOneContainer />
+                    </div>
+                    {/* section 2 - 4 images, detail, shop now*/}
+                    <div className="px-11">
+                        <SectionTwoContainer />
+                    </div>
+                    {/* section 3 - five images, fixed, detail */}
+                    <div className="px-11">
+                        <SectionThreeContainer />
+                    </div>
+                    {/* section 4 - overlapping images */}
+                    <div className="px-11">
+                        <SectionFourContainer />
+                    </div>
+                </div>
             </div>
-
-            <div className="mt-16 mx-auto mb-16">
-                <StoreTypeSelection />
-            </div>
-            <div className="space-y-16">
-
-                {/* section 1 - 5 images scollable */}
-                <div className="px-11">
-                    <SectionOneContainer />
+            <div className="bg-black">
+                <div className="space-y-16 pt-16">
+                    <div className="px-11">
+                        <SectionFiveContainer />
+                    </div>
+                    <SectionSixContainer />
+                    <SectionSevenContainer />
                 </div>
 
-                {/* section 2 - 4 images, detail, shop now*/}
-                <div className="px-11">
-                    <SectionTwoContainer />
+                <div className="mt-20 space-y-20 w-full">
+                    <SectionEightContainer />
+                    <SectionNineContainer />
+                    <SectionTenContainer />
+                    <SectionElevenContainer />
+                    <SectionTwelveContainer />
                 </div>
 
-
-                {/* section 3 - five images, fixed, detail */}
-                <div className="px-11">
-                    <SectionThreeContainer />
+                <div className="mt-10">
+                    <ScrollingTextBanner />
                 </div>
-
-                {/* section 4 - overlapping images */}
-                <div className="px-11">
-                    <SectionFourContainer />
-                </div>
-
-
-                {/* section 5 - 5 images scollable */}
-                <div className="px-11">
-                    <SectionFiveContainer />
-                </div>
-                {/* section 6 - 4 images, detail, shop now */}
-                <SectionSixContainer />
-
-                {/* section 7 - five images, fixed, detail */}
-                <SectionSevenContainer />
-
                 
+                <CurrentLocs />
             </div>
 
-            <div className="mt-20 space-y-20">
 
-                <SectionEightContainer />
-
-
-                <SectionNineContainer />
-
-                <SectionTenContainer />
-
-                <SectionElevenContainer />
-
-                <SectionTwelveContainer />
-
-            </div>
-            <div className="mt-10">
-             <ScrollingTextBanner/>
-            </div>
-            <CurrentLocs/>
-
+            {/* --- 3. FOOTER AREA (No background wrapper) --- */}
             <ListingFooter />
-            
         </div>
     )
 }

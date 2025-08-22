@@ -36,7 +36,7 @@ export default function CurrentLocs() {
       {/* Right Column: Supported By */}
       <div className="flex flex-col items-center justify-start gap-5">
         <span className="text-[28px] text-black">Supported By</span>
-        <div className="flex gap-3 items-center">
+        {/* <div className="flex gap-3 items-center"> */}
           <Image
             src="/Homepage/ISB_AIC.svg"
             alt="ISB AIC"
@@ -46,11 +46,11 @@ export default function CurrentLocs() {
           <Image
             src="/Homepage/Razorpay.svg"
             alt="Razorpay"
-            width={186}
-            height={70}
+            width={310}
+            height={61}
             className="mr-3"
           />
-        </div>
+        {/* </div> */}
       </div>
     </div>
   );

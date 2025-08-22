@@ -60,12 +60,12 @@ export default function ProductCard({
       rel="noopener noreferrer"
       className="block w-full"
     >
-      <div className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}>
+      <div className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2">
         
         {/* Product Image Carousel */}
-        <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group">
+        <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group"
+        onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}>
           <Image
             src={imageUrl[imageIndex]}
             alt={title}

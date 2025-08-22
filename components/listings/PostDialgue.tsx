@@ -37,9 +37,10 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
     <div className="fixed inset-0 z-50 bg-neutral-900/70 flex justify-center items-center ">
       <div
         ref={wrapperRef}
-        className="relative flex max-w-[70vw] max-h-[90vh]"
+        className="relative flex max-w-[957px] max-h-[621px]"
       >
-        <div className='grid grid-cols-[1.5fr_1fr] rounded-2xl overflow-hidden'>
+        <div className='flex rounded-2xl overflow-hidden'>
+          <div className="flex justify-center items-center w-full h-full bg-black overflow-hidden">
           {post.media_type === 'CAROUSEL_ALBUM' ? (
             <CorouselImages key={post.id} mediaUrls={post.carousel_images} />
           ) : 
@@ -62,7 +63,8 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
               className="max-w-full max-h-full object-contain"
             />
           )}
-          <div className={`${manrope.className} bg-white px-3 flex flex-col gap-3`}
+          </div>
+          <div className={`${manrope.className} w-[519px] bg-white px-3 flex flex-col gap-[25px]`}
             style={{ fontWeight: 600 }}>
             <div className='flex pt-2 gap-4 items-center'>
               <img
@@ -72,7 +74,7 @@ export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, is
               <span className='text-[20px] text-black' style={{fontWeight:700}}>{storeName}  x  Attirelly</span>
             </div>
 
-            {/* <hr className='border border-gray-300 '/> */}
+            <hr className='border border-[#E8E8E8]'/>
             <span className='text-sm text-black' style={{ fontWeight: 400 }}>{post.caption || ''}</span>
             {/* <div className='text-sm flex gap-3'>
               <div className='flex flex-col items-center'>
