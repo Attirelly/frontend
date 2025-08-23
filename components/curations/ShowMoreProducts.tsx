@@ -50,7 +50,7 @@ export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductPro
         }
     }, []);
     return (
-        <div className="flex gap-5 overflow-x-auto scrollbar-none">
+        <div className="py-2 flex gap-5 overflow-x-auto scrollbar-none">
 
             {products.map((product, index) => (
                 <div key={index} className="w-[240px] flex-shrink-0">

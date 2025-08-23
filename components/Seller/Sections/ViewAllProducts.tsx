@@ -355,7 +355,7 @@ export default function ProductsPage({
   const [isReady, setIsReady] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 30,
   });
   const [filters, setFilters] = useState<ProductFiltersType>({
     category: [],

@@ -334,7 +334,8 @@ export default function ListingPageHeader() {
               Attirelly
             </div>
           </div>
-          <div className="flex h-full items-center justify-center">
+          <div className="flex h-full items-center justify-center"
+          onMouseEnter={() => setSearchFocus(false)}>
             <MenWomenNavbar />
           </div>
           <div className="flex justify-center">

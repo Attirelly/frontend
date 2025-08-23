@@ -92,22 +92,28 @@ export default function StoreInfoPage({
 
         {/* Location */}
         <div
-          className={`flex items-center gap-2 mt-6 ${locationUrl ? "cursor-pointer" : "cursor-default"}`}
-          onClick={locationUrl ? handleLocationRoute : undefined}
-        >
-          <Image
-            src="/ListingPageHeader/location_pin_black.svg"
-            alt="Location"
-            width={16}
-            height={16}
-          />
-          <span
-            className={`${manrope.className} text-sm text-black`}
-            style={{ fontWeight: 400 }}
-          >
-            {area === 'Others' ? '' : `${area},`} {city}
-          </span>
-        </div>
+  className={`
+    group flex items-center gap-2 mt-6 
+    ${locationUrl ? "cursor-pointer" : "cursor-default"}
+  `}
+  onClick={locationUrl ? handleLocationRoute : undefined}
+>
+  <Image
+    src="/ListingPageHeader/location_pin_black.svg"
+    alt="Location"
+    width={16}
+    height={16}
+    className={`${locationUrl ? "transition-transform duration-200 ease-in-out group-hover:-translate-y-1" : ""}`}
+  />
+  <span
+    className={`
+      ${manrope.className} text-sm text-black ${locationUrl ? "transition-colors duration-200 group-hover:text-gray-400" : ""}
+    `}
+    style={{ fontWeight: 400 }}
+  >
+    {area === 'Others' ? '' : `${area},`} {city}
+  </span>
+</div>
       </div>
 
       {/* Right: Store Info */}
@@ -153,7 +159,7 @@ export default function StoreInfoPage({
           <div className="flex flex-col gap-6">
             <div className="flex gap-12">
               {post_count && post_count !== "0" ? (
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 items-center">
                   <h2 className="text-black" style={{ fontWeight: 700 }}>
                     {formatNumberStr(post_count)}
                   </h2>
@@ -164,7 +170,7 @@ export default function StoreInfoPage({
               )}
 
               {instagramFollowers && instagramFollowers !== "0" ? (
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 items-center">
                   <h2 className="text-black" style={{ fontWeight: 700 }}>
                     {formatNumberStr(instagramFollowers)}
                   </h2>
@@ -175,7 +181,7 @@ export default function StoreInfoPage({
               )}
 
               {product_count && product_count !== "0" ? (
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 items-center">
                   <h2 className="text-black" style={{ fontWeight: 700 }}>
                     {formatNumberStr(product_count)}
                   </h2>

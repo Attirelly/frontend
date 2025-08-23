@@ -610,12 +610,12 @@ Could you please confirm its availability and share more details.`;
       {product && (
         <div className="w-300 flex flex-col mx-auto">
           <hr
-            className="border-t border-transparent"
-            style={{
-              borderImage:
-                "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
-              borderImageSlice: 1,
-            }}
+            className="border-t border-gray-300"
+            // style={{
+            //   borderImage:
+            //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
+            //   borderImageSlice: 1,
+            // }}
           />
 
           <div className={`${roboto.className} flex mt-16 justify-between`}>

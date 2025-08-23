@@ -28,6 +28,29 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           gap: "16px",
         }}
       >
+
+        <Select
+          mode="multiple"
+          placeholder="Product Name"
+          value={filters.productName}
+          onChange={(v) => setFilters({ ...filters, productName: v })}
+        >
+          {filterOptions.productNames.map((c) => (
+            <Option key={c}>{c}</Option>
+          ))}
+        </Select>
+
+        <Select
+          mode="multiple"
+          placeholder="SKU"
+          value={filters.sku}
+          onChange={(v) => setFilters({ ...filters, sku: v })}
+        >
+          {filterOptions.skus.map((c) => (
+            <Option key={c}>{c}</Option>
+          ))}
+        </Select>
+
         <Select
           mode="multiple"
           placeholder="Primary Category"
@@ -163,28 +186,6 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
               <Option key={subloc}>{subloc}</Option>
             ))}
         </Select> */}
-
-        <Select
-          mode="multiple"
-          placeholder="Product Name"
-          value={filters.productName}
-          onChange={(v) => setFilters({ ...filters, productName: v })}
-        >
-          {filterOptions.productNames.map((c) => (
-            <Option key={c}>{c}</Option>
-          ))}
-        </Select>
-
-        <Select
-          mode="multiple"
-          placeholder="SKU"
-          value={filters.sku}
-          onChange={(v) => setFilters({ ...filters, sku: v })}
-        >
-          {filterOptions.skus.map((c) => (
-            <Option key={c}>{c}</Option>
-          ))}
-        </Select>
 
 
         {/* <Search

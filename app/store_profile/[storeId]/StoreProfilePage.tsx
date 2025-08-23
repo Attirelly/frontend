@@ -165,7 +165,7 @@ export default function StoreProfilePage() {
       <div className="flex flex-col items-center w-full">
         <div className="mt-8 w-full max-w-4xl px-4">
           <StoreInfoContainer storeId={storeId} />
-          <hr className="border border-[#D9D9D9]" />
+          {/* <hr className="border border-[#D9D9D9]" />
           {defaultButton ? (
             <PostCatalogueButton
               storeId={storeId}
@@ -173,9 +173,24 @@ export default function StoreProfilePage() {
             />
           ) : (
             <PostCatalogueButton storeId={storeId} />
-          )}
+          )} */}
+        </div>
+        <div 
+          className={`w-full px-4 mt-8 
+            ${viewType === 'Posts' ? 'max-w-[950px]' : 'max-w-[1350px]'}
+          `}
+        >
+          <hr className="border border-[#D9D9D9]" />
         </div>
 
+        {defaultButton ? (
+            <PostCatalogueButton
+              storeId={storeId}
+              defaultValue={defaultButton}
+            />
+          ) : (
+            <PostCatalogueButton storeId={storeId} />
+          )}
         {viewType === "Posts" && (
           <div className="mt-8 flex justify-center w-full">
             <div className="w-full max-w-[950px] px-4">
