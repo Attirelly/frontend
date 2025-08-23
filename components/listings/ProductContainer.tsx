@@ -14,7 +14,7 @@ interface ProductContainerProps {
   colCount?: number;
 }
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 20;
 const BUFFER_SIZE = 60; // Fetch 60 products at a time from the backend
 const REFETCH_THRESHOLD = Math.round(BUFFER_SIZE * 0.2); // Refetch when 80% of buffer is used
 
@@ -170,12 +170,15 @@ export default function ProductContainer({
     }
   };
 
+  console.log("Has More ? and loader Ref ? ", hasMore, loaderRef.current);
+
   useEffect(() => {
     const controller = new AbortController();
     setPage(0);
     setProducts([]);
     setBuffer([]);
     setHasMore(true);
+    setApiHasMore(true);
     fetchProducts(0, controller);
     return () => {
       controller.abort();
@@ -199,7 +202,12 @@ export default function ProductContainer({
   }, [buffer.length, apiHasMore]);
 
   useEffect(() => {
-    console.log("IntersectionObserver triggered!");
+    const currentRef = loaderRef.current;
+
+    // If there's no element to observe, or if we are in a loading state, we do nothing.
+    if (!currentRef || loading) {
+      return;
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !loading) {
@@ -212,13 +220,13 @@ export default function ProductContainer({
       },
       { threshold: 0.1 }
     );
-    console.log("view port trigger observer ke under", loaderRef.current);
-    const currentRef = loaderRef.current;
-    if (currentRef) observer.observe(currentRef);
+    observer.observe(currentRef);
+
+    // The cleanup function uses the same `currentRef` variable
     return () => {
-      if (currentRef) observer.unobserve(currentRef);
+      observer.unobserve(currentRef);
     };
-  }, [loaderRef.current, buffer, loading]);
+  }, [hasMore, buffer, loading]);
 
   useEffect(() => {
     if (!apiHasMore && buffer.length === 0) {
@@ -245,11 +253,11 @@ export default function ProductContainer({
       )}
       {hasMore && (
         <div ref={loaderRef} className="h-12 flex justify-center items-center">
-          {/* {loading && products.length > 0 && ( */}
-            {/* <span className="text-gray-500 text-sm">
+          {loading && products.length > 0 && (
+            <span className="text-gray-500 text-sm">
               Loading more products...
-            </span> */}
-          {/* )} */}
+            </span>
+          )}
         </div>
       )}
     </>
