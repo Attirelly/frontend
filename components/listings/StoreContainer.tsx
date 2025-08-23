@@ -226,7 +226,7 @@ export default function StoreContainerPage() {
 
   // Logic for infinite scrolling
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(      
       (entries) => {
         if (entries[0].isIntersecting && !loading) {
           if (buffer.length > ITEMS_PER_PAGE) {

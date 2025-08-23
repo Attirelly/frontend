@@ -30,7 +30,7 @@ export default function ProductContainer({
     priceBounds,
   } = useProductFilterStore();
 
-  const { query, city, area, storeTypeString, sortBy } = useHeaderStore();
+  const { query, city, area, storeType, sortBy } = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [buffer, setBuffer] = useState<ProductCardType[]>([]); // New buffer state
   const [page, setPage] = useState(0);
@@ -83,7 +83,7 @@ export default function ProductContainer({
     currentPage: number,
     controller?: AbortController
   ) => {
-    const facetFilters = buildFacetFilters(selectedFilters, storeTypeString);
+    const facetFilters = buildFacetFilters(selectedFilters, storeType?.store_type);
 
     try {
       let filterParam = skipFilters ? "" : filters;
@@ -176,7 +176,7 @@ export default function ProductContainer({
     return () => {
       controller.abort();
     };
-  }, [selectedFilters, filters, query, storeTypeString, sortBy, city, area]);
+  }, [selectedFilters, filters, query, storeType, sortBy, city, area]);
 
   useEffect(() => {
     if (
