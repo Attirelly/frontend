@@ -35,7 +35,7 @@ export default function CardStack() {
           id: p.product_id,
           imageUrl: p.images[0].image_url || "/Homepage/CardTypeOne.svg",
           title: p.product_name,
-          description: p.stores && p.stores.area && p.stores.area?.name.toLowerCase() === "others" ?  `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
+          description: p.stores && p.stores.area && p.stores.area?.name.toLowerCase() === "others" ? `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
         }));
         setProducts(formattedProducts);
 
@@ -124,46 +124,54 @@ export default function CardStack() {
 
         {/* Card Stack */}
         <div className="relative flex items-center justify-center w-full h-[588px]">
-          {visibleCards.map((card) => {
-            const offset = card.offset;
-            const zIndex = 10 - Math.abs(offset);
-            const cardWidth = 392;
-            const overlap = cardWidth * 0.3;
-            const translateX = offset * overlap;
-            const scale = offset === 0 ? 1 : 0.9;
+  {/* ✅ FIX: Sort the array to stabilize the DOM order before mapping */}
+  {visibleCards
+    .sort((a, b) => a.originalIndex - b.originalIndex) // 👈 ADD THIS LINE
+    .map((card) => {
+      const offset = card.offset;
+      const zIndex = 10 - Math.abs(offset);
+      const cardWidth = 392;
+      const overlap = cardWidth * 0.3;
+      const translateX = offset * overlap;
+      const scale = offset === 0 ? 1 : 0.9;
 
-            // Height tiers based on offset
-            let heightClass = "h-full"; // center
-            if (Math.abs(offset) === 1) heightClass = "h-[588px]";
-            if (Math.abs(offset) === 2) heightClass = "h-[530px]";
+      let heightClass = "";
+      if (offset === 0) {
+        heightClass = "h-[588px]"; // Tallest (Center)
+      } else if (Math.abs(offset) === 1) {
+        heightClass = "h-[530px]"; // Medium (Adjacent)
+      } else {
+        heightClass = "h-[480px]"; // Shortest (Outer)
+      }
 
-            return (
-              <div
-                key={`${card.id}-${card.originalIndex}`}
-                className={`absolute w-[392px] ${heightClass}`}
-                style={{
-                  transform: `translateX(${translateX}px) scale(${scale})`,
-                  zIndex,
-                  transition:
-                    "transform 600ms cubic-bezier(0.25, 1, 0.5, 1), height 600ms ease",
-                  willChange: "transform, height",
-                }}
-              >
-                <a
-                  href={`/product_detail/${card.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <CardTypeOne
-                    imageUrl={card.imageUrl}
-                    title={card.title}
-                    description={card.description}
-                  />
-                </a>
-              </div>
-            );
-          })}
+      return (
+        <div
+          key={`${card.id}-${card.originalIndex}`}
+          className={`absolute w-[392px] ${heightClass}`}
+          style={{
+            transform: `translateX(${translateX}px) scale(${scale})`,
+            zIndex,
+            transition:
+              "transform 600ms cubic-bezier(0.25, 1, 0.5, 1), height 600ms ease",
+            willChange: "transform, height",
+          }}
+        >
+          {/* ... link and CardTypeOne component ... */}
+          <a
+            href={`/product_detail/${card.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <CardTypeOne
+              imageUrl={card.imageUrl}
+              title={card.title}
+              description={card.description}
+            />
+          </a>
         </div>
+      );
+    })}
+</div>
 
         {/* Right Arrow */}
         <button

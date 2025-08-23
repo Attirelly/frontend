@@ -170,8 +170,6 @@ export default function ProductContainer({
     }
   };
 
-  console.log("Has More ? and loader Ref ? ", hasMore, loaderRef.current);
-
   useEffect(() => {
     const controller = new AbortController();
     setPage(0);
