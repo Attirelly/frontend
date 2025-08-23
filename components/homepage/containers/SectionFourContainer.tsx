@@ -34,7 +34,7 @@ export default function CardStack() {
         const formattedProducts: CardData[] = productData.map((p: any) => ({
           id: p.product_id,
           imageUrl: p.images[0].image_url || "/Homepage/CardTypeOne.svg",
-          title: p.product_name,
+          title: p.title,
           description: p.stores && p.stores.area && p.stores.area?.name.toLowerCase() === "others" ? `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
         }));
         setProducts(formattedProducts);

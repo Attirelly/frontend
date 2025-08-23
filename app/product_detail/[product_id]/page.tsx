@@ -53,47 +53,47 @@ export default function ProductDetail() {
     x: number;
     y: number;
   } | null>(null);
-  
+
 
   const ZOOM_FACTOR = 2; // Adjust this value as needed
-const LENS_WIDTH = 150;
-const LENS_HEIGHT = 100;
-const ORIGINAL_IMAGE_WIDTH = 600;
-const ORIGINAL_IMAGE_HEIGHT = 600; // your image container size
+  const LENS_WIDTH = 150;
+  const LENS_HEIGHT = 100;
+  const ORIGINAL_IMAGE_WIDTH = 600;
+  const ORIGINAL_IMAGE_HEIGHT = 600; // your image container size
 
-const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-  const rect = e.currentTarget.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  
-  // Ensure lens stays within image bounds
-  const boundedX = Math.max(0, Math.min(x - LENS_WIDTH/2, rect.width - LENS_WIDTH));
-  const boundedY = Math.max(0, Math.min(y - LENS_HEIGHT/2, rect.height - LENS_HEIGHT));
-  
-  setLensPosition({ x: boundedX, y: boundedY });
-};
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Ensure lens stays within image bounds
+    const boundedX = Math.max(0, Math.min(x - LENS_WIDTH / 2, rect.width - LENS_WIDTH));
+    const boundedY = Math.max(0, Math.min(y - LENS_HEIGHT / 2, rect.height - LENS_HEIGHT));
+
+    setLensPosition({ x: boundedX, y: boundedY });
+  };
   const handleMouseLeave = () => {
     setLensPosition(null);
   };
 
   const imageRef = useRef<HTMLImageElement>(null);
-const [ratio, setRatio] = useState<number>(1);
+  const [ratio, setRatio] = useState<number>(1);
 
   const handleImageLoad = () => {
-  if (imageRef.current) {
-    const naturalWidth = imageRef.current.naturalWidth;
-    const naturalHeight = imageRef.current.naturalHeight;
+    if (imageRef.current) {
+      const naturalWidth = imageRef.current.naturalWidth;
+      const naturalHeight = imageRef.current.naturalHeight;
 
-    
-    const containerWidth = 600;
-    const containerHeight = 600;
-    const ratioio = naturalWidth/naturalHeight;
-   console.log(ratio);
-   setRatio(ratioio);
-    // const displayedWidth = naturalWidth * ratioWidth;
-    // const displayedHeight = naturalHeight * ratioHeight;
-  }
-};
+
+      const containerWidth = 600;
+      const containerHeight = 600;
+      const ratioio = naturalWidth / naturalHeight;
+      console.log(ratio);
+      setRatio(ratioio);
+      // const displayedWidth = naturalWidth * ratioWidth;
+      // const displayedHeight = naturalHeight * ratioHeight;
+    }
+  };
 
 
 
@@ -151,14 +151,15 @@ const [ratio, setRatio] = useState<number>(1);
     setPendingWhatsApp(true);     // Set intent to open WhatsApp
     setSignIn(true);              // Trigger sign-in modal
   };
+  console.log("goof", selectedColor);
 
   const sendToWhatsApp = async () => {
     setSignIn(true);
     try {
-      const phoneNumber = (storeBasicInfo?.whatsapp_number).substring(0,5) === "11111" ? "9915916707": storeBasicInfo?.whatsapp_number;
+      const phoneNumber = (storeBasicInfo?.whatsapp_number).substring(0, 5) === "11111" ? "9915916707" : storeBasicInfo?.whatsapp_number;
       const storeName = storeBasicInfo?.store_name || "Store"; // fallback if not available
       const productName = product?.title || "";
-      const variant = "color : " +  selectedColor?.color_name + " " + "size : " + selectedSize?.size_name || "";
+      const variant = "color : " + selectedColor?.color_name + " " + "size : " + selectedSize?.size_name || "";
       const price = "₹" + (selectedVariant?.mrp || "");
       const productLink = window.location.href; // current page link
 
@@ -223,21 +224,21 @@ Could you please confirm its availability and share more details.`;
       ) || [];
 
   const images = (selectedVariant?.images?.length
-  ? selectedVariant.images
-  : product?.images || []
-).map((img) => img.image_url);
+    ? selectedVariant.images
+    : product?.images || []
+  ).map((img) => img.image_url);
 
 
   const nextImage = () => {
-     if(activeIndex === endIndex){
-      setEndIndex((prev) => Math.min(prev + 1, images.length)); 
+    if (activeIndex === endIndex) {
+      setEndIndex((prev) => Math.min(prev + 1, images.length));
       setStartIndex((prev) => Math.min(prev + 1, images.length - 1));
-     }
-     setActiveIndex((prev) => (prev + 1) % images.length);
+    }
+    setActiveIndex((prev) => (prev + 1) % images.length);
   };
 
   const prevImage = () => {
-    if(activeIndex === startIndex){
+    if (activeIndex === startIndex) {
       setStartIndex((prev) => Math.max(prev - 1, 0));
       setEndIndex((prev) => Math.max(prev - 1, 4));
     }
@@ -245,7 +246,7 @@ Could you please confirm its availability and share more details.`;
   };
 
   if (!product) {
-    return <div className="p-4"><LoadingSpinner/></div>;
+    return <div className="p-4"><LoadingSpinner /></div>;
   }
 
   return (
@@ -263,7 +264,7 @@ Could you please confirm its availability and share more details.`;
                 className="w-[600px] h-[600px] relative rounded overflow-hidden"
               >
                 <Image
-                ref={imageRef}
+                  ref={imageRef}
                   src={images[activeIndex]}
                   alt={`Product Image ${activeIndex + 1}`}
                   fill
@@ -273,21 +274,21 @@ Could you please confirm its availability and share more details.`;
               </div>
 
               {lensPosition && (
-          <div
-            className="absolute pointer-events-none transition-all duration-75 ease-linear"
-            style={{
-              width: LENS_WIDTH,
-              height: LENS_HEIGHT,
-              top: lensPosition.y,
-              left: lensPosition.x,
-              backgroundColor: "transparent",
-              border: "1px solid rgba(0, 123, 255, 0.6)",
-              borderRadius: 4,
-              boxShadow: "0 0 4px rgba(0, 123, 255, 0.3)",
-              zIndex: 20,
-            }}
-          />
-        )}
+                <div
+                  className="absolute pointer-events-none transition-all duration-75 ease-linear"
+                  style={{
+                    width: LENS_WIDTH,
+                    height: LENS_HEIGHT,
+                    top: lensPosition.y,
+                    left: lensPosition.x,
+                    backgroundColor: "transparent",
+                    border: "1px solid rgba(0, 123, 255, 0.6)",
+                    borderRadius: 4,
+                    boxShadow: "0 0 4px rgba(0, 123, 255, 0.3)",
+                    zIndex: 20,
+                  }}
+                />
+              )}
 
               <div className="mt-4 flex items-center gap-2">
                 <button
@@ -330,47 +331,47 @@ Could you please confirm its availability and share more details.`;
             <div className="text-[#111] font-sans w-full max-w-xl">
               {/* ✅ Magnifier Preview Inside Description */}
               {lensPosition && (
-          <div
-            className="border border-gray-300 overflow-hidden"
-           style={{
-    width: LENS_WIDTH * ZOOM_FACTOR * 2,
-    height: LENS_HEIGHT * ZOOM_FACTOR * 2,
-    backgroundImage: `url(${images[activeIndex]})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
-    backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
-    
-    // backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
-  }}
-          />
-  // <div
-  //           className="border border-gray-300 overflow-hidden">
-  // <Image
-  // src={images[activeIndex]}
-  // alt="zoomed image"
-  // width={600}
-  // height={400}
-  // className="object-cover"
-  // style={{
-  //   width: LENS_WIDTH * ZOOM_FACTOR * 2,
-  //   height: LENS_HEIGHT * ZOOM_FACTOR * 2,
-  //   backgroundImage: `url(${images[activeIndex]})`,
-  //   backgroundRepeat: "no-repeat",
-  //   // backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
-  //   // backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
-  //   backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
-  // }}
-  // />
-  //         </div>
-        )}
+                <div
+                  className="border border-gray-300 overflow-hidden"
+                  style={{
+                    width: LENS_WIDTH * ZOOM_FACTOR * 2,
+                    height: LENS_HEIGHT * ZOOM_FACTOR * 2,
+                    backgroundImage: `url(${images[activeIndex]})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
+                    backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio}px -${lensPosition.y * ZOOM_FACTOR * 2}px`,
+
+                    // backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
+                  }}
+                />
+                // <div
+                //           className="border border-gray-300 overflow-hidden">
+                // <Image
+                // src={images[activeIndex]}
+                // alt="zoomed image"
+                // width={600}
+                // height={400}
+                // className="object-cover"
+                // style={{
+                //   width: LENS_WIDTH * ZOOM_FACTOR * 2,
+                //   height: LENS_HEIGHT * ZOOM_FACTOR * 2,
+                //   backgroundImage: `url(${images[activeIndex]})`,
+                //   backgroundRepeat: "no-repeat",
+                //   // backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
+                //   // backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio }px -${lensPosition.y * ZOOM_FACTOR * 2 }px`,
+                //   backgroundPosition: `-${lensPosition.x}px -${lensPosition.y }px`,
+                // }}
+                // />
+                //         </div>
+              )}
               <p className="text-[24px] font-medium leading-9.5 tracking-normal">
                 By <Link href={`/store_profile/${product?.store_id}`} className="hover:text-gray-500">{storeBasicInfo?.store_name}</Link>
               </p>
               <h1 className="text-[20px] text-[#7D7D7D] font-medium tracking-tighter mt-2">
-  {product?.title
-    ? product.title.charAt(0).toUpperCase() + product.title.slice(1)
-    : ""}
-</h1>
+                {product?.title
+                  ? product.title.charAt(0).toUpperCase() + product.title.slice(1)
+                  : ""}
+              </h1>
 
               <div className="flex items-center gap-4 mt-4">
                 {selectedVariant?.mrp === selectedVariant?.price ? (
@@ -432,23 +433,28 @@ Could you please confirm its availability and share more details.`;
                   <p className="text-lg font-medium">
                     <span className="text-[#7D7D7D]">Available Color: </span>
                   </p>
-                  <div className="flex gap-3 mt-5">
-                    {colors.map((color) => (
-                      <div className="flex flex-col items-center">
-                        <button
-                          key={color.color_id}
-                          className={`w-10 h-10 rounded-full border-0.25  ${selectedColor?.color_id === color.color_id
-                            ? "border-black"
-                            : "border-gray-300"
-                            }`}
-                          style={{ backgroundColor: color.hex_code || "#ccc" }}
-                          onClick={() =>
-                            updateVariantBySelection(color, selectedSize)
-                          }
-                        />
-                        <span className="text-sm mt-1">{color.color_name}</span>
-                      </div>
-                    ))}
+                  <div className="flex gap-4 mt-5"> {/* Increased gap slightly for the ring */}
+                    {colors.map((color) => {
+                      const isSelected = selectedColor?.color_id === color.color_id;
+                      return (
+                        <div key={color.color_id} className="flex flex-col items-center">
+                          <button
+                            className={`w-10 h-10 rounded-full border border-gray-300 transition-all duration-200
+                ${isSelected ? "ring-2 ring-black ring-offset-2" : ""
+                              }`}
+                            style={{ backgroundColor: color.hex_code || "#ccc" }}
+                            onClick={() => updateVariantBySelection(color, selectedSize)}
+                          />
+                          {/* ✅ Emphasize the text of the selected color */}
+                          <span
+                            className={`text-sm mt-2 transition-colors duration-200 ${isSelected ? "font-semibold text-black" : "text-gray-500"
+                              }`}
+                          >
+                            {color.color_name}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -611,11 +617,11 @@ Could you please confirm its availability and share more details.`;
         <div className="w-300 flex flex-col mx-auto">
           <hr
             className="border-t border-gray-300"
-            // style={{
-            //   borderImage:
-            //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
-            //   borderImageSlice: 1,
-            // }}
+          // style={{
+          //   borderImage:
+          //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
+          //   borderImageSlice: 1,
+          // }}
           />
 
           <div className={`${roboto.className} flex mt-16 justify-between`}>
