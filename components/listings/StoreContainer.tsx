@@ -8,6 +8,7 @@ import { useFilterStore } from "@/store/filterStore";
 import { event } from "@/lib/gtag";
 import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";
 import NoResultFound from "./NoResultFound";
+import { log } from "console";
 
 const ITEMS_PER_PAGE = 10;
 const BUFFER_SIZE = 60; // Fetch 60 stores at a time from the backend
@@ -27,6 +28,8 @@ export default function StoreContainerPage() {
   const [loading, setLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const [noResultFound, setNoResultFound] = useState(false);
+  const [differentLocationStoreIndex, setDifferentLocationStoreIndex] =
+    useState<number>(-1);
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
@@ -107,26 +110,46 @@ export default function StoreContainerPage() {
       setFacets(data.facets, activeFacet);
       setTotalPages(data.total_pages);
 
-      const storeCards: StoreCardType[] = data.hits.map((sc: any) => ({
-        id: sc.id,
-        imageUrl: sc.profile_image || "/OnboardingSections/qr.png",
-        storeName: sc.store_name,
-        location:
-          sc.area?.toLowerCase() === "others"
-            ? `${sc.city}`
-            : `${sc.area}, ${sc.city}`,
-        storeTypes: sc.store_types || [],
-        priceRanges: [
-          ...new Set(
-            sc.store_type_price_range
-              .filter((item) => item.store_type === storeType?.store_type)
-              .map((item) => item.price_range)
-          ),
-        ],
-        bestSelling: sc.categories,
-        discount: sc.discount,
-        instagramFollowers: sc.followers_count || "1K",
-      }));
+      const storeCards: StoreCardType[] = data.hits.map(
+        (sc: any, index: number) => {
+          // return the mapped store
+          if (differentLocationStoreIndex === -1) {
+            const absoluteIndex = currentPage * BUFFER_SIZE + index;
+            if (
+              area &&
+              city &&
+              (city.name.toLowerCase() !== sc.city ||
+                area.name.toLowerCase() !== sc.area)
+            ) {
+              setDifferentLocationStoreIndex(absoluteIndex);
+            } else if (area && area.name.toLowerCase() !== sc.area) {
+              setDifferentLocationStoreIndex(absoluteIndex);
+            } else if (city && city.name.toLowerCase() !== sc.city) {
+              setDifferentLocationStoreIndex(absoluteIndex);
+            }
+          }
+          return {
+            id: sc.id,
+            imageUrl: sc.profile_image || "/OnboardingSections/qr.png",
+            storeName: sc.store_name,
+            location:
+              sc.area?.toLowerCase() === "others"
+                ? `${sc.city}`
+                : `${sc.area}, ${sc.city}`,
+            storeTypes: sc.store_types || [],
+            priceRanges: [
+              ...new Set(
+                sc.store_type_price_range
+                  .filter((item) => item.store_type === storeType?.store_type)
+                  .map((item) => item.price_range)
+              ),
+            ],
+            bestSelling: sc.categories,
+            discount: sc.discount,
+            instagramFollowers: sc.followers_count || "1K",
+          };
+        }
+      );
 
       if (currentPage === 0) {
         setStores(storeCards.slice(0, ITEMS_PER_PAGE));
@@ -192,7 +215,7 @@ export default function StoreContainerPage() {
 
   // Logic for infinite scrolling
   useEffect(() => {
-      const observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !loading) {
           if (buffer.length > ITEMS_PER_PAGE) {
@@ -229,12 +252,15 @@ export default function StoreContainerPage() {
     fillViewport();
   }, [stores, buffer, loading]);
 
-
   useEffect(() => {
     if (!apiHasMore && buffer.length === 0) {
       setHasMore(false);
     }
   }, [apiHasMore, buffer]);
+
+  useEffect(() => {
+    console.log("index found", differentLocationStoreIndex);
+  }, [differentLocationStoreIndex]);
 
   if (loading && page === 0) {
     return (
@@ -255,18 +281,25 @@ export default function StoreContainerPage() {
   ) : (
     <div className="flex flex-col gap-4 min-h-screen">
       {stores.map((store, index) => (
-        <StoreCard
-          key={`${store.id}-${index}`}
-          imageUrl={store.imageUrl}
-          storeName={store.storeName}
-          location={store.location}
-          storeTypes={store.storeTypes}
-          priceRanges={store.priceRanges}
-          bestSelling={store.bestSelling}
-          discount={store.discount}
-          instagramFollowers={store.instagramFollowers}
-          id={store.id}
-        />
+        <div key={`${store.id}-${index}`}>
+          {index === differentLocationStoreIndex && (
+            <div className="text-lg font-bold my-4">
+              More stores from other locations
+            </div>
+          )}
+
+          <StoreCard
+            imageUrl={store.imageUrl}
+            storeName={store.storeName}
+            location={store.location}
+            storeTypes={store.storeTypes}
+            priceRanges={store.priceRanges}
+            bestSelling={store.bestSelling}
+            discount={store.discount}
+            instagramFollowers={store.instagramFollowers}
+            id={store.id}
+          />
+        </div>
       ))}
       {loading && page !== 0 && (
         <div className="flex flex-col gap-4">

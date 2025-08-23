@@ -89,9 +89,9 @@ export default function ListingFooter() {
             ))}
           </div> */}
            <div className="flex gap-3 pt-2">
-            {socialPlatforms.map((platform) => (
+            {socialPlatforms.map((platform , index) => (
               <a
-                key={platform.name}
+                key={platform.name +  index}
                 href={platform.href}
                 target="_blank"
                 rel="noopener noreferrer"
