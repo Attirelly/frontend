@@ -78,13 +78,13 @@ export default function StoreTypeSelection() {
                     );
                     return (
                             <div key={tab.value} className="flex flex-col items-center cursor-pointer" onClick={() => handleTabClick(tab)}>
-                                <div className="w-23 h-23 flex items-center justify-center">
-                                    <div className="relative w-22 h-22">
+                                <div className="w-36 h-36 flex items-center justify-center">
+                                    <div className="relative w-40 h-40">
                                         <Image
                                             src={storeImage?.url || '/Homepage/tailor.svg'}
                                             alt='Store Type'
                                             fill
-                                            sizes="88px"
+                                            sizes="160px"
                                         />
                                     </div>
 

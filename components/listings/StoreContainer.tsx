@@ -296,9 +296,9 @@ export default function StoreContainerPage() {
           {index === differentLocationStoreIndex && (
             
 
-            <div className="flex items-center my-6">
-              <span className="mx-4text-[16px] text-[#5F5F5F]">
-                More Stores from other Location
+            <div className="flex items-center mt-2 mb-4">
+              <span className="mx-4 text-[20px] text-[#5F5F5F]">
+                More From Other Locations
               </span>
               {/* <div className="mx-4 flex-grow border-t border-[#5F5F5F]"></div> */}
             </div>

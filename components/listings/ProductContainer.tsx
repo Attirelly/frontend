@@ -7,6 +7,7 @@ import { ProductCardType } from "@/types/ProductTypes";
 import { useHeaderStore } from "@/store/listing_header_store";
 import ProductGridSkeleton from "./skeleton/catalogue/ProductGridSkeleton";
 import NoResultFound from "./NoResultFound";
+import { apiClientVersion } from "algoliasearch";
 
 interface ProductContainerProps {
   storeId?: string;
@@ -83,7 +84,10 @@ export default function ProductContainer({
     currentPage: number,
     controller?: AbortController
   ) => {
-    const facetFilters = buildFacetFilters(selectedFilters, storeType?.store_type);
+    const facetFilters = buildFacetFilters(
+      selectedFilters,
+      storeType?.store_type
+    );
 
     try {
       let filterParam = skipFilters ? "" : filters;
@@ -195,6 +199,7 @@ export default function ProductContainer({
   }, [buffer.length, apiHasMore]);
 
   useEffect(() => {
+    console.log("IntersectionObserver triggered!");
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !loading) {
@@ -205,32 +210,15 @@ export default function ProductContainer({
           }
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.1 }
     );
+    console.log("view port trigger observer ke under", loaderRef.current);
     const currentRef = loaderRef.current;
     if (currentRef) observer.observe(currentRef);
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, [products , buffer, loading]);
-
-  useEffect(() => {
-
-    const fillViewport = () => {
-      if (loaderRef.current && buffer.length > 0 && !loading) {
-        const { top } = loaderRef.current.getBoundingClientRect();
-        const isLoaderVisible = top <= window.innerHeight;
-
-        // If loader is visible and we have items in buffer, load them
-        if (isLoaderVisible) {
-          const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
-          setProducts((prev) => [...prev, ...nextItems]);
-          setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
-        }
-      }
-    };
-    fillViewport();
-  }, [products, buffer, loading]);
+  }, [loaderRef.current, buffer, loading]);
 
   useEffect(() => {
     if (!apiHasMore && buffer.length === 0) {
@@ -257,11 +245,11 @@ export default function ProductContainer({
       )}
       {hasMore && (
         <div ref={loaderRef} className="h-12 flex justify-center items-center">
-          {loading && products.length > 0 ? (
-            <span className="text-gray-500 text-sm">
+          {/* {loading && products.length > 0 && ( */}
+            {/* <span className="text-gray-500 text-sm">
               Loading more products...
-            </span>
-          ) : null}
+            </span> */}
+          {/* )} */}
         </div>
       )}
     </>
