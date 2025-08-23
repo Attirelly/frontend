@@ -70,8 +70,7 @@ export default function ProductCard({
             src={imageUrl[imageIndex]}
             alt={title}
             fill
-            // unoptimized 
-            // priority={imageIndex === 0} 
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 300px"
             loading={imageIndex === 0 ? 'eager' : 'lazy'} 
             className="object-cover object-top transition-all duration-300"
           />

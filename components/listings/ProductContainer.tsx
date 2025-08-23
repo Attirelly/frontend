@@ -100,8 +100,6 @@ export default function ProductContainer({
 
       let encodedFilterParam = encodeURIComponent(filterParam);
 
-      // console.log("ajsdf sdjf ",currentPage, BUFFER_SIZE, controller.signal);
-      // if(currentPage === 1 )return;
       const res = await api.get(
         `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${encodedFilterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`,
         controller ? { signal: controller.signal } : {}
@@ -168,20 +166,7 @@ export default function ProductContainer({
     }
   };
 
-  //   useEffect(() => {
-  // fetchProducts(0);
-  //   }, []);
   useEffect(() => {
-    console.log(
-      "changes",
-      selectedFilters,
-      filters,
-      query,
-      storeTypeString,
-      sortBy,
-      city,
-      area
-    );
     const controller = new AbortController();
     setPage(0);
     setProducts([]);
@@ -227,25 +212,25 @@ export default function ProductContainer({
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, [buffer, loading]);
+  }, [products , buffer, loading]);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const fillViewport = () => {
-      if (loaderRef.current && buffer.length > 0 && !loading) {
-        const { top } = loaderRef.current.getBoundingClientRect();
-        const isLoaderVisible = top <= window.innerHeight;
+  //   const fillViewport = () => {
+  //     if (loaderRef.current && buffer.length > 0 && !loading) {
+  //       const { top } = loaderRef.current.getBoundingClientRect();
+  //       const isLoaderVisible = top <= window.innerHeight;
 
-        // If loader is visible and we have items in buffer, load them
-        if (isLoaderVisible) {
-          const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
-          setProducts((prev) => [...prev, ...nextItems]);
-          setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
-        }
-      }
-    };
-    fillViewport();
-  }, [products, buffer, loading]);
+  //       // If loader is visible and we have items in buffer, load them
+  //       if (isLoaderVisible) {
+  //         const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
+  //         setProducts((prev) => [...prev, ...nextItems]);
+  //         setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
+  //       }
+  //     }
+  //   };
+  //   fillViewport();
+  // }, [products, buffer, loading]);
 
   useEffect(() => {
     if (!apiHasMore && buffer.length === 0) {

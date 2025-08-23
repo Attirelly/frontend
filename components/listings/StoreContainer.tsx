@@ -295,12 +295,15 @@ export default function StoreContainerPage() {
         <div key={`${store.id}-${index}`}>
           {index === differentLocationStoreIndex && (
             
-            <div className="my-3 flex items-center">
-              <span className=" px-4 text-[16px] text-[#5F5F5F]">
-                More stores from other locations
+
+            <div className="flex items-center my-6">
+              <span className="mx-4text-[16px] text-[#5F5F5F]">
+                More Stores from other Location
               </span>
-              
+              {/* <div className="mx-4 flex-grow border-t border-[#5F5F5F]"></div> */}
             </div>
+
+          
           )}
 
           <StoreCard
