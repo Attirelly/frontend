@@ -214,23 +214,23 @@ export default function ProductContainer({
     };
   }, [products , buffer, loading]);
 
-  // useEffect(() => {
+  useEffect(() => {
 
-  //   const fillViewport = () => {
-  //     if (loaderRef.current && buffer.length > 0 && !loading) {
-  //       const { top } = loaderRef.current.getBoundingClientRect();
-  //       const isLoaderVisible = top <= window.innerHeight;
+    const fillViewport = () => {
+      if (loaderRef.current && buffer.length > 0 && !loading) {
+        const { top } = loaderRef.current.getBoundingClientRect();
+        const isLoaderVisible = top <= window.innerHeight;
 
-  //       // If loader is visible and we have items in buffer, load them
-  //       if (isLoaderVisible) {
-  //         const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
-  //         setProducts((prev) => [...prev, ...nextItems]);
-  //         setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
-  //       }
-  //     }
-  //   };
-  //   fillViewport();
-  // }, [products, buffer, loading]);
+        // If loader is visible and we have items in buffer, load them
+        if (isLoaderVisible) {
+          const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
+          setProducts((prev) => [...prev, ...nextItems]);
+          setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
+        }
+      }
+    };
+    fillViewport();
+  }, [products, buffer, loading]);
 
   useEffect(() => {
     if (!apiHasMore && buffer.length === 0) {
