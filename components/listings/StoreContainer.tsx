@@ -244,7 +244,7 @@ export default function StoreContainerPage() {
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, [loading, buffer]);
+  }, [stores , loading, buffer]);
 
   useEffect(() => {
     const fillViewport = () => {
