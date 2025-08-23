@@ -110,23 +110,30 @@ export default function StoreContainerPage() {
       setFacets(data.facets, activeFacet);
       setTotalPages(data.total_pages);
 
-      data.hits.forEach((sc :any , index : number ) => {
-        if (differentLocationStoreIndex === -1) {
+      let firstDifferentIndex = -1;
+
+      if (differentLocationStoreIndex === -1) {
+        for (let index = 0; index < data.hits.length; index++) {
+          const sc = data.hits[index];
           const absoluteIndex = currentPage * BUFFER_SIZE + index;
+
           if (
-            area &&
-            city &&
-            (city.name.toLowerCase() !== sc.city ||
-              area.name.toLowerCase() !== sc.area)
+            (city &&
+              sc.city &&
+              city.name.toLowerCase() !== sc.city.toLowerCase()) ||
+            (area &&
+              sc.area &&
+              area.name.toLowerCase() !== sc.area.toLowerCase())
           ) {
             setDifferentLocationStoreIndex(absoluteIndex);
-          } else if (area && area.name.toLowerCase() !== sc.area) {
-            setDifferentLocationStoreIndex(absoluteIndex);
-          } else if (city && city.name.toLowerCase() !== sc.city) {
-            setDifferentLocationStoreIndex(absoluteIndex);
+            break; // ✅ stop at the first mismatch
           }
         }
-      });
+      }
+
+      if (differentLocationStoreIndex === -1 && firstDifferentIndex !== -1) {
+        setDifferentLocationStoreIndex(firstDifferentIndex);
+      }
 
       const storeCards: StoreCardType[] = data.hits.map(
         (sc: any, index: number) => {
@@ -287,8 +294,23 @@ export default function StoreContainerPage() {
       {stores.map((store, index) => (
         <div key={`${store.id}-${index}`}>
           {index === differentLocationStoreIndex && (
-            <div className="text-lg font-bold my-4">
-              More stores from other locations
+            // <div className="bg-gray-100 text-gray-700 font-semibold text-base rounded-lg px-4 py-2 my-6 shadow-sm text-center">
+            //   More stores from other locations
+            // </div>
+
+            // <div className="flex items-center my-6">
+            //   <div className="flex-grow border-t border-gray-300"></div>
+            //   <span className="px-4 text-gray-600 font-semibold text-base">
+            //     More stores from other locations
+            //   </span>
+            //   <div className="flex-grow border-t border-gray-300"></div>
+            // </div>
+
+            <div className="my-6 flex items-center">
+              <span className="text-sm font-medium text-gray-500">
+                More stores from other locations
+              </span>
+              
             </div>
           )}
 
