@@ -110,24 +110,28 @@ export default function StoreContainerPage() {
       setFacets(data.facets, activeFacet);
       setTotalPages(data.total_pages);
 
+      data.hits.forEach((sc :any , index : number ) => {
+        if (differentLocationStoreIndex === -1) {
+          const absoluteIndex = currentPage * BUFFER_SIZE + index;
+          if (
+            area &&
+            city &&
+            (city.name.toLowerCase() !== sc.city ||
+              area.name.toLowerCase() !== sc.area)
+          ) {
+            setDifferentLocationStoreIndex(absoluteIndex);
+          } else if (area && area.name.toLowerCase() !== sc.area) {
+            setDifferentLocationStoreIndex(absoluteIndex);
+          } else if (city && city.name.toLowerCase() !== sc.city) {
+            setDifferentLocationStoreIndex(absoluteIndex);
+          }
+        }
+      });
+
       const storeCards: StoreCardType[] = data.hits.map(
         (sc: any, index: number) => {
           // return the mapped store
-          if (differentLocationStoreIndex === -1) {
-            const absoluteIndex = currentPage * BUFFER_SIZE + index;
-            if (
-              area &&
-              city &&
-              (city.name.toLowerCase() !== sc.city ||
-                area.name.toLowerCase() !== sc.area)
-            ) {
-              setDifferentLocationStoreIndex(absoluteIndex);
-            } else if (area && area.name.toLowerCase() !== sc.area) {
-              setDifferentLocationStoreIndex(absoluteIndex);
-            } else if (city && city.name.toLowerCase() !== sc.city) {
-              setDifferentLocationStoreIndex(absoluteIndex);
-            }
-          }
+
           return {
             id: sc.id,
             imageUrl: sc.profile_image || "/OnboardingSections/qr.png",
