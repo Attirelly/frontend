@@ -33,7 +33,7 @@ const Card: React.FC<CardProps> = ({ imageUrl, discountText, title, description 
 
       {/* Text Content */}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 text-center  pb-4 text-white w-full">
-        <h3 className="text-2xl" style={{fontWeight:500}}>{title}</h3>
+        <h3 className="text-[20px]" style={{fontWeight:500}}>{title}</h3>
         <h4 className='text-base' style={{fontWeight:400}}>{description}</h4>
       </div>
     </div>

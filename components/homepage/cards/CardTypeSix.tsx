@@ -30,13 +30,8 @@ const CardTypeSix: React.FC<CardProps> = ({ imageUrl, title, description }) => {
 
       {/* Text Content */}
       <div className="flex flex-col items-center justify-center absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 pb-7 text-white mx-auto">
-        {/* <h3
-          className="text-[20px] font-extrabold whitespace-nowrap"
-          style={{ fontWeight: 500 }}
-        >
-          <div>{title}</div>
-        </h3> */}
-        <h2 className="text-xs whitespace-nowrap" style={{ fontWeight: 400 }}>
+      
+        <h2 className="text-[16px] whitespace-nowrap" style={{ fontWeight: 400 }}>
           {description}
         </h2>
         <button

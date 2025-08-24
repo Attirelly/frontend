@@ -35,9 +35,9 @@ export default function CardTypeFive({
         className={`${manrope.className} w-full flex flex-col gap-2`}
         style={{ fontWeight: 500 }}
       >
-        <span className="text-base text-[#1E1E1E]">{title}</span>
+        <span className="text-[20px] text-[#1E1E1E]">{title}</span>
         <span
-          className="text-[13px] text-[#1E1E1E] truncate"
+          className="text-[16px] text-[#1E1E1E] truncate"
           style={{ fontWeight: 300 }}
         >
           {description}

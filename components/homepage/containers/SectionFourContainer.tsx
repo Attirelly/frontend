@@ -103,7 +103,7 @@ export default function CardStack() {
   return (
     <div className="flex flex-col gap-8 items-center">
       <span
-        className={`${manrope.className} text-3xl text-[#242424]`}
+        className={`${manrope.className} text-4xl text-[#242424]`}
         style={{ fontWeight: 400 }}
       >
         {name}

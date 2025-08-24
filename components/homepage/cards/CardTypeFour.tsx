@@ -10,7 +10,7 @@ interface CardProps {
 
 const CardTypeFour: React.FC<CardProps> = ({ imageUrl, title, description }) => {
   return (
-    <div className={`${manrope.className} relative w-[184px] h-[184px] overflow-hidden`}>
+    <div className={`${manrope.className} relative w-[200px] h-[200px] overflow-hidden rounded-sm`}>
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -32,10 +32,10 @@ const CardTypeFour: React.FC<CardProps> = ({ imageUrl, title, description }) => 
 
       {/* Text Content */}
       <div className="flex flex-col items-center justify-center absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 mb-4 text-white mx-auto">
-  <h3 className="text-xs whitespace-nowrap text-white" style={{ fontWeight: 500 }}>
+  <h3 className="text-[20px] whitespace-nowrap text-white" style={{ fontWeight: 400 }}>
     {title}
   </h3>
-  <h2 className="text-[6px] whitespace-nowrap text-white" style={{ fontWeight: 400 }}>
+  <h2 className="text-[16px] whitespace-nowrap text-white" style={{ fontWeight: 400 }}>
     {description}
   </h2>
 </div>

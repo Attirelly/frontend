@@ -75,7 +75,7 @@ export default function SectionElevenContainer() {
   return (
     <div className='w-[1242px] mx-auto space-y-8'>
       <div className='flex justify-between'>
-        <span className={`${manrope.className} text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
+        <span className={`${manrope.className} text-4xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
         <a
           href={viewAll}
           target="_blank"
