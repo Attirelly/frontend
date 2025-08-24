@@ -226,7 +226,7 @@ export default function StoreContainerPage() {
 
   // Logic for infinite scrolling
   useEffect(() => {
-    const observer = new IntersectionObserver(      
+    const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !loading) {
           if (buffer.length > ITEMS_PER_PAGE) {
@@ -244,34 +244,13 @@ export default function StoreContainerPage() {
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, [stores , loading, buffer]);
-
-  useEffect(() => {
-    const fillViewport = () => {
-      if (loaderRef.current && buffer.length > 0 && !loading) {
-        const { top } = loaderRef.current.getBoundingClientRect();
-        const isLoaderVisible = top <= window.innerHeight;
-
-        // If loader is visible and we have items in buffer, load them
-        if (isLoaderVisible) {
-          const nextItems = buffer.slice(0, ITEMS_PER_PAGE);
-          setStores((prev) => [...prev, ...nextItems]);
-          setBuffer((prev) => prev.slice(ITEMS_PER_PAGE));
-        }
-      }
-    };
-    fillViewport();
-  }, [stores, buffer, loading]);
+  }, [loaderRef.current, stores, loading, buffer]);
 
   useEffect(() => {
     if (!apiHasMore && buffer.length === 0) {
       setHasMore(false);
     }
   }, [apiHasMore, buffer]);
-
-  useEffect(() => {
-    console.log("index found", differentLocationStoreIndex);
-  }, [differentLocationStoreIndex]);
 
   if (loading && page === 0) {
     return (
@@ -294,16 +273,12 @@ export default function StoreContainerPage() {
       {stores.map((store, index) => (
         <div key={`${store.id}-${index}`}>
           {index === differentLocationStoreIndex && (
-            
-
             <div className="flex items-center mt-2 mb-4">
               <span className="mx-4 text-[20px] text-[#5F5F5F]">
                 More From Other Locations
               </span>
               {/* <div className="mx-4 flex-grow border-t border-[#5F5F5F]"></div> */}
             </div>
-
-          
           )}
 
           <StoreCard

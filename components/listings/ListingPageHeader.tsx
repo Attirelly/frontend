@@ -32,16 +32,12 @@ export default function ListingPageHeader() {
     setAllCity,
     allArea,
     setAllArea,
-    setQuery
+    setQuery,
   } = useHeaderStore();
   const { resetFilters } = useProductFilterStore();
 
   const { user } = useAuthStore();
   const [signIn, setSignIn] = useState(false);
-  const [cities, setCities] = useState<City[]>([]);
-  const [areas, setAreas] = useState<Area[]>([]);
-  const [selectedCity, setSelectedCity] = useState<City | null>(city || null);
-  const [selectedArea, setSelectedArea] = useState<Area | null>(area || null);
   const [tempQuery, setTempQuery] = useState<string>("");
 
   const [storeSuggestions, setStoreSuggestions] = useState<string[]>([]);
@@ -76,7 +72,7 @@ export default function ListingPageHeader() {
       setSearchFocus(false);
 
       if (trimmed !== "") {
-        setQuery("")
+        setQuery("");
         router.push("/product_directory?search=" + encodeURIComponent(trimmed));
       }
     }
@@ -85,11 +81,11 @@ export default function ListingPageHeader() {
   const handleSearchQuerySuggestion = async () => {
     try {
       let tempStr = "";
-      if (selectedCity) {
-        tempStr = `city:${selectedCity.name}`;
+      if (city) {
+        tempStr = `city:${city.name}`;
       }
-      if (selectedArea) {
-        tempStr = `area:${selectedArea.name}`;
+      if (area) {
+        tempStr = `area:${area.name}`;
       }
       const response = await api.post(`/search/search_suggestion`, {
         query: tempQuery,
@@ -114,7 +110,6 @@ export default function ListingPageHeader() {
     const fetchCities = async () => {
       try {
         const res = await api.get("/location/cities/");
-        setCities(res.data);
         setAllCity(res.data);
       } catch {
         toast.error("Failed to fetch cities");
@@ -127,7 +122,6 @@ export default function ListingPageHeader() {
     const fetchAreas = async () => {
       try {
         const res = await api.get("/location/areas/");
-        setAreas(res.data);
         setAllArea(res.data);
       } catch {
         toast.error("Failed to fetch areas");
@@ -135,22 +129,6 @@ export default function ListingPageHeader() {
     };
     fetchAreas();
   }, []);
-
-  useEffect(() => {
-    if (selectedCity) {
-      setCity(selectedCity);
-    } else {
-      setCity(null);
-    }
-  }, [selectedCity]);
-
-  useEffect(() => {
-    if (selectedArea) {
-      setArea(selectedArea);
-    } else {
-      setArea(null);
-    }
-  }, [selectedArea]);
 
   useEffect(() => {
     if (tempQuery.length < 4) {
@@ -235,7 +213,7 @@ export default function ListingPageHeader() {
   const handleStoreListRoute = () => {
     setSearchFocus(false);
     setShowDropdown(false);
-    const value = tempQuery; 
+    const value = tempQuery;
     router.push("/store_listing?search=" + encodeURIComponent(value));
   };
 
@@ -251,14 +229,14 @@ export default function ListingPageHeader() {
 
   const groupedOptions: SelectOption[] = [
     { value: "", label: "All Cities", name: "All Cities", country: "" },
-    ...cities.map((c) => ({
+    ...(allCity ?? []).map((c) => ({
       value: c.id,
       label: c.name,
       name: c.name,
       country: "India",
       type: "city",
     })),
-    ...areas.map((a) => ({
+    ...(allArea ?? []).map((a) => ({
       value: a.id,
       label: a.name,
       name: a.name,
@@ -269,19 +247,19 @@ export default function ListingPageHeader() {
   ];
 
   const selectedOption: SelectOption =
-    selectedCity != null
+    city != null
       ? {
-          value: selectedCity.id,
-          label: selectedCity.name,
-          name: selectedCity.name,
+          value: city.id,
+          label: city.name,
+          name: city.name,
           country: "India",
         }
-      : selectedArea != null
+      : area != null
       ? {
-          value: selectedArea.id,
-          label: selectedArea.name,
-          name: selectedArea.name,
-          city: selectedArea.city_name,
+          value: area.id,
+          label: area.name,
+          name: area.name,
+          city: area.city_name,
         }
       : // : cityOptions[0];
         groupedOptions[0];
@@ -334,8 +312,10 @@ export default function ListingPageHeader() {
               Attirelly
             </div>
           </div>
-          <div className="flex h-full items-center justify-center"
-          onMouseEnter={() => setSearchFocus(false)}>
+          <div
+            className="flex h-full items-center justify-center"
+            onMouseEnter={() => setSearchFocus(false)}
+          >
             <MenWomenNavbar />
           </div>
           <div className="flex justify-center">
@@ -353,12 +333,26 @@ export default function ListingPageHeader() {
                       : groupedOptions
                   }
                   value={selectedOption}
-                  onChange={(val) => {
-                    const v = val as SelectOption | null;
-                    const city = cities.find((c) => c.id === v?.value);
-                    setSelectedCity(city || null);
-                    const area = areas.find((a) => a.id === v?.value);
-                    setSelectedArea(area || null);
+                  onChange={(val: SelectOption | null) => {
+                    if (!val || !val.value) {
+                      // "All Cities" is selected
+                      setCity(null);
+                      setArea(null);
+                    } else if (val.type === "city") {
+                      setCity({ id: val.value, name: (val.name || "")});
+                      setArea(null); // IMPORTANT: Clear the area when a city is selected
+                    } else if (val.type === "area") {
+                      // When an area is selected, find its parent city to keep the state consistent
+                      const parentCity = allCity.find(
+                        (c) => c.name === val.city
+                      );
+                      setCity(parentCity || null);
+                      setArea({
+                        id: val.value,
+                        name: val.name,
+                        city_name: val.city,
+                      });
+                    }
                   }}
                   onInputChange={(value) => setLocationSearchInput(value)} // capture search text
                   getOptionValue={(e) => e.value}
@@ -417,7 +411,7 @@ export default function ListingPageHeader() {
                 {showDropdown && (
                   <div className="absolute top-10 transform -translate-x-10 mt-2 bg-white rounded-md shadow-lg max-h-[480px] overflow-y-auto scrollbar-none z-50 max-w-[500px] w-[400px]">
                     <div className="flex flex-col gap-1">
-                      {[...storeSuggestions, ...productSuggestions].map(  
+                      {[...storeSuggestions, ...productSuggestions].map(
                         (suggestion, i) => (
                           <div
                             key={i}
@@ -460,7 +454,9 @@ export default function ListingPageHeader() {
                                 handleCategoryClick(cat.subcategory3)
                               }
                             >
-                              {cat?.subcategory3.includes("Kurta") ? `${cat?.subcategory3} (${cat?.category})` : cat?.subcategory3}
+                              {cat?.subcategory3.includes("Kurta")
+                                ? `${cat?.subcategory3} (${cat?.category})`
+                                : cat?.subcategory3}
                               {/* <img
                                 src="/SuggestionBox/top_right_arrow.svg"
                                 alt="Arrow"
@@ -536,10 +532,10 @@ export default function ListingPageHeader() {
                                 {store.store_name}
                               </span>
                               <span className="text-sm text-[#A6A6A6]">
-                                {
-                                  store.area && store.area.toLowerCase() === "others" ? `${store.city}` : 
-                                  `${store.area}, ${store.city}`
-                               }
+                                {store.area &&
+                                store.area.toLowerCase() === "others"
+                                  ? `${store.city}`
+                                  : `${store.area}, ${store.city}`}
                               </span>
                             </div>
                           </div>

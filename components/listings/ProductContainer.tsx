@@ -39,8 +39,6 @@ export default function ProductContainer({
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef<HTMLDivElement>(null);
-  const prevStoreTypeRef = useRef<string>("");
-  const isObserverTriggered = useRef(false);
   const [skipFilters, setSkipFilters] = useState(false);
   const [noResultFound, setNoResultFound] = useState(false);
   const [apiHasMore, setApiHasMore] = useState(true);

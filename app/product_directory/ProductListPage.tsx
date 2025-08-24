@@ -82,6 +82,7 @@ export default function ProductListPage() {
     });
 
     // Only perform the lookup if the master lists have been loaded
+    console.log("all city" , allCity)
     if (allCity && allCity.length > 0 && cityName) {
       const cityObject = allCity.find((c) => c.name === cityName);
       console.log("url_city", cityObject);
@@ -136,11 +137,7 @@ export default function ProductListPage() {
     if (oldparams.get("categories")) {
       newparams.set("categories", oldparams.get("categories") || "");
     }
-    // if (sortBy) {
-    //   params.set("sortBy", sortBy);
-    // }
-    console.log("select filter", selectedFilters);
-    console.log("city and area", city, area);
+
     Object.entries(selectedFilters).forEach(([key, values]) => {
       if (values && values.length > 0) {
         newparams.set(key, values.join(","));
@@ -163,7 +160,7 @@ export default function ProductListPage() {
     }
 
     router.replace(`${pathname}?${newparams.toString()}`);
-  }, [selectedFilters, selectedPriceRange, pathname, city, area, storeType, router]);
+  }, [selectedFilters, selectedPriceRange, city, area, storeType, pathname , router]);
 
   const displayCategory = selectedFilters.categories?.[0] || "";
 
