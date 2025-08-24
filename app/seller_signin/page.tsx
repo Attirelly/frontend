@@ -7,7 +7,7 @@ import { useSellerStore } from '@/store/sellerStore'
 import { api } from '@/lib/axios'
 import Header from '@/components/Header';
 import axios, { AxiosError } from 'axios';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 export default function SellerSignup() {
     const [phone, setPhone] = useState('');
@@ -31,10 +31,10 @@ export default function SellerSignup() {
     const testing_phone = '7015241757'
 
     useEffect(() => {
-        
+
         router.prefetch('/seller_dashboard');
         router.prefetch('/seller_signup/sellerOnboarding');
-        
+
     }, []);
 
     useEffect(() => {
@@ -97,7 +97,15 @@ export default function SellerSignup() {
         }
     };
 
-     const handleSubmit = async (e: React.FormEvent) => {
+    useEffect(() => {
+        if (sendOTP) {
+            setTimeout(() => {
+                inputsRef.current[0]?.focus();
+            }, 0);
+        }
+    }, [sendOTP]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sendOTP) {
             const fullOtp = otp.join('');
@@ -107,7 +115,7 @@ export default function SellerSignup() {
             }
             // send api to verify otp 
             try {
-                if(phone !== '1111111111'){
+                if (phone !== '1111111111') {
                     await api.post('/otp/verify_otp', null, { params: { phone_number: phone, otp: fullOtp } })
                 }
                 try {
@@ -132,11 +140,11 @@ export default function SellerSignup() {
                 }
             }
             catch (error) {
-                
+
                 if (axios.isAxiosError(error) && error.response?.status === 403) {
                     const detail = error.response.data?.detail;
                     const msg = typeof detail === 'string' ? detail : detail?.message;
-                    
+
                     toast.error(msg || "Too many attempts. Please wait.");
 
                     if (typeof msg === 'string' && msg.includes('Try again after')) {
@@ -164,7 +172,7 @@ export default function SellerSignup() {
             try {
                 // Check if phone number is already registered
                 const response = await api.get('/users/user', { params: { phone_number: phone } });
-                
+
                 const user_data = response.data;
                 const curr_section_res = await api.get('/stores/get_store_section', { params: { user_id: user_data.id } })
                 console.log(curr_section_res)
@@ -172,12 +180,12 @@ export default function SellerSignup() {
                 setSellerId(user_data.id);
                 setSellerName(user_data.name);
                 setSellerEmail(user_data.email);
-                if(phone === '1111111111'){
+                if (phone === '1111111111') {
                     setSendOTP(true);
                     // alert(`OTP sent to ${phone}`);
                     setSellerNumber(phone);
                     return;
-                    
+
                 }
                 try {
                     await api.post('/otp/send_otp', null, { params: { phone_number: phone, otp_template: "UserLoginOTP" } })
@@ -191,13 +199,18 @@ export default function SellerSignup() {
 
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
-                    
-                    
-                    alert(`Error : ${error.response.data?.message || 'Something went wrong'}, Please Sign In`);
-                    return;
+                    if (error.response.status === 404) {
+                        // Use the detailed message from the backend, or a default one
+                        toast.error("This phone number is not registered. Please sign up.");
+                        return;
+                    } else {
+                        // Handle all other potential API errors (e.g., 500, 400)
+                        toast.error(`Error: ${error.response.data?.message || 'Something went wrong'}. Please try again.`);
+                        return;
+                    }
                 } else {
-                    
-                    alert('An unexpected error occurred. Please try again.');
+
+                    toast.error('An unexpected error occurred. Please try again.');
                 }
             }
         }
@@ -261,7 +274,7 @@ export default function SellerSignup() {
                         <button
                             type="submit"
                             className="cursor-pointer w-full bg-black text-white py-2 rounded hover:bg-gray-800  hover:shadow-md active:scale-[0.98] transition-all duration-200"
-                           
+
                         >
                             Send OTP
                         </button>

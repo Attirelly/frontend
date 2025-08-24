@@ -742,7 +742,7 @@ const ToggleChips: FC<{
 }> = ({ label, items, selected, toggle }) => (
   <div>
     <RequiredLabel>{label}</RequiredLabel>
-    <div className="flex flex-wrap gap-2">
+    <div className="grid grid-cols-2 gap-2">
       {items.map((item) => {
         const text = item.store_type || item.gender_value;
         const isSelected = selected.some((s) => s.id === item.id);
@@ -750,7 +750,7 @@ const ToggleChips: FC<{
           <label
             key={item.id}
             // onClick={() => toggle(item)}
-            className={`px-3 py-2 border border-gray-500 rounded cursor-pointer ${
+            className={`px-3 w-50 py-2 border border-gray-500 rounded cursor-pointer ${
               isSelected ? "bg-gray-100" : "bg-white"
             }`}
           >

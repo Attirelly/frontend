@@ -21,8 +21,6 @@ export default function HomePage() {
     return (
         // Remove the background color from the outermost container
         <div className="flex flex-col">
-
-            {/* --- 1. WHITE BACKGROUND AREA --- */}
             <div className="bg-white">
                 <ListingPageHeader />
 
@@ -53,7 +51,7 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
-            <div className="bg-black">
+            <div className="text-black bg-gray-500">
                 <div className="space-y-16 pt-16">
                     <div className="px-11">
                         <SectionFiveContainer />
@@ -62,7 +60,7 @@ export default function HomePage() {
                     <SectionSevenContainer />
                 </div>
 
-                <div className="mt-20 space-y-20 w-full">
+                <div className="mt-20 space-y-20 bg-[#F9F9F9]">
                     <SectionEightContainer />
                     <SectionNineContainer />
                     <SectionTenContainer />
@@ -73,7 +71,7 @@ export default function HomePage() {
                 <div className="mt-10">
                     <ScrollingTextBanner />
                 </div>
-                
+
                 <CurrentLocs />
             </div>
 

@@ -189,6 +189,7 @@ export default function StoreContainerPage() {
     setHasMore(true);
     setStores([]);
     setBuffer([]);
+    setApiHasMore(true);
     fetchStores(0, controller);
     return () => {
       controller.abort();

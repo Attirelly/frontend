@@ -329,7 +329,7 @@ export default function ListingPageHeader() {
                 <Select
                   options={
                     locationSearchInput.trim() === ""
-                      ? groupedOptions.slice(0, 6)
+                      ? groupedOptions.slice(0, 7)
                       : groupedOptions
                   }
                   value={selectedOption}

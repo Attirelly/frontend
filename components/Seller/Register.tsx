@@ -284,7 +284,8 @@ export default function SellerSignup() {
                 className="mr-2"
               />
               <label htmlFor="agree" className="text-sm text-gray-600">
-                By accepting, you agree to Attirelly's <a>Privacy Policy</a> and <a>Terms & Conditions</a>
+                {/* By accepting, you agree to receive SMS for account authorization */}
+                By accepting, you agree to <Link href="/term_and_condition" className="hover:underline text-blue-600 ">Terms and Condition</Link> and <Link href="privacy_policy" className="hover:underline text-blue-600 ">Privacy Policy</Link> of Attirelly.
               </label>
             </div>
             {/* Submit button */}

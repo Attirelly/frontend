@@ -87,7 +87,7 @@ export default function StoreSearchType({
           style={{fontWeight:600}}
         >
           <h1 className="text-[18px] text-[#363636] mb-4 text-center">
-            Store Type
+            Category Type
           </h1>
 
           <div className="grid grid-cols-2 gap-4">
