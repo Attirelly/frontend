@@ -247,6 +247,14 @@ export default function ListingPageHeader() {
   ];
 
   const selectedOption: SelectOption =
+    area != null
+      ? {
+          value: area.id,
+          label: area.name,
+          name: area.name,
+          city: area.city_name,
+        }
+       : 
     city != null
       ? {
           value: city.id,
@@ -254,14 +262,8 @@ export default function ListingPageHeader() {
           name: city.name,
           country: "India",
         }
-      : area != null
-      ? {
-          value: area.id,
-          label: area.name,
-          name: area.name,
-          city: area.city_name,
-        }
-      : // : cityOptions[0];
+      : 
+       // : cityOptions[0];
         groupedOptions[0];
 
   function highlightMatch(text: string, query: string) {
@@ -338,6 +340,7 @@ export default function ListingPageHeader() {
                       // "All Cities" is selected
                       setCity(null);
                       setArea(null);
+                      
                     } else if (val.type === "city") {
                       setCity({ id: val.value, name: (val.name || "")});
                       setArea(null); // IMPORTANT: Clear the area when a city is selected

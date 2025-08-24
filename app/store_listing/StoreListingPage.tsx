@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { manrope } from "@/font";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFilterStore } from "@/store/filterStore";
+import { Fascinate } from "next/font/google";
 
 export default function StoreListingPage() {
   const router = useRouter();
@@ -32,9 +33,13 @@ export default function StoreListingPage() {
   const { results, initializeFilters, selectedFilters, selectedPriceRange } =
     useFilterStore();
 
+  const [isReadyFlag , setIsReadyFlag] = useState<boolean>(false);
+
   // url to state update
   useEffect(() => {
     // return;
+     if(!(allCity && allCity.length > 0 && allArea && allArea.length > 0 && allStoreType && allStoreType.length > 0 ))return;
+
     console.log(searchParams);
     const params = new URLSearchParams(searchParams);
     const initialSelectedFilters: Record<string, string[]> = {};
@@ -81,11 +86,14 @@ export default function StoreListingPage() {
     initializeFilters({
       selectedFilters: initialSelectedFilters,
     });
-  }, [searchParams, initializeFilters, setQuery, setCity, setArea]);
+    setIsReadyFlag(true)
+  }, [searchParams,allCity , allArea , allStoreType, initializeFilters, setQuery, setCity, setArea]);
 
   // state to url
 
   useEffect(() => {
+    if(!isReadyFlag) return ; 
+
     const newparams = new URLSearchParams();
     if (query) {
       newparams.set("search", query);
@@ -107,7 +115,7 @@ export default function StoreListingPage() {
       newparams.set("store_type" , storeType.store_type)
     }
     router.replace(`${pathname}?${newparams.toString()}`);
-  }, [selectedFilters, query, city, area, storeType,  pathname, router]);
+  }, [selectedFilters, isReadyFlag , query, city, area, storeType,  pathname, router]);
 
   const getHeading = () => {
     // if (storeType && query && city) {

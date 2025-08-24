@@ -53,7 +53,7 @@ export default function ProductListPage() {
     activeFacet,
   } = useProductFilterStore();
   const [matchedStoreType, setMatchedStoreType] = useState<string | null>(null);
-
+  const [isReadyFlag , setIsReadyFlag] = useState<Boolean>(false);
   const fuse = new Fuse(STORE_TYPE_OPTIONS, {
     keys: ["store_type"],
     threshold: 0.4,
@@ -67,6 +67,8 @@ export default function ProductListPage() {
     const cityName = params.get("city");
     const areaName = params.get("area");
     const storeTypeName = params.get("store_type");
+
+    if(!(allCity && allCity.length > 0 && allArea && allArea.length > 0 && allStoreType && allStoreType.length > 0 ))return;
 
     params.forEach((value, key) => {
       if (
@@ -126,9 +128,12 @@ export default function ProductListPage() {
       setStoreType(matchedType);
       setMatchedStoreType(matchedType.store_type);
     }
-  }, [searchParams, initializeFilters, setQuery, setStoreType]);
+
+    setIsReadyFlag(true);
+  }, [searchParams,  allCity , allArea ,allStoreType ,   initializeFilters, setQuery, setStoreType]);
 
   useEffect(() => {
+    if(!isReadyFlag) return;
     const oldparams = new URLSearchParams(searchParams);
     const newparams = new URLSearchParams();
     if (query) {
@@ -160,7 +165,7 @@ export default function ProductListPage() {
     }
 
     router.replace(`${pathname}?${newparams.toString()}`);
-  }, [selectedFilters, selectedPriceRange, city, area, storeType, pathname , router]);
+  }, [selectedFilters, isReadyFlag ,  selectedPriceRange, city, area, storeType, pathname , router]);
 
   const displayCategory = selectedFilters.categories?.[0] || "";
 
