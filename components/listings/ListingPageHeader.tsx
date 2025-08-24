@@ -254,16 +254,14 @@ export default function ListingPageHeader() {
           name: area.name,
           city: area.city_name,
         }
-       : 
-    city != null
+      : city != null
       ? {
           value: city.id,
           label: city.name,
           name: city.name,
           country: "India",
         }
-      : 
-       // : cityOptions[0];
+      : // : cityOptions[0];
         groupedOptions[0];
 
   function highlightMatch(text: string, query: string) {
@@ -340,21 +338,22 @@ export default function ListingPageHeader() {
                       // "All Cities" is selected
                       setCity(null);
                       setArea(null);
-                      
-                    } else if (val.type === "city") {
-                      setCity({ id: val.value, name: (val.name || "")});
-                      setArea(null); // IMPORTANT: Clear the area when a city is selected
                     } else if (val.type === "area") {
                       // When an area is selected, find its parent city to keep the state consistent
                       const parentCity = allCity.find(
                         (c) => c.name === val.city
                       );
-                      setCity(parentCity || null);
-                      setArea({
-                        id: val.value,
-                        name: val.name,
-                        city_name: val.city,
-                      });
+                      if (parentCity) {
+                        setArea({
+                          id: val.value,
+                          name: val.name,
+                          city_name: val.city,
+                        });
+                        setCity(parentCity || null);
+                      }
+                    } else if (val.type === "city") {
+                      setCity({ id: val.value, name: val.name });
+                      setArea(null);
                     }
                   }}
                   onInputChange={(value) => setLocationSearchInput(value)} // capture search text

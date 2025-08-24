@@ -359,7 +359,8 @@ const DynamicFilter = ({ context }: DynamicFilterProps) => {
                                     <div className="flex justify-between items-center w-full space-x-2">
                                       <input
                                         type="checkbox"
-                                        checked={facet.selected}
+                                        // checked={facet.selected}
+                                        checked = {(selectedFilters[facetName] || [] ).includes(facet.name)}
                                         onChange={() =>
                                           toggleFilter(facetName, facet.name)
                                         }

@@ -61,20 +61,16 @@ export default function StoreListingPage() {
     });
     // Only perform the lookup if the master lists have been loaded
     if (allCity && allCity.length > 0 && cityName) {
-      console.log("all city", allCity, cityName);
       const cityObject = allCity.find((c) => c.name === cityName);
-      console.log("url_city", cityObject);
       if (cityObject) setCity(cityObject);
     }
 
     if (allArea && allArea.length > 0 && areaName) {
       const areaObject = allArea.find((a) => a.name === areaName);
-      console.log(areaObject);
       if (areaObject) setArea(areaObject);
     }
     if (search) {
       setQuery(search);
-      console.log("query1", search);
     }
     if(storeTypeName){
       const storeTypeObject = allStoreType.find((st)=> st.store_type === storeTypeName)
