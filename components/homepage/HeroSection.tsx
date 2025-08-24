@@ -2,10 +2,10 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 const res = [
-    {image:"/Homepage/homepage_image.svg", url:"https://google.com/"},
-    {image:"/Homepage/CardImage.svg", url:"https://maps.app.goo.gl/yWzNswF8oSVXbLCSA"},
-    {image:"/Homepage/CardTypeFive.svg", url:"https://maps.app.goo.gl/mF7SE4ScTkoc7eYEA"},
-    {image:"/Homepage/CardTypeOne.svg", url:"https://maps.app.goo.gl/toHDxmqNqLffRFRH8"},
+    {image:"/Homepage/homepage_image.svg", url:"https://attirelly.com/product_directory?store_type=Designer+Label"},
+    // {image:"/Homepage/CardImage.svg", url:"https://maps.app.goo.gl/yWzNswF8oSVXbLCSA"},
+    // {image:"/Homepage/CardTypeFive.svg", url:"https://maps.app.goo.gl/mF7SE4ScTkoc7eYEA"},
+    // {image:"/Homepage/CardTypeOne.svg", url:"https://maps.app.goo.gl/toHDxmqNqLffRFRH8"},
 ];
 export default function HeroSection() {
     const [currIndex, setCurrIndex] = useState(0);

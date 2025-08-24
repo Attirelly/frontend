@@ -9,11 +9,11 @@ import { manrope, roboto } from '@/font';
 import Link from 'next/link';
 
 const socialPlatforms = [
-  {
-    name: 'facebook',
-    href: 'https://www.facebook.com/profile.php?id=61567132705001', // Replace with your Facebook URL
-    hoverColor: 'hover:bg-[#1877F2]',
-  },
+  // {
+  //   name: 'facebook',
+  //   href: 'https://www.facebook.com/profile.php?id=61567132705001', // Replace with your Facebook URL
+  //   hoverColor: 'hover:bg-[#1877F2]',
+  // },
   {
     name: 'instagram',
     href: 'https://www.instagram.com/attirelly/', // Replace with your Instagram URL
