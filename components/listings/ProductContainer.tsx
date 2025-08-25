@@ -20,7 +20,6 @@ const REFETCH_THRESHOLD = Math.round(BUFFER_SIZE * 0.2); // Refetch when 80% of 
 
 export default function ProductContainer({
   storeId = "",
-  colCount = 4,
 }: ProductContainerProps) {
   const {
     selectedFilters,
@@ -238,9 +237,7 @@ export default function ProductContainer({
         <ProductGridSkeleton />
       ) : (
         <div
-          className={`grid grid-cols-1 sm:grid-cols-2 ${
-            colCount === 4 ? "md:grid-cols-4" : "md:grid-cols-3"
-          } gap-4 p-2`}
+         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2"
         >
           {products.map((product, index) => (
             <ProductCard key={`${product.id}`} {...product} />
