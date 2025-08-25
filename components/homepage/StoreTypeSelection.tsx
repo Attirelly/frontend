@@ -21,12 +21,13 @@ export default function StoreTypeSelection() {
     const { setStoreType, storeType } = useHeaderStore();
     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
     const [tabs, setTabs] = useState<SelectOption[]>([]);
-    // const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+
     useEffect(() => {
         router.prefetch('/store_listing')
-    },[router])
+    },[router]);
+
     const handleTabClick = (value: SelectOption) => {
         const storeType: BrandType = {
             id: value.value,
@@ -67,30 +68,32 @@ export default function StoreTypeSelection() {
         }
         fetchStoreTypes();
     }, []);
+
     return (
         <div className={`${manrope.className} flex flex-col items-center`}
             style={{ fontWeight: 500 }}>
-            <span className="text-3xl text-[#242424]" style={{ fontWeight: 400 }}>SHOP BY CATEGORY</span>
-            <div className="flex gap-23 mt-8">
+            <span className="text-2xl lg:text-3xl text-[#242424]" style={{ fontWeight: 400, wordSpacing: '2px' }}>SHOP BY CATEGORY</span>
+            <div className="grid grid-cols-2 gap-x-10 gap-y-15 mt-8 lg:flex lg:gap-23 ">
                 {tabs.map((tab, index) => {
                     const storeImage = StoreTypeImage.find(
                         (item) => item.name.toLowerCase() === tab.label.toLowerCase()
                     );
                     return (
-                            <div key={tab.value} className="flex flex-col items-center cursor-pointer" onClick={() => handleTabClick(tab)}>
-                                <div className="w-36 h-36 flex items-center justify-center">
-                                    <div className="relative w-40 h-40">
+                            <div key={tab.value} className="flex flex-col items-center cursor-pointer gap-[18px] lg:gap-[24px]" onClick={() => handleTabClick(tab)}>
+                                <div className="relative w-[75px] h-[75px] lg:w-[95px] lg:h-[95px] flex items-center justify-center">
+                                    {/* <div className="relative w-40 h-40"> */}
                                         <Image
                                             src={storeImage?.url || '/Homepage/tailor.svg'}
                                             alt='Store Type'
                                             fill
-                                            sizes="160px"
+                                            className="object-contain"
+                                            sizes="95px"
                                         />
-                                    </div>
+                                    {/* </div> */}
 
                                 </div>
                                 <div>
-                                    <span key={tab.value} className="text-xl text-[#242424]">{tab.label}</span>
+                                    <span key={tab.value} className="text-base lg:text-xl text-[#242424] text-center">{tab.label}</span>
                                 </div>
 
                             </div>

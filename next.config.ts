@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
         // pathname: '/**', // allow all paths
       },
     ],
-  }
+  },
 };
 
 export default nextConfig;

@@ -20,11 +20,11 @@ import ListingPageHeader from "@/components/listings/ListingPageHeader";
 export default function HomePage() {
     return (
         // Remove the background color from the outermost container
-        <div className="flex flex-col">
+        <div className="w-full flex flex-col">
             <div className="bg-white">
                 <ListingPageHeader />
 
-                <div className="px-20">
+                <div className="lg:px-20">
                     <HeroSection />
                 </div>
 
