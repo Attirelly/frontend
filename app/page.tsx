@@ -34,7 +34,7 @@ export default function HomePage() {
 
                 <div className="space-y-16">
                     {/* section 1 - 5 images scollable */}
-                    <div className="px-[10px] lg:px-11">
+                    <div className="px-4 lg:px-11">
                         <SectionOneContainer />
                     </div>
                     {/* section 2 - 4 images, detail, shop now*/}

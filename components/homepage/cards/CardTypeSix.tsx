@@ -12,7 +12,7 @@ const CardTypeSix: React.FC<CardProps> = ({ imageUrl, title, description }) => {
   return (
     <div>
     <div
-      className={`${manrope.className}  relative w-[192px] h-[261px] lg:w-[293px] lg:h-[333px] rounded-2xl overflow-hidden`}
+      className={`${manrope.className}  relative w-[180px] h-[250px] lg:w-[293px] lg:h-[333px] rounded-2xl overflow-hidden`}
     >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">

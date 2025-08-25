@@ -113,9 +113,10 @@ export default function SectionTwoContainer() {
       <div className="relative">
         {/* Navigation Arrows for Mobile */}
         <button
-          onClick={handlePrev}
-          className="absolute z-10 left-0 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-8 h-8 flex items-center justify-center cursor-pointer lg:hidden"
-        >
+  onClick={handlePrev}
+  // Change position from -left-5 to a more contained value
+  className="absolute z-10 left-4 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-8 h-8 flex items-center justify-center cursor-pointer lg:hidden"
+>
           <Image
             src="/Homepage/left_arrow.svg"
             alt="Left arrow"
@@ -160,9 +161,10 @@ export default function SectionTwoContainer() {
 
         {/* Navigation Arrows for Mobile */}
         <button
-          onClick={handleNext}
-          className="absolute z-10 right-0 translate-x-1/2 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-8 h-8 flex items-center justify-center cursor-pointer lg:hidden"
-        >
+  onClick={handleNext}
+  // Change position from -right-5 to a more contained value
+  className="absolute z-10 right-4 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-8 h-8 flex items-center justify-center cursor-pointer lg:hidden"
+>
           <Image
             src="/Homepage/right_arrow.svg"
             alt="Left arrow"
