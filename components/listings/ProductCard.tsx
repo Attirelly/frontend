@@ -224,9 +224,9 @@ export default function ProductCard({
                   e.stopPropagation();
                   handlePrev();
                 }}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-1 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-0.5 md:p-1 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft className="h-4 w-4 lg:h-5 lg:w-5" />
               </button>
 
               {/* Next Button */}
@@ -236,9 +236,9 @@ export default function ProductCard({
                   e.stopPropagation();
                   handleNext();
                 }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-1 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-0.5 md:p-1 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
               >
-                <ChevronRight size={20} />
+                <ChevronRight className="h-4 w-4 lg:h-5 lg:w-5" />
               </button>
             </>
           )}

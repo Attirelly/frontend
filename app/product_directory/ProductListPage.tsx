@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import StoreTypeTabs from "@/components/listings/StoreTypes";
 import { BrandType } from "@/types/SellerTypes";
+import { Filter } from "lucide-react";
 
 // const STORE_TYPE_OPTIONS = [
 //   { store_type: "Retail Store", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
@@ -52,7 +53,7 @@ export default function ProductListPage() {
     selectedPriceRange,
     activeFacet,
   } = useProductFilterStore();
-   const [isFilterOpen, setIsFilterOpen] = useState(true);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [matchedStoreType, setMatchedStoreType] = useState<string | null>(null);
   const [isReadyFlag, setIsReadyFlag] = useState<Boolean>(false);
@@ -202,13 +203,12 @@ export default function ProductListPage() {
     console.log("results changed", results);
   }, [results]);
 
-
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
       {/* <ListingPageHeader /> */}
-      <div className="flex flex-col mx-20">
+      <div className="flex flex-col px-4 pb-24 md:pb-0 lg:px-20">
         <span
-          className={`${manrope.className} text-[#101010] mt-4 text-[32px]`}
+          className={`${manrope.className} text-[#101010] mt-4 text-2xl lg:text-[32px]`}
           style={{ fontWeight: 500 }}
         >
           {results > 0
@@ -221,18 +221,11 @@ export default function ProductListPage() {
         </span>
 
         {/* Store Type Selection */}
-        <div className="mt-10">
+        <div className="hidden md:block mt-10">
           <StoreTypeTabs
             defaultValue={storeType?.store_type ?? matchedStoreType ?? ""}
             context="products"
           />
-          {/* <StoreTypeButtons
-            options={STORE_TYPE_OPTIONS}
-            context="product"
-            defaultValue={ storeType?.store_type ?? matchedStoreType ?? "" }
-          /> */}
-
-          {/* <StoreTypeTabs context={"products"} /> */}
         </div>
 
         {/* Content Section */}
@@ -240,21 +233,40 @@ export default function ProductListPage() {
           <hr className="border-t border-[#D9D9D9] w-full mt-5 mb-4" />
           <div className="flex flex-col items-center w-full mt-8">
             <div className="w-full px-4">
-              <div className="w-full grid grid-cols-[300px_1fr] gap-6">
-                <div className="hidden lg:block sticky top-2">
+              <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+                {/* Filter Column */}
+                <div className="hidden lg:block lg:col-span-1 sticky top-2">
                   <DynamicFilter context="product" />
                 </div>
-                <div>
-                  <div className="flex justify-between items-center">
+
+                {/* Product Content Column */}
+                <div className="lg:col-span-3">
+                  <div className="flex justify-between items-center mb-4">
+                    <div
+                      onClick={() => setIsFilterOpen(true)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-500 rounded-md lg:hidden"
+                    >
+                      <span>Filters</span>
+                      <img
+                        src="/ListingPageHeader/FilterIcon.svg"
+                        alt="Filter button"
+                        className={`w-4 h-4 transform transition-transform`}
+                      />
+                    </div>
                     <SortByDropdown />
                   </div>
-                  
-                    <ProductContainer  />
-                  
+                  <ProductContainer />
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white p-2 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-30">
+          <StoreTypeTabs
+            defaultValue={storeType?.store_type ?? matchedStoreType ?? ""}
+            context="products"
+          />
         </div>
       </div>
       <div className="mt-10">
