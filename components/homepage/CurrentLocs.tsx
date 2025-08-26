@@ -18,10 +18,11 @@ export default function CurrentLocs() {
     >
       {/* Left Column: Location Info */}
       <div className="flex flex-col gap-10 items-center">
-        <span className="text-[32px] text-center text-black">
+        <span className={`text-[24px] md:text-[30px] lg:text-[32px] 
+        text-center text-black`}>
           CURRENTLY OPERATING IN
         </span>
-        <div className="grid grid-cols-3 gap-x-6 ml-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 justify-items-center">
           {locs.map((location) => (
             <span
               key={location.location}
@@ -35,7 +36,7 @@ export default function CurrentLocs() {
 
       {/* Right Column: Supported By */}
       <div className="flex flex-col items-center justify-start gap-5">
-        <span className="text-[28px] text-black">Supported By</span>
+        <span className="text-[18px] md:text-[24px] lg:text-[28px] text-black">Supported By</span>
         {/* <div className="flex gap-3 items-center"> */}
           <Image
             src="/Homepage/ISB_AIC.svg"

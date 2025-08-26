@@ -70,8 +70,12 @@ export default function HomePage() {
                     <div className="mx-auto px-3 md:px-9 lg:px-11">
                         <SectionTenContainer />
                     </div>
-                    <SectionElevenContainer />
-                    <SectionTwelveContainer />
+                    <div className="mx-auto px-3 md:px-9 lg:px-11">
+                        <SectionElevenContainer />
+                    </div>
+                    <div className="mx-auto px-3 md:px-9 lg:px-11">
+                        <SectionTwelveContainer />
+                    </div>
                 </div>
 
                 <div className="mt-10">

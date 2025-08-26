@@ -15,23 +15,49 @@ interface CardData {
 }
 
 const SECTION_NUMBER = 12;
+const DESKTOP_VISIBLE_COUNT = 6;
+const TAB_VISIBLE_COUNT = 4;
+const MOBILE_VISIBLE_COUNT = 2;
 
 export default function SectionTwelveContainer() {
   const [startIndex, setStartIndex] = useState(0);
-  const visibleCount = 6;
   const cardWidth = 184; // Width of each card
   const gap = 20; // Tailwind gap-5 = 1.25rem = 20px
   const [stores, setStores] = useState<CardData[]>([]);
   const [viewAll, setViewAll] = useState('');
+  const [visibleCount, setVisibleCount] = useState(DESKTOP_VISIBLE_COUNT);
   const [name, setName] = useState('');
+
+  const [screenSize, setScreenSize] = useState("sm");
+  
+    useEffect(() => {
+      const updateVisibleCount = () => {
+        if (window.innerWidth < 768) {
+          setVisibleCount(MOBILE_VISIBLE_COUNT);
+          setScreenSize("sm");
+        } else if (window.innerWidth < 1024) {
+          setVisibleCount(TAB_VISIBLE_COUNT);
+          setScreenSize("md");
+        } else if (window.innerWidth < 1300) {
+          setVisibleCount(DESKTOP_VISIBLE_COUNT);
+          setScreenSize("lg");
+        } else {
+          setVisibleCount(DESKTOP_VISIBLE_COUNT);
+          setScreenSize("xl");
+        }
+      };
+      updateVisibleCount();
+      window.addEventListener("resize", updateVisibleCount);
+      return () => window.removeEventListener("resize", updateVisibleCount);
+    }, []);
 
   useEffect(() => {
     const fetchStoresBySection = async () => {
       try {
         const res = await api.get(`homepage/stores_by_section_number/${SECTION_NUMBER}`);
         const storeData = res.data;
-
-        const formattedStores: CardData[] = storeData.map((store: any) => ({
+        
+        const formattedStores: CardData[] = storeData.map((store : any) => ({
           id: store.store_id,
           imageUrl: store.profile_image,
           title: store.store_name,
@@ -69,21 +95,19 @@ export default function SectionTwelveContainer() {
     const realIndex = (startIndex + i) % totalCards;
     return stores[realIndex];
   });
-
-    if (!stores || stores.length == 0) {
-    return <div></div>;
+  if(!stores || stores.length == 0  ){
+   return <div></div>
   }
-
   return (
-    <div className='w-[1242px]  mx-auto space-y-8'>
-      <div className='flex justify-between'>
-        <span className={`${manrope.className} text-4xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
+    <div className='w-full mx-auto space-y-4 lg:space-y-8'>
+      <div className='flex justify-between px-4 lg:px-2'>
+        <span className={`${manrope.className} text-xl md:text-2xl lg:text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
         <a
           href={viewAll}
           target="_blank"
           rel="noopener noreferrer"
-          className='flex items-center gap-2'>
-          <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
+          className='flex items-center gap-1 lg:gap-2'>
+          <span className={`${manrope.className} text-sm lg:text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
           <Image
             src="/Homepage/right_arrow.svg"
             alt="View All"
@@ -94,12 +118,12 @@ export default function SectionTwelveContainer() {
 
       </div>
 
-      <div className="relative">
+      <div className="relative flex items-center">
         {/* Navigation Arrows */}
         <button
           onClick={handlePrev}
           // disabled={startIndex === 0}
-          className="absolute z-50 -left-15 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+          className="absolute z-50 -left-0 -translate-x-1/4 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
         >
           <Image
             src="/Homepage/left_arrow.svg"
@@ -109,9 +133,15 @@ export default function SectionTwelveContainer() {
           />
         </button>
 
-        <div className="overflow-hidden">
+        {/* <div className="overflow-hidden"> */}
           <div
-            className="flex gap-6 transition-transform duration-500 ease-in-out">
+          className={`w-full grid
+            ${screenSize === 'sm' ? "grid-cols-2 pl-1" : ""}
+            ${screenSize === 'md' ? "grid-cols-4 px-10 ml-2" : ""}
+            ${screenSize === 'lg' ? "grid-cols-6 px-8 ml-2" : ""}
+            ${screenSize === 'xl' ? "grid-cols-6 px-10 ml-2" : ""}
+           `}
+        >
             {visibleCards.map((card) => (
               <div
                 key={card?.id}
@@ -126,22 +156,23 @@ export default function SectionTwelveContainer() {
                     imageUrl={card?.imageUrl}
                     title={card?.title}
                     description={card?.description || ''}
+                    screenSize={screenSize}
                   />
                 </a>
 
               </div>
             ))}
           </div>
-        </div>
+        {/* </div> */}
 
         <button
           onClick={handleNext}
           // disabled={startIndex === maxIndex}
-          className="absolute z-10  -right-10 translate-x-1/2 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+          className="absolute z-10  -right-0 translate-x-1/4 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
         >
           <Image
             src="/Homepage/right_arrow.svg"
-            alt="Left arrow"
+            alt="Right arrow"
             width={7}
             height={7}
           />

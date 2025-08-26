@@ -16,7 +16,7 @@ interface CardData {
 
 const SECTION_NUMBER = 9;
 
-export default function SectionEightContainer() {
+export default function SectionNineContainer() {
   const [stores, setStores] = useState<CardData[]>([]);
   const [viewAll, setViewAll] = useState("");
   const [name, setName] = useState("");
