@@ -5,6 +5,7 @@ import Image from "next/image";
 import CardTypeSix from "../cards/CardTypeSix";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
+import SectionTwoContainerSkeleton from "../skeleton/SectionTwoContainerSkeleton";
 
 interface CardData {
   id: string;
@@ -27,6 +28,8 @@ export default function SectionTwoContainer() {
   const [products, setProducts] = useState<CardData[]>([]);
   const [visibleCount, setVisibleCount] = useState(DESKTOP_VISIBLE_COUNT);
   const [screenSize, setScreenSize] = useState('sm');
+  const [loading, setLoading] = useState(true);
+
 
   // ✅ handle responsive breakpoints
   useEffect(() => {
@@ -77,6 +80,9 @@ export default function SectionTwoContainer() {
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
+      finally {
+        setLoading(false);
+      }
     };
 
     fetchSegmentInfo();
@@ -101,6 +107,10 @@ export default function SectionTwoContainer() {
     const realIndex = (startIndex + i) % totalCards;
     return products[realIndex];
   });
+
+  if (loading) {
+    return <SectionTwoContainerSkeleton />;
+  }
 
   if (!products || products.length === 0) {
     return <div></div>;

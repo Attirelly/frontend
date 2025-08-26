@@ -5,6 +5,7 @@ import Image from "next/image";
 import CardTypeOne from "../cards/CardTypeOne";
 import { api } from "@/lib/axios";
 import { manrope } from "@/font";
+import SectionFourContainerSkeleton from "../skeleton/SectionFourContainerSkeleton";
 
 interface CardData {
   id: string;
@@ -22,6 +23,7 @@ export default function CardStack() {
   const [name, setName] = useState("");
   const [products, setProducts] = useState<CardData[]>([]);
   const [screenSize, setScreenSize] = useState('sm');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
   const updateScreenSize = () => {
@@ -66,6 +68,9 @@ export default function CardStack() {
         setName(sectionData.section_name);
       } catch (error) {
         console.error(error);
+      }
+      finally {
+        setLoading(false);
       }
     };
     fetchSegmentInfo();
@@ -118,6 +123,10 @@ const getVisibleCards = useCallback(() => {
 
   const visibleCards = getVisibleCards();
 
+  if (loading) {
+    return <SectionFourContainerSkeleton />;
+  }
+
   if (!products || products.length == 0) {
     return <div></div>;
   }
@@ -125,7 +134,7 @@ const getVisibleCards = useCallback(() => {
   return (
     <div className="flex flex-col gap-8 items-center">
       <span
-        className={`${manrope.className} text-4xl text-[#242424]`}
+        className={`${manrope.className} text-[24px] md:text-[28px] lg:text-[32px] text-[#242424]`}
         style={{ fontWeight: 400 }}
       >
         {name}

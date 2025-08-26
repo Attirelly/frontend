@@ -26,6 +26,7 @@ export default function SectionOneContainer() {
   const [viewAll, setViewAll] = useState("");
   const [name, setName] = useState("");
   const [products, setProducts] = useState<CardData[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,6 +54,9 @@ export default function SectionOneContainer() {
         setName(sectionData.section_name);
       } catch (error) {
         console.error(error);
+      }
+      finally {
+        setLoading(false);
       }
     };
 

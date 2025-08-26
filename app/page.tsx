@@ -46,7 +46,7 @@ export default function HomePage() {
                         <SectionThreeContainer />
                     </div>
                     {/* section 4 - overlapping images */}
-                    <div className="mx-auto px-1 md:px-9 lg:px-11">
+                    <div className="mx-auto px-1 md:px-9 lg:px-11 mb-20">
                         <SectionFourContainer />
                     </div>
                 </div>

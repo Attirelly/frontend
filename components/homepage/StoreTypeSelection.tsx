@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { manrope } from "@/font";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import StoreTypeSelectionSkeleton from "./skeleton/StoreTypeSelectionSkeleton";
 
 const StoreTypeImage = [
     { name: 'Designer Label', url: '/Homepage/designer_labels.svg' },
@@ -33,16 +34,8 @@ export default function StoreTypeSelection() {
             id: value.value,
             store_type: value.label
         }
-        // event({
-        //     action: "Store Type Select",
-        //     params: {
-        //         "Store Type": value.label
-        //     }
-        // });
-        // setSelectedStoreType(storeType);
         setStoreType(storeType);
         router.push('/store_listing');
-        // onChange(value);
     };
     // 
 
@@ -69,6 +62,10 @@ export default function StoreTypeSelection() {
         fetchStoreTypes();
     }, []);
 
+    if (loading) {
+        return <StoreTypeSelectionSkeleton />;
+    }
+
     return (
         <div className={`${manrope.className} flex flex-col items-center`}
             style={{ fontWeight: 500 }}>
@@ -81,7 +78,6 @@ export default function StoreTypeSelection() {
                     return (
                             <div key={tab.value} className="flex flex-col items-center cursor-pointer gap-[18px] lg:gap-[24px]" onClick={() => handleTabClick(tab)}>
                                 <div className="relative w-[75px] h-[75px] lg:w-[95px] lg:h-[95px] flex items-center justify-center">
-                                    {/* <div className="relative w-40 h-40"> */}
                                         <Image
                                             src={storeImage?.url || '/Homepage/tailor.svg'}
                                             alt='Store Type'
@@ -89,7 +85,6 @@ export default function StoreTypeSelection() {
                                             className="object-contain"
                                             sizes="95px"
                                         />
-                                    {/* </div> */}
 
                                 </div>
                                 <div>
@@ -97,8 +92,6 @@ export default function StoreTypeSelection() {
                                 </div>
 
                             </div>
-
-
                     )
                 })}
             </div>

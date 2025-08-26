@@ -5,6 +5,7 @@ import CardTypeFive from "../cards/CardTypeFive";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
+import SectionThreeContainerSkeleton from "../skeleton/SectionThreeContainerSkeleton";
 
 interface CardData {
   id: string;
@@ -29,6 +30,7 @@ export default function SectionThreeContainer() {
   const [products, setProducts] = useState<CardData[]>([]);
   const [visibleCount, setVisibleCount] = useState(DESKTOP_VISIBLE_COUNT);
   const [screenSize, setScreenSize] = useState("sm");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const updateVisibleCount = () => {
@@ -79,6 +81,9 @@ export default function SectionThreeContainer() {
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
+      finally {
+        setLoading(false);
+      }
     };
 
     fetchSegmentInfo();
@@ -102,6 +107,10 @@ export default function SectionThreeContainer() {
     const realIndex = (startIndex + i) % totalCards;
     return products[realIndex];
   });
+
+  if (loading) {
+    return <SectionThreeContainerSkeleton />;
+  }
 
   if (!products || products.length == 0) {
     return <div></div>;

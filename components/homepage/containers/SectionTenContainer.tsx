@@ -5,6 +5,7 @@ import Image from "next/image";
 import CardTwoType from "../cards/CardTypeTwo";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
+import SectionEightContainerSkeleton from "../skeleton/SectionEightContainerSkeleton";
 
 interface CardData {
   id: string;
@@ -21,6 +22,7 @@ export default function SectionTenContainer() {
   const [viewAll, setViewAll] = useState("");
   const [name, setName] = useState("");
   const [screenSize, setScreenSize] = useState('sm');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
       const updateVisibleCount = () => {
@@ -65,9 +67,16 @@ export default function SectionTenContainer() {
       } catch (error) {
         console.error("Failed to fetch store data:", error);
       }
+      finally {
+        setLoading(false);
+      }
     };
     fetchStoresBySection();
   }, []);
+
+  if (loading) {
+    return <SectionEightContainerSkeleton />;
+  }
 
   if (!stores || stores.length == 0) {
     return <div></div>;

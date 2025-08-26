@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { manrope } from '@/font';
 import CardTypeFour from '../cards/CardTypeFour';
 import { api } from '@/lib/axios';
+import SectionElevenContainerSkeleton from '../skeleton/SectionElevenContainerSkeleton';
 
 interface CardData {
   id: string;
@@ -27,6 +28,7 @@ export default function SectionTwelveContainer() {
   const [viewAll, setViewAll] = useState('');
   const [visibleCount, setVisibleCount] = useState(DESKTOP_VISIBLE_COUNT);
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const [screenSize, setScreenSize] = useState("sm");
   
@@ -72,6 +74,8 @@ export default function SectionTwelveContainer() {
 
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchStoresBySection()
@@ -95,8 +99,13 @@ export default function SectionTwelveContainer() {
     const realIndex = (startIndex + i) % totalCards;
     return stores[realIndex];
   });
-  if(!stores || stores.length == 0  ){
-   return <div></div>
+
+  if (loading) {
+    return <SectionElevenContainerSkeleton />;
+  }
+
+  if (!stores || stores.length == 0) {
+    return <div></div>;
   }
   return (
     <div className='w-full mx-auto space-y-4 lg:space-y-8'>
