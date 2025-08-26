@@ -7,11 +7,17 @@ interface CardProps {
   discountText?: string;
   title: string;
   description?: string;
+  screenSize?:string;
 }
 
-const Card: React.FC<CardProps> = ({ imageUrl, discountText, title, description }) => {
+const Card: React.FC<CardProps> = ({ imageUrl, discountText, title, description, screenSize='sm' }) => {
   return (
-    <div className={`${manrope.className} relative w-[392px] h-full rounded-xl overflow-hidden shadow-lg`}>
+    <div className={`${manrope.className} relative
+     ${screenSize === 'sm' ? 'w-[350px]' : ''}
+      ${screenSize === 'md' ? 'w-[210px]' : ''}
+      ${screenSize === 'lg' ? 'w-[250px]' : ''}
+      ${screenSize === 'xl' ? 'w-[293px]' : ''}
+      h-full rounded-xl overflow-hidden shadow-lg`}>
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image

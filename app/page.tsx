@@ -34,19 +34,19 @@ export default function HomePage() {
 
                 <div className="space-y-16">
                     {/* section 1 - 5 images scollable */}
-                    <div className="px-4 lg:px-11">
+                    <div className="mx-auto px-3 md:px-9 lg:px-11">
                         <SectionOneContainer />
                     </div>
                     {/* section 2 - 4 images, detail, shop now*/}
-                    <div className="px-[10px] lg:px-11">
+                    <div className="mx-auto px-3 md:px-9 lg:px-11">
                         <SectionTwoContainer />
                     </div>
                     {/* section 3 - five images, fixed, detail */}
-                    <div className="px-11">
+                    <div className="mx-auto px-3 md:px-9 lg:px-11">
                         <SectionThreeContainer />
                     </div>
                     {/* section 4 - overlapping images */}
-                    <div className="px-11">
+                    <div className="mx-auto px-1 md:px-9 lg:px-11">
                         <SectionFourContainer />
                     </div>
                 </div>
@@ -61,9 +61,15 @@ export default function HomePage() {
                 </div>
 
                 <div className="mt-20 space-y-20">
-                    <SectionEightContainer />
-                    <SectionNineContainer />
-                    <SectionTenContainer />
+                    <div className="mx-auto px-3 md:px-9 lg:px-11">
+                        <SectionEightContainer />
+                    </div>
+                    <div className="mx-auto px-3 md:px-9 lg:px-11">
+                        <SectionNineContainer />
+                    </div>
+                    <div className="mx-auto px-3 md:px-9 lg:px-11">
+                        <SectionTenContainer />
+                    </div>
                     <SectionElevenContainer />
                     <SectionTwelveContainer />
                 </div>

@@ -16,10 +16,29 @@ interface CardData {
 
 const SECTION_NUMBER = 9;
 
-export default function SectionNineContainer() {
+export default function SectionEightContainer() {
   const [stores, setStores] = useState<CardData[]>([]);
   const [viewAll, setViewAll] = useState("");
   const [name, setName] = useState("");
+  const [screenSize, setScreenSize] = useState('sm');
+
+  useEffect(() => {
+      const updateVisibleCount = () => {
+        if (window.innerWidth < 768) {
+          setScreenSize('sm');
+        } else if (window.innerWidth < 1024) {
+          setScreenSize('md');
+        } else if(window.innerWidth < 1300){
+          setScreenSize('lg')
+        }else{
+          setScreenSize('xl')
+        }
+      };
+  
+      updateVisibleCount();
+      window.addEventListener("resize", updateVisibleCount);
+      return () => window.removeEventListener("resize", updateVisibleCount);
+    }, []);
 
   useEffect(() => {
     const fetchStoresBySection = async () => {
@@ -55,10 +74,10 @@ export default function SectionNineContainer() {
   }
 
   return (
-    <div className="w-[1242px] mx-auto space-y-8">
-      <div className="flex justify-between">
+    <div className="w-full mx-auto space-y-4 lg:space-y-8">
+      <div className="flex justify-between px-4 lg:px-0">
         <span
-          className={`${manrope.className} text-4xl text-[#242424]`}
+          className={`${manrope.className} text-xl md:text-2xl lg:text-3xl text-[#242424]`}
           style={{ fontWeight: 400 }}
         >
           {name}
@@ -67,10 +86,10 @@ export default function SectionNineContainer() {
           href={viewAll}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 lg:gap-2"
         >
           <span
-            className={`${manrope.className} text-base text-[#242424]`}
+            className={`${manrope.className} text-sm lg:text-base text-[#242424]`}
             style={{ fontWeight: 400 }}
           >
             View All
@@ -85,7 +104,11 @@ export default function SectionNineContainer() {
       </div>
 
       <div className="flex flex-col">
-        <div className="grid grid-cols-4 gap-x-10 gap-y-6">
+        <div className={`grid
+        ${screenSize === 'sm' ? "grid-cols-2 gap-x-2" : ""}
+            ${screenSize === 'md' ? "grid-cols-4 gap-x-10" : ""}
+            ${screenSize === 'lg' || screenSize === 'xl' ? "grid-cols-4 gap-x-12" : ""}
+            gap-y-6`}>
           {stores.map((card) => (
             <a
               key={card.id}
@@ -97,6 +120,7 @@ export default function SectionNineContainer() {
                 imageUrl={card.imageUrl}
                 title={card.title}
                 description={card.description || ""}
+                screenSize={screenSize}
               />
             </a>
           ))}

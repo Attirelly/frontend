@@ -17,6 +17,7 @@ interface CardData {
 
 const SECTION_NUMBER = 2;
 const DESKTOP_VISIBLE_COUNT = 4;
+const TAB_VISIBLE_COUNT = 3;
 const MOBILE_VISIBLE_COUNT = 2;
 
 export default function SectionTwoContainer() {
@@ -24,7 +25,33 @@ export default function SectionTwoContainer() {
   const [viewAll, setViewAll] = useState("");
   const [name, setName] = useState("");
   const [products, setProducts] = useState<CardData[]>([]);
+  const [visibleCount, setVisibleCount] = useState(DESKTOP_VISIBLE_COUNT);
+  const [screenSize, setScreenSize] = useState('sm');
 
+  // ✅ handle responsive breakpoints
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      if (window.innerWidth < 768) {
+        setVisibleCount(MOBILE_VISIBLE_COUNT);
+        setScreenSize('sm');
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(TAB_VISIBLE_COUNT);
+        setScreenSize('md');
+      } else if(window.innerWidth < 1300){
+        setVisibleCount(DESKTOP_VISIBLE_COUNT);
+        setScreenSize('lg')
+      }else{
+        setVisibleCount(DESKTOP_VISIBLE_COUNT);
+        setScreenSize('xl')
+      }
+    };
+
+    updateVisibleCount();
+    window.addEventListener("resize", updateVisibleCount);
+    return () => window.removeEventListener("resize", updateVisibleCount);
+  }, []);
+
+  // ✅ fetch API
   useEffect(() => {
     const fetchSegmentInfo = async () => {
       try {
@@ -69,7 +96,8 @@ export default function SectionTwoContainer() {
     }
   };
 
-  const visibleCards = Array.from({ length: totalCards }, (_, i) => {
+  // ✅ responsive visible cards
+  const visibleCards = Array.from({ length: visibleCount }, (_, i) => {
     const realIndex = (startIndex + i) % totalCards;
     return products[realIndex];
   });
@@ -79,8 +107,8 @@ export default function SectionTwoContainer() {
   }
 
   return (
-    <div className="w-full lg:w-[1242px] mx-auto space-y-4 lg:space-y-8">
-      {/* Container for title and "View All" */}
+    <div className="w-full mx-auto space-y-4 lg:space-y-8">
+      {/* Title + View All */}
       <div className="flex justify-between px-4 lg:px-0">
         <span
           className={`${manrope.className} text-xl md:text-2xl lg:text-3xl text-[#242424]`}
@@ -110,13 +138,12 @@ export default function SectionTwoContainer() {
       </div>
 
       {/* Main scrolling container */}
-      <div className="relative">
-        {/* Navigation Arrows for Mobile */}
+      <div className="relative flex items-center">
+        {/* Prev Button */}
         <button
-  onClick={handlePrev}
-  // Change position from -left-5 to a more contained value
-  className="absolute z-10 left-4 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-8 h-8 flex items-center justify-center cursor-pointer lg:hidden"
->
+          onClick={handlePrev}
+          className="absolute z-10 left-0 top-1/2 -translate-x-1/4 md:-translate-x-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-8 h-8 flex items-center justify-center cursor-pointer lg:hidden"
+        >
           <Image
             src="/Homepage/left_arrow.svg"
             alt="Left arrow"
@@ -125,49 +152,38 @@ export default function SectionTwoContainer() {
           />
         </button>
 
-        {/* The Card Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-x-10 lg:gap-y-6">
-          {products.slice(startIndex, startIndex + MOBILE_VISIBLE_COUNT).map((card, index) => (
+        {/* Card Grid */}
+        <div
+          className={`w-full grid 
+            ${visibleCount === 2 ? "grid-cols-2 gap-x-2" : ""}
+            ${visibleCount === 3 ? "grid-cols-3 gap-x-10" : ""}
+            ${visibleCount === 4 ? "grid-cols-4 gap-x-12" : ""}`}
+        >
+          {visibleCards.map((card) => (
             <a
               key={card.id}
               href={card?.categoryLandingUrl || "#"}
               target="_blank"
               rel="noopener noreferrer"
-              className="lg:hidden"
             >
               <CardTypeSix
                 imageUrl={card.imageUrl}
                 title={card.title}
                 description={card.description || ""}
-              />
-            </a>
-          ))}
-          {products.map((card) => (
-            <a
-              key={card.id}
-              href={card?.categoryLandingUrl || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden lg:block"
-            >
-              <CardTypeSix
-                imageUrl={card.imageUrl}
-                title={card.title}
-                description={card.description || ""}
+                screenSize={screenSize}
               />
             </a>
           ))}
         </div>
 
-        {/* Navigation Arrows for Mobile */}
+        {/* Next Button */}
         <button
-  onClick={handleNext}
-  // Change position from -right-5 to a more contained value
-  className="absolute z-10 right-4 top-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-8 h-8 flex items-center justify-center cursor-pointer lg:hidden"
->
+          onClick={handleNext}
+          className="absolute z-10 right-0 top-1/2 translate-x-1/4 md:translate-x-1/2 -translate-y-1/2 bg-[#D9D9D9] shadow-md rounded-full w-8 h-8 flex items-center justify-center cursor-pointer lg:hidden"
+        >
           <Image
             src="/Homepage/right_arrow.svg"
-            alt="Left arrow"
+            alt="Right arrow"
             width={7}
             height={7}
           />

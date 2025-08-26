@@ -73,7 +73,7 @@ export default function StoreTypeSelection() {
         <div className={`${manrope.className} flex flex-col items-center`}
             style={{ fontWeight: 500 }}>
             <span className="text-2xl lg:text-3xl text-[#242424]" style={{ fontWeight: 400, wordSpacing: '2px' }}>SHOP BY CATEGORY</span>
-            <div className="grid grid-cols-2 gap-x-10 gap-y-15 mt-8 lg:flex lg:gap-23 ">
+            <div className="grid grid-cols-2 gap-x-10 gap-y-15 mt-8 md:flex lg:gap-23 ">
                 {tabs.map((tab, index) => {
                     const storeImage = StoreTypeImage.find(
                         (item) => item.name.toLowerCase() === tab.label.toLowerCase()

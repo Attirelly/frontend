@@ -6,13 +6,19 @@ interface CardProps {
   imageUrl: string;
   title: string;
   description?: string;
+  screenSize?:string;
 }
 
-const CardTypeSix: React.FC<CardProps> = ({ imageUrl, title, description }) => {
+const CardTypeSix: React.FC<CardProps> = ({ imageUrl, title, description, screenSize='sm' }) => {
   return (
     <div>
     <div
-      className={`${manrope.className}  relative w-[180px] h-[250px] lg:w-[293px] lg:h-[333px] rounded-2xl overflow-hidden`}
+      className={`${manrope.className} relative
+      ${screenSize === 'sm' ? 'w-[170px] h-[250px]' : ''}
+      ${screenSize === 'md' ? 'w-[210px] h-[310px]' : ''}
+      ${screenSize === 'lg' ? 'w-[250px] h-[310px]' : ''}
+      ${screenSize === 'xl' ? 'w-[293px] h-[333px]' : ''}
+      rounded-2xl overflow-hidden`}
     >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">

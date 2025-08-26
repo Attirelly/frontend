@@ -21,6 +21,25 @@ export default function CardStack() {
   const [viewAll, setViewAll] = useState("");
   const [name, setName] = useState("");
   const [products, setProducts] = useState<CardData[]>([]);
+  const [screenSize, setScreenSize] = useState('sm');
+
+  useEffect(() => {
+  const updateScreenSize = () => {
+    if (window.innerWidth < 768) {
+      setScreenSize("sm");
+    } else if (window.innerWidth < 1024) {
+      setScreenSize("md");
+    } else if (window.innerWidth < 1300) {
+      setScreenSize("lg");
+    } else {
+      setScreenSize("xl");
+    }
+  };
+
+  updateScreenSize();
+  window.addEventListener("resize", updateScreenSize);
+  return () => window.removeEventListener("resize", updateScreenSize);
+}, []);
 
   // Fetch data
   useEffect(() => {
@@ -62,37 +81,40 @@ export default function CardStack() {
   }, [products.length]);
 
   // Get visible cards with wrap-around logic
-  const getVisibleCards = useCallback(() => {
-    if (products.length === 0) return [];
+  // Get visible cards with wrap-around logic
+const getVisibleCards = useCallback(() => {
+  if (products.length === 0) return [];
 
-    const visibleIndices = [];
-    const totalCards = products.length;
+  let range = 2; // default for lg and xl → show 5 cards (-2..2)
 
-    // Always show 5 cards (2 left, center, 2 right)
-    for (let i = -2; i <= 2; i++) {
-      let index = centerIndex + i;
+  if (screenSize === "sm") {
+    range = 0; // only center card
+  } else if (screenSize === "md") {
+    range = 1; // left, center, right (3 cards)
+  }
 
-      // Handle wrap-around for negative indices
-      if (index < 0) {
-        index += totalCards;
-      }
-      // Handle wrap-around for indices beyond array length
-      else if (index >= totalCards) {
-        index -= totalCards;
-      }
+  const visibleIndices = [];
+  const totalCards = products.length;
 
-      visibleIndices.push(index);
-    }
+  for (let i = -range; i <= range; i++) {
+    let index = centerIndex + i;
 
-    return visibleIndices.map((index) => ({
-      ...products[index],
-      originalIndex: index,
-      offset:
-        (index - centerIndex + totalCards) % totalCards > totalCards / 2
-          ? ((index - centerIndex + totalCards) % totalCards) - totalCards
-          : (index - centerIndex + totalCards) % totalCards,
-    }));
-  }, [centerIndex, products]);
+    if (index < 0) index += totalCards;
+    else if (index >= totalCards) index -= totalCards;
+
+    visibleIndices.push(index);
+  }
+
+  return visibleIndices.map((index) => ({
+    ...products[index],
+    originalIndex: index,
+    offset:
+      (index - centerIndex + totalCards) % totalCards > totalCards / 2
+        ? ((index - centerIndex + totalCards) % totalCards) - totalCards
+        : (index - centerIndex + totalCards) % totalCards,
+  }));
+}, [centerIndex, products, screenSize]);
+
 
   const visibleCards = getVisibleCards();
 
@@ -126,51 +148,61 @@ export default function CardStack() {
         <div className="relative flex items-center justify-center w-full h-[588px]">
   {/* ✅ FIX: Sort the array to stabilize the DOM order before mapping */}
   {visibleCards
-    .sort((a, b) => a.originalIndex - b.originalIndex) // 👈 ADD THIS LINE
-    .map((card) => {
-      const offset = card.offset;
-      const zIndex = 10 - Math.abs(offset);
-      const cardWidth = 392;
-      const overlap = cardWidth * 0.3;
-      const translateX = offset * overlap;
-      const scale = offset === 0 ? 1 : 0.9;
+  .sort((a, b) => a.originalIndex - b.originalIndex)
+  .map((card) => {
+    const offset = card.offset;
+    const zIndex = 10 - Math.abs(offset);
+    const cardWidth = 392;
+    const overlap = cardWidth * 0.3;
+    const translateX = offset * overlap;
+    const scale = offset === 0 ? 1 : 0.9;
 
-      let heightClass = "";
-      if (offset === 0) {
-        heightClass = "h-[588px]"; // Tallest (Center)
-      } else if (Math.abs(offset) === 1) {
-        heightClass = "h-[530px]"; // Medium (Adjacent)
-      } else {
-        heightClass = "h-[480px]"; // Shortest (Outer)
-      }
+    let heightClass = "";
+    if (offset === 0) {
+      heightClass = "h-[588px]";
+    } else if (Math.abs(offset) === 1) {
+      heightClass = "h-[530px]";
+    } else {
+      heightClass = "h-[480px]";
+    }
 
-      return (
-        <div
-          key={`${card.id}-${card.originalIndex}`}
-          className={`absolute w-[392px] ${heightClass}`}
-          style={{
-            transform: `translateX(${translateX}px) scale(${scale})`,
-            zIndex,
-            transition:
-              "transform 600ms cubic-bezier(0.25, 1, 0.5, 1), height 600ms ease",
-            willChange: "transform, height",
-          }}
+    // ✅ Mobile fix
+    const isMobile = screenSize === "sm";
+
+    return (
+      <div
+        key={`${card.id}-${card.originalIndex}`}
+        className={`${isMobile ? "relative mx-auto" : "absolute"} w-[392px] ${heightClass}`}
+        style={
+          isMobile
+            ? {
+                zIndex: 10,
+                transition: "height 600ms ease",
+              }
+            : {
+                transform: `translateX(${translateX}px) scale(${scale})`,
+                zIndex,
+                transition:
+                  "transform 600ms cubic-bezier(0.25, 1, 0.5, 1), height 600ms ease",
+                willChange: "transform, height",
+              }
+        }
+      >
+        <a
+          href={`/product_detail/${card.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          {/* ... link and CardTypeOne component ... */}
-          <a
-            href={`/product_detail/${card.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <CardTypeOne
-              imageUrl={card.imageUrl}
-              title={card.title}
-              description={card.description}
-            />
-          </a>
-        </div>
-      );
-    })}
+          <CardTypeOne
+            imageUrl={card.imageUrl}
+            title={card.title}
+            description={card.description}
+          />
+        </a>
+      </div>
+    );
+  })}
+
 </div>
 
         {/* Right Arrow */}
