@@ -262,7 +262,7 @@ export default function ProductListPage() {
           </div>
         </div>
 
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white p-2 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-30">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white p-2 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-30 flex justify-center">
           <StoreTypeTabs
             defaultValue={storeType?.store_type ?? matchedStoreType ?? ""}
             context="products"
@@ -282,7 +282,7 @@ export default function ProductListPage() {
           {/* Panel */}
           <div
             onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the panel
-            className="fixed top-0 left-0 z-50 h-full w-full max-w-xs bg-white shadow-xl"
+            className="fixed top-0 left-0 z-50 h-full w-full max-w-xs bg-white shadow-xl mx-auto"
           >
             {/* The filter component is rendered here for mobile, with the 'onClose' prop */}
             <DynamicFilter
