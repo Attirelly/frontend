@@ -1,0 +1,161 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { api } from '@/lib/axios';
+import { Category, SubCat1, SubCat2 } from '@/types/CategoryTypes';
+import { manrope } from '@/font';
+import Link from 'next/link';
+import { useHeaderStore } from '@/store/listing_header_store';
+import { useProductFilterStore } from '@/store/filterStore';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import useCategoryStore from '@/store/categoryStore';
+
+// A simple utility to get the correct category data based on gender
+const getCategoryByGender = (
+  categoriesFiltered: Category[],
+  gender: 'Men' | 'Women'
+): Category | undefined => {
+  return categoriesFiltered.find((c) => c.name.toLowerCase() === gender.toLowerCase());
+};
+
+export default function MobileMenWomenNavbar() {
+  const router = useRouter();
+  const { categories } = useCategoryStore();
+  const { resetFilters } = useProductFilterStore();
+  const [categoriesFiltered, setCategoriesFiltered] = useState<Category[]>([]);
+  const [selectedGender, setSelectedGender] = useState<'Men' | 'Women'>('Women');
+  // Change state from a single string to an array of strings
+  const [openSubcats, setOpenSubcats] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const menAndWomen = categories.filter(
+          (cat) =>
+            cat.name.toLowerCase() === 'men' ||
+            cat.name.toLowerCase() === 'women'
+        );
+
+        const result: Category[] = menAndWomen.map((genderCat) => {
+          const ethnicWear = genderCat.children.find(
+            (subcat1: SubCat1) => subcat1.name.toLowerCase() === 'ethnic wear'
+          );
+
+          return {
+            ...genderCat,
+            children: ethnicWear?.children || [],
+          };
+        });
+
+        setCategoriesFiltered(result);
+      } catch (error) {
+        toast.error('Failed to fetch categories');
+      }
+    };
+
+    fetchCategories();
+  }, [categories]);
+
+  const selectedCategory = getCategoryByGender(categoriesFiltered, selectedGender);
+
+  const handleSubcatToggle = (subcatId: string) => {
+    setOpenSubcats(prevOpenSubcats => 
+        prevOpenSubcats.includes(subcatId)
+            ? prevOpenSubcats.filter(id => id !== subcatId) // Remove if already open
+            : [...prevOpenSubcats, subcatId] // Add if not open
+    );
+  };
+
+  const handleLinkClick = (name: string) => {
+    resetFilters();
+    router.push(`/product_directory?categories=${encodeURIComponent(name)}`);
+  };
+
+  if (categoriesFiltered.length === 0) {
+    return null; // Don't render anything if categories haven't loaded yet
+  }
+
+  const isSubcatOpen = (subcatId: string) => openSubcats.includes(subcatId);
+
+  return (
+    <div className="w-full">
+      {/* Gender Selection Buttons */}
+      <div className="flex p-4 gap-4">
+        <button
+          className={`${manrope.className} ${
+            selectedGender === 'Women'
+              ? 'text-black font-bold border-b-2 border-black'
+              : 'text-black font-normal'
+          }`}
+          onClick={() => setSelectedGender('Women')}
+        >
+          Women
+        </button>
+        <button
+          className={`${manrope.className} ${
+            selectedGender === 'Men'
+              ? 'text-black font-bold border-b-2 border-black'
+              : 'text-black font-normal'
+          }`}
+          onClick={() => setSelectedGender('Men')}
+        >
+          Men
+        </button>
+      </div>
+
+      {/* Category List */}
+      <div className="flex flex-col p-4">
+        {selectedCategory?.children.map((subcat2: SubCat2) => (
+          <div key={subcat2.category_id} className="border-b border-gray-200">
+            <div
+              className="flex justify-between items-center py-4 cursor-pointer"
+              onClick={() => handleSubcatToggle(subcat2.category_id)}
+            >
+              <span
+                className={`${manrope.className} text-sm text-[#121212]`}
+                style={{ fontWeight: 600 }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleLinkClick(subcat2.name);
+                }}
+              >
+                {subcat2.name}
+              </span>
+              <Image
+                src={
+                  isSubcatOpen(subcat2.category_id)
+                    ? '/ListingMobileHeader/up_arrow.svg'
+                    : '/ListingMobileHeader/down_arrow.svg'
+                }
+                alt="Toggle"
+                width={12}
+                height={12}
+                className="transition-transform duration-300"
+              />
+            </div>
+            {isSubcatOpen(subcat2.category_id) && (
+              <ul className="pl-4 space-y-2 pb-4">
+                {subcat2.children.map((subcat3) => (
+                  <li key={subcat3.category_id}>
+                    <Link
+                      href={`/product_directory?categories=${encodeURIComponent(
+                        subcat3.name
+                      )}`}
+                      className={`${manrope.className} text-sm text-[#464646] hover:text-black`}
+                      style={{ fontWeight: 400 }}
+                      onClick={() => resetFilters()}
+                    >
+                      {subcat3.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

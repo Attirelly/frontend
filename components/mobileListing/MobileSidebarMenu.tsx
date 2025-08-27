@@ -1,5 +1,9 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
+import MobileMenWomenNavbar from "./MobileMenWomenNavbar";
 
 type Props = {
   onClose: () => void;
@@ -7,17 +11,20 @@ type Props = {
 };
 
 export default function MobileSidebarMenu({ onClose, onLoginClick }: Props) {
+
+  const [category, setCategory] = useState("");
+
   return (
-    <div className="h-fit inset-0 bg-black/50 z-50" onClick={onClose}>
-      <div className="w-[50%] bg-[#F8F8F8] px-[24px] py-[12px]">
-        <div
-          className=" bg-[#F8F8F8] text-black flex flex-col"
-          onClick={(e) => e.stopPropagation()}
-        >
+    <div className="z-10 h-full w-full" onClick={onClose}>
+      <div className="h-screen w-[50%] bg-[#F8F8F8] px-[24px] py-[12px]  overflow-y-auto scrollbar-none" onClick={(e) => e.stopPropagation()}>
+        <div className="flex flex-col text-black">
+
+          {/* login */}
           <div className="flex items-center gap-1">
             <span
-              className="cursor-pointer hover:underline"
+              className="cursor-pointer hover:underline text-[14px]"
               onClick={onLoginClick}
+              style={{ fontWeight: 600 }}
             >
               Login
             </span>
@@ -29,12 +36,39 @@ export default function MobileSidebarMenu({ onClose, onLoginClick }: Props) {
             />
           </div>
 
-          <Link href="/seller_signin" onClick={onClose}>
+          <hr className="my-2 border border-[#D2D2D2]" />
+
+          {/* category links */}
+
+          <MobileMenWomenNavbar/>
+          
+          {/* seller sign in link */}
+          <div className="flex items-center gap-1" >
+          <Link href="/seller_signin" onClick={onClose} className="cursor-pointer hover:underline text-[14px]" style={{ fontWeight: 600 }}>
             Seller SignIn
           </Link>
-          <Link href="/seller_signup" onClick={onClose}>
+          <Image
+              src="/SuggestionBox/top_right_arrow.svg"
+              alt="top right arrow"
+              width={10}
+              height={10}
+            />
+            </div>
+            <hr className="my-2 border border-[#D2D2D2]" />
+
+            {/* seller sign up link */}
+            <div className="flex items-center gap-1">
+          <Link href="/seller_signup" onClick={onClose} className="cursor-pointer hover:underline text-[14px]" style={{ fontWeight: 600 }}>
             Seller SignUp
           </Link>
+          <Image
+              src="/SuggestionBox/top_right_arrow.svg"
+              alt="top right arrow"
+              width={10}
+              height={10}
+            />
+            </div>
+            <hr className="my-2 border border-[#D2D2D2]" />
         </div>
       </div>
     </div>
