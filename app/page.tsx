@@ -15,6 +15,7 @@ import HeroSection from "@/components/homepage/HeroSection";
 import ScrollingTextBanner from "@/components/homepage/ScrollingTextBanner";
 import StoreTypeSelection from "@/components/homepage/StoreTypeSelection";
 import ListingFooter from "@/components/listings/ListingFooter";
+import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
 
 export default function HomePage() {
@@ -22,7 +23,8 @@ export default function HomePage() {
         // Remove the background color from the outermost container
         <div className="w-full flex flex-col">
             <div className="bg-white">
-                <ListingPageHeader />
+                <ListingMobileHeader className='block lg:hidden'/>
+                <ListingPageHeader className='hidden lg:block'/>
 
                 <div className="lg:px-20">
                     <HeroSection />

@@ -109,10 +109,13 @@ export default function SocialLoginButtons({ onSuccess }: { onSuccess: () => voi
                     type="button"
                     aria-label="Login with Google"
                     onClick={() => handleGoogleLogin()}
-                    className="w-[423px] h-[54px] rounded-xl bg-white shadow-sm shadow-black/30 flex items-center justify-center hover:bg-gray-100 gap-2 cursor-pointer"
-                >
-                    <Image src="/Login/google.svg" alt="Google" width={24} height={24} />
-                    <span className='text-xl text-gray-400'>Sign In with Google</span>
+                    className="w-[338px] h-[25px] rounded-xs md:w-[423px] md:h-[54px] md:rounded-xl bg-white shadow-sm shadow-black/30 flex items-center justify-center hover:bg-gray-100 gap-2 cursor-pointer"
+                > 
+                    <div className='relative w-[19px] h-[19px] md:w-[24px] md:h-[24px]'>
+<Image src="/Login/google.svg" alt="Google" fill className='object-cover'/>
+                    </div>
+                    
+                    <span className='text-base md:text-xl text-gray-400'>Sign In with Google</span>
                 </button>
 
             </div>

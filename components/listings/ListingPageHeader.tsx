@@ -19,7 +19,11 @@ import { useFilterStore, useProductFilterStore } from "@/store/filterStore";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
-export default function ListingPageHeader() {
+type Props = {
+  className?: string;
+};
+
+export default function ListingPageHeader({ className }: Props) {
   const router = useRouter();
   const {
     city,
@@ -298,7 +302,7 @@ export default function ListingPageHeader() {
   }
 
   return (
-    <div>
+    <div className={`${className}`}>
       <header className="bg-white shadow-[0_2px_1px_-1px_rgba(0,0,0,0.1)] h-[72px]">
         <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-[83px] h-full">
           <div className="flex justify-center items-center">
