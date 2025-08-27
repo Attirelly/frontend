@@ -198,7 +198,7 @@ export default function ProductCard({
               src={imageUrl[imageIndex]}
               alt={title}
               fill
-              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
               loading={imageIndex === 0 ? 'eager' : 'lazy'}
               className="object-cover object-top transition-all duration-300"
             />
@@ -226,7 +226,7 @@ export default function ProductCard({
                 }}
                 className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-0.5 md:p-1 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
               >
-                <ChevronLeft className="h-4 w-4 lg:h-5 lg:w-5" />
+                <ChevronLeft className="h-4 w-4 md:h-5 md:w-5 m-0.5 md:m-1"  />
               </button>
 
               {/* Next Button */}
@@ -238,7 +238,7 @@ export default function ProductCard({
                 }}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-0.5 md:p-1 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
               >
-                <ChevronRight className="h-4 w-4 lg:h-5 lg:w-5" />
+                <ChevronRight className="h-4 w-4 md:h-5 md:w-5 m-0.5 md:m-1"  />
               </button>
             </>
           )}
