@@ -30,6 +30,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
     setAllCity,
     allArea,
     setAllArea,
+    searchFocus,
     setSearchFocus,
   } = useHeaderStore();
 
@@ -326,9 +327,10 @@ export default function MobileSearchContainer({ onClose }: Props) {
             onFocus={() => {
               if (tempQuery.length === 0) {
                 setShowStoreType(true);
+                setSearchFocus(true);
               }
-              setShowDropdown(true);
-              setSearchFocus(true);
+              // setShowDropdown(true);
+              
             }}
           />
         </div>
@@ -336,18 +338,10 @@ export default function MobileSearchContainer({ onClose }: Props) {
 
       {/* Conditional Content */}
       <div className="flex-grow overflow-y-auto scrollbar-none mt-4">
-        <AnimatePresence>
-          {showStoreType && tempQuery.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.2 }}
-            >
+        {/* <AnimatePresence> */}
+          {searchFocus && tempQuery.length === 0 && (
               <StoreSearchType visible={showStoreType} onClose={() => setShowStoreType(false)} />
-            </motion.div>
           )}
-        </AnimatePresence>
 
         <AnimatePresence>
           {tempQuery.length > 0 && (
