@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import StoreTypeTabs from "@/components/listings/StoreTypes";
 import { BrandType } from "@/types/SellerTypes";
+import { Filter } from "lucide-react";
 
 // const STORE_TYPE_OPTIONS = [
 //   { store_type: "Retail Store", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
@@ -24,7 +25,7 @@ import { BrandType } from "@/types/SellerTypes";
 
 const STORE_TYPE_OPTIONS: BrandType[] = [
   { id: "f923d739-4c06-4472-9bfd-bb848b32594b", store_type: "Retail Store" },
-  { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" }
+  { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" },
 ];
 
 export default function ProductListPage() {
@@ -52,8 +53,10 @@ export default function ProductListPage() {
     selectedPriceRange,
     activeFacet,
   } = useProductFilterStore();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   const [matchedStoreType, setMatchedStoreType] = useState<string | null>(null);
-  const [isReadyFlag , setIsReadyFlag] = useState<Boolean>(false);
+  const [isReadyFlag, setIsReadyFlag] = useState<Boolean>(false);
   const fuse = new Fuse(STORE_TYPE_OPTIONS, {
     keys: ["store_type"],
     threshold: 0.4,
@@ -68,7 +71,17 @@ export default function ProductListPage() {
     const areaName = params.get("area");
     const storeTypeName = params.get("store_type");
 
-    if(!(allCity && allCity.length > 0 && allArea && allArea.length > 0 && allStoreType && allStoreType.length > 0 ))return;
+    if (
+      !(
+        allCity &&
+        allCity.length > 0 &&
+        allArea &&
+        allArea.length > 0 &&
+        allStoreType &&
+        allStoreType.length > 0
+      )
+    )
+      return;
 
     params.forEach((value, key) => {
       if (
@@ -76,7 +89,7 @@ export default function ProductListPage() {
         key !== "sortBy" &&
         key !== "price" &&
         key !== "city" &&
-        key !== "area" && 
+        key !== "area" &&
         key !== "store_type"
       ) {
         initialSelectedFilters[key] = value.split(",");
@@ -84,7 +97,7 @@ export default function ProductListPage() {
     });
 
     // Only perform the lookup if the master lists have been loaded
-    console.log("all city" , allCity)
+    console.log("all city", allCity);
     if (allCity && allCity.length > 0 && cityName) {
       const cityObject = allCity.find((c) => c.name === cityName);
       console.log("url_city", cityObject);
@@ -105,12 +118,12 @@ export default function ProductListPage() {
       }
     }
     if (storeTypeName) {
-      console.log(storeTypeName)
+      console.log(storeTypeName);
       const storeTypeObject = allStoreType.find(
         (st) => st.store_type === storeTypeName
       );
       if (storeTypeObject) {
-        console.log("storetypeobject" , storeTypeObject);
+        console.log("storetypeobject", storeTypeObject);
         setStoreType(storeTypeObject);
       }
     }
@@ -130,10 +143,18 @@ export default function ProductListPage() {
     }
 
     setIsReadyFlag(true);
-  }, [searchParams,  allCity , allArea ,allStoreType ,   initializeFilters, setQuery, setStoreType]);
+  }, [
+    searchParams,
+    allCity,
+    allArea,
+    allStoreType,
+    initializeFilters,
+    setQuery,
+    setStoreType,
+  ]);
 
   useEffect(() => {
-    if(!isReadyFlag) return;
+    if (!isReadyFlag) return;
     const oldparams = new URLSearchParams(searchParams);
     const newparams = new URLSearchParams();
     if (query) {
@@ -165,20 +186,29 @@ export default function ProductListPage() {
     }
 
     router.replace(`${pathname}?${newparams.toString()}`);
-  }, [selectedFilters, isReadyFlag ,  selectedPriceRange, city, area, storeType, pathname , router]);
+  }, [
+    selectedFilters,
+    isReadyFlag,
+    selectedPriceRange,
+    city,
+    area,
+    storeType,
+    pathname,
+    router,
+  ]);
 
   const displayCategory = selectedFilters.categories?.[0] || "";
 
   useEffect(() => {
     console.log("results changed", results);
-  },[results]);
+  }, [results]);
 
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
-      <ListingPageHeader />
-      <div className="flex flex-col mx-20">
+      {/* <ListingPageHeader /> */}
+      <div className="flex flex-col px-4 pb-24 md:pb-0 lg:px-20">
         <span
-          className={`${manrope.className} text-[#101010] mt-4 text-[32px]`}
+          className={`${manrope.className} text-[#101010] mt-4 text-2xl lg:text-[32px]`}
           style={{ fontWeight: 500 }}
         >
           {results > 0
@@ -191,18 +221,11 @@ export default function ProductListPage() {
         </span>
 
         {/* Store Type Selection */}
-        <div className="mt-10">
+        <div className="hidden md:block mt-10">
           <StoreTypeTabs
-                    defaultValue={ storeType?.store_type ?? matchedStoreType ?? "" }
-                    context="products"
-                  />
-          {/* <StoreTypeButtons
-            options={STORE_TYPE_OPTIONS}
-            context="product"
-            defaultValue={ storeType?.store_type ?? matchedStoreType ?? "" }
-          /> */}
-
-          {/* <StoreTypeTabs context={"products"} /> */}
+            defaultValue={storeType?.store_type ?? matchedStoreType ?? ""}
+            context="products"
+          />
         </div>
 
         {/* Content Section */}
@@ -210,26 +233,65 @@ export default function ProductListPage() {
           <hr className="border-t border-[#D9D9D9] w-full mt-5 mb-4" />
           <div className="flex flex-col items-center w-full mt-8">
             <div className="w-full px-4">
-              <div className="w-full grid grid-cols-[300px_1fr] gap-6">
-                <div>
+              <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+                {/* Filter Column */}
+                <div className="hidden lg:block lg:col-span-1 sticky top-2">
                   <DynamicFilter context="product" />
                 </div>
-                <div>
-                  <div className="flex justify-between items-center">
+
+                {/* Product Content Column */}
+                <div className="lg:col-span-3">
+                  <div className="flex justify-between items-center mb-4">
+                    <div
+                      onClick={() => setIsFilterOpen(true)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-500 rounded-md lg:hidden"
+                    >
+                      <span>Filters</span>
+                      <img
+                        src="/ListingPageHeader/FilterIcon.svg"
+                        alt="Filter button"
+                        className={`w-4 h-4 transform transition-transform`}
+                      />
+                    </div>
                     <SortByDropdown />
                   </div>
-                  <div className="h-full">
-                    <ProductContainer colCount={4} />
-                  </div>
+                  <ProductContainer />
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white p-2 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-30 flex justify-center">
+          <StoreTypeTabs
+            defaultValue={storeType?.store_type ?? matchedStoreType ?? ""}
+            context="products"
+          />
+        </div>
       </div>
       <div className="mt-10">
         <ListingFooter />
       </div>
+
+      {isFilterOpen && (
+        // Backdrop
+        <div
+          onClick={() => setIsFilterOpen(false)}
+          className="fixed inset-0 z-100 bg-black/40 lg:hidden"
+        >
+          {/* Panel */}
+          <div
+            onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the panel
+            className="fixed top-0 left-0 z-50 h-full w-full max-w-xs bg-white shadow-xl mx-auto"
+          >
+            {/* The filter component is rendered here for mobile, with the 'onClose' prop */}
+            <DynamicFilter
+              context="product"
+              onClose={() => setIsFilterOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

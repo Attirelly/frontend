@@ -133,7 +133,7 @@ export default function GridPostGallery({ sellerId }: IdProp) {
         {posts.map((post, index) => (
           <div
             key={post.id}
-            className="relative w-[300px] h-[400px] overflow-hidden bg-black"
+            className="relative w-full aspect-[3/4] overflow-hidden bg-black"
             onClick={() => openDialog(index)}
           >
             {post.media_type === "IMAGE" ||
@@ -142,6 +142,7 @@ export default function GridPostGallery({ sellerId }: IdProp) {
                 src={post.media_url}
                 alt="Instagram post"
                 fill
+                sizes="33vw"
                 className="object-cover object-top"
                 unoptimized
               />

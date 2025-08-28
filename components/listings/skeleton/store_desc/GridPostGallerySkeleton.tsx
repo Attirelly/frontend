@@ -2,14 +2,16 @@
 import React from "react";
 
 export default function GridPostGallerySkeleton() {
-  const skeletons = Array(9).fill(0); // For 3x3 grid
+  // ✅ Increased skeleton count for larger screens
+  const skeletons = Array(15).fill(0); 
 
   return (
-    <div className="grid grid-cols-3 gap-[2px] animate-pulse">
+    // ✅ Grid now changes columns based on screen size
+    <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 md:gap-2 animate-pulse">
       {skeletons.map((_, index) => (
         <div
           key={index}
-          className="aspect-square bg-gray-200"
+          className="aspect-square bg-gray-200 rounded-md" // Added rounded corners
         />
       ))}
     </div>

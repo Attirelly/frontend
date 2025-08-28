@@ -44,7 +44,7 @@ export default function TwoOptionToggle({ options, defaultValue, context }: TwoO
   };
 
   return (
-    <div className="flex space-x-2">
+    <div className="flex space-x-1.5">
       {options.map((option) => {
         const isSelected = selected === option;
         const iconPath = getIconPath(option, isSelected);
@@ -53,7 +53,7 @@ export default function TwoOptionToggle({ options, defaultValue, context }: TwoO
           <button
             key={option}
             onClick={() => setSelected(option)}
-            className={`${manrope.className} flex items-center space-x-2 px-4 py-2 rounded-full border transition ${
+            className={`${manrope.className} flex items-center space-x-2 px-3 md:px-4 py-2 text-sm md:text-base rounded-full border transition ${
               isSelected
                 ? 'bg-black text-white border-black'
                 : 'bg-white text-[#878787] border-[#878787] hover:border-black hover:text-black'

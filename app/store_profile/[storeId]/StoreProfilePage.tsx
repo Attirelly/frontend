@@ -44,6 +44,7 @@ export default function StoreProfilePage() {
   } = useProductFilterStore();
 
   const [showFilters, setShowFilters] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const params = useParams();
   const storeId = params?.storeId as string;
@@ -159,7 +160,7 @@ export default function StoreProfilePage() {
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
       {/* Full-width header */}
-      <ListingPageHeader />
+      {/* <ListingPageHeader /> */}
 
       {/* Centered content container */}
       <div className="flex flex-col items-center w-full">
@@ -175,47 +176,53 @@ export default function StoreProfilePage() {
             <PostCatalogueButton storeId={storeId} />
           )} */}
         </div>
-        <div 
-          className={`w-full px-4 mt-8 
-            ${viewType === 'Posts' ? 'max-w-[950px]' : 'max-w-[1350px]'}
+        <div
+          className={`w-full px-4 mt-6 md:mt-8
+            ${viewType === "Posts" ? "max-w-[950px]" : "max-w-[1350px]"}
           `}
         >
           <hr className="border border-[#D9D9D9]" />
         </div>
 
         {defaultButton ? (
-            <PostCatalogueButton
-              storeId={storeId}
-              defaultValue={defaultButton}
-            />
-          ) : (
-            <PostCatalogueButton storeId={storeId} />
-          )}
+          <PostCatalogueButton storeId={storeId} defaultValue={defaultButton} />
+        ) : (
+          <PostCatalogueButton storeId={storeId} />
+        )}
         {viewType === "Posts" && (
           <div className="mt-8 flex justify-center w-full">
-            <div className="w-full max-w-[950px] px-4">
+            <div className="w-full max-w-4xl mx-auto">
               <PostGalleryContainer storeId={storeId} />
             </div>
           </div>
         )}
 
         {viewType === "Products" && (
-          <div className="mt-8 w-full px-4">
-            <div className="px-20 w-full grid grid-cols-[300px_1fr] gap-6">
-              <div>
+          <div className="mt-8 w-full max-w-7xl mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+              {/* Filter Column (Desktop) */}
+              <div className="hidden lg:block lg:col-span-1 sticky top-4">
                 <DynamicFilter context="product" />
               </div>
-              {/* <div>
-                  <div className="flex justify-between items-center">
-                    <SortByDropdown />
-                  </div>
-                  <div className="h-full">
-                    <ProductContainer colCount={4} />
-                  </div>
-                </div> */}
 
-              <div className="h-full">
-                <ProductContainer storeId={storeId} colCount={4} />
+              {/* Product Grid (Mobile & Desktop) */}
+              <div className="lg:col-span-3">
+                {/* Mobile 'Filters' button */}
+                <div className="flex  mb-4 lg:hidden">
+                  <button
+                    onClick={() => setIsFilterOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md lg:hidden"
+                  >
+                    <span>Filters</span>
+                    <img
+                      src="/ListingPageHeader/FilterIcon.svg"
+                      alt="Filter button"
+                      className={`w-4 h-4 transform transition-transform`}
+                    />
+                  </button>
+                </div>
+                {/* ✅ 4. Removed the outdated 'colCount' prop */}
+                <ProductContainer storeId={storeId} />
               </div>
             </div>
           </div>
@@ -225,6 +232,23 @@ export default function StoreProfilePage() {
       <div className="mt-10">
         <ListingFooter />
       </div>
+
+      {isFilterOpen && (
+        <div
+          onClick={() => setIsFilterOpen(false)}
+          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="fixed top-0 left-0 z-50 h-full w-full max-w-xs bg-white shadow-xl"
+          >
+            <DynamicFilter
+              context="product"
+              onClose={() => setIsFilterOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

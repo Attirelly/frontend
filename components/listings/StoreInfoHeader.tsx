@@ -68,163 +68,203 @@ export default function StoreInfoPage({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 p-6">
-      {/* Left: Circular Store Image */}
-      <div className="flex flex-col items-center justify-center">
-        <div className="relative w-32 h-32">
-          <Image
-            src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(imageUrl)}`}
-            alt={storeName}
-            fill
-            className="rounded-full object-cover object-top"
-          />
-
-          {/* Verified Badge */}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
+    <div>
+      <div className="grid grid-cols-[1fr_2fr] gap-6  mx-auto">
+        {/* Left: Circular Store Image */}
+        <div className="flex flex-col items-center md:justify-center">
+          <div className="relative w-28 h-28  md:w-32 md:h-32">
             <Image
-              src="/ListingPageHeader/verified_logo.svg"
-              alt="Verified"
-              width={24}
-              height={24}
+              src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(
+                imageUrl
+              )}`}
+              alt={storeName}
+              fill
+              sizes="(max-width: 768px) 112px, 128px"
+              className="rounded-full object-cover object-top"
             />
-          </div>
-        </div>
 
-        {/* Location */}
-        <div
-  className={`
-    group flex items-center gap-2 mt-6 
-    ${locationUrl ? "cursor-pointer" : "cursor-default"}
-  `}
-  onClick={locationUrl ? handleLocationRoute : undefined}
->
-  <Image
-    src="/ListingPageHeader/location_pin_black.svg"
-    alt="Location"
-    width={16}
-    height={16}
-    className={`${locationUrl ? "transition-transform duration-200 ease-in-out group-hover:-translate-y-1" : ""}`}
-  />
-  <span
-    className={`
-      ${manrope.className} text-sm text-black ${locationUrl ? "transition-colors duration-200 group-hover:text-gray-400" : ""}
+            {/* Verified Badge */}
+            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
+              <Image
+                src="/ListingPageHeader/verified_logo.svg"
+                alt="Verified"
+                width={24}
+                height={24}
+              />
+            </div>
+          </div>
+
+          {/* Location */}
+          <div
+            className={`group flex items-center gap-2 mt-6 ${
+              locationUrl ? "cursor-pointer" : "cursor-default"
+            }`}
+            onClick={locationUrl ? handleLocationRoute : undefined}
+          >
+            <Image
+              src="/ListingPageHeader/location_pin_black.svg"
+              alt="Location"
+              width={16}
+              height={16}
+              className={`${
+                locationUrl
+                  ? "transition-transform duration-200 ease-in-out group-hover:-translate-y-1"
+                  : ""
+              }`}
+            />
+            <span
+              className={`
+      ${manrope.className} text-sm text-black ${
+                locationUrl
+                  ? "transition-colors duration-200 group-hover:text-gray-400"
+                  : ""
+              }
     `}
-    style={{ fontWeight: 400 }}
-  >
-    {area === 'Others' ? '' : `${area},`} {city}
-  </span>
-</div>
-      </div>
-
-      {/* Right: Store Info */}
-      <div className={`${manrope.className} flex flex-col`}>
-        <div className="flex justify-between items-start flex-wrap">
-          <h2 className="text-xl text-black mb-2 max-w-[60%] " style={{ fontWeight: 500, wordSpacing: "2px" }}>
-            {storeName}
-          </h2>
-          <div className="flex gap-2.5 flex-shrink-0">
-            <button
-              className={`flex border border-black rounded-full items-center justify-center gap-2 px-4 transition-all duration-300 ${showPhone ? "bg-gray-100" : ""
-                }`}
-              onClick={handlePhoneClick}
+              style={{ fontWeight: 400 }}
             >
-              <Image
-                src="/ListingPageHeader/phone.svg"
-                alt="call"
-                width={18}
-                height={18}
-              />
-              {showPhone && (
-                <span className="text-black text-sm" style={{ fontWeight: 400 }}>
-                  {phone_number.startsWith("11111", 0) ? "9915916707" : phone_number}
-                </span>
-              )}
-            </button>
-            <button
-              className="flex border border-black rounded-full items-center justify-center gap-2 px-4"
-              onClick={handleCopyUrl}
-            >
-              <span className="text-black" style={{ fontWeight: 400 }}>Share</span>
-              <Image
-                src="/ListingPageHeader/share.svg"
-                alt="share"
-                width={18}
-                height={18}
-              />
-            </button>
+              {area === "Others" ? "" : `${area},`} {city}
+            </span>
           </div>
         </div>
 
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-6">
-            <div className="flex gap-12">
-              {post_count && post_count !== "0" ? (
-                <div className="flex flex-col gap-1 items-center">
-                  <h2 className="text-black" style={{ fontWeight: 700 }}>
-                    {formatNumberStr(post_count)}
-                  </h2>
-                  <span className="text-black" style={{ fontWeight: 400 }}>Posts</span>
-                </div>
-              ) : (
-                <div></div>
-              )}
+        {/* Right: Store Info */}
+        <div className={`${manrope.className} flex flex-col`}>
+          <div className="flex justify-between items-start flex-wrap">
+            <h2
+              className="text-lg md:text-xl text-black mb-2 max-w-[60%] "
+              style={{ fontWeight: 500, wordSpacing: "2px" }}
+            >
+              {storeName}
+            </h2>
+            <div className="flex gap-2.5 flex-shrink-0">
+              <button
+                className={`flex border border-black rounded-full items-center justify-center gap-2 px-2 py-1 md:px-4 md:py-2 transition-all duration-300 ${
+                  showPhone ? "bg-gray-100" : ""
+                }`}
+                onClick={handlePhoneClick}
+              >
+                <Image
+                  src="/ListingPageHeader/phone.svg"
+                  alt="call"
+                  width={18}
+                  height={18}
+                  className="w-4 h-4 md:w-[18px] md:h-[18px]"
+                />
+                {showPhone && (
+                  <span
+                    className="text-black text-sm"
+                    style={{ fontWeight: 400 }}
+                  >
+                    {phone_number.startsWith("11111", 0)
+                      ? "9915916707"
+                      : phone_number}
+                  </span>
+                )}
+              </button>
+              <button
+                className="flex border border-black rounded-full items-center justify-center gap-2 px-2 py-1 md:px-4 md:py-2"
+                onClick={handleCopyUrl}
+              >
+                <span
+                  className="text-black text-sm hidden sm:inline"
+                  style={{ fontWeight: 400 }}
+                >
+                  Share
+                </span>
+                <Image
+                  src="/ListingPageHeader/share.svg"
+                  alt="share"
+                  width={18}
+                  height={18}
+                  className="w-4 h-4 md:w-[18px] md:h-[18px]"
+                />
+              </button>
+            </div>
+          </div>
 
-              {instagramFollowers && instagramFollowers !== "0" ? (
-                <div className="flex flex-col gap-1 items-center">
-                  <h2 className="text-black" style={{ fontWeight: 700 }}>
-                    {formatNumberStr(instagramFollowers)}
-                  </h2>
-                  <span className="text-black" style={{ fontWeight: 400 }}>Followers</span>
-                </div>
-              ) : (
-                <div></div>
-              )}
+          <div className="flex flex-col-reverse md:flex-col gap-6">
+            <div className="flex flex-col gap-6">
+              <div className="hidden md:flex gap-12 ">
+                {post_count && post_count !== "0" ? (
+                  <div className="flex flex-col gap-1 items-center">
+                    <h2 className="text-black" style={{ fontWeight: 700 }}>
+                      {formatNumberStr(post_count)}
+                    </h2>
+                    <span className="text-black" style={{ fontWeight: 400 }}>
+                      Posts
+                    </span>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
 
-              {product_count && product_count !== "0" ? (
-                <div className="flex flex-col gap-1 items-center">
-                  <h2 className="text-black" style={{ fontWeight: 700 }}>
-                    {formatNumberStr(product_count)}
-                  </h2>
-                  <span className="text-black" style={{ fontWeight: 400 }}>Products</span>
-                </div>
-              ) : (
-                <div></div>
+                {instagramFollowers && instagramFollowers !== "0" ? (
+                  <div className="flex flex-col gap-1 items-center">
+                    <h2 className="text-black" style={{ fontWeight: 700 }}>
+                      {formatNumberStr(instagramFollowers)}
+                    </h2>
+                    <span className="text-black" style={{ fontWeight: 400 }}>
+                      Followers
+                    </span>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
+
+                {product_count && product_count !== "0" ? (
+                  <div className="flex flex-col gap-1 items-center">
+                    <h2 className="text-black" style={{ fontWeight: 700 }}>
+                      {formatNumberStr(product_count)}
+                    </h2>
+                    <span className="text-black" style={{ fontWeight: 400 }}>
+                      Products
+                    </span>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
+              </div>
+
+              {/* Bio */}
+              {bio && (
+                <p
+                  className={`hidden md:block text-black          ${
+                    bio.length > TRUNCATE_LENGTH ? "cursor-pointer" : ""
+                  }`}
+                  style={{ fontWeight: 400, whiteSpace: "pre-line" }}
+                  onClick={() => setIsBioExpanded(!isBioExpanded)}
+                >
+                  {isBioExpanded || bio.length <= TRUNCATE_LENGTH
+                    ? bio
+                    : `${bio.substring(0, TRUNCATE_LENGTH)}...`}
+
+                  {/* more button */}
+                  {bio.length > TRUNCATE_LENGTH && !isBioExpanded && (
+                    <button
+                      className="text-gray-500 ml-1 cursor-pointer bg-transparent border-none p-0"
+                      style={{ fontWeight: 500 }}
+                    >
+                      more
+                    </button>
+                  )}
+                </p>
               )}
             </div>
 
-            {/* Bio */}
-            {bio && (
-              <p className={`text-black ${bio.length > TRUNCATE_LENGTH ? "cursor-pointer" : ""}`}  style={{ fontWeight: 400, whiteSpace: "pre-line" }}
-              onClick={() => setIsBioExpanded(!isBioExpanded)}>
-                {isBioExpanded || bio.length <= TRUNCATE_LENGTH
-                  ? bio
-                  : `${bio.substring(0, TRUNCATE_LENGTH)}...`}
-
-                {/* more button */}
-                {bio.length > TRUNCATE_LENGTH && !isBioExpanded && (
-                  <button
-                    className="text-gray-500 ml-1 cursor-pointer bg-transparent border-none p-0"
-                    style={{ fontWeight: 500 }}
-                  >
-                    more
-                  </button>
-                )}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-4">
-            {/* Store Types */}
-            <div className="flex flex-wrap mt-2 gap-2">
-              {storeTypes.map((type, idx) => {
-                const imageObj = StoreTypeImage.find((img) => img.name === type);
-                return (
-                  <span
-                    key={idx}
-                    className="bg-[#F8F8F8] px-2 py-1 rounded-full text-black flex gap-1"
-                    style={{ fontWeight: 400 }}
-                  >
-                    {/* {imageObj && (
+            <div className="flex flex-col gap-2 md:gap-4">
+              {/* Store Types */}
+              <div className="flex flex-wrap mt-2 gap-2">
+                {storeTypes.map((type, idx) => {
+                  const imageObj = StoreTypeImage.find(
+                    (img) => img.name === type
+                  );
+                  return (
+                    <span
+                      key={idx}
+                      className="bg-[#F8F8F8] px-2 py-1 rounded-full text-black flex gap-1 md:gap-2"
+                      style={{ fontWeight: 400 }}
+                    >
+                      {/* {imageObj && (
                       <Image
                         src={imageObj.url}
                         alt="Store Type"
@@ -232,26 +272,80 @@ export default function StoreInfoPage({
                         height={18}
                       />
                     )} */}
+                      {type}
+                    </span>
+                  );
+                })}
+              </div>
+
+              {/* Price Ranges */}
+              <div className="flex flex-wrap gap-1 md:gap-2">
+                {priceRanges?.map((type, idx) => (
+                  <span
+                    key={idx}
+                    className="text-sm bg-[#F5F5F5] px-2 py-1 rounded-full text-black"
+                    style={{ fontWeight: 400 }}
+                  >
                     {type}
                   </span>
-                );
-              })}
-            </div>
-
-            {/* Price Ranges */}
-            <div className="flex flex-wrap mt-2 gap-2">
-              {priceRanges?.map((type, idx) => (
-                <span
-                  key={idx}
-                  className="text-sm bg-[#F5F5F5] px-2 py-1 rounded-full text-black px-6"
-                  style={{ fontWeight: 400 }}
-                >
-                  {type}
-                </span>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      </div>
+      <div className={`${manrope.className} mt-4 px-4 md:hidden`}>
+        {bio && (
+          <p
+            className="text-sm text-black"
+            style={{ fontWeight: 400, whiteSpace: "pre-line" }}
+            onClick={() =>
+              bio.length > TRUNCATE_LENGTH && setIsBioExpanded(!isBioExpanded)
+            }
+          >
+            {isBioExpanded || bio.length <= TRUNCATE_LENGTH
+              ? bio
+              : `${bio.substring(0, TRUNCATE_LENGTH)}...`}
+
+            {bio.length > TRUNCATE_LENGTH && !isBioExpanded && (
+              <button className="text-gray-500 ml-1 font-medium">more</button>
+            )}
+          </p>
+        )}
+      </div>
+      <div
+        className={`${manrope.className} w-full flex justify-around items-center text-center mt-4 pt-4 border-t border-gray-200 md:hidden`}
+      >
+        {post_count && post_count !== "0" && (
+          <div className="flex flex-col gap-1 items-center">
+            <h3 className="text-lg text-black" style={{ fontWeight: 600 }}>
+              {formatNumberStr(post_count)}
+            </h3>
+            <span className="text-sm text-black" style={{ fontWeight: 400 }}>
+              Posts
+            </span>
+          </div>
+        )}
+        {instagramFollowers && instagramFollowers !== "0" && (
+          <div className="flex flex-col gap-1 items-center">
+            <h3 className="text-lg text-black" style={{ fontWeight: 600 }}>
+              {formatNumberStr(instagramFollowers)}
+            </h3>
+            <span className="text-sm text-black" style={{ fontWeight: 400 }}>
+              Followers
+            </span>
+          </div>
+        )}
+        {product_count && product_count !== "0" && (
+          <div className="flex flex-col gap-1 items-center">
+            <h3 className="text-lg text-black" style={{ fontWeight: 600 }}>
+              {formatNumberStr(product_count)}
+            </h3>
+            <span className="text-sm text-black" style={{ fontWeight: 400 }}>
+              Products
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
