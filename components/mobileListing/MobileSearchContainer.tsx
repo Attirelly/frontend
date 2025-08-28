@@ -44,6 +44,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
   const [products, setProducts] = useState<any[]>([]);
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -68,6 +69,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
   }, [setAllCity, setAllArea]);
 
   useEffect(() => {
+    console.log("on close use effect");
     const handleClickOutside = (event: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         onClose();
@@ -77,6 +79,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+
   }, [onClose]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -89,6 +92,15 @@ export default function MobileSearchContainer({ onClose }: Props) {
       }
     }
   };
+
+  const handleSearchClick = () => {
+      const trimmed = tempQuery.trim();
+      onClose();
+      if (trimmed !== "") {
+        router.push("/product_directory?search=" + encodeURIComponent(trimmed));
+      }
+  };
+  
 
   const handleSearchQuerySuggestion = async () => {
     try {
@@ -118,12 +130,14 @@ export default function MobileSearchContainer({ onClose }: Props) {
   };
 
   useEffect(() => {
+    console.log("temp query use effect");
     if (tempQuery.length < 4) {
       setStoreSuggestions([]);
       setProductSuggestions([]);
       setStores([]);
       setProducts([]);
       setShowStoreType(true);
+      setShowDropdown(false);
       return;
     }
     if (tempQuery.length === 4) {
@@ -137,6 +151,22 @@ export default function MobileSearchContainer({ onClose }: Props) {
 
     return () => clearTimeout(debounce);
   }, [tempQuery]);
+
+   useEffect(() => {
+    console.log("handle outside click use effect");
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setShowDropdown(false);
+        setShowStoreType(false);
+        setSearchFocus(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [searchFocus]);
 
 
   const groupedOptions: SelectOption[] = [
@@ -162,57 +192,58 @@ export default function MobileSearchContainer({ onClose }: Props) {
   const selectedOption: SelectOption =
     area != null
       ? {
-          value: area.id,
-          label: area.name,
-          name: area.name,
-          city: area.city_name,
-        }
+        value: area.id,
+        label: area.name,
+        name: area.name,
+        city: area.city_name,
+      }
       : city != null
-      ? {
+        ? {
           value: city.id,
           label: city.name,
           name: city.name,
           country: "India",
         }
-      : groupedOptions[0];
+        : groupedOptions[0];
 
-    function highlightMatch(text: string, query: string) {
-     const defaultClasses = `${manrope.className} text-base text-[#464646]`;
+  function highlightMatch(text: string, query: string) {
+    const defaultClasses = `${manrope.className} text-base text-[#464646]`;
 
-        if (!query) {
-        return (
-            <span className={defaultClasses} style={{ fontWeight: 400 }}>
-            {text}
-            </span>
-        );
-        }
-
-        const index = text.toLowerCase().indexOf(query.toLowerCase());
-        if (index === -1) {
-        return (
-            <span className={defaultClasses} style={{ fontWeight: 400 }}>
-            {text}
-            </span>
-        );
-        }
-
-        return (
+    if (!query) {
+      return (
         <span className={defaultClasses} style={{ fontWeight: 400 }}>
-            {text.slice(0, index)}
-            <span className="text-black font-semibold">
-            {text.slice(index, index + query.length)}
-            </span>
-            <span className="text-[#464646]">
-            {text.slice(index + query.length)}
-            </span>
+          {text}
         </span>
-        );
+      );
     }
+
+    const index = text.toLowerCase().indexOf(query.toLowerCase());
+    if (index === -1) {
+      return (
+        <span className={defaultClasses} style={{ fontWeight: 400 }}>
+          {text}
+        </span>
+      );
+    }
+
+    return (
+      <span className={defaultClasses} style={{ fontWeight: 400 }}>
+        {text.slice(0, index)}
+        <span className="text-black font-semibold">
+          {text.slice(index, index + query.length)}
+        </span>
+        <span className="text-[#464646]">
+          {text.slice(index + query.length)}
+        </span>
+      </span>
+    );
+  }
 
   const handleSuggestionClick = (value: string) => {
     onClose();
     setTempQuery("");
     setSearchFocus(false);
+    console.log("SC");
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
@@ -220,12 +251,14 @@ export default function MobileSearchContainer({ onClose }: Props) {
     onClose();
     setTempQuery("");
     setSearchFocus(false);
+    console.log("CC");
     router.push(`/product_directory?categories=${encodeURIComponent(category)}`);
   };
 
   const handleStoreClick = (storeID: string) => {
     onClose();
     setSearchFocus(false);
+    console.log("StC");
     router.push("/store_profile/" + storeID);
   };
 
@@ -233,12 +266,15 @@ export default function MobileSearchContainer({ onClose }: Props) {
     onClose();
     setSearchFocus(false);
     const value = tempQuery;
+    console.log("StLR");
     router.push("/store_listing?search=" + encodeURIComponent(value));
   };
 
+  console.log("system hai to hai", searchFocus, showStoreType, showDropdown, tempQuery);
+
   return (
     <div
-      className="fixed inset-0 z-[100] bg-white text-black p-[14px] flex flex-col"
+      className="fixed inset-0 z-[100] bg-[#F2F2F2] text-black p-[14px] flex flex-col"
       ref={searchContainerRef}
     >
       <div className="flex justify-end">
@@ -252,14 +288,14 @@ export default function MobileSearchContainer({ onClose }: Props) {
         />
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 px-4">
         {/* City/Area Select */}
-        <div className="w-full flex items-center border border-gray-300 rounded-lg px-2">
+        <div className="w-full flex items-center bg-white border-[1px] border-[#D7D7D7] rounded-full px-2">
           <Image
-            src="/ListingMobileHeader/location_pin.svg"
+            src="/ListingPageHeader/location_pin.svg"
             alt="Location"
-            width={12}
-            height={12}
+            width={24}
+            height={24}
             className="opacity-100"
           />
           <Select
@@ -299,7 +335,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
                 <span className="text-[#0F0F0F]">{data.name}</span>
               )
             }
-            className={`${manrope.className} w-full`}
+            className={`${manrope.className} w-full rounded-full`}
             styles={customStyles}
             classNamePrefix="city-select"
             placeholder="City Name"
@@ -308,14 +344,8 @@ export default function MobileSearchContainer({ onClose }: Props) {
         </div>
 
         {/* Search Input */}
-        <div className="flex items-center w-full border border-gray-300 rounded-lg px-4">
-          <Image
-            src="/ListingMobileHeader/search_lens.svg"
-            alt="Search Lens"
-            width={20}
-            height={20}
-            className="opacity-80"
-          />
+        <div className="flex items-center w-full bg-white border-[1px] border-[#D7D7D7] px-4 rounded-full"
+          ref={dropdownRef}>
           <input
             type="text"
             placeholder="Saree for Mhendi"
@@ -325,137 +355,123 @@ export default function MobileSearchContainer({ onClose }: Props) {
             onChange={(e) => setTempQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             onFocus={() => {
-              if (tempQuery.length === 0) {
+              if (tempQuery.length == 0) {
                 setShowStoreType(true);
-                setSearchFocus(true);
               }
-              // setShowDropdown(true);
               
+              setSearchFocus(true);
             }}
           />
+          <Image
+            src="/ListingMobileHeader/search_lens.svg"
+            alt="Search Lens"
+            width={20}
+            height={20}
+            className="opacity-80 cursor-pointer"
+            onClick={handleSearchClick}
+          />
         </div>
+        {searchFocus && tempQuery.length === 0 && (
+          <StoreSearchType visible={showStoreType} onClose={() => setShowStoreType(false)} />
+        )}
       </div>
 
       {/* Conditional Content */}
-      <div className="flex-grow overflow-y-auto scrollbar-none mt-4">
-        {/* <AnimatePresence> */}
-          {searchFocus && tempQuery.length === 0 && (
-              <StoreSearchType visible={showStoreType} onClose={() => setShowStoreType(false)} />
-          )}
 
-        <AnimatePresence>
-          {tempQuery.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.2 }}
-            >
-              {/* Search Suggestions */}
-              {storeSuggestions.length > 0 || productSuggestions.length > 0 ? (
-                <div className="flex flex-col gap-1">
-                  {/* ... (Existing suggestion mapping logic) ... */}
-                  {[...storeSuggestions, ...productSuggestions].map((suggestion, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 py-3 px-4 rounded-md hover:bg-gray-100 cursor-pointer"
-                      onClick={() => handleSuggestionClick(suggestion)}
-                    >
-                      <Image
-                        src="/SuggestionBox/search_lens.svg"
-                        alt="search"
-                        width={16}
-                        height={16}
-                        className="opacity-80"
-                      />
-                      <span className="text-sm">
-                        {highlightMatch(suggestion, tempQuery)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex-grow flex flex-col items-center justify-center p-8 text-center text-gray-500">
+      {/* <AnimatePresence> */}
+
+      {showDropdown && (
+        <div className="flex-grow overflow-y-auto scrollbar-none mt-2 bg-white rounded-xl px-2">
+          {/* Search Suggestions */}
+            <div className="flex flex-col mt-2">
+              {/* ... (Existing suggestion mapping logic) ... */}
+              {[...storeSuggestions, ...productSuggestions].map((suggestion, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 py-1 px-4 rounded-md hover:bg-gray-100 cursor-pointer"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
                   <Image
-                    src="/ListingMobileHeader/no-results.svg"
-                    alt="No results found"
-                    width={150}
-                    height={150}
-                    className="mb-4"
+                    src="/SuggestionBox/search_lens.svg"
+                    alt="search"
+                    width={13}
+                    height={13}
+                    className="opacity-80"
                   />
-                  <h3 className="text-lg font-semibold">Sorry, Nothing to show here</h3>
-                  <p className="text-sm mt-1">
-                    Probably a wrong search or typo, please try again.
-                  </p>
+                  <span className="text-[14px]" style={{fontWeight: 400}}>
+                    {highlightMatch(suggestion, tempQuery)}
+                  </span>
                 </div>
-              )}
+              ))}
+            </div>
 
-              {/* Categories */}
-              {categories.length > 0 && (
-                <div className={`${manrope.className} px-4 py-3 mt-4`}>
-                  <div className="text-[#1F2937] text-base mb-2 font-semibold">
-                    CATEGORY
-                  </div>
-                  <div className="flex gap-2 flex-wrap font-normal">
-                    {categories.map((cat, i) => (
-                      <button
-                        key={i}
-                        className="flex items-center gap-2 px-4 py-2 rounded-full text-sm text-black transition-all bg-gray-100 hover:bg-gray-200 cursor-pointer"
-                        onClick={() => handleCategoryClick(cat.subcategory3)}
-                      >
-                        {cat?.subcategory3.includes("Kurta")
-                          ? `${cat?.subcategory3} (${cat?.category})`
-                          : cat?.subcategory3}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
 
-              {/* Stores */}
-              {stores.length > 0 && (
-                <div className={`${manrope.className} p-4 mt-4`}>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-base text-[#1F2937] font-semibold">
-                      STORES
-                    </span>
-                    <button
-                      className="text-sm text-[#3A3A3A] font-normal cursor-pointer"
-                      onClick={handleStoreListRoute}
-                    >
-                      View all
-                    </button>
-                  </div>
-                  {stores.map((store, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
-                      onClick={() => handleStoreClick(store.store_id)}
-                    >
-                      <img
-                        src={store.profile_image || "/globe.svg"}
-                        alt={store.store_name}
-                        className="w-10 h-10 rounded-md object-cover bg-gray-200"
-                      />
-                      <div className="flex flex-col">
-                        <span className="text-base text-[#1E1E1E]">
-                          {store.store_name}
-                        </span>
-                        <span className="text-sm text-[#A6A6A6]">
-                          {store.area &&
-                          store.area.toLowerCase() === "others"
-                            ? `${store.city}`
-                            : `${store.area}, ${store.city}`}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
+          {/* Categories */}
+          {categories.length > 0 && (
+            <div className={`${manrope.className} px-4 py-3`} style={{fontWeight:600}}>
+              <div className="text-[#1F2937] text-[12px] mb-2 font-semibold">
+                CATEGORY
+              </div>
+              <div className="flex gap-2 flex-wrap" style={{fontWeight:400}}>
+                {categories.map((cat, i) => (
+                  <button
+                    key={i}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-[12px] text-black transition-all bg-gray-100 hover:bg-gray-200 cursor-pointer"
+                    onClick={() => handleCategoryClick(cat.subcategory3)}
+                  >
+                    {cat?.subcategory3.includes("Kurta")
+                      ? `${cat?.subcategory3} (${cat?.category})`
+                      : cat?.subcategory3}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
-        </AnimatePresence>
-      </div>
+
+          {/* Stores */}
+          {stores.length > 0 && (
+            <div className={`${manrope.className} px-4 py-2`}>
+              <div className="flex justify-between items-center mb-1" style={{fontWeight:600}}>
+                <span className="text-[12px] text-[#1F2937]">
+                  STORES
+                </span>
+                <button
+                  className="text-[12px] text-[#3A3A3A] font-normal cursor-pointer"
+                  onClick={handleStoreListRoute}
+                  style={{fontWeight:400}}
+                >
+                  View all
+                </button>
+              </div>
+              {stores.map((store, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
+                  onClick={() => handleStoreClick(store.store_id)}
+                >
+                  <img
+                    src={store.profile_image || "/globe.svg"}
+                    alt={store.store_name}
+                    className="w-10 h-10 rounded-md object-cover bg-gray-200"
+                  />
+                  <div className="flex flex-col" style={{fontWeight:500}}>
+                    <span className="text-[13px] text-[#1E1E1E]">
+                      {store.store_name}
+                    </span>
+                    <span className="text-[11px] text-[#A6A6A6]">
+                      {store.area &&
+                        store.area.toLowerCase() === "others"
+                        ? `${store.city}`
+                        : `${store.area}, ${store.city}`}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
     </div>
   );
 }
