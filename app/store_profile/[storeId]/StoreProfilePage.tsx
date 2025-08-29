@@ -160,7 +160,7 @@ export default function StoreProfilePage() {
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
       {/* Full-width header */}
-      {/* <ListingPageHeader /> */}
+      <ListingPageHeader />
 
       {/* Centered content container */}
       <div className="flex flex-col items-center w-full">

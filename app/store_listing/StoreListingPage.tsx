@@ -169,7 +169,7 @@ export default function StoreListingPage() {
 
   return (
     <div className="bg-[#FFFFFF]">
-      {/* <ListingPageHeader /> */}
+      <ListingPageHeader />
       {/* ✅ 3. Corrected responsive padding for the main container */}
       <div className="px-4 lg:px-20 mt-8 gap-10 flex flex-col pb-16 md:pb-0">
         <h1
