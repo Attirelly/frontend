@@ -17,6 +17,7 @@ import {
 import { useProductFilterStore } from "@/store/filterStore";
 import ProductContainer from "@/components/listings/ProductContainer";
 import SortByDropdown from "@/components/listings/SortByDropdown";
+import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 
 export default function StoreProfilePage() {
   const router = useRouter();
@@ -160,7 +161,8 @@ export default function StoreProfilePage() {
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
       {/* Full-width header */}
-      <ListingPageHeader />
+      <ListingMobileHeader className="block lg:hidden" />
+      <ListingPageHeader className="hidden lg:block" />
 
       {/* Centered content container */}
       <div className="flex flex-col items-center w-full">

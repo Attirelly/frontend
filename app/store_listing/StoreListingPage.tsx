@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { manrope } from "@/font";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFilterStore } from "@/store/filterStore";
+import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 
 export default function StoreListingPage() {
   const router = useRouter();
@@ -169,7 +170,8 @@ export default function StoreListingPage() {
 
   return (
     <div className="bg-[#FFFFFF]">
-      <ListingPageHeader />
+      <ListingMobileHeader className="block lg:hidden" />
+      <ListingPageHeader className="hidden lg:block" />
       {/* ✅ 3. Corrected responsive padding for the main container */}
       <div className="px-4 lg:px-20 mt-8 gap-10 flex flex-col pb-16 md:pb-0">
         <h1

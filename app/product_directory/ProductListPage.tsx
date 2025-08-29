@@ -14,6 +14,7 @@ import Fuse from "fuse.js";
 import StoreTypeTabs from "@/components/listings/StoreTypes";
 import { BrandType } from "@/types/SellerTypes";
 import { Filter } from "lucide-react";
+import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 
 // const STORE_TYPE_OPTIONS = [
 //   { store_type: "Retail Store", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
@@ -205,7 +206,8 @@ export default function ProductListPage() {
 
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
-      <ListingPageHeader />
+      <ListingMobileHeader className="block lg:hidden" />
+      <ListingPageHeader className="hidden lg:block" />
       <div className="flex flex-col px-4 pb-24 md:pb-0 lg:px-20">
         <span
           className={`${manrope.className} text-[#101010] mt-4 text-2xl lg:text-[32px]`}
