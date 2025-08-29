@@ -19,6 +19,7 @@
     "axios": "^1.9.0",
     "browser-image-compression": "^2.0.2",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.23.12",
     "fuse.js": "^7.1.0",
     "immer": "^10.1.1",
     "instantsearch.css": "^8.5.1",

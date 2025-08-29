@@ -270,7 +270,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
     router.push("/store_listing?search=" + encodeURIComponent(value));
   };
 
-  console.log("system hai to hai", searchFocus, showStoreType, showDropdown, tempQuery);
+
 
   return (
     <div
@@ -355,7 +355,8 @@ export default function MobileSearchContainer({ onClose }: Props) {
             onChange={(e) => setTempQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             onFocus={() => {
-              if (tempQuery.length == 0) {
+              console.log("system hai to hai", searchFocus, showStoreType, showDropdown, tempQuery);
+              if (tempQuery.length === 0 ) {
                 setShowStoreType(true);
               }
               
