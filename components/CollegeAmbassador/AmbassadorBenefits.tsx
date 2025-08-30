@@ -2,66 +2,73 @@ import { manrope } from "@/font";
 import Image from "next/image";
 import React from "react";
 
+type Props = {
+  screenSize?: string;
+};
 
-
-const AmbassadorBenefits: React.FC = () => {
+const AmbassadorBenefits: React.FC<Props> = ({ screenSize = 'sm' }) => {
   return (
     <div className={`${manrope.className} flex flex-col gap-[104px]`}>
       {/* Section 1 */}
-      <div className={`${manrope.className} flex flex-col mt-[23px] gap-20`} style={{ fontWeight: 600 }}>
-      <div className="flex flex-col items-center" style={{ fontWeight: 400 }}>
-        <span className="text-[32px] text-[#1B1C57] mb-4" style={{ fontWeight: 800 }}>Why become Attirelly Ambassador?</span>
-        <span className="w-[602px] text-[20px] text-[#1B1C57] text-center">Everything you need about finding the best, safe and affordable storage space near you.</span>
+      <div className={`${manrope.className} flex flex-col mt-[23px] gap-[80px]`} style={{ fontWeight: 600 }}>
+        <div className="flex flex-col items-center" style={{ fontWeight: 400 }}>
+          <span className=" text-[24px] md:text-[32px] text-[#1B1C57] mb-4 text-center" style={{ fontWeight: 800 }}>Why become Attirelly Ambassador?</span>
+          <span className=" w-[346px] md:w-[602px] text-[14px] md:text-[20px] text-[#1B1C57] text-center">Everything you need about finding the best, safe and affordable storage space near you.</span>
+        </div>
+
+        <div className="flex flex-col lg:flex-row justify-center gap-[40px] mx-auto">
+          <div className="flex relative flex-col items-center px-8 py-4">
+            {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
+            <Image src="/CollegeAmbassador/money.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 245} height={screenSize === 'sm' ? 190 : 245} className="" />
+            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5">Earn up to 25,000/Month</span>
+            <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>
+              Promote India's fastest-growing hyper local fashion marketplace and earn for every successful referral, event, and content initiative</span>
+          </div>
+          <div className="flex flex-col items-center px-8 py-4">
+            {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
+            <Image src="/CollegeAmbassador/people_web.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 245} height={screenSize === 'sm' ? 190 : 245} className="" />
+            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5">Real Industry Exposure</span>
+            <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>Get hands-on experience in the world of fashion-tech, marketing, and influencer outreach</span>
+          </div>
+          <div className="flex flex-col items-center px-8 py-4">
+            {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
+            <Image src="/CollegeAmbassador/two_hand.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 245} height={screenSize === 'sm' ? 190 : 245} className="" />
+            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5">Gain practical Experience</span>
+            <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>Learn how to build and promote your brand through an exciting 0 → 100 journey</span>
+          </div>
+        </div>
+
       </div>
 
-      <div className="flex relative justify-center gap-[40px] mx-auto">
-        <div className="flex relative flex-col items-center px-8 py-4">
-          <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/>
-          <Image src="/CollegeAmbassador/money.svg" alt="zero commision" width={147} height={147} className="absolute top-15"/>
-          <span className="text-[28px] text-[#1B1C57] mt-5">Earn up to 25,000/Month</span>
-          <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>
-Promote India's fastest-growing hyper local fashion marketplace and earn for every successful referral, event, and content initiative</span>
-        </div>
-        <div className="flex flex-col items-center px-8 py-4">
-          <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/>
-          <Image src="/CollegeAmbassador/people_web.svg" alt="zero commision" width={213} height={213} className="absolute"/>
-          <span className="text-[28px] text-[#1B1C57] mt-5">Real Industry Exposure</span>
-          <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>Get hands-on experience in the world of fashion-tech, marketing, and influencer outreach</span>
-        </div>
-        <div className="flex flex-col items-center px-8 py-4">
-          <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/>
-          <Image src="/CollegeAmbassador/two_hand.svg" alt="zero commision" width={145} height={145} className="absolute translate-y-1/2"/>
-          <span className="text-[28px] text-[#1B1C57] mt-5">Gain practical Experience</span>
-          <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>Learn how to build and promote your brand through an exciting 0 → 100 journey</span>
-        </div>
-      </div>
+      {/* Section 2 */}
+      <div className="w-full px-[20px] md:px-[40px]">
+        <div className="relative flex flex-col lg:flex-row lg:h-[347px] border border-[#D8D8D8] bg-[#F7F9FC] rounded-xl mx-auto overflow-hidden">
+          <div className="flex flex-col items-center lg:my-[94px] lg:ml-[40px] lg:w-[647px] lg:h-[189px] gap-4">
+            <span
+              className="text-[24px] md:text-[36px] text-[#0B0B0B]"
+              style={{ fontWeight: 800 }}
+            >
+              Why Attirelly
+            </span>
+            <span
+              className={`
+                ${screenSize === 'sm' ? 'w-[340px]' : ''}
+                ${screenSize === 'md' ? 'w-[500px]' : ''}
+                ${screenSize === 'lg' ? 'w-[600px]' : ''}
+                ${screenSize === 'xl' ? 'w-[641px]' : ''}
+                 text-[14px] md:text-[18px] text-[#0B0B0B] text-center lg:text-left`}
+              style={{ fontWeight: 400 }}
+            >
+              Attirelly bridges the gap between 700K+ local boutiques and 500M+ shoppers across India. We curate regional ethnic styles and help fashion lovers discover hidden local gems — all through one powerful hyperlocal fashion platform.
 
-    </div>
-
-    {/* Section 2 */}
-
-    <div className="relative flex w-[1247px] h-[347px] border border-[#D8D8D8] bg-[#F7F9FC] rounded-xl mx-auto overflow-hidden">
-            <div className="flex flex-col my-[94px] ml-[40px] w-[647px] h-[189px] gap-4">
-              <span
-                className="text-[36px] text-[#0B0B0B]"
-                style={{ fontWeight: 800 }}
-              >
-                Why Attirelly
-              </span>
-              <span
-                className="w-[641px] text-[18px] text-[#0B0B0B]"
-                style={{ fontWeight: 400 }}
-              >
-                 Attirelly bridges the gap between 700K+ local boutiques and 500M+ shoppers across India. We curate regional ethnic styles and help fashion lovers discover hidden local gems — all through one powerful hyperlocal fashion platform.
-    
-              </span>
-              {/* <button className="bg-black rounded p-2 text-white w-fit mt-2">
+            </span>
+            {/* <button className="bg-black rounded p-2 text-white w-fit mt-2">
                 Start Selling
               </button> */}
-            </div>
-    
-            <div>
-              <Image
+          </div>
+
+          <div>
+            {/* <Image
             src="/CollegeAmbassador/ellipse_white.svg"
             alt="Ellipse White"
             width={570}
@@ -69,7 +76,7 @@ Promote India's fastest-growing hyper local fashion marketplace and earn for eve
             className="absolute right-0 bottom-0"
             />
     
-    <Image
+            <Image
             src="/CollegeAmbassador/star3.svg"
             alt="star 3"
             width={45}
@@ -99,16 +106,32 @@ Promote India's fastest-growing hyper local fashion marketplace and earn for eve
             width={423}
             height={304}
             className="absolute bottom-0 right-0"
+            /> */}
+
+            <Image
+              src="/CollegeAmbassador/lady_image.svg"
+              alt="lady white image"
+              width={630}
+              height={630}
+              className="lg:absolute bottom-0 right-0 hidden lg:flex"
             />
-            </div>
-    
-    
-            
-    
+            <Image
+              src="/CollegeAmbassador/lady_image_mobile.svg"
+              alt="lady white image"
+              width={630}
+              height={630}
+              className="lg:absolute bottom-0 right-0 lg:hidden"
+            />
           </div>
 
+
+
+        </div>
+
+      </div>
+
     </div>
-    
+
   );
 };
 
