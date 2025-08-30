@@ -105,7 +105,7 @@ export default function SocialLinksComponent() {
 
       const encodedState = encodeURIComponent(JSON.stringify(stateData));
 
-      window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic,instagram_manage_insights&response_type=code&state=${encodedState}`;
+      window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic,instagram_business_manage_insights&response_type=code&state=${encodedState}`;
     } catch (error: any) {
       console.log(error.message);
     }
