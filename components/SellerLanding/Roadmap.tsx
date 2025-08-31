@@ -1,6 +1,10 @@
 import { manrope } from "@/font";
 import RoadmapCard from "./RoadmapCard";
 
+type Props = {
+  screenSize?: string;
+};
+
 const roadmap = [
     {
         id:1,
@@ -28,22 +32,21 @@ const roadmap = [
     },
 ];
 
-export default function Roadmap(){
+export default function Roadmap({ screenSize }: Props) {
     return(
         <div className={`${manrope.className} flex flex-col items-center mt-20 gap-4`} style={{ fontWeight: 800 }}>
-  <span className="text-[32px] text-[#1B1C57]">
+  <span className="text-[20px] md:text-[32px] text-[#1B1C57] text-center">
     Future roadmap to help you increase your sales
   </span>
   <span
-    className="w-[560px] text-[16px] text-[#1B1C57] text-center"
+    className="px-4 md:w-[500px] lg:w-[560px] text-[14px] md:text-[16px] text-[#1B1C57] text-center"
     style={{ fontWeight: 500 }}
   >
     Attirelly aims to provide the best experience to our partners. We plan to introduce multiple features in coming months to help you expand your business and generate more revenue.
   </span>
 
-  {/* Updated Grid Container */}
   <div className="flex justify-center w-full mt-10">
-    <div className="grid grid-cols-2 gap-x-[80px] gap-y-[47px] w-fit">
+    <div className="flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:gap-x-[80px] lg:gap-y-[47px] w-fit">
       {roadmap.map((item) => (
         <RoadmapCard
           key={item.id}
@@ -51,6 +54,7 @@ export default function Roadmap(){
           title={item.title}
           subtitle={item.subtitle}
           image={item.image}
+          screenSize={screenSize}
         />
       ))}
     </div>

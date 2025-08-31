@@ -55,8 +55,8 @@ export default function SellerOnboardingPage() {
         <section id="Why Attirelly?"><Benefits screenSize={screenSize} /></section>
         <section id="How it works"><HowItWorks screenSize={screenSize} /></section>
         <section id="Our Numbers"><OurNumbers screenSize={screenSize}/></section>
-        <section id="Future Roadmap"><Roadmap /></section>
-        <section id="Contact Us"><SellerForm /></section>
+        <section id="Future Roadmap"><Roadmap screenSize={screenSize}/></section>
+        {/* <section id="Contact Us"><SellerForm /></section> */}
         <section id="FAQ"><FAQ /></section>
         <section><CurrentLocs /></section>
         <section><ListingFooter /></section>
