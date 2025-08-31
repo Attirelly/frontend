@@ -53,8 +53,8 @@ export default function SellerOnboardingPage() {
       <Hero screenSize={screenSize} />
       <div className="absolute w-full top-[730px] lg:top-[548px] rounded-tl-4xl rounded-tr-4xl bg-white">
         <section id="Why Attirelly?"><Benefits screenSize={screenSize} /></section>
-        <section id="How it works"><HowItWorks /></section>
-        <section id="Our Numbers"><OurNumbers /></section>
+        <section id="How it works"><HowItWorks screenSize={screenSize} /></section>
+        <section id="Our Numbers"><OurNumbers screenSize={screenSize}/></section>
         <section id="Future Roadmap"><Roadmap /></section>
         <section id="Contact Us"><SellerForm /></section>
         <section id="FAQ"><FAQ /></section>

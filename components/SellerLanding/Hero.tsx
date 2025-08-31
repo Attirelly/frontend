@@ -2,6 +2,7 @@
 
 import { manrope } from "@/font";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -42,9 +43,9 @@ export default function Hero({ screenSize= 'sm' }: Props) {
               <span className="text-[#959595]">through Attirelly</span>
             </div>
           </div>
-          <button className="text-[18px] text-white w-fit bg-black rounded px-[28px] py-[10px]">
+          <Link href='/seller_signup' className="text-[18px] text-white w-fit bg-black rounded px-[28px] py-[10px]">
 Get Free Credits
-          </button>
+          </Link>
         </p>
         
 

@@ -50,7 +50,7 @@ export default function SellerOnboardingPage() {
       <AmbassadorHero screenSize={screenSize} />
       <div className="absolute w-full top-[730px] lg:top-[548px] rounded-tl-4xl rounded-tr-4xl bg-white">
         <section id="Why Attirelly?"><AmbassadorBenefits screenSize={screenSize} /></section>
-        <section id="Our Numbers"><AmbassadorOurNumbers /></section>
+        <section id="Our Numbers"><AmbassadorOurNumbers screenSize={screenSize}/></section>
         <section id="Future Roadmap"><AmbassadorRevolution /></section>  
         <section id="FAQ"><FAQ /></section>
         <section id="Contact Us"><AmbassadorSellerForm /></section>

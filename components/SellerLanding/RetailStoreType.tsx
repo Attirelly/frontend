@@ -1,16 +1,19 @@
 import { manrope } from "@/font";
 import Image from "next/image";
-export default function RetailStoreType() {
+type Props = {
+    screenSize: string;
+};
+export default function RetailStoreType({ screenSize }: Props) {
     return (
-        <div className="w-[1280px] h-[340px] bg-[#F7F9FC] rounded-4xl overflow-hidden">
-            <div className="flex justify-between">
-                <div className={`${manrope.className} flex flex-col py-[94px] pl-[80px]`}>
+        <div className="w-full bg-[#F7F9FC] rounded-4xl overflow-hidden">
+            <div className="flex flex-col gap-4 lg:flex-row lg:justify-between">
+                <div className={`${manrope.className} flex flex-col py-2 lg:py-[94px] items-center lg:items-start lg:pl-[80px]`}>
 
-                    <h2 className="text-[36px] text-[#1B1C57] mb-4" style={{fontWeight:700}}>
+                    <h2 className="text-[24px] lg:text-[36px] text-[#1B1C57] mb-4" style={{fontWeight:700}}>
                         Attirely For Retail Stores
                     </h2>
                     <div>
-                        <ul className="space-y-2 text-[18px] text-[#1B1C57]" style={{fontWeight:400}}>
+                        <ul className="space-y-2 text-[14px] lg:text-[18px] w-[320px] lg:w-full text-[#1B1C57]" style={{fontWeight:400}}>
                             <li className="flex items-center gap-2">
                                 <span className="w-[10px] h-[10px] bg-gray-700 rounded-full"></span>
                                 <span>Put your store on the fashion map — online & offline.</span>
@@ -27,22 +30,22 @@ export default function RetailStoreType() {
                     </div>
 
                 </div>
-                <div className="relative flex">
+                <div className="flex items-end justify-center">
                     <Image
-                src="/SellerLanding/retail_store_type_2.svg"
+                src="/SellerLanding/retail_store_type.svg"
                 alt="retail store type"
-                width={351}
-                height={234}
-                className="absolute bottom-0"
+                width={screenSize === 'lg' || screenSize === 'xl' ? 560 : 328}
+                height={screenSize === 'lg' || screenSize === 'xl' ? 411 : 218}
+                className=""
                 />
 
-                <Image
+                {/* <Image
                 src="/SellerLanding/retail_store_type_1.svg"
                 alt="retail store type"
                 width={473}
                 height={316}
                 className=""
-                />
+                /> */}
 
 
                 </div>

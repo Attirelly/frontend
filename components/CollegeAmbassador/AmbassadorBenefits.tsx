@@ -123,9 +123,6 @@ const AmbassadorBenefits: React.FC<Props> = ({ screenSize = 'sm' }) => {
               className="lg:absolute bottom-0 right-0 lg:hidden"
             />
           </div>
-
-
-
         </div>
 
       </div>
