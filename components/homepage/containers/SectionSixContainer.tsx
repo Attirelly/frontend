@@ -31,7 +31,7 @@ export default function SectionSixContainer() {
                     id: p.product_id,
                     imageUrl: p.images?.[0]?.image_url || '/Homepage/CardTypeOne.svg',
                     title: p.title,
-                    description: p.stores && p.stores.area && p.stores.area?.name.toLowerCase() === "others" ?  `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
+                    description: p.stores && p.stores.area && p.stores.area?.name.toLowerCase() === "others" ? `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
                 }));
                 setProducts(formattedProducts);
 
@@ -48,28 +48,31 @@ export default function SectionSixContainer() {
     }, []);
 
 
-  if (!products || products.length == 0) {
-    return <div></div>;
-  }
-     
+    if (!products || products.length == 0) {
+        return <div></div>;
+    }
+
     return (
         <div className='w-[1242px] mx-auto space-y-8'>
-            <div className='flex justify-between'>
+            <div className='flex'>
                 <span className={`${manrope.className} text-4xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
-                <a
-                    href={viewAll}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className='flex items-center gap-2'
-                >
-                    <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
-                    <Image
-                        src="/Homepage/view_all_arrow.svg"
-                        alt="View All"
-                        width={12}
-                        height={16}
-                    />
-                </a>
+                {viewAll && (
+                    <a
+                        href={viewAll}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className='flex ml-auto items-center gap-2'
+                    >
+                        <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
+                        <Image
+                            src="/Homepage/view_all_arrow.svg"
+                            alt="View All"
+                            width={12}
+                            height={16}
+                        />
+                    </a>
+                )}
+
             </div>
 
             <div className='flex flex-col'>

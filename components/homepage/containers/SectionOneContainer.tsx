@@ -88,32 +88,35 @@ export default function SectionOneContainer() {
 
   return (
     <div className="w-[1242px]  mx-auto space-y-8">
-      <div className="flex justify-between">
+      <div className="flex items-center">
         <span
           className={`${manrope.className} text-4xl text-[#242424]`}
           style={{ fontWeight: 400 }}
         >
           {name}
         </span>
-        <a
-          href={viewAll}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2"
-        >
-          <span
-            className={`${manrope.className} text-base text-[#242424]`}
-            style={{ fontWeight: 400 }}
+        {viewAll && (
+          <a
+            href={viewAll}
+            target="_blank"
+            rel="noopener noreferrer"
+            // Add ml-auto here to push this element to the right
+            className="ml-auto flex items-center gap-2"
           >
-            View All
-          </span>
-          <Image
-            src="/Homepage/right_arrow.svg"
-            alt="View All"
-            width={5}
-            height={5}
-          />
-        </a>
+            <span
+              className={`${manrope.className} text-base text-[#242424]`}
+              style={{ fontWeight: 400 }}
+            >
+              View All
+            </span>
+            <Image
+              src="/Homepage/right_arrow.svg"
+              alt="View All"
+              width={5}
+              height={5}
+            />
+          </a>
+        )}
       </div>
 
       <div className="relative">

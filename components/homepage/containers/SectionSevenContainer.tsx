@@ -109,32 +109,35 @@ export default function SectionSevenContainer() {
 
   return (
     <div className="w-full mx-auto space-y-4 lg:space-y-8">
-      <div className="flex justify-between px-4 lg:px-0">
+      <div className="flex px-4 lg:px-0">
         <span
           className={`${manrope.className} text-xl md:text-2xl lg:text-3xl text-[#242424]`}
           style={{ fontWeight: 400 }}
         >
           {name}
         </span>
-        <a
-          href={viewAll}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1 lg:gap-2"
-        >
-          <span
-            className={`${manrope.className} text-sm lg:text-base text-[#242424]`}
-            style={{ fontWeight: 400 }}
+        {viewAll && (
+          <a
+            href={viewAll}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex ml-auto items-center gap-1 lg:gap-2"
           >
-            View All
-          </span>
-          <Image
-            src="/Homepage/right_arrow.svg"
-            alt="View All"
-            width={5}
-            height={5}
-          />
-        </a>
+            <span
+              className={`${manrope.className} text-sm lg:text-base text-[#242424]`}
+              style={{ fontWeight: 400 }}
+            >
+              View All
+            </span>
+            <Image
+              src="/Homepage/right_arrow.svg"
+              alt="View All"
+              width={5}
+              height={5}
+            />
+          </a>
+        )}
+
       </div>
       <div className="relative flex items-center">
         {/* Prev Button */}

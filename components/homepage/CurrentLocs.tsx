@@ -18,7 +18,7 @@ export default function CurrentLocs() {
     >
       {/* Left Column: Location Info */}
       <div className="flex flex-col gap-10 items-center">
-        <span className={`text-[24px] md:text-[30px] lg:text-[32px] 
+        <span className={`text-[18px] md:text-[30px] lg:text-[32px] 
         text-center text-black`}>
           CURRENTLY OPERATING IN
         </span>
@@ -26,7 +26,7 @@ export default function CurrentLocs() {
           {locs.map((location) => (
             <span
               key={location.location}
-              className="text-xl text-black px-5 py-3"
+              className="text-[14px] md:text-xl text-black px-5 py-3"
             >
               {location.location}
             </span>
@@ -36,20 +36,21 @@ export default function CurrentLocs() {
 
       {/* Right Column: Supported By */}
       <div className="flex flex-col items-center justify-start gap-5">
-        <span className="text-[18px] md:text-[24px] lg:text-[28px] text-black">Supported By</span>
+        <span className="text-[16px] md:text-[24px] lg:text-[28px] text-black">Supported By</span>
         {/* <div className="flex gap-3 items-center"> */}
           <Image
             src="/Homepage/ISB_AIC.svg"
             alt="ISB AIC"
             width={217}
             height={70}
+            className="w-[127px] h-[40px] md:w-[217px] md:h-[70px]"
           />
           <Image
             src="/Homepage/Razorpay.svg"
             alt="Razorpay"
             width={310}
             height={61}
-            className="mr-3"
+            className="w-[181px] h-[36px] md:w-[310px] md:h-[61px]"
           />
         {/* </div> */}
       </div>

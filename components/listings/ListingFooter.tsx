@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { manrope, roboto } from '@/font';
+import { manrope, roboto, rosario } from '@/font';
 import Link from 'next/link';
 
 const socialPlatforms = [
@@ -37,7 +37,8 @@ export default function ListingFooter() {
       >
         {/* Left Column: Company Info */}
         <div className="space-y-4 text-center md:text-left">
-          <h2 className={`${roboto.className} text-3xl font-bold`} style={{ fontWeight: 700 }}>Attirelly</h2>
+          <Link href="/" className={`${rosario.className} text-3xl font-bold`} style={{ fontWeight: 700 }}>Attirelly</Link>
+
 
           <div className="flex flex-col items-center md:items-start gap-2 text-[#787A7C] text-base">
             <div className="flex items-start gap-2">

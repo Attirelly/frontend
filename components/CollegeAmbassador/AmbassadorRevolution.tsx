@@ -2,23 +2,26 @@
 import { manrope, rosario } from "@/font";
 import Image from "next/image";
 import { useHeaderStore } from "@/store/listing_header_store";
+type Props = {
+    screenSize?: string;
+};
 
-export default function OurNumbers() {
+export default function OurNumbers({ screenSize }: Props) {
     const { storeType } = useHeaderStore();
     return (
-         <div
-              className={`${manrope.className} flex flex-col items-center gap-30 pt-30`}
-            >
-        <div className="relative flex w-[1247px] h-[347px] bg-[#F7F9FC] rounded-xl overflow-hidden">
-            <div className="flex flex-col my-[94px] ml-[40px] w-[647px] h-[189px] gap-4">
+        <div className="px-10 lg:px-0">
+
+            <div className="w-full md:max-w-[600px] lg:max-w-[1247px] mx-auto bg-[#F7F9FC] rounded-4xl overflow-hidden mt-10">
+            <div className="flex flex-col gap-4 lg:flex-row lg:justify-between">
+                <div className={`${manrope.className} flex flex-col py-2 lg:py-[94px] items-center lg:items-start lg:pl-[80px]`}>
                 <span
-                    className="text-[36px] text-[#1B1C57]"
+                    className="text-[24px] lg:text-[36px] text-[#1B1C57]"
                     style={{ fontWeight: 700 }}
                 >
                     Join the revolution
                 </span>
                 <span
-                    className="text-[18px] text-[#1B1C57]"
+                    className="text-[14px] md:text-[18px] text-[#1B1C57] text-center lg:text-start"
                     style={{ fontWeight: 400 }}
                 >
                     Build, earn, and learn — all while being a trendsetter on your campus
@@ -29,24 +32,27 @@ export default function OurNumbers() {
                 </button>
             </div>
 
-            <div>
-                <Image
-                    src="/SellerLanding/bg_dark_gray.svg"
-                    alt="bg dark gray"
-                    width={570}
-                    height={570}
-                    className="absolute right-0 bottom-0"
-                />
-
+            <div className="flex items-end justify-center">
                 <Image
                     src="/CollegeAmbassador/revolution.svg"
                     alt="Revolution"
-                    width={598}
-                    height={399}
-                    className="absolute bottom-0 right-0"
+                    width={screenSize === 'sm' ? 143 : 580}
+                height={screenSize === 'sm' ? 143 : 1000}
+                    className="hidden lg:block"
                 />
+                <Image
+                    src="/CollegeAmbassador/revolution_2.svg"
+                    alt="Revolution"
+                    width={screenSize === 'sm' ? 300 : screenSize === 'md' ? 600 : 580}
+                height={screenSize === 'sm' ? 300 : screenSize === 'md' ? 400 : 580}
+                    className="lg:hidden"
+                />
+
             </div>
         </div>
         </div>
+
+        </div>
+        
     );
 }

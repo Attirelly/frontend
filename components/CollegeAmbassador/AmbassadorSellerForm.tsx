@@ -26,10 +26,10 @@ export default function SellerForm() {
 
   return (
     <section
-      className={`${manrope.className} bg-[#F7F9FC] py-[117px] px-[161px] mt-20`}
+      className={`${manrope.className} bg-[#F7F9FC]  px-[100px] py-[20px] lg:px-[161px] lg:py-[117px] mt-20`}
       style={{ fontWeight: 500 }}
     >
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+      <div className=" mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         {/* Left Side */}
         <div>
           <h2 className="text-2xl font-semibold text-[#1B1C57]">

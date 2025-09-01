@@ -25,22 +25,22 @@ export default function SectionNineContainer() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-      const updateVisibleCount = () => {
-        if (window.innerWidth < 768) {
-          setScreenSize('sm');
-        } else if (window.innerWidth < 1024) {
-          setScreenSize('md');
-        } else if(window.innerWidth < 1300){
-          setScreenSize('lg')
-        }else{
-          setScreenSize('xl')
-        }
-      };
-  
-      updateVisibleCount();
-      window.addEventListener("resize", updateVisibleCount);
-      return () => window.removeEventListener("resize", updateVisibleCount);
-    }, []);
+    const updateVisibleCount = () => {
+      if (window.innerWidth < 768) {
+        setScreenSize('sm');
+      } else if (window.innerWidth < 1024) {
+        setScreenSize('md');
+      } else if (window.innerWidth < 1300) {
+        setScreenSize('lg')
+      } else {
+        setScreenSize('xl')
+      }
+    };
+
+    updateVisibleCount();
+    window.addEventListener("resize", updateVisibleCount);
+    return () => window.removeEventListener("resize", updateVisibleCount);
+  }, []);
 
   useEffect(() => {
     const fetchStoresBySection = async () => {
@@ -54,7 +54,7 @@ export default function SectionNineContainer() {
           id: store.store_id,
           imageUrl: store.profile_image || "/Homepage/CardImage.svg",
           title: store.store_name,
-          description: store.area && store.area?.name.toLowerCase() === "others"? `${store.city?.name}` : `${store.area?.name}, ${store.city?.name}`,
+          description: store.area && store.area?.name.toLowerCase() === "others" ? `${store.city?.name}` : `${store.area?.name}, ${store.city?.name}`,
         }));
         setStores(formattedStores);
 
@@ -84,32 +84,35 @@ export default function SectionNineContainer() {
 
   return (
     <div className="w-full mx-auto space-y-4 lg:space-y-8">
-      <div className="flex justify-between px-4 lg:px-0">
+      <div className="flex px-4 lg:px-0">
         <span
           className={`${manrope.className} text-xl md:text-2xl lg:text-3xl text-[#242424]`}
           style={{ fontWeight: 400 }}
         >
           {name}
         </span>
-        <a
-          href={viewAll}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1 lg:gap-2"
-        >
-          <span
-            className={`${manrope.className} text-sm lg:text-base text-[#242424]`}
-            style={{ fontWeight: 400 }}
+        {viewAll && (
+          <a
+            href={viewAll}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex ml-auto items-center gap-1 lg:gap-2"
           >
-            View All
-          </span>
-          <Image
-            src="/Homepage/view_all_arrow.svg"
-            alt="View All"
-            width={12}
-            height={16}
-          />
-        </a>
+            <span
+              className={`${manrope.className} text-sm lg:text-base text-[#242424]`}
+              style={{ fontWeight: 400 }}
+            >
+              View All
+            </span>
+            <Image
+              src="/Homepage/view_all_arrow.svg"
+              alt="View All"
+              width={12}
+              height={16}
+            />
+          </a>
+        )}
+
       </div>
 
       <div className="flex flex-col">

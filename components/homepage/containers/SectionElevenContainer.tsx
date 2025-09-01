@@ -31,39 +31,39 @@ export default function SectionElevenContainer() {
   const [loading, setLoading] = useState(true);
 
   const [screenSize, setScreenSize] = useState("sm");
-  
-    useEffect(() => {
-      const updateVisibleCount = () => {
-        if (window.innerWidth < 768) {
-          setVisibleCount(MOBILE_VISIBLE_COUNT);
-          setScreenSize("sm");
-        } else if (window.innerWidth < 1024) {
-          setVisibleCount(TAB_VISIBLE_COUNT);
-          setScreenSize("md");
-        } else if (window.innerWidth < 1300) {
-          setVisibleCount(DESKTOP_VISIBLE_COUNT);
-          setScreenSize("lg");
-        } else {
-          setVisibleCount(DESKTOP_VISIBLE_COUNT);
-          setScreenSize("xl");
-        }
-      };
-      updateVisibleCount();
-      window.addEventListener("resize", updateVisibleCount);
-      return () => window.removeEventListener("resize", updateVisibleCount);
-    }, []);
+
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      if (window.innerWidth < 768) {
+        setVisibleCount(MOBILE_VISIBLE_COUNT);
+        setScreenSize("sm");
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(TAB_VISIBLE_COUNT);
+        setScreenSize("md");
+      } else if (window.innerWidth < 1300) {
+        setVisibleCount(DESKTOP_VISIBLE_COUNT);
+        setScreenSize("lg");
+      } else {
+        setVisibleCount(DESKTOP_VISIBLE_COUNT);
+        setScreenSize("xl");
+      }
+    };
+    updateVisibleCount();
+    window.addEventListener("resize", updateVisibleCount);
+    return () => window.removeEventListener("resize", updateVisibleCount);
+  }, []);
 
   useEffect(() => {
     const fetchStoresBySection = async () => {
       try {
         const res = await api.get(`homepage/stores_by_section_number/${SECTION_NUMBER}`);
         const storeData = res.data;
-        
-        const formattedStores: CardData[] = storeData.map((store : any) => ({
+
+        const formattedStores: CardData[] = storeData.map((store: any) => ({
           id: store.store_id,
           imageUrl: store.profile_image,
           title: store.store_name,
-          description: store.area && store.area?.name.toLowerCase() === "others"? `${store.city?.name}` : `${store.area?.name}, ${store.city?.name}`,
+          description: store.area && store.area?.name.toLowerCase() === "others" ? `${store.city?.name}` : `${store.area?.name}, ${store.city?.name}`,
         }));
         setStores(formattedStores);
 
@@ -109,21 +109,24 @@ export default function SectionElevenContainer() {
   }
   return (
     <div className='w-full mx-auto space-y-4 lg:space-y-8'>
-      <div className='flex justify-between px-4 lg:px-2'>
+      <div className='flex px-4 lg:px-2'>
         <span className={`${manrope.className} text-xl md:text-2xl lg:text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
-        <a
-          href={viewAll}
-          target="_blank"
-          rel="noopener noreferrer"
-          className='flex items-center gap-1 lg:gap-2'>
-          <span className={`${manrope.className} text-sm lg:text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
-          <Image
-            src="/Homepage/right_arrow.svg"
-            alt="View All"
-            width={5}
-            height={5} />
+        {viewAll && (
+          <a
+            href={viewAll}
+            target="_blank"
+            rel="noopener noreferrer"
+            className='flex ml-auto items-center gap-1 lg:gap-2'>
+            <span className={`${manrope.className} text-sm lg:text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
+            <Image
+              src="/Homepage/right_arrow.svg"
+              alt="View All"
+              width={5}
+              height={5} />
 
-        </a>
+          </a>
+        )}
+
 
       </div>
 
@@ -143,7 +146,7 @@ export default function SectionElevenContainer() {
         </button>
 
         {/* <div className="overflow-hidden"> */}
-          <div
+        <div
           className={`w-full grid
             ${screenSize === 'sm' ? "grid-cols-2 pl-1" : ""}
             ${screenSize === 'md' ? "grid-cols-4 px-10 ml-2" : ""}
@@ -151,27 +154,27 @@ export default function SectionElevenContainer() {
             ${screenSize === 'xl' ? "grid-cols-6 px-10 ml-2" : ""}
            `}
         >
-            {visibleCards.map((card) => (
-              <div
-                key={card?.id}
-                style={{ minWidth: `${cardWidth}px` }}
-              >
-                <a
-                  href={`/store_profile/${card?.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer">
+          {visibleCards.map((card) => (
+            <div
+              key={card?.id}
+              style={{ minWidth: `${cardWidth}px` }}
+            >
+              <a
+                href={`/store_profile/${card?.id}`}
+                target="_blank"
+                rel="noopener noreferrer">
 
-                  <CardTypeFour
-                    imageUrl={card?.imageUrl}
-                    title={card?.title}
-                    description={card?.description || ''}
-                    screenSize={screenSize}
-                  />
-                </a>
+                <CardTypeFour
+                  imageUrl={card?.imageUrl}
+                  title={card?.title}
+                  description={card?.description || ''}
+                  screenSize={screenSize}
+                />
+              </a>
 
-              </div>
-            ))}
-          </div>
+            </div>
+          ))}
+        </div>
         {/* </div> */}
 
         <button

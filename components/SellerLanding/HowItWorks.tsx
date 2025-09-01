@@ -28,18 +28,28 @@ const steps = [
   },
 ]
 
-export default function HowItWorks(){
-    return(
+type Props = {
+  screenSize?: string;
+};
 
-    <div className={`${manrope.className} flex flex-col gap-[64px] bg-[#F7F9FC] pb-10 rounded-tl-4xl rounded-tr-4xl`} style={{fontWeight:700}}>
+export default function HowItWorks({ screenSize }: Props) {
+  return (
+    <div className={`${manrope.className} flex flex-col gap-[64px] bg-[#F7F9FC] pb-10 rounded-tl-4xl rounded-tr-4xl`} style={{ fontWeight: 700 }}>
       <div className="flex flex-col items-center mt-16" style={{ fontWeight: 700 }}>
-        <span className="text-[32px] text-[#1B1C57] mb-4" style={{ fontWeight: 800 }}>How it works</span>
-        <span className="w-[641px] text-[18px] text-[#1B1C57] text-center" style={{fontWeight:400}}>Whether you run a boutique in Jaipur, a store in Chandni Chowk, or a tailor shop in Surat—Attirelly helps you grow your business online and offline.</span>
+        <span className="text-[24px] md:text-[32px] text-[#1B1C57] mb-4" style={{ fontWeight: 800 }}>How it works</span>
+        <span className="w-[360px] md:w-[641px] text-[14px] md:text-[18px] text-[#1B1C57] text-center" style={{fontWeight:400}}>Whether you run a boutique in Jaipur, a store in Chandni Chowk, or a tailor shop in Surat—Attirelly helps you grow your business online and offline.</span>
       </div>
 
-      <div className="flex justify-center gap-[28px] mb-10">
+      <div className={`flex flex-col lg:flex-row 
+      ${screenSize === 'sm' ? 'px-[40px]' : ''}
+      ${screenSize === 'md' ? 'px-[200px]' : ''}
+      ${screenSize === 'lg' ? 'px-[200px]' : ''}
+      ${screenSize === 'xl' ? 'px-[120px]' : ''}
+      justify-center gap-[45px] lg:gap-[28px] mb-10`}>
         {steps.map((item) => (
-<StepsCard key={item.id} id={item.id} title={item.title} subtitle={item.subtitle} image={item.image}/>
+          <div className={`${screenSize === 'lg' ? 'w-[280px]' : ''}`}>
+            <StepsCard key={item.id} id={item.id} title={item.title} subtitle={item.subtitle} image={item.image} />
+          </div>
         ))}
       </div>
 
