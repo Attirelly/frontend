@@ -42,6 +42,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
   const [stores, setStores] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
+  const [locationSearchInput, setLocationSearchInput] = useState("");
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -170,7 +171,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
 
 
   const groupedOptions: SelectOption[] = [
-    { value: "", label: "City Name", name: "City Name", country: "" },
+    { value: "", label: "All Cities", name: "All Cities", country: "" },
     ...(allCity ?? []).map((c) => ({
       value: c.id,
       label: c.name,
@@ -299,7 +300,11 @@ export default function MobileSearchContainer({ onClose }: Props) {
             className="opacity-100"
           />
           <Select
-            options={groupedOptions}
+            options={
+                    locationSearchInput.trim() === ""
+                      ? groupedOptions.slice(0, 7)
+                      : groupedOptions
+                  }
             value={selectedOption}
             onChange={(val: SelectOption | null) => {
               if (!val || !val.value) {
@@ -319,6 +324,9 @@ export default function MobileSearchContainer({ onClose }: Props) {
                 setCity({ id: val.value, name: val.name });
                 setArea(null);
               }
+            }}
+            onInputChange={(inputValue) => {
+              setLocationSearchInput(inputValue);
             }}
             getOptionValue={(e) => e.value}
             formatOptionLabel={(data: SelectOption, { context }) =>
