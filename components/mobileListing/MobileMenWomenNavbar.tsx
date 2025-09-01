@@ -69,7 +69,7 @@ export default function MobileMenWomenNavbar() {
   };
 
   const handleLinkClick = (name: string) => {
-    resetFilters();
+    // resetFilters();
     router.push(`/product_directory?categories=${encodeURIComponent(name)}`);
   };
 
@@ -145,7 +145,6 @@ export default function MobileMenWomenNavbar() {
                       )}`}
                       className={`${manrope.className} text-sm text-[#464646] hover:text-black`}
                       style={{ fontWeight: 400 }}
-                      onClick={() => resetFilters()}
                     >
                       {subcat3.name}
                     </Link>

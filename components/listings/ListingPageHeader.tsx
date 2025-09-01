@@ -106,7 +106,7 @@ export default function ListingPageHeader({ className }: Props) {
       setProducts(data.products || []);
       setShowDropdown(true);
     } catch (error) {
-      toast.error("Failed to fetch search suggestions");
+      console.error("Failed to fetch search suggestions");
     }
   };
 
