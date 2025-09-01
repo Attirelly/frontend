@@ -33,25 +33,18 @@ export default function StoreContainerPage() {
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
-    city?: City | null,
     storeType?: BrandType | null
   ): string => {
-    const filters: string[][] = [];
+    const facetFilters: string[][] = [];
     for (const key in facets) {
       if (facets[key].length > 0 && key.toLowerCase() !== "discount") {
-        filters.push(facets[key].map((value) => `${key}:${value}`));
+        facetFilters.push(facets[key].map((value) => `${key}:${value}`));
       }
     }
-    if (city) {
-      filters.push([`city:${city.name}`]);
-    }
-    if (area) {
-      filters.push([`area:${area.name}`]);
-    }
     if (storeType) {
-      filters.push([`store_types:${storeType.store_type}`]);
+      facetFilters.push([`store_types:${storeType.store_type}`]);
     }
-    return encodeURIComponent(JSON.stringify(filters));
+    return encodeURIComponent(JSON.stringify(facetFilters));
   };
 
   const fetchStores = async (
@@ -60,24 +53,53 @@ export default function StoreContainerPage() {
   ) => {
     setLoading(true);
 
-    let discountArray = selectedFilters["discount"] || [];
-    let discountStr = discountArray
-      .map((val) => `discount >= ${val.slice(0, 2)}`)
-      .join(" OR ");
-    let tempFilterStr = "";
-    if (filters.length > 0 && discountStr.length > 0) {
-      tempFilterStr = filters + " AND " + discountStr;
-    } else if (filters.length > 0) {
-      tempFilterStr = filters;
-    } else {
-      tempFilterStr = discountStr;
+    let filterClauses = [];
+
+    // 2. Use .push() and check if the string is not empty
+    if (filters) {
+      filterClauses.push(filters);
     }
 
-    const facetFilters = buildFacetFilters(selectedFilters, city, storeType);
+    // 3. Process the discount filter
+    const discountArray = selectedFilters["discount"] || [];
+    if (discountArray.length > 0) {
+      const discountStr = discountArray
+        .map((val) => `discount >= ${parseInt(val, 10)}`)
+        .join(" OR ");
+
+      // Wrap OR conditions in parentheses for correct logic
+      filterClauses.push(`(${discountStr})`);
+    }
+
+    // // 4. Process the city filter
+    // if (city && city.name) {
+    //   const cityFilter = `city='${city.name}'`;
+    //   filterClauses.push(cityFilter);
+    // }
+
+    // // 5. Process the area filter (CORRECTION: use .push(), not .findLastIndex())
+    // if (area && area.name) {
+    //   const areaFilter = `area='${area.name}'`;
+    //   filterClauses.push(areaFilter); // Use .push() to add the filter
+    // }
+
+    // 6. Combine all clauses into a single string
+    const finalFilterString = filterClauses.join(" AND ");
+
+    const facetFilters = buildFacetFilters(selectedFilters, storeType);
+
+    let searchUrl = `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}`;
+
+    if (area) {
+      searchUrl += `&area=${area.name}`;
+    }
+    if (city) {
+      searchUrl += `&city=${city.name}`;
+    }
 
     try {
       const res = await api.get(
-        `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${tempFilterStr}&facetFilters=${facetFilters}&activeFacet=${activeFacet}`,
+        searchUrl,
         controller ? { signal: controller.signal } : {}
       );
 
@@ -186,7 +208,6 @@ export default function StoreContainerPage() {
   useEffect(() => {
     const controller = new AbortController();
     setPage(0);
-    setHasMore(true);
     setStores([]);
     setBuffer([]);
     setApiHasMore(true);

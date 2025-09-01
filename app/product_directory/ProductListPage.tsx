@@ -63,7 +63,7 @@ export default function ProductListPage() {
     threshold: 0.4,
   });
 
-  //  initialise the state using url
+  // url to state
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
     const initialSelectedFilters: Record<string, string[]> = {};

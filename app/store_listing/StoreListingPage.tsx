@@ -66,7 +66,13 @@ export default function StoreListingPage() {
         key !== "area" &&
         key !== "store_type"
       ) {
-        initialSelectedFilters[key] = value.split(",");
+        if (key === "selectedCity") {
+          initialSelectedFilters["city"] = value.split(",");
+        } else if (key === "selectedArea") {
+          initialSelectedFilters["area"] = value.split(",");
+        } else {
+          initialSelectedFilters[key] = value.split(",");
+        }
       }
     });
     // Only perform the lookup if the master lists have been loaded
@@ -117,7 +123,13 @@ export default function StoreListingPage() {
 
     Object.entries(selectedFilters).forEach(([key, values]) => {
       if (values && values.length > 0) {
-        newparams.set(key, values.join(","));
+        if (key === "city") {
+          newparams.set("selectedCity", values.join(","));
+        } else if (key === "area") {
+          newparams.set("selectedArea", values.join(","));
+        } else {
+          newparams.set(key, values.join(","));
+        }
       }
     });
 

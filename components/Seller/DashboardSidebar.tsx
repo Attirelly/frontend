@@ -1,31 +1,26 @@
 'use client';
 
 import { useState } from 'react';
-import { useSellerStore } from '@/store/sellerStore'
+import { useSellerStore } from '@/store/sellerStore';
 import { api } from '@/lib/axios';
 
+// Note: Some titles have been shortened for a cleaner mobile display.
 const sections = [
-  { id: 'brand', title: 'Business details', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'price', title: 'Price filters', iconUrl: '/OnboardingSections/price_filters.png' },
-  { id: 'market', title: 'Select where you want to sell', iconUrl: '/OnboardingSections/where_to_sell.png' },
-  { id: 'social', title: 'Social links', iconUrl: '/OnboardingSections/social_links.png' },
-  { id: 'photos', title: 'Photos', iconUrl: '/OnboardingSections/store_photos.png' },
-  { id: 'one_product', title: 'Add single product', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'bulk_products', title: 'Add bulk products', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'all_products', title: 'View all products', iconUrl: '/OnboardingSections/business_details.png' },
-  { id: 'qr_code', title: 'Add QR code', iconUrl: '/OnboardingSections/business_details.png' },
-  // { id: 'new_user', title: 'Add new user', iconUrl: '/OnboardingSections/business_details.png' },
-  // { id: 'view_edit_user', title: 'View and edit users', iconUrl: '/OnboardingSections/business_details.png' },
-  // { id: 'horizontal_image', title: 'Add horizontal image', iconUrl: '/OnboardingSections/business_details.png' },
-  // { id: 'vertical_image', title: 'Add vertical image', iconUrl: '/OnboardingSections/business_details.png' },
+  { id: 'brand', title: 'Business Details', iconUrl: '/OnboardingSections/business_details.png' },
+  { id: 'price', title: 'Price Filters', iconUrl: '/OnboardingSections/price_filters.png' },
+  { id: 'market', title: 'Where to Sell', iconUrl: '/OnboardingSections/where_to_sell.png' },
+  { id: 'social', title: 'Social Links', iconUrl: '/OnboardingSections/social_links.png' },
+  { id: 'photos', title: 'Store Photos', iconUrl: '/OnboardingSections/store_photos.png' },
+  { id: 'one_product', title: 'Add Single', iconUrl: '/OnboardingSections/business_details.png' },
+  { id: 'bulk_products', title: 'Add Bulk', iconUrl: '/OnboardingSections/business_details.png' },
+  { id: 'all_products', title: 'All Products', iconUrl: '/OnboardingSections/business_details.png' },
+  { id: 'qr_code', title: 'QR Code', iconUrl: '/OnboardingSections/business_details.png' },
 ];
 
 const sectionGroups = [
   { heading: 'Store Profile', ids: ['brand', 'price', 'market', 'social', 'photos'] },
   { heading: 'Add Products', ids: ['one_product', 'bulk_products', 'all_products'] },
   { heading: 'QR Code', ids: ['qr_code'] },
-  // { heading: 'User Profile', ids: ['new_user', 'view_edit_user'] },
-  // { heading: 'Images for Paid Marketing', ids: ['horizontal_image', 'vertical_image'] },
 ];
 
 export default function DashboardSidebar({
@@ -35,6 +30,7 @@ export default function DashboardSidebar({
   selected: string;
   onSelect: (id: string) => void;
 }) {
+  // All your existing state and data fetching logic remains unchanged.
   const {
     sellerId,
     storeId,
@@ -55,6 +51,7 @@ export default function DashboardSidebar({
     setOpenGroups((prev) => ({ ...prev, [heading]: !prev[heading] }));
   };
 
+  // Your handleUpdate function remains exactly the same.
   const handleUpdate = async () => {
       if (!businessDetailsValid || !businessDetailsData){
         alert('Fill all mandatory fields of Business Details Section');
@@ -94,8 +91,7 @@ export default function DashboardSidebar({
         listing_page_image: storePhotosData.bannerUrl,
         profile_image : storePhotosData.profileUrl
       }
-      
-      
+
       try{
         await api.put(`/users/update_user/${sellerId}`, seller_up_payload);
         await api.put(`/stores/${storeId}`, store_up_payload);
@@ -103,15 +99,14 @@ export default function DashboardSidebar({
       }catch(error){
         alert(`Error : ${error}`);
       }
+  };
 
-      
+  // ==> CHANGE START: We define two separate layouts.
 
-  }
-
-  return (
-    <div className="bg-gray-100 p-4 rounded-2xl w-full max-w-sm self-start space-y-6 text-black">
+  // 1. DESKTOP LAYOUT: Your original accordion sidebar with a fixed width.
+  const DesktopSidebar = () => (
+    <div className="bg-gray-100 p-4 rounded-2xl w-96 flex-shrink-0 self-start space-y-6 text-black">
       <h2 className="text-xl font-bold mb-4">Dashboard</h2>
-
       {sectionGroups.map((group) => (
         <div className="bg-white p-4 rounded-2xl" key={group.heading}>
           <div
@@ -123,30 +118,16 @@ export default function DashboardSidebar({
               {openGroups[group.heading] ? '^' : '⌄'}
             </span>
           </div>
-
           {openGroups[group.heading] && (
             <div className="mt-3 space-y-3">
-              {/* Conditionally show update button for 'Store Profile' */}
-              {/* {group.heading === 'Store Profile' && (
-                <div className="flex justify-center">
-                  <button 
-                  className="bg-black text-white text-sm py-2 px-6 rounded-xl hover:bg-gray-800 transition"
-                  onClick={handleUpdate}
-                  >
-                    Update
-                  </button>
-                </div>
-              )} */}
-              {/* Render section items */}
               {group.ids.map((id) => {
-                const 
-                section = sections.find((s) => s.id === id);
+                const section = sections.find((s) => s.id === id);
                 if (!section) return null;
                 return (
                   <div
                     key={section.id}
                     onClick={() => onSelect(section.id)}
-                    className={`flex items-start gap-4 p-2 mb-2 cursor-pointer rounded-2xl border transition 
+                    className={`flex items-start gap-4 p-2 cursor-pointer rounded-2xl border transition 
                       ${selected === section.id ? 'border-black bg-gray-100' : 'border-gray-300 hover:bg-gray-50'}`}
                   >
                     <img
@@ -167,5 +148,43 @@ export default function DashboardSidebar({
     </div>
   );
 
+  // 2. MOBILE LAYOUT: A new, simple horizontal navigation bar.
+  const MobileSidebar = () => (
+    <nav className="w-full bg-white p-2 shadow-md rounded-lg">
+      <div className="flex flex-row items-center space-x-2 overflow-x-auto whitespace-nowrap scrollbar-none">
+        {sections.map((section) => (
+          <button
+            key={section.id}
+            onClick={() => onSelect(section.id)}
+            className={`flex flex-col items-center justify-center p-2 rounded-lg transition min-w-[90px] ${
+              selected === section.id ? 'bg-gray-200' : 'bg-transparent hover:bg-gray-100'
+            }`}
+          >
+            <img
+              src={section.iconUrl}
+              alt={section.title}
+              className="w-7 h-7 mb-1 rounded-full object-cover"
+            />
+            <span className="text-xs font-medium text-center">{section.title}</span>
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
 
+  // 3. RESPONSIVE RENDER: Use Tailwind classes to show the correct layout.
+  return (
+    <>
+      {/* Shows only on mobile (screens smaller than 'md') */}
+      <div className="block md:hidden w-full">
+        <MobileSidebar />
+      </div>
+
+      {/* Shows only on desktop (screens 'md' and larger) */}
+      <div className="hidden md:block">
+        <DesktopSidebar />
+      </div>
+    </>
+  );
 }
+

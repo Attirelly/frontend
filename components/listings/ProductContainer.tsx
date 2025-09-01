@@ -46,11 +46,11 @@ export default function ProductContainer({
     facets: Record<string, string[]>,
     storeTypeString?: string
   ): string => {
-    const filters: string[][] = [];
+    const facetFilters: string[][] = [];
     for (const key in facets) {
       if (facets[key].length > 0) {
         if (key === "price") continue;
-        filters.push(
+       facetFilters.push(
           facets[key].map(
             (value) =>
               `${
@@ -65,15 +65,8 @@ export default function ProductContainer({
       }
     }
     if (storeTypeString) {
-      filters.push([`store_types:${storeTypeString}`]);
+      facetFilters.push([`store_types:${storeTypeString}`]);
     }
-    if (city) {
-      filters.push([`city:${city.name}`]);
-    }
-    if (area) {
-      filters.push([`area:${area.name}`]);
-    }
-
     return encodeURIComponent(JSON.stringify(filters));
   };
 
@@ -87,22 +80,31 @@ export default function ProductContainer({
     );
 
     try {
-      let filterParam = skipFilters ? "" : filters;
+      let filterClauses: string[] = [];
+      if (filters && !skipFilters) {
+        filterClauses.push(filters);
+      }
 
       let priceFilterString = "";
       if (selectedPriceRange) {
         const [min, max] = selectedPriceRange;
-        // Only add the filter if it's not the default full range.
         if (min > priceBounds[0] || max < priceBounds[1]) {
           priceFilterString = `price > ${min} AND price < ${max}`;
         }
       }
-      filterParam += priceFilterString;
+      filterClauses.push(priceFilterString);
 
-      let encodedFilterParam = encodeURIComponent(filterParam);
+      const finalFilterString = filterClauses.join(" AND ");
+      let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
 
+      if (area) {
+        searchUrl += `&area=${area.name}`;
+      }
+      if (city) {
+        searchUrl += `&city=${city.name}`;
+      }
       const res = await api.get(
-        `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${encodedFilterParam}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`,
+        searchUrl,
         controller ? { signal: controller.signal } : {}
       );
 
