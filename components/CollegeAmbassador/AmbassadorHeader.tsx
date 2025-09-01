@@ -23,6 +23,7 @@ export default function AmbassadorHeader() {
   const handleClick = (title: string, id: string) => {
     setSelected(title);
     setHamburgerMenu(false);
+    window.history.pushState(null, "", `#${id}`);
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
