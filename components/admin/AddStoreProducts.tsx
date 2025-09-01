@@ -197,8 +197,9 @@ export default function AddStoreProduct() {
 
 
   const handleEdit = async () => {
-    if (!curationName.trim() || !viewAllUrl.trim()) {
-      alert('Curation name and View All URL are required.');
+    // if (!curationName.trim() || !viewAllUrl.trim()) {
+    if (!curationName.trim()) {
+      alert('Curation name is required.');
       return;
     }
 
@@ -250,8 +251,9 @@ export default function AddStoreProduct() {
   };
 
   const handleCreate = async () => {
-    if (!curationName.trim() || !viewAllUrl.trim()) {
-      alert('Curation name and View All URL are required.');
+    // if (!curationName.trim() || !viewAllUrl.trim()) {
+    if (!curationName.trim()) {
+      alert('Curation name is required.');
       return;
     }
 
@@ -370,7 +372,7 @@ export default function AddStoreProduct() {
 
       <div className="flex flex-wrap gap-6 mb-10 items-center">
         <div className="flex flex-col">
-          <label className="font-semibold mb-1 text-black">Curation Name</label>
+          <label className="font-semibold mb-1 text-black">Curation Name<span className="text-red-500">*</span></label>
           <input
             type="text"
             className="border rounded px-4 py-2 w-48 placeholder:text-gray-400 text-black"

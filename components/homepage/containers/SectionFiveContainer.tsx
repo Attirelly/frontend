@@ -39,7 +39,7 @@ export default function SectionFiveContainer() {
           id: p.product_id,
           imageUrl: p.images[0]?.image_url || "/Homepage/CardTypeOne.svg",
           title: p.product_name,
-          description: p.stores && p.stores.area && p.stores.area?.name.toLowerCase() === "others" ?  `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
+          description: p.stores && p.stores.area && p.stores.area?.name.toLowerCase() === "others" ? `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
         }));
         setProducts(formattedProducts);
 
@@ -84,32 +84,35 @@ export default function SectionFiveContainer() {
   return (
     <div className="w-[1242px] mx-auto space-y-8">
       {/* Section header */}
-      <div className="flex justify-between">
+      <div className="flex">
         <span
           className={`${manrope.className} text-4xl text-[#242424]`}
           style={{ fontWeight: 400 }}
         >
           {name}
         </span>
-        <a
-          href={viewAll}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2"
-        >
-          <span
-            className={`${manrope.className} text-base text-[#242424]`}
-            style={{ fontWeight: 400 }}
+        {viewAll && (
+          <a
+            href={viewAll}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex ml-auto items-center gap-2"
           >
-            View All
-          </span>
-          <Image
-            src="/Homepage/right_arrow.svg"
-            alt="View All"
-            width={5}
-            height={5}
-          />
-        </a>
+            <span
+              className={`${manrope.className} text-base text-[#242424]`}
+              style={{ fontWeight: 400 }}
+            >
+              View All
+            </span>
+            <Image
+              src="/Homepage/right_arrow.svg"
+              alt="View All"
+              width={5}
+              height={5}
+            />
+          </a>
+        )}
+
       </div>
 
       {/* Carousel */}
