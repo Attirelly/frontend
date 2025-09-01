@@ -219,9 +219,9 @@ export default function StoreContainerPage() {
 
   // Handle delivery type filter
   useEffect(() => {
-    if (deliveryType == "In Store Shopping") {
+    if (deliveryType == "In Store") {
       setFilters("is_online:'false' OR is_both:'true'");
-    } else if (deliveryType == "Online Shopping") {
+    } else if (deliveryType == "Online") {
       setFilters("is_online:'true' OR is_both:'true'");
     } else {
       setFilters("");

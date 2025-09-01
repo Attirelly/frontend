@@ -72,7 +72,7 @@ export default function StoreInfoPage({
       <div className="grid grid-cols-[1fr_2fr] gap-6  mx-auto">
         {/* Left: Circular Store Image */}
         <div className="flex flex-col items-center md:justify-center">
-          <div className="relative w-28 h-28  md:w-32 md:h-32">
+          <div className="relative w-24 h-24  md:w-32 md:h-32">
             <Image
               src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(
                 imageUrl
@@ -80,7 +80,7 @@ export default function StoreInfoPage({
               alt={storeName}
               fill
               sizes="(max-width: 768px) 112px, 128px"
-              className="rounded-full object-cover object-top"
+              className="rounded-full object-cover object-top border border-gray-300 border-[2px]"
             />
 
             {/* Verified Badge */}
@@ -114,7 +114,7 @@ export default function StoreInfoPage({
             />
             <span
               className={`
-      ${manrope.className} text-sm text-black ${
+      ${manrope.className} text-sm text-black  text-center${
                 locationUrl
                   ? "transition-colors duration-200 group-hover:text-gray-400"
                   : ""
@@ -131,14 +131,14 @@ export default function StoreInfoPage({
         <div className={`${manrope.className} flex flex-col`}>
           <div className="flex justify-between items-start flex-wrap">
             <h2
-              className="text-lg md:text-xl text-black mb-2 max-w-[60%] "
+              className="text-base md:text-xl text-black mb-2 max-w-[60%] "
               style={{ fontWeight: 500, wordSpacing: "2px" }}
             >
               {storeName}
             </h2>
             <div className="flex gap-2.5 flex-shrink-0">
               <button
-                className={`flex border border-black rounded-full items-center justify-center gap-2 px-2 py-1 md:px-4 md:py-2 transition-all duration-300 ${
+                className={`flex border border-black rounded-full items-center justify-center gap-2 px-2 py-1 md:px-4 md:py-2 transition-all duration-300 cursor-pointer ${
                   showPhone ? "bg-gray-100" : ""
                 }`}
                 onClick={handlePhoneClick}
@@ -261,7 +261,7 @@ export default function StoreInfoPage({
                   return (
                     <span
                       key={idx}
-                      className="bg-[#F8F8F8] px-2 py-1 rounded-full text-black flex gap-1 md:gap-2"
+                      className="text-sm md:text-base bg-[#F8F8F8] px-2 py-1 rounded-full text-black flex gap-1 md:gap-2"
                       style={{ fontWeight: 400 }}
                     >
                       {/* {imageObj && (
@@ -314,34 +314,34 @@ export default function StoreInfoPage({
         )}
       </div>
       <div
-        className={`${manrope.className} w-full flex justify-around items-center text-center mt-4 pt-4 border-t border-gray-200 md:hidden`}
+        className={`${manrope.className} w-full flex justify-around items-center text-center mt-2 py-2 border-t border-gray-200 md:hidden`}
       >
         {post_count && post_count !== "0" && (
           <div className="flex flex-col gap-1 items-center">
-            <h3 className="text-lg text-black" style={{ fontWeight: 600 }}>
+            <h3 className="text-[14px] text-black" style={{ fontWeight: 700 }}>
               {formatNumberStr(post_count)}
             </h3>
-            <span className="text-sm text-black" style={{ fontWeight: 400 }}>
+            <span className="text-[12px] text-black" style={{ fontWeight: 400 }}>
               Posts
             </span>
           </div>
         )}
         {instagramFollowers && instagramFollowers !== "0" && (
           <div className="flex flex-col gap-1 items-center">
-            <h3 className="text-lg text-black" style={{ fontWeight: 600 }}>
+            <h3 className="text-[14px] text-black" style={{ fontWeight: 700 }}>
               {formatNumberStr(instagramFollowers)}
             </h3>
-            <span className="text-sm text-black" style={{ fontWeight: 400 }}>
+            <span className="text-[12px] text-black" style={{ fontWeight: 400 }}>
               Followers
             </span>
           </div>
         )}
         {product_count && product_count !== "0" && (
           <div className="flex flex-col gap-1 items-center">
-            <h3 className="text-lg text-black" style={{ fontWeight: 600 }}>
+            <h3 className="text-[14px] text-black" style={{ fontWeight: 700 }}>
               {formatNumberStr(product_count)}
             </h3>
-            <span className="text-sm text-black" style={{ fontWeight: 400 }}>
+            <span className="text-[12px] text-black" style={{ fontWeight: 400 }}>
               Products
             </span>
           </div>

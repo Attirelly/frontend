@@ -145,13 +145,14 @@ export default function ProductDetail() {
   }, [pendingWhatsApp, user?.id]);
 
   const handleSendToWhatsAppClick = () => {
-    setPendingWhatsApp(true);     // Set intent to open WhatsApp
-    setSignIn(true);              // Trigger sign-in modal
+    setPendingWhatsApp(true);
+    if (!isCustomerAuthenticated()) {    
+      setSignIn(true);              
+    }
   };
-  console.log("goof", selectedColor);
 
   const sendToWhatsApp = async () => {
-    setSignIn(true);
+    // setSignIn(true);
     try {
       const phoneNumber = (storeBasicInfo?.whatsapp_number).substring(0, 5) === "11111" ? "9915916707" : storeBasicInfo?.whatsapp_number;
       const storeName = storeBasicInfo?.store_name || "Store"; // fallback if not available

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { manrope } from "@/font";
 
+const TRUNCATE_LENGTH = 45; // Adjust the value as needed
+
 interface CardTwoTypeProps {
   imageUrl: string;
   title: string;
@@ -61,7 +63,7 @@ export default function CardTypeFive({
                           }
                           text-[#1E1E1E]`}
         >
-          {title}
+          {title.length > TRUNCATE_LENGTH ? `${title.slice(0, TRUNCATE_LENGTH)}...` : title}
         </span>
         <span
           className={`${screenSize === "sm" ? "text-[12px]" : ""}
@@ -99,7 +101,7 @@ export default function CardTypeFive({
                               ? "text-[14px]"
                               : ""
                           } 
-             text-xs`}
+             text-xs text-gray-400`}
             >
               ₹{mrp.toLocaleString()}
             </span>
