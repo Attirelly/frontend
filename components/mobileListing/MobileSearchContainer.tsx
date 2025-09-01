@@ -126,7 +126,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
       setProducts(data.products || []);
       setShowDropdown(true);
     } catch (error) {
-      toast.error("Failed to fetch search suggestions");
+      console.error("Failed to fetch search suggestions");
     }
   };
 
