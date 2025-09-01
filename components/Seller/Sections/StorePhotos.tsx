@@ -373,7 +373,7 @@ export default function PhotosPage() {
   }, [profileUrl]);
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-6 bg-white p-4 sm:p-6 rounded-2xl shadow-sm text-black">
+    <div className="mx-auto space-y-6 bg-white p-4 sm:p-6 rounded-2xl shadow-sm text-black">
       <Modal
         isOpen={!!croppingImage}
         ariaHideApp={false}

@@ -1300,7 +1300,7 @@ export default function BusinessDetailsComponent({
   };
 
   return (
-    <div className="p-4 sm:p-6 rounded-2xl space-y-4 md:space-y-6 w-full max-w-3xl mx-auto  bg-white text-black">
+    <div className="p-4 sm:p-6 rounded-2xl space-y-4 md:space-y-6 mx-auto  bg-white text-black">
       {/* Brand Owner Section */}
       <Section
         title="Store owner details"
@@ -1498,12 +1498,6 @@ export default function BusinessDetailsComponent({
               setPinCode("");
             }}
           />
-          <InputField
-            label="Enter Google Map link of store"
-            value={brandAddress}
-            onChange={setBrandAddress}
-            placeholder="Enter your Google map store link"
-          />
           <SelectField
             label="Area"
             options={[...areaOptions]}
@@ -1530,6 +1524,12 @@ export default function BusinessDetailsComponent({
               setPinCode(found?.id || "");
             }}
             isDisabled={!selectedCityOption}
+          />
+          <InputField
+            label="Enter Google Map link of store"
+            value={brandAddress}
+            onChange={setBrandAddress}
+            placeholder="Enter your Google map store link"
           />
         </div>
       </Section>

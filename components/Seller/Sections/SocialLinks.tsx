@@ -521,7 +521,7 @@ export default function SocialLinksComponent() {
                     <img
                         src="/OnboardingSections/instagram.svg"
                         alt="Instagram logo"
-                        className="w-16 h-16 sm:w-16 sm:h-16 rounded-2xl object-cover"
+                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl object-cover"
                     />
                 </div>
             </div>
