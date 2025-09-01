@@ -167,7 +167,7 @@ export default function QrCodeGeneration() {
     };
 
     return (
-        <div className="rounded-2xl p-4 sm:p-6 space-y-6 w-full max-w-3xl mx-auto shadow-sm bg-white text-black">
+        <div className="rounded-2xl p-4 sm:p-6 space-y-6  mx-auto shadow-sm bg-white text-black">
             <div>
                 <h2 className="text-base sm:text-lg font-semibold">QR code</h2>
                 <p className="text-xs sm:text-sm text-gray-500">Download QR and share it with your customers to promote your store on Attirelly</p>

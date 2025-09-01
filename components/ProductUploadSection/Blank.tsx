@@ -1,5 +1,6 @@
+'use client';
 import { useCurrentStep, useFormActions } from "@/store/product_upload_store";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Blank() {
 
@@ -17,7 +18,6 @@ export default function Blank() {
   }, [])
 
   const handleContinueExisting = async () => {
-    // await loadDraft(); 
     if (draftStep !== null) {
       setCurrentStep(draftStep);
     }
@@ -27,22 +27,23 @@ export default function Blank() {
     if (draftStep !== null) {
       await deleteDraft(); // clear any existing draft
     }
-
     setCurrentStep(1); // skip to first form section
   };
 
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg p-8 space-y-6">
-      {/* Label at top */}
-      <div className="text-2xl font-bold text-gray-700 text-center">
+    // Main container with responsive padding and width
+    <div className="w-full max-w-4xl mx-auto bg-white rounded-lg p-6 sm:p-8 space-y-6">
+      {/* Responsive title */}
+      <div className="text-xl sm:text-2xl font-bold text-gray-700 text-center">
         Start creating your product
       </div>
-      {/* Buttons row */}
-      <div className="flex justify-between">
+      
+      {/* Buttons row: stacks vertically on mobile, horizontal on larger screens */}
+      <div className="flex flex-col text-sm md:text-lg sm:flex-row sm:justify-between gap-4">
         <button
           onClick={handleContinueExisting}
-          className={`px-4 py-2 rounded-md ${draftStep !== null
+          className={`w-full sm:w-auto px-4 py-2 rounded-md transition-colors duration-200 ${draftStep !== null
               ? "bg-yellow-500 text-white hover:bg-yellow-600"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
@@ -50,8 +51,10 @@ export default function Blank() {
         >
           Continue Existing
         </button>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={handleCreateNew}>
+        <button 
+          className="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200"
+          onClick={handleCreateNew}
+        >
           Create New Product
         </button>
       </div>

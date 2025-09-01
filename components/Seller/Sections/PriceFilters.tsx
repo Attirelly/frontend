@@ -403,7 +403,7 @@ export default function PriceFiltersComponent() {
   }, [minPrice, maxPrice, selectedPrices, storeTypes]);
 
   return (
-    <div className="p-4 sm:p-6 rounded-2xl shadow-sm space-y-4 w-full max-w-3xl mx-auto bg-white text-black">
+    <div className="p-4 sm:p-6 rounded-2xl shadow-sm space-y-4 mx-auto bg-white text-black">
       <div>
         <h2 className="text-base sm:text-lg font-semibold">Price filters</h2>
         <p className="text-xs sm:text-sm text-gray-500">

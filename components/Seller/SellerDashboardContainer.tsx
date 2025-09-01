@@ -458,7 +458,7 @@ export default function SellerDashboardContainer() {
       case "qr_code":
         return <QrCodeGeneration />;
       case "all_products":
-        return <ViewAllProducts />;
+        return <ViewAllProducts/>;
       case "bulk_products":
         return <BulkUploadPage />;
       case "one_product":
@@ -496,7 +496,7 @@ export default function SellerDashboardContainer() {
           </div>
 
           {/* Content area with responsive max-width */}
-          <div className="flex flex-col max-w-3xl lg:max-w-4xl gap-6">
+          <div className="flex-1 flex flex-col max-w-3xl lg:max-w-4xl gap-6">
             <div className="rounded-md bg-gray-100">{renderSection()}</div>
             {["brand", "price", "market", "social", "photos"].includes(
               activeSection
