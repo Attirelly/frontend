@@ -105,7 +105,7 @@ export default function DashboardSidebar({
 
   // 1. DESKTOP LAYOUT: Your original accordion sidebar with a fixed width.
   const DesktopSidebar = () => (
-    <div className="bg-gray-100 p-4 rounded-2xl w-96 flex-shrink-0 self-start space-y-6 text-black">
+    <div className="bg-gray-100 p-4 rounded-2xl md:w-80 lg:w-96 flex-shrink-0 self-start space-y-6 text-black">
       <h2 className="text-xl font-bold mb-4">Dashboard</h2>
       {sectionGroups.map((group) => (
         <div className="bg-white p-4 rounded-2xl" key={group.heading}>
