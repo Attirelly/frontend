@@ -16,7 +16,7 @@ export default function MobileSidebarMenu({ onClose, onLoginClick }: Props) {
 
   return (
     <div className="z-10 h-full w-full" onClick={onClose}>
-      <div className="h-screen w-[50%] bg-[#F8F8F8] px-[24px] py-[12px]  overflow-y-auto scrollbar-none" onClick={(e) => e.stopPropagation()}>
+      <div className="h-screen w-[70%] bg-[#F8F8F8] px-[24px] py-[12px]  overflow-y-auto scrollbar-none" onClick={(e) => e.stopPropagation()}>
         <div className="flex flex-col text-black">
 
           {/* login */}
