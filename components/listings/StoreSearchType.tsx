@@ -23,10 +23,10 @@ interface StoreType {
 }
 
 export default function StoreSearchType({
-  visible,
+  visible = false,
   onClose,
 }: {
-  visible: boolean;
+  visible?: boolean;
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -83,7 +83,7 @@ export default function StoreSearchType({
       {searchFocus && (
         <div
           ref={containerRef}
-          className={`${manrope.className} absolute top-[70px] left-1/2 transform -translate-x-1/4 bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50`}
+          className={`${manrope.className} lg:absolute lg:top-[70px] lg:left-1/2 lg:transform lg:-translate-x-1/4 bg-white shadow-2xl rounded-xl p-6 w-[90%] max-w-lg z-50`}
           style={{fontWeight:600}}
         >
           <h1 className="text-[18px] text-[#363636] mb-4 text-center">
