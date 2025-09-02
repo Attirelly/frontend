@@ -134,7 +134,6 @@
 //   );
 // }
 
-
 'use client';
 
 import Image from 'next/image';
@@ -174,7 +173,9 @@ export default function ProductCard({
 
   const handlePrev = () => {
     if (!imageUrl) return;
-    setImageIndex((prevIndex) => (prevIndex - 1 + imageUrl.length) % imageUrl.length);
+    setImageIndex(
+      (prevIndex) => (prevIndex - 1 + imageUrl.length) % imageUrl.length
+    );
   };
 
   return (
@@ -184,8 +185,8 @@ export default function ProductCard({
       rel="noopener noreferrer"
       className="block w-full"
     >
-      {/* Updated: Added responsive width and height classes */}
-      <div className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2 md:p-3 w-full">
+      {/* Card container with responsive padding */}
+      <div className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2 md:p-3 lg:p-4 w-full">
         {/* Product Image Carousel */}
         <div
           className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group"
@@ -197,7 +198,7 @@ export default function ProductCard({
               src={imageUrl[imageIndex]}
               alt={title}
               fill
-              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               loading={imageIndex === 0 ? 'eager' : 'lazy'}
               className="object-cover object-top transition-all duration-300"
             />
@@ -209,55 +210,57 @@ export default function ProductCard({
 
           {imageUrl && imageUrl.length > 1 && (
             <>
-              {/* Prev Button */}
+              {/* Prev Button with responsive padding and icon size */}
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   handlePrev();
                 }}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-0.5 md:p-1 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-1 md:p-1.5 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
               >
-                <ChevronLeft className="h-4 w-4 md:h-5 md:w-5 m-0.5 md:m-1" />
+                <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
               </button>
 
-              {/* Next Button */}
+              {/* Next Button with responsive padding and icon size */}
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   handleNext();
                 }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-0.5 md:p-1 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-1 md:p-1.5 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
               >
-                <ChevronRight className="h-4 w-4 md:h-5 md:w-5 m-0.5 md:m-1" />
+                <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
               </button>
             </>
           )}
         </div>
 
-        {/* Product Info */}
-        <div className={`${manrope.className}`} style={{ fontWeight: 500 }}>
-          <h3 className="text-sm md:text-base text-black mt-2 mb-1 truncate">{title}</h3>
+        {/* Product Info with responsive text and margins */}
+        <div className={`${manrope.className} pt-2 md:pt-3`} style={{ fontWeight: 500 }}>
+          <h3 className="text-sm md:text-base lg:text-lg text-black mb-1 truncate">
+            {title}
+          </h3>
           <p
-            className="text-xs md:text-sm text-[#333333] mb-2 truncate"
+            className="text-xs md:text-sm lg:text-base text-[#333333] mb-1.5 md:mb-2 truncate"
             style={{ fontWeight: 300 }}
           >
             {description
               ? description.charAt(0).toUpperCase() + description.slice(1)
               : ''}
           </p>
-          <div className="flex items-center gap-2 font-medium flex-wrap">
-            <span className="text-sm md:text-base text-black">
+          <div className="flex items-center gap-1.5 md:gap-2 font-medium flex-wrap">
+            <span className="text-sm md:text-base lg:text-lg text-black">
               ₹{price?.toLocaleString()}
             </span>
             {price !== originalPrice && (
-              <span className="line-through text-gray-400 text-[11px] md:text-xs">
+              <span className="line-through text-gray-400 text-[11px] md:text-xs lg:text-sm">
                 ₹{originalPrice?.toLocaleString()}
               </span>
             )}
             {price !== originalPrice && (
-              <span className="text-green-600 text-[10px] md:text-xs">
+              <span className="text-green-600 text-[10px] md:text-xs lg:text-sm">
                 {discountPercentage}% OFF
               </span>
             )}
