@@ -8,6 +8,7 @@ import { SelectOption } from "@/types/SellerTypes";
 import customStyles from "@/utils/selectStyles";
 import { manrope } from "@/font";
 import StoreSearchType from "../listings/StoreSearchType";
+import MobileStoreTypeSearch from "./MobileStoreTypeSearch";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
@@ -137,10 +138,15 @@ export default function MobileSearchContainer({ onClose }: Props) {
       setProductSuggestions([]);
       setStores([]);
       setProducts([]);
-      setShowStoreType(true);
+      if (tempQuery.length === 0) {
+        setShowStoreType(true);
+    }else{
+      setShowStoreType(false);
+    }
       setShowDropdown(false);
       return;
     }
+    
     if (tempQuery.length === 4) {
       handleSearchQuerySuggestion();
       return;
@@ -167,7 +173,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
     };
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
-  }, [searchFocus]);
+  }, [showStoreType]);
 
 
   const groupedOptions: SelectOption[] = [
@@ -363,12 +369,9 @@ export default function MobileSearchContainer({ onClose }: Props) {
             onChange={(e) => setTempQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             onFocus={() => {
-              console.log("system hai to hai", searchFocus, showStoreType, showDropdown, tempQuery);
               if (tempQuery.length === 0 ) {
                 setShowStoreType(true);
               }
-              
-              setSearchFocus(true);
             }}
           />
           <Image
@@ -380,8 +383,11 @@ export default function MobileSearchContainer({ onClose }: Props) {
             onClick={handleSearchClick}
           />
         </div>
-        {searchFocus && tempQuery.length === 0 && (
-          <StoreSearchType visible={showStoreType} onClose={() => setShowStoreType(false)} />
+        {showStoreType && (
+          <MobileStoreTypeSearch
+            visible={showStoreType}
+            onClose={() => setShowStoreType(false)}
+          />
         )}
       </div>
 
