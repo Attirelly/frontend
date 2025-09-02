@@ -138,12 +138,12 @@ export default function MobileSearchContainer({ onClose }: Props) {
       setProductSuggestions([]);
       setStores([]);
       setProducts([]);
-      if (tempQuery.length === 0) {
-        setShowStoreType(true);
-    }else{
-      setShowStoreType(false);
-    }
       setShowDropdown(false);
+      if (tempQuery.length === 0 && searchFocus) {
+        setShowStoreType(true);
+      } else {
+        setShowStoreType(false);
+      }
       return;
     }
     
@@ -370,6 +370,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
             onKeyDown={handleKeyDown}
             onFocus={() => {
               if (tempQuery.length === 0 ) {
+                setSearchFocus(true);
                 setShowStoreType(true);
               }
             }}

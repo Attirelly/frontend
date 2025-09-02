@@ -208,12 +208,12 @@
 //   );
 // }
 
-"use client";
+'use client';
 
 import { manrope } from "@/font";
 import CardTypeFive from "../cards/CardTypeFive";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { api } from "@/lib/axios";
 import SectionThreeContainerSkeleton from "../skeleton/SectionThreeContainerSkeleton";
 
@@ -235,19 +235,33 @@ export default function SectionThreeContainer() {
   const [products, setProducts] = useState<CardData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // CHANGED: Use a ref for direct DOM access to the scroller
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  // --- 1. COPIED: Carousel state from the reference component ---
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(5); // Default to large screen
+  const [isTransitioning, setIsTransitioning] = useState(true);
 
-  // REMOVED: All state and useEffect for screenSize, startIndex, and visibleCount are gone.
+  // Set the number of clones based on the max possible visible count for this section
+  const clonesCount = 5;
 
+  // --- 2. ADAPTED: Responsive logic for this section's card counts ---
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      if (window.innerWidth < 768) setVisibleCount(2);      // sm: 2 cards
+      else if (window.innerWidth < 1024) setVisibleCount(3); // md: 3 cards
+      else setVisibleCount(5);                              // lg: 5 cards
+    };
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
+    return () => window.removeEventListener('resize', updateVisibleCount);
+  }, []);
+
+  // --- 3. ADAPTED: API fetch logic to set the initial index ---
   useEffect(() => {
     const fetchSegmentInfo = async () => {
       setLoading(true);
       try {
         const res = await api.get(`homepage/get_products_by_section_number/${SECTION_NUMBER}`);
-        const productData = res.data;
-
-        const formattedProducts: CardData[] = productData.map((p: any) => ({
+        const formattedProducts: CardData[] = res.data.map((p: any) => ({
           id: p.product_id,
           imageUrl: p.images?.[0]?.image_url || "/Homepage/CardTypeOne.svg",
           title: p.title,
@@ -257,33 +271,56 @@ export default function SectionThreeContainer() {
           discount: p.variants?.[0]?.discount || 0,
         }));
         setProducts(formattedProducts);
+        // Set the initial index to the start of the *real* items
+        setCurrentIndex(clonesCount);
 
         const resSection = await api.get(`/homepage/get_section_by_number/${SECTION_NUMBER}`);
-        const sectionData = resSection.data;
-        setViewAll(sectionData.section_url);
-        setName(sectionData.section_name);
+        setViewAll(resSection.data.section_url);
+        setName(resSection.data.section_name);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchSegmentInfo();
   }, []);
 
-  // CHANGED: Navigation logic now manipulates scroll position
+  // --- 4. COPIED: Infinite scroll cloning and transition logic ---
+  const displayProducts = useMemo(() => {
+    if (products.length === 0) return [];
+    const startClones = products.slice(0, clonesCount);
+    const endClones = products.slice(products.length - clonesCount);
+    return [...endClones, ...products, ...startClones];
+  }, [products]);
+
+  useEffect(() => {
+    if (!isTransitioning) {
+      setTimeout(() => setIsTransitioning(true), 50);
+    }
+  }, [isTransitioning]);
+
   const handleNext = () => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = scrollContainerRef.current.offsetWidth;
-      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    if (!isTransitioning) return;
+    setCurrentIndex(prev => prev + 1);
+
+    if (currentIndex === products.length + clonesCount - 1) {
+      setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentIndex(clonesCount);
+      }, 500); // Must match transition duration
     }
   };
 
   const handlePrev = () => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = scrollContainerRef.current.offsetWidth;
-      scrollContainerRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    if (!isTransitioning) return;
+    setCurrentIndex(prev => prev - 1);
+
+    if (currentIndex === clonesCount) {
+      setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentIndex(products.length + clonesCount - 1);
+      }, 500); // Must match transition duration
     }
   };
 
@@ -296,7 +333,8 @@ export default function SectionThreeContainer() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 space-y-4 lg:space-y-8">
+    // Add padding to give space for the buttons
+    <div className="w-full max-w-7xl mx-auto px-2 space-y-4 lg:space-y-8">
       <div className="flex items-center">
         <span className={`${manrope.className} text-xl md:text-2xl lg:text-3xl text-[#242424]`} style={{ fontWeight: 400 }}>
           {name}
@@ -310,43 +348,51 @@ export default function SectionThreeContainer() {
           </a>
         )}
       </div>
+
+      {/* --- 5. UPDATED: JSX structure for the new carousel logic --- */}
       <div className="relative flex items-center">
-        {/* Prev Button */}
         <button
           onClick={handlePrev}
-          className="absolute z-10 -left-4 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
+          className="absolute z-10 left-0 top-1/2 -translate-y-1/2 -translate-x-1/4 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer lg:hidden"
         >
           <Image src="/Homepage/left_arrow.svg" alt="Left arrow" width={7} height={7} />
         </button>
 
-        {/* CHANGED: This is now a flex container for the carousel */}
-        <div
-          ref={scrollContainerRef}
-          className="flex w-full space-x-4 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-none px-2"
-        >
-          {/* CHANGED: Map over the entire products array */}
-          {products.map((card) => (
-            // CHANGED: This wrapper div defines the responsive width of each card
-            <div key={card.id} className="flex-shrink-0 w-1/2 md:w-1/3 lg:w-1/5 snap-start">
-              <a href={`/product_detail/${card.id}`} target="_blank" rel="noopener noreferrer">
-                {/* REMOVED: screenSize prop is gone */}
-                <CardTypeFive
-                  imageUrl={card.imageUrl}
-                  title={card.title}
-                  description={card.description || ""}
-                  price={card.price}
-                  mrp={card.mrp}
-                  discount={card.discount}
-                />
-              </a>
-            </div>
-          ))}
+        {/* The viewport */}
+        <div className="w-full overflow-hidden">
+          {/* The track that moves */}
+          <div
+            className="flex"
+            style={{
+              width: `${(displayProducts.length / visibleCount) * 100}%`,
+              transform: `translateX(-${((currentIndex) / displayProducts.length) * 100}%)`,
+              transition: isTransitioning ? 'transform 0.5s ease-in-out' : 'none',
+            }}
+          >
+            {displayProducts.map((card, index) => (
+              <div
+                key={`${card.id}-${index}`} // Unique key for clones
+                className="flex-shrink-0 px-2"
+                style={{ width: `${100 / displayProducts.length}%` }}
+              >
+                <a href={`/product_detail/${card.id}`} target="_blank" rel="noopener noreferrer">
+                  <CardTypeFive
+                    imageUrl={card.imageUrl}
+                    title={card.title}
+                    description={card.description || ""}
+                    price={card.price}
+                    mrp={card.mrp}
+                    discount={card.discount}
+                  />
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Next Button */}
         <button
           onClick={handleNext}
-          className="absolute z-10 -right-4 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
+          className="absolute z-10 right-0 top-1/2 -translate-y-1/2 translate-x-1/4 bg-[#D9D9D9] shadow-md rounded-full w-10 h-10 flex items-center justify-center cursor-pointer lg:hidden"
         >
           <Image src="/Homepage/right_arrow.svg" alt="Right arrow" width={7} height={7} />
         </button>
