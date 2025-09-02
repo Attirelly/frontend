@@ -7,7 +7,6 @@ import { ProductCardType } from "@/types/ProductTypes";
 import { useHeaderStore } from "@/store/listing_header_store";
 import ProductGridSkeleton from "./skeleton/catalogue/ProductGridSkeleton";
 import NoResultFound from "./NoResultFound";
-import { apiClientVersion } from "algoliasearch";
 
 interface ProductContainerProps {
   storeId?: string;

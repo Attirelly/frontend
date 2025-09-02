@@ -185,7 +185,7 @@ export default function ProductCard({
       className="block w-full"
     >
       {/* Updated: Added responsive width and height classes */}
-      <div className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2 md:p-3 w-40  md:w-56  lg:w-64">
+      <div className="rounded-xl hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white p-2 md:p-3 w-full">
         {/* Product Image Carousel */}
         <div
           className="relative w-full aspect-[3/4] rounded-xl overflow-hidden group"
