@@ -276,31 +276,68 @@ export default function StoreTypeTabs({
     //   ))}
     // </div>
 
-    <div className="flex flex-wrap justify-around items-center bg-[#F5F5F5] rounded-full w-fit p-1">
-      {tabs.map((tab, index) => (
-        // ✅ Added flex-shrink-0 to prevent buttons from being squished
-        <div key={tab.value} className="flex items-center flex-shrink-0">
-          <button
-            className={clsx(
-              manrope.className,
-              // ✅ Made padding and text size responsive
-              "px-2 py-1.5 md:px-4 md:py-2 rounded-full transition-all duration-200 mx-1 text-sm md:text-base",
-              selectedStoreType?.id === tab.value
-                ? "bg-white shadow text-black"
-                : "text-[#565656] hover:text-black"
-            )}
-            style={{ fontWeight: 500 }}
-            onClick={() => handleTabClick(tab)}
-          >
-            {tab.label}
-          </button>
+//    <div className="grid grid-cols-2 gap-y-2 gap-x-2 md:flex md:flex-wrap md:justify-around justify-items-center rounded-full md:w-fit p-1">
+//   {tabs.map((tab, index) => (
+//     <div key={tab.value} className="flex items-center flex-shrink-0">
+//       <button
+//         className={clsx(
+//           manrope.className,
+//           "px-2 py-1.5 md:px-4 md:py-2 rounded-full transition-all duration-200 text-sm md:text-base",
+//           "w-[150px] bg-[#F5F5F5] border border-gray-300",
+//           selectedStoreType?.id === tab.value
+//             ? "bg-black shadow text-white"
+//             : "text-[#565656] hover:text-black"
+//         )}
+//         style={{ fontWeight: 500 }}
+//         onClick={() => handleTabClick(tab)}
+//       >
+//         {tab.label}
+//       </button>
 
-          {/* ✅ Divider is now hidden on mobile */}
-          {index !== tabs.length - 1 && (
-            <div className="h-6 border-r border-gray-300 hidden md:block" />
-          )}
+//       {/* ✅ Mobile: divider after every odd index (i.e. between 2 items in a row) */}
+//       {index % 2 === 0 && (
+//         <div className="h-full w-px bg-gray-300 md:hidden" />
+//       )}
+//     </div>
+//   ))}
+// </div>
+
+<div className="grid w-full max-w-sm grid-cols-2 gap-y-4 md:flex md:gap-2 md:w-fit md:max-w-fit md:items-center md:rounded-full md:p-2">
+          {tabs.map((tab, index) => (
+            <React.Fragment key={tab.value}>
+              {/* Wrapper for button and mobile divider */}
+              <div className="relative flex w-full justify-center">
+                <button
+                  className={clsx(
+                    manrope.className,
+                    'py-2 rounded-full transition-all duration-200 text-base text-center font-medium',
+                    // Mobile-first sizing
+                    'w-[150px]',
+                    // Desktop sizing overrides
+                    'md:py-2 md:px-4 md:mx-0',
+                    // Conditional styling based on selection
+                    selectedStoreType?.id === tab.value
+                      ? // Selected styles: black on mobile, white w/ shadow on desktop
+                        'bg-black text-white md:shadow'
+                      : // Default styles: white w/ border on mobile, transparent on desktop
+                        'bg-[#F5F5F5] text-black border border-gray-300 md:border-none md:text-[#565656] hover:md:text-black'
+                  )}
+                  onClick={() => handleTabClick(tab)}
+                >
+                  {tab.label}
+                </button>
+    
+                {/* --- Mobile Divider --- */}
+                {/* This divider is only visible on mobile (md:hidden) */}
+                {/* It appears on the right of the first item in each row (index 0 and 2) */}
+                {index % 2 === 0 && (
+                  <div className="absolute right-0 top-0 h-full w-px bg-gray-300 md:hidden" />
+                )}
+              </div>
+              
+            </React.Fragment>
+          ))}
         </div>
-      ))}
-    </div>
+
   );
 }
