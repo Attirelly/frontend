@@ -32,7 +32,7 @@ export default function StoreTypeTabs({ defaultValue }: StoreTypeTabsProps) {
 
   return (
     // Main container: grid on mobile, flex on desktop
-    <div className="grid w-full max-w-sm grid-cols-2 gap-y-4 md:flex md:w-fit md:max-w-fit md:items-center md:rounded-full md:bg-[#F5F5F5] md:p-2">
+    <div className="grid w-full max-w-sm grid-cols-2 gap-y-4 md:flex md:gap-2 md:w-fit md:max-w-fit md:items-center md:rounded-full md:p-2">
       {hardcodedStoreTypes.map((tab, index) => (
         <React.Fragment key={tab.store_type}>
           {/* Wrapper for button and mobile divider */}
@@ -48,9 +48,9 @@ export default function StoreTypeTabs({ defaultValue }: StoreTypeTabsProps) {
                 // Conditional styling based on selection
                 selectedAmbassadorType === tab.store_type
                   ? // Selected styles: black on mobile, white w/ shadow on desktop
-                    'bg-black text-white md:bg-white md:text-black md:shadow'
+                    'bg-black text-white md:shadow'
                   : // Default styles: white w/ border on mobile, transparent on desktop
-                    'bg-[#F5F5F5] text-black border border-gray-300 md:border-none md:bg-transparent md:text-[#565656] hover:md:text-black'
+                    'bg-[#F5F5F5] text-black border border-gray-300 md:border-none md:text-[#565656] hover:md:text-black'
               )}
               onClick={() => handleTabClick(tab.store_type)}
             >
@@ -68,9 +68,9 @@ export default function StoreTypeTabs({ defaultValue }: StoreTypeTabsProps) {
           {/* --- Desktop Divider --- */}
           {/* This divider is only visible on desktop (hidden md:block) */}
           {/* It appears between all flex items, except the last one */}
-          {index !== hardcodedStoreTypes.length - 1 && (
+          {/* {index !== hardcodedStoreTypes.length - 1 && (
             <div className="hidden h-6 w-px bg-gray-300 md:block md:mx-2" />
-          )}
+          )} */}
         </React.Fragment>
       ))}
     </div>

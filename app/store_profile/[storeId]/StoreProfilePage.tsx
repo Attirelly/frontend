@@ -179,7 +179,7 @@ export default function StoreProfilePage() {
           )} */}
         </div>
         <div
-          className={`w-full px-4 mt-6 md:mt-8
+          className={`w-full px-4 md:mt-8
             ${viewType === "Posts" ? "max-w-[950px]" : "max-w-[1350px]"}
           `}
         >

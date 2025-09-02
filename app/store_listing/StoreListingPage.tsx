@@ -181,7 +181,7 @@ export default function StoreListingPage() {
   };
 
   return (
-    <div className="bg-[#FFFFFF]">
+    <div className="bg-[#FFFFFF] text-black">
       <ListingMobileHeader className="block lg:hidden" />
       <ListingPageHeader className="hidden lg:block" />
       {/* ✅ 3. Corrected responsive padding for the main container */}
@@ -207,14 +207,14 @@ export default function StoreListingPage() {
             <div className="flex justify-between items-center">
               <div className="hidden md:block">
                 <TwoOptionToggle
-                  options={["Online Shopping", "In Store Shopping"]}
-                  defaultValue="Online Shopping"
+                  options={["Online", "In Store"]}
+                  defaultValue="Online"
                   context="store"
                 />
               </div>
               <button
                 onClick={() => setIsFilterOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium border rounded-md lg:hidden"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-transform active:scale-95 rounded-md lg:hidden"
               >
                 <span>Filters</span>
                 <img
@@ -233,8 +233,8 @@ export default function StoreListingPage() {
 
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white p-3 flex justify-center shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-30">
         <TwoOptionToggle
-          options={["Online Shopping", "In Store Shopping"]}
-          defaultValue="Online Shopping"
+          options={["Online", "In Store"]}
+          defaultValue="Online"
           context="store"
         />
       </div>

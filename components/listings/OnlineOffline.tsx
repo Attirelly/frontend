@@ -31,11 +31,11 @@ export default function TwoOptionToggle({ options, defaultValue, context }: TwoO
   // Map option to icon based on selection state
   const getIconPath = (option: string, isSelected: boolean) => {
     const optionKey = option.toLowerCase().replace(/\s+/g, '_');
-    if (optionKey === 'in_store_shopping') {
+    if (optionKey === 'in_store') {
       return isSelected
         ? '/ListingPageHeader/white_instore.png'
         : '/ListingPageHeader/gray_instore.png';
-    } else if (optionKey === 'online_shopping') {
+    } else if (optionKey === 'online') {
       return isSelected
         ? '/ListingPageHeader/white_online.png'
         : '/ListingPageHeader/gray_online.png';
@@ -53,7 +53,7 @@ export default function TwoOptionToggle({ options, defaultValue, context }: TwoO
           <button
             key={option}
             onClick={() => setSelected(option)}
-            className={`${manrope.className} flex items-center space-x-2 px-3 md:px-4 py-2 text-sm md:text-base rounded-full border transition ${
+            className={`${manrope.className} flex items-center justify-center space-x-2 px-3 md:px-4 py-2 text-sm md:text-base w-[130px] rounded-full border transition ${
               isSelected
                 ? 'bg-black text-white border-black'
                 : 'bg-white text-[#878787] border-[#878787] hover:border-black hover:text-black'

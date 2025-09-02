@@ -22,7 +22,7 @@ const SortByDropdown: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`${manrope.className} flex items-center space-x-1 text-base  text-gray-500`}
+        className={`${manrope.className} flex items-center space-x-1 text-sm md:text-base  text-gray-500`}
         style={{fontWeight:500}}
       >
         <span>Sort by:</span>
@@ -46,7 +46,7 @@ const SortByDropdown: React.FC = () => {
                 setSortBy(option.value);
                 setIsOpen(false);
               }}
-              className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${
+              className={`px-4 py-2 text-[12px] md:text-sm cursor-pointer hover:bg-gray-100 ${
                 sortBy === option.value ? "font-semibold text-black" : "text-gray-600"
               }`}
             >
