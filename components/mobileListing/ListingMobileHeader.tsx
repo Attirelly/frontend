@@ -122,7 +122,7 @@ export default function ListingMobileHeader({
           </Link>
         </div>
         <div className="flex items-center gap-[15px]">
-          {!user ? (
+          {/* {!user ? (
             <div className="flex items-center gap-2">
               <span
                 className={`text-base text-[#373737] cursor-pointer`}
@@ -167,7 +167,7 @@ export default function ListingMobileHeader({
                 </div>
               )}
             </div>
-          )}
+          )} */}
           <Image
             src="/ListingMobileHeader/search_lens.svg"
             alt="Search Lens"
