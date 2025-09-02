@@ -1,3 +1,102 @@
+// 'use client';
+
+// import { manrope } from '@/font';
+// import Image from 'next/image';
+// import CardTypeSix from '../cards/CardTypeSix';
+// import { useEffect, useState } from 'react';
+// import { api } from '@/lib/axios';
+
+// interface CardData {
+//     id: string;
+//     imageUrl: string;
+//     discountText?: string;
+//     title: string;
+//     description?: string;
+// }
+
+// const SECTION_NUMBER = 6;
+
+// export default function SectionSixContainer() {
+//     const [viewAll, setViewAll] = useState('');
+//     const [name, setName] = useState('');
+//     const [products, setProducts] = useState<CardData[]>([]);
+
+//     useEffect(() => {
+//         const fetchSegmentInfo = async () => {
+//             try {
+//                 const res = await api.get(`homepage/get_products_by_section_number/${SECTION_NUMBER}`);
+//                 const productData = res.data;
+
+//                 const formattedProducts: CardData[] = productData.map((p: any) => ({
+//                     id: p.product_id,
+//                     imageUrl: p.images?.[0]?.image_url || '/Homepage/CardTypeOne.svg',
+//                     title: p.title,
+//                     description: p.stores && p.stores.area && p.stores.area?.name.toLowerCase() === "others" ? `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
+//                 }));
+//                 setProducts(formattedProducts);
+
+//                 const resSection = await api.get(`/homepage/get_section_by_number/${SECTION_NUMBER}`);
+//                 const sectionData = resSection.data;
+//                 setViewAll(sectionData.section_url);
+//                 setName(sectionData.section_name);
+//             } catch (error) {
+//                 console.error('Failed to fetch data:', error);
+//             }
+//         };
+
+//         fetchSegmentInfo();
+//     }, []);
+
+
+//     if (!products || products.length == 0) {
+//         return <div></div>;
+//     }
+
+//     return (
+//         <div className='w-[1242px] mx-auto space-y-8'>
+//             <div className='flex'>
+//                 <span className={`${manrope.className} text-4xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
+//                 {viewAll && (
+//                     <a
+//                         href={viewAll}
+//                         target="_blank"
+//                         rel="noopener noreferrer"
+//                         className='flex ml-auto items-center gap-2'
+//                     >
+//                         <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
+//                         <Image
+//                             src="/Homepage/view_all_arrow.svg"
+//                             alt="View All"
+//                             width={12}
+//                             height={16}
+//                         />
+//                     </a>
+//                 )}
+
+//             </div>
+
+//             <div className='flex flex-col'>
+//                 <div className="grid grid-cols-4 gap-x-10 gap-y-6">
+//                     {products.map((card) => (
+//                         <a
+//                             key={card.id}
+//                             href={`/product_detail/${card.id}`}
+//                             target="_blank"
+//                             rel="noopener noreferrer"
+//                         >
+//                             <CardTypeSix
+//                                 imageUrl={card.imageUrl}
+//                                 title={card.title}
+//                                 description={card.description || ''}
+//                             />
+//                         </a>
+//                     ))}
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
 'use client';
 
 import { manrope } from '@/font';
@@ -9,7 +108,6 @@ import { api } from '@/lib/axios';
 interface CardData {
     id: string;
     imageUrl: string;
-    discountText?: string;
     title: string;
     description?: string;
 }
@@ -20,6 +118,7 @@ export default function SectionSixContainer() {
     const [viewAll, setViewAll] = useState('');
     const [name, setName] = useState('');
     const [products, setProducts] = useState<CardData[]>([]);
+    // REMOVED: No longer need to track screenSize in state.
 
     useEffect(() => {
         const fetchSegmentInfo = async () => {
@@ -31,7 +130,7 @@ export default function SectionSixContainer() {
                     id: p.product_id,
                     imageUrl: p.images?.[0]?.image_url || '/Homepage/CardTypeOne.svg',
                     title: p.title,
-                    description: p.stores && p.stores.area && p.stores.area?.name.toLowerCase() === "others" ? `${p.stores?.city?.name || ''}` : `${p.stores?.area?.name || ''}, ${p.stores?.city?.name || ''}`,
+                    description: p.stores?.store_name || "",
                 }));
                 setProducts(formattedProducts);
 
@@ -47,15 +146,15 @@ export default function SectionSixContainer() {
         fetchSegmentInfo();
     }, []);
 
-
-    if (!products || products.length == 0) {
-        return <div></div>;
+    if (!products || products.length === 0) {
+        return null; // Return null to render nothing if there's no data.
     }
 
     return (
-        <div className='w-[1242px] mx-auto space-y-8'>
-            <div className='flex'>
-                <span className={`${manrope.className} text-4xl text-[#242424]`} style={{ fontWeight: 400 }}>{name}</span>
+        // CHANGED: Container is now fluid, centered, and has padding.
+        <div className='w-full max-w-7xl mx-auto px-4 space-y-4 md:space-y-8'>
+            <div className='flex items-center'>
+                <span className={`${manrope.className} text-xl md:text-2xl lg:text-3xl`} style={{ fontWeight: 400 }}>{name}</span>
                 {viewAll && (
                     <a
                         href={viewAll}
@@ -63,7 +162,7 @@ export default function SectionSixContainer() {
                         rel="noopener noreferrer"
                         className='flex ml-auto items-center gap-2'
                     >
-                        <span className={`${manrope.className} text-base text-[#242424]`} style={{ fontWeight: 400 }}>View All</span>
+                        <span className={`${manrope.className} text-sm lg:text-base`} style={{ fontWeight: 400 }}>View All</span>
                         <Image
                             src="/Homepage/view_all_arrow.svg"
                             alt="View All"
@@ -72,26 +171,25 @@ export default function SectionSixContainer() {
                         />
                     </a>
                 )}
-
             </div>
 
-            <div className='flex flex-col'>
-                <div className="grid grid-cols-4 gap-x-10 gap-y-6">
-                    {products.map((card) => (
-                        <a
-                            key={card.id}
-                            href={`/product_detail/${card.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <CardTypeSix
-                                imageUrl={card.imageUrl}
-                                title={card.title}
-                                description={card.description || ''}
-                            />
-                        </a>
-                    ))}
-                </div>
+            {/* CHANGED: Grid is now responsive, showing 2 columns on mobile and 4 on large screens. */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {products.map((card) => (
+                    <a
+                        key={card.id}
+                        href={`/product_detail/${card.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {/* REMOVED: screenSize prop is gone. */}
+                        <CardTypeSix
+                            imageUrl={card.imageUrl}
+                            title={card.title}
+                            description={card.description || ''}
+                        />
+                    </a>
+                ))}
             </div>
         </div>
     );
