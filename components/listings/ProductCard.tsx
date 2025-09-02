@@ -219,9 +219,8 @@ export default function ProductCard({
                 }}
                 className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-1 md:p-1.5 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
               >
-                <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+                <ChevronLeft className="h-3 w-3 md:h-4 md:w-4 lg:h-5 lg:w-5" />
               </button>
-
               {/* Next Button with responsive padding and icon size */}
               <button
                 onClick={(e) => {
@@ -231,7 +230,7 @@ export default function ProductCard({
                 }}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-black/60 hover:bg-black/80 rounded-full p-1 md:p-1.5 z-10 block lg:hidden lg:group-hover:block cursor-pointer"
               >
-                <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+                <ChevronRight className="h-3 w-3 md:h-4 md:w-4 lg:h-5 lg:w-5" />
               </button>
             </>
           )}
