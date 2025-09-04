@@ -32,7 +32,7 @@ export default function StoreSearchType({
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const [storeTypesList, setStoreTypesList] = useState<StoreType[]>([]);
-  const { setStoreType, searchFocus } = useHeaderStore();
+  const { setStoreType, searchFocus, setQuery } = useHeaderStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchType, setShowSearchType] = useState(false);
 
@@ -73,6 +73,7 @@ export default function StoreSearchType({
 
 
   const handleSearchTypeClick = (type: StoreType) => {
+    setQuery("");
     let redirect_url = type && type.store_type ? "/store_listing?store_type="+ type.store_type : "/store_listing"
     console.log(redirect_url) ;
     router.push(redirect_url);
