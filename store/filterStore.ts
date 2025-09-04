@@ -12,6 +12,8 @@ interface FilterState {
   activeFacet: string | null;
   results: number;
   setResults: (results: number) => void;
+  isResultsLoading:boolean;
+  setIsResultsLoading:(isResultsLoading:boolean) => void;
   selectedPriceRange: [number, number] | null;
   setPriceRange: (range: [number, number]) => void;
   priceBounds: [number, number];
@@ -39,6 +41,8 @@ function createFilterStore() {
     setActiveFacet: (facet: string | null) => set({ activeFacet: facet }),
     results: 0,
     setResults: (results: number) => set({ results }),
+    isResultsLoading:true,
+    setIsResultsLoading:(loading:boolean) => set({isResultsLoading:loading}),
     selectedPriceRange: null,
     setPriceRange: (range) => set({ selectedPriceRange: range }),
     priceBounds: [0, 100000],

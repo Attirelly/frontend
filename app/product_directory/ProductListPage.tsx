@@ -53,6 +53,7 @@ export default function ProductListPage() {
     selectedFilters,
     selectedPriceRange,
     activeFacet,
+    isResultsLoading,
   } = useProductFilterStore();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -213,7 +214,9 @@ export default function ProductListPage() {
           className={`${manrope.className} text-[#101010] mt-4 text-2xl lg:text-[32px]`}
           style={{ fontWeight: 500 }}
         >
-          {results > 0
+          {isResultsLoading
+            ? "" // or "Loading..."
+            : results > 0
             ? query
               ? `Showing Results for "${query}"`
               : displayCategory
