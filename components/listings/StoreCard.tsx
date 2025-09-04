@@ -294,7 +294,7 @@ export default function StoreCard({
         className={`${manrope.className} flex flex-col justify-between w-full gap-2 md:gap-1`}
         style={{ fontWeight: 400 }}
       >
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2"> {/* Increased gap for better spacing */}
           <div className="flex justify-between items-start flex-wrap gap-2">
             <div className="flex-grow">
               <h3
