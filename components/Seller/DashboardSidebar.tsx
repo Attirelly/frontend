@@ -5,20 +5,62 @@ import { useSellerStore } from "@/store/sellerStore";
 
 // --- Data (Unchanged) ---
 const sections = [
-  { id: "brand", title: "Business Details", iconUrl: "/OnboardingSections/business_details.png" },
-  { id: "price", title: "Price Filters", iconUrl: "/OnboardingSections/price_filters.png" },
-  { id: "market", title: "Where to Sell", iconUrl: "/OnboardingSections/where_to_sell.png" },
-  { id: "social", title: "Social Links", iconUrl: "/OnboardingSections/social_links.png" },
-  { id: "photos", title: "Store Photos", iconUrl: "/OnboardingSections/store_photos.png" },
-  { id: "one_product", title: "Add Single", iconUrl: "/OnboardingSections/business_details.png" },
-  { id: "bulk_products", title: "Add Bulk", iconUrl: "/OnboardingSections/business_details.png" },
-  { id: "all_products", title: "All Products", iconUrl: "/OnboardingSections/business_details.png" },
-  { id: "qr_code", title: "QR Code", iconUrl: "/OnboardingSections/business_details.png" },
+  {
+    id: "brand",
+    title: "Business Details",
+    iconUrl: "/OnboardingSections/business_details.png",
+  },
+  {
+    id: "price",
+    title: "Price Filters",
+    iconUrl: "/OnboardingSections/price_filters.png",
+  },
+  {
+    id: "market",
+    title: "Where to Sell",
+    iconUrl: "/OnboardingSections/where_to_sell.png",
+  },
+  {
+    id: "social",
+    title: "Social Links",
+    iconUrl: "/OnboardingSections/social_links.png",
+  },
+  {
+    id: "photos",
+    title: "Store Photos",
+    iconUrl: "/OnboardingSections/store_photos.png",
+  },
+  {
+    id: "one_product",
+    title: "Add Single",
+    iconUrl: "/OnboardingSections/business_details.png",
+  },
+  {
+    id: "bulk_products",
+    title: "Add Bulk",
+    iconUrl: "/OnboardingSections/business_details.png",
+  },
+  {
+    id: "all_products",
+    title: "All Products",
+    iconUrl: "/OnboardingSections/business_details.png",
+  },
+  {
+    id: "qr_code",
+    title: "QR Code",
+    iconUrl: "/OnboardingSections/business_details.png",
+  },
 ];
 
 const sectionGroups = [
-  { heading: "Store Profile", ids: ["brand", "price", "market", "social", "photos"] },
-  { heading: "Add Products", ids: ["one_product", "bulk_products", "all_products"] },
+  {
+    heading: "Store Profile",
+    ids: ["brand", "price", "market", "social", "photos"],
+  },
+  {
+    heading: "Add Products",
+    ids: ["one_product", "bulk_products", "all_products"],
+  },
   { heading: "QR Code", ids: ["qr_code"] },
 ];
 
@@ -44,7 +86,7 @@ const MobileSidebar = ({ selected, onSelect }) => {
   }, []); // Empty dependency array means this runs only once on mount
 
   return (
-    <nav className="w-full bg-white p-2 shadow-md rounded-lg">
+    <nav className="w-full p-2 rounded-lg text-black bg-white">
       <div
         ref={scrollContainerRef}
         className="flex flex-row items-center space-x-2 overflow-x-auto whitespace-nowrap scrollbar-none"
@@ -53,7 +95,7 @@ const MobileSidebar = ({ selected, onSelect }) => {
           <button
             key={section.id}
             onClick={() => onSelect(section.id)}
-            className={`flex flex-col items-center justify-center p-2 rounded-lg transition min-w-[90px] ${
+            className={`flex flex-col items-center justify-center p-1 rounded-lg transition min-w-[90px] ${
               selected === section.id
                 ? "bg-gray-200"
                 : "bg-transparent hover:bg-gray-100"
@@ -64,7 +106,9 @@ const MobileSidebar = ({ selected, onSelect }) => {
               alt={section.title}
               className="w-7 h-7 mb-1 rounded-full object-cover"
             />
-            <span className="text-xs font-medium text-center">{section.title}</span>
+            <div className="text-xs font-[400] text-center">
+              {section.title}
+            </div>
           </button>
         ))}
       </div>

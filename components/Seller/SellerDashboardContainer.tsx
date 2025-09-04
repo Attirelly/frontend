@@ -479,7 +479,7 @@ export default function SellerDashboardContainer() {
 
   return (
     <ProtectedRoute role={["admin", "super_admin"]}>
-      <div className="min-h-screen bg-gray-100">
+      <div className="bg-gray-100">
         <Header
           title="Attirelly"
           actions={
@@ -487,14 +487,14 @@ export default function SellerDashboardContainer() {
           }
         />
         {/* Main content container with responsive padding */}
-        <div className="flex flex-col md:flex-row gap-4 md:gap-6 p-4 md:p-6 justify-around">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-6 p-4 md:p-6 justify-around">
           <div className="max-w-3xl lg:max-w-4xl">
             <DashboardSidebar
               selected={activeSection}
               onSelect={handleSectionChange}
             />
           </div>
-
+          
           {/* Content area with responsive max-width */}
           <div className="flex-1 flex flex-col max-w-3xl lg:max-w-4xl gap-6">
             <div className="rounded-md bg-gray-100">{renderSection()}</div>

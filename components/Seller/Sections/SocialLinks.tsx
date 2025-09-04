@@ -457,10 +457,10 @@ export default function SocialLinksComponent() {
                         <input
                             type="text"
                             placeholder="your_username"
-                            // value={instagramUsname}
-                            // onChange={handleInstagramChange}
+                            value={instagramUsname}
+                            onChange={handleInstagramChange}
                             className="flex-1 px-3 py-2 outline-none text-xs sm:text-sm disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                            // disabled={isInstagramConnected}
+                            disabled={isInstagramConnected}
                         />
                     </div>
                 </div>
@@ -472,8 +472,8 @@ export default function SocialLinksComponent() {
                         type="url"
                         className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs sm:text-sm"
                         placeholder="https://yourwebsite.com"
-                        // value={websiteUrl}
-                        // onChange={(e) => setWebsiteUrl(e.target.value)}
+                        value={websiteUrl}
+                        onChange={(e) => setWebsiteUrl(e.target.value)}
                     />
                 </div>
 
@@ -484,8 +484,8 @@ export default function SocialLinksComponent() {
                         type="url"
                         className="w-full border border-gray-300 rounded-md px-3 py-2 text-xs sm:text-sm"
                         placeholder="https://facebook.com/yourpage"
-                        // value={facebookUrl}
-                        // onChange={(e) => setFacebookUrl(e.target.value)}
+                        value={facebookUrl}
+                        onChange={(e) => setFacebookUrl(e.target.value)}
                     />
                 </div>
             </div>
