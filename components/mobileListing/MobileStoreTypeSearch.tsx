@@ -4,6 +4,7 @@
 
 import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
+import { useHeaderStore } from "@/store/listing_header_store";
 import { useEffect, useRef, useState } from "react";
 import { manrope } from "@/font";
 import Image from "next/image";
@@ -30,6 +31,7 @@ export default function MobileStoreTypeSearch({
   onClose: () => void;
 }) {
   const router = useRouter();
+  const {setQuery} = useHeaderStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const [storeTypesList, setStoreTypesList] = useState<StoreType[]>([]);
 
@@ -66,6 +68,7 @@ export default function MobileStoreTypeSearch({
   }
 
   const handleSearchTypeClick = (type: StoreType) => {
+    setQuery("");
     const redirect_url = type?.store_type
       ? "/store_listing?store_type=" + type.store_type
       : "/store_listing";
@@ -102,7 +105,7 @@ export default function MobileStoreTypeSearch({
                   sizes="40px"
                 />
               </div>
-              <span className="text-base text-black" style={{ fontWeight: 400 }}>
+              <span className="text-[12px] md:text-base text-black" style={{ fontWeight: 400 }}>
                 {type.store_type}
               </span>
             </div>

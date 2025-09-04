@@ -139,11 +139,13 @@ export default function MobileSearchContainer({ onClose }: Props) {
       setStores([]);
       setProducts([]);
       setShowDropdown(false);
-      if (tempQuery.length === 0 && searchFocus) {
-        setShowStoreType(true);
-      } else {
-        setShowStoreType(false);
-      }
+      // if (tempQuery.length === 0 && searchFocus) {
+      if (searchFocus) {
+      setShowStoreType(true);
+      } 
+      // else {
+      //   setShowStoreType(false);
+      // }
       return;
     }
     
