@@ -824,8 +824,7 @@ export default function CategorySelector() {
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        {/* Column 1 */}
-        <div className="flex flex-col gap-4">
+       
           {/* Level 1 */}
           <div className="category-dropdown-container relative">
             <label className="block text-xs sm:text-sm font-medium mb-1">
@@ -868,39 +867,6 @@ export default function CategorySelector() {
             )}
           </div>
 
-          {/* Level 3 */}
-          {selectedCategories.level2 && getSubcategories(3).length > 0 && (
-            <div className="category-dropdown-container relative">
-              <label className="block text-xs sm:text-sm font-medium mb-1">
-                Sub-category (Level 2)
-              </label>
-              <input
-                type="text"
-                value={getSelectedCategoryName(3)}
-                readOnly
-                className="w-full border border-gray-300 rounded-md p-2 bg-gray-50 cursor-pointer text-sm"
-                placeholder="Select Sub-category"
-                onClick={() => setShowCategoryDropdown((prev) => ({ ...prev, level3: true }))}
-              />
-              {showCategoryDropdown.level3 && (
-                <div className="absolute z-20 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto scrollbar-thin">
-                  {getSubcategories(3).map((category) => (
-                    <div
-                      key={category.category_id}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => handleCategorySelect(category, 3)}
-                    >
-                      <div className="font-medium text-sm">{category.name}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Column 2 */}
-        <div className="flex flex-col gap-4">
           {/* Level 2 */}
           {selectedCategories.level1 && getSubcategories(2).length > 0 && (
             <div className="category-dropdown-container relative">
@@ -931,6 +897,37 @@ export default function CategorySelector() {
             </div>
           )}
 
+
+          {/* Level 3 */}
+          {selectedCategories.level2 && getSubcategories(3).length > 0 && (
+            <div className="category-dropdown-container relative">
+              <label className="block text-xs sm:text-sm font-medium mb-1">
+                Sub-category (Level 2)
+              </label>
+              <input
+                type="text"
+                value={getSelectedCategoryName(3)}
+                readOnly
+                className="w-full border border-gray-300 rounded-md p-2 bg-gray-50 cursor-pointer text-sm"
+                placeholder="Select Sub-category"
+                onClick={() => setShowCategoryDropdown((prev) => ({ ...prev, level3: true }))}
+              />
+              {showCategoryDropdown.level3 && (
+                <div className="absolute z-20 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto scrollbar-thin">
+                  {getSubcategories(3).map((category) => (
+                    <div
+                      key={category.category_id}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleCategorySelect(category, 3)}
+                    >
+                      <div className="font-medium text-sm">{category.name}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        
           {/* Level 4 */}
           {selectedCategories.level3 && getSubcategories(4).length > 0 && (
             <div className="category-dropdown-container relative">
@@ -960,7 +957,7 @@ export default function CategorySelector() {
               )}
             </div>
           )}
-        </div>
+        
       </div>
     </div>
   );

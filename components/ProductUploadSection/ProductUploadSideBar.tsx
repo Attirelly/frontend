@@ -119,7 +119,7 @@ const sections = [
 
 // --- Extracted DesktopSidebar Component ---
 const DesktopSidebar = ({ currentStep, setCurrentStep, stepValidations }) => (
-    <div className="w-full bg-white p-4 rounded-lg shadow-sm">
+    <div className="w-full bg-white p-4 rounded-lg">
         <h2 className="text-lg font-semibold mb-6">List your products</h2>
         <div className="space-y-1">
             {sections.map((section) => {
@@ -161,7 +161,7 @@ const MobileSidebar = ({ currentStep, setCurrentStep, stepValidations }) => {
     }, [currentStep]);
 
     return (
-        <nav className="w-full bg-white p-2 shadow-md rounded-lg">
+        <nav className="w-full bg-white p-2 rounded-lg">
             <div
                 ref={scrollContainerRef}
                 className="flex flex-row items-center space-x-2 overflow-x-auto whitespace-nowrap scrollbar-none"

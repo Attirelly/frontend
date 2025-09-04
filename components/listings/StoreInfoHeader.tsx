@@ -280,15 +280,17 @@ export default function StoreInfoPage({
 
               {/* Price Ranges */}
               <div className="flex flex-wrap gap-1 md:gap-2">
-                {priceRanges?.map((type, idx) => (
-                  <span
-                    key={idx}
-                    className="text-sm bg-[#F5F5F5] px-2 py-1 rounded-full text-black"
-                    style={{ fontWeight: 400 }}
-                  >
-                    {type}
-                  </span>
-                ))}
+                {/* Check if priceRanges exists before creating the Set */}
+                {priceRanges &&
+                  [...new Set(priceRanges)].map((type) => (
+                    <span
+                      key={type} // Use the unique price range as the key
+                      className="text-sm bg-[#F5F5F5] px-2 py-1 rounded-full text-black"
+                      style={{ fontWeight: 400 }}
+                    >
+                      {type}
+                    </span>
+                  ))}
               </div>
             </div>
           </div>
@@ -321,7 +323,10 @@ export default function StoreInfoPage({
             <h3 className="text-[14px] text-black" style={{ fontWeight: 700 }}>
               {formatNumberStr(post_count)}
             </h3>
-            <span className="text-[12px] text-black" style={{ fontWeight: 400 }}>
+            <span
+              className="text-[12px] text-black"
+              style={{ fontWeight: 400 }}
+            >
               Posts
             </span>
           </div>
@@ -331,7 +336,10 @@ export default function StoreInfoPage({
             <h3 className="text-[14px] text-black" style={{ fontWeight: 700 }}>
               {formatNumberStr(instagramFollowers)}
             </h3>
-            <span className="text-[12px] text-black" style={{ fontWeight: 400 }}>
+            <span
+              className="text-[12px] text-black"
+              style={{ fontWeight: 400 }}
+            >
               Followers
             </span>
           </div>
@@ -341,7 +349,10 @@ export default function StoreInfoPage({
             <h3 className="text-[14px] text-black" style={{ fontWeight: 700 }}>
               {formatNumberStr(product_count)}
             </h3>
-            <span className="text-[12px] text-black" style={{ fontWeight: 400 }}>
+            <span
+              className="text-[12px] text-black"
+              style={{ fontWeight: 400 }}
+            >
               Products
             </span>
           </div>

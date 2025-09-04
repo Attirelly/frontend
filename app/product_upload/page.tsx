@@ -197,7 +197,7 @@ export default function ProductUploadPage() {
         {/* Sidebar: Full width on mobile, fixed on desktop */}
         {currentStep !== 0 && (
           <div className="w-full md:w-64 lg:w-72 flex-shrink-0">
-            <div className="border border-gray-200 bg-white rounded-lg shadow-sm p-4 md:p-6">
+            <div className="border border-gray-200 bg-white rounded-lg p-4 md:p-6">
               <ProductUploadSideBar />
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function ProductUploadPage() {
 
         {/* Main content: Takes remaining space */}
         <div className="flex-1 overflow-auto">
-          <div className="w-full bg-white rounded-lg shadow-sm p-4 sm:p-6 md:p-8">
+          <div className="w-full bg-white rounded-lg p-4 sm:p-6 md:p-8">
             {isLoading ? (
               <LoadingSpinner />
             ) : (

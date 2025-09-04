@@ -190,10 +190,10 @@ export default function ApifyPostDialog({
     <div className="fixed inset-0 z-50 bg-neutral-900/80 flex justify-center items-center p-4">
       <div
         ref={dialogContentRef}
-        className="relative w-full h-full md:h-auto md:w-auto max-h-[90vh] max-w-4xl flex flex-col md:flex-row rounded-lg overflow-y-scroll scrollbar-none"
+        className=" w-full h-full md:h-auto md:w-auto max-h-[90vh] max-w-4xl flex flex-col md:flex-row rounded-lg overflow-y-auto scrollbar-none"
       >
         {/* Media Container */}
-        <div className="relative flex-1 flex justify-center items-center bg-black">
+        <div className="flex-1 flex justify-center items-center bg-black ">
           {post.media_type === "Sidecar" ? (
             <SidecarCarousel mediaUrls={post.media_urls} />
           ) : post.media_type === "Video" ? (
@@ -227,7 +227,7 @@ export default function ApifyPostDialog({
           {!isFirst && (
             <button
               onClick={onPrev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/60 rounded-full p-1 md:p-2 z-10"
+              className="absolute left-[0px] md:left-[20px] top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/60 rounded-full p-1 md:p-2 z-100"
               aria-label="Previous post"
             >
               <ChevronLeft size={28} />
@@ -238,7 +238,7 @@ export default function ApifyPostDialog({
           {!isLast && (
             <button
               onClick={onNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/60 rounded-full p-1 md:p-2 z-10"
+              className="absolute right-[0px] md:right-[20px] top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/60 rounded-full p-1 md:p-2 z-10"
               aria-label="Next post"
             >
               <ChevronRight size={28} />
@@ -264,7 +264,7 @@ export default function ApifyPostDialog({
             </span>
           </div>
           <hr className="border-gray-200" />
-          <div className="overflow-y-auto flex-1">
+          <div className="overflow-y-auto flex-1 scrollbar-none">
             <p className="text-sm text-black font-normal whitespace-pre-line">
               {post.caption || ""}
             </p>

@@ -114,7 +114,7 @@
 
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { SelectOption, BrandType } from "@/types/SellerTypes";
 import { toast } from "sonner";
@@ -146,6 +146,7 @@ export default function StoreTypeTabs({
     null
   );
   const [loading, setLoading] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handleTabClick = (value: SelectOption) => {
     console.log("store_type_select", value);
@@ -162,6 +163,31 @@ export default function StoreTypeTabs({
     setSelectedStoreType(storeTypeObj);
     setStoreType(storeTypeObj);
   };
+
+  useLayoutEffect(() => {
+    // This effect handles the scrolling behavior after the DOM has been updated
+    if (scrollContainerRef.current && selectedStoreType) {
+      const container = scrollContainerRef.current;
+      const activeTab = container.querySelector(
+        `[data-id="${selectedStoreType.id}"]`
+      ) as HTMLElement;
+
+      if (activeTab) {
+        const containerWidth = container.offsetWidth;
+        const activeTabWidth = activeTab.offsetWidth;
+        const activeTabLeft = activeTab.offsetLeft;
+
+        // Calculate the position to scroll to center the tab
+        const scrollPosition =
+          activeTabLeft - containerWidth / 2 + activeTabWidth / 2;
+
+        container.scrollTo({
+          left: scrollPosition,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [selectedStoreType]); // Re-run whenever the selected tab changes
 
   //   useEffect(() => {
   //     try {
@@ -276,68 +302,102 @@ export default function StoreTypeTabs({
     //   ))}
     // </div>
 
-//    <div className="grid grid-cols-2 gap-y-2 gap-x-2 md:flex md:flex-wrap md:justify-around justify-items-center rounded-full md:w-fit p-1">
-//   {tabs.map((tab, index) => (
-//     <div key={tab.value} className="flex items-center flex-shrink-0">
-//       <button
-//         className={clsx(
-//           manrope.className,
-//           "px-2 py-1.5 md:px-4 md:py-2 rounded-full transition-all duration-200 text-sm md:text-base",
-//           "w-[150px] bg-[#F5F5F5] border border-gray-300",
-//           selectedStoreType?.id === tab.value
-//             ? "bg-black shadow text-white"
-//             : "text-[#565656] hover:text-black"
-//         )}
-//         style={{ fontWeight: 500 }}
-//         onClick={() => handleTabClick(tab)}
-//       >
-//         {tab.label}
-//       </button>
+    //    <div className="grid grid-cols-2 gap-y-2 gap-x-2 md:flex md:flex-wrap md:justify-around justify-items-center rounded-full md:w-fit p-1">
+    //   {tabs.map((tab, index) => (
+    //     <div key={tab.value} className="flex items-center flex-shrink-0">
+    //       <button
+    //         className={clsx(
+    //           manrope.className,
+    //           "px-2 py-1.5 md:px-4 md:py-2 rounded-full transition-all duration-200 text-sm md:text-base",
+    //           "w-[150px] bg-[#F5F5F5] border border-gray-300",
+    //           selectedStoreType?.id === tab.value
+    //             ? "bg-black shadow text-white"
+    //             : "text-[#565656] hover:text-black"
+    //         )}
+    //         style={{ fontWeight: 500 }}
+    //         onClick={() => handleTabClick(tab)}
+    //       >
+    //         {tab.label}
+    //       </button>
 
-//       {/* ✅ Mobile: divider after every odd index (i.e. between 2 items in a row) */}
-//       {index % 2 === 0 && (
-//         <div className="h-full w-px bg-gray-300 md:hidden" />
-//       )}
-//     </div>
-//   ))}
-// </div>
+    //       {/* ✅ Mobile: divider after every odd index (i.e. between 2 items in a row) */}
+    //       {index % 2 === 0 && (
+    //         <div className="h-full w-px bg-gray-300 md:hidden" />
+    //       )}
+    //     </div>
+    //   ))}
+    // </div>
 
-<div className="grid w-full max-w-sm grid-cols-2 gap-y-4 md:flex md:gap-2 md:w-fit md:max-w-fit md:items-center md:rounded-full md:p-2">
-          {tabs.map((tab, index) => (
-            <React.Fragment key={tab.value}>
-              {/* Wrapper for button and mobile divider */}
-              <div className="relative flex w-full justify-center">
-                <button
-                  className={clsx(
-                    manrope.className,
-                    'py-2 rounded-full transition-all duration-200 text-base text-center font-medium',
-                    // Mobile-first sizing
-                    'w-[150px]',
-                    // Desktop sizing overrides
-                    'md:py-2 md:px-4 md:mx-0',
-                    // Conditional styling based on selection
-                    selectedStoreType?.id === tab.value
-                      ? // Selected styles: black on mobile, white w/ shadow on desktop
-                        'bg-black text-white md:shadow'
-                      : // Default styles: white w/ border on mobile, transparent on desktop
-                        'bg-[#F5F5F5] text-black border border-gray-300 md:border-none md:text-[#565656] hover:md:text-black'
-                  )}
-                  onClick={() => handleTabClick(tab)}
-                >
-                  {tab.label}
-                </button>
-    
-                {/* --- Mobile Divider --- */}
-                {/* This divider is only visible on mobile (md:hidden) */}
-                {/* It appears on the right of the first item in each row (index 0 and 2) */}
-                {index % 2 === 0 && (
-                  <div className="absolute right-0 top-0 h-full w-px bg-gray-300 md:hidden" />
-                )}
-              </div>
-              
-            </React.Fragment>
-          ))}
-        </div>
+    // <div className="grid w-full max-w-sm grid-cols-2 gap-y-4 md:flex md:gap-2 md:w-fit md:max-w-fit md:items-center md:rounded-full md:p-2">
+    //           {tabs.map((tab, index) => (
+    //             <React.Fragment key={tab.value}>
+    //               {/* Wrapper for button and mobile divider */}
+    //               <div className="relative flex w-full justify-center">
+    //                 <button
+    //                   className={clsx(
+    //                     manrope.className,
+    //                     'py-2 rounded-full transition-all duration-200 text-base text-center font-medium',
+    //                     // Mobile-first sizing
+    //                     'w-[150px]',
+    //                     // Desktop sizing overrides
+    //                     'md:py-2 md:px-4 md:mx-0',
+    //                     // Conditional styling based on selection
+    //                     selectedStoreType?.id === tab.value
+    //                       ? // Selected styles: black on mobile, white w/ shadow on desktop
+    //                         'bg-black text-white md:shadow'
+    //                       : // Default styles: white w/ border on mobile, transparent on desktop
+    //                         'bg-[#F5F5F5] text-black border border-gray-300 md:border-none md:text-[#565656] hover:md:text-black'
+    //                   )}
+    //                   onClick={() => handleTabClick(tab)}
+    //                 >
+    //                   {tab.label}
+    //                 </button>
 
+    //                 {/* --- Mobile Divider --- */}
+    //                 {/* This divider is only visible on mobile (md:hidden) */}
+    //                 {/* It appears on the right of the first item in each row (index 0 and 2) */}
+    //                 {index % 2 === 0 && (
+    //                   <div className="absolute right-0 top-0 h-full w-px bg-gray-300 md:hidden" />
+    //                 )}
+    //               </div>
+
+    //             </React.Fragment>
+    //           ))}
+    //         </div>
+
+    //   );
+
+    <div
+      ref={scrollContainerRef}
+      className={clsx(
+        // Mobile: Flex container with horizontal scrolling
+        "flex w-full items-center gap-2 overflow-x-auto p-2 scrollbar-hide",
+        // Desktop: Overrides for the pill-style container
+        "md:w-fit md:max-w-fit md:rounded-full md:overflow-x-visible"
+      )}
+    >
+      {tabs.map((tab) => (
+        <button
+          key={tab.value}
+          data-id={tab.value} // Add data-id for easy selection in useLayoutEffect
+          className={clsx(
+            manrope.className,
+            // Common styles
+            "py-2 rounded-full transition-all duration-300 text-base font-medium text-center",
+            // Prevent buttons from shrinking in the flex container
+            "flex-shrink-0",
+            // Sizing
+            "w-[150px] md:w-auto md:px-4",
+            // Conditional styles based on selection
+            selectedStoreType?.id === tab.value
+              ? "bg-black text-white md:shadow"
+              : "bg-[#F5F5F5] text-black border border-gray-300 md:border-none md:text-[#565656] hover:md:text-black"
+          )}
+          onClick={() => handleTabClick(tab)}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
   );
 }

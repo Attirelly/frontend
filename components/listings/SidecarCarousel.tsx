@@ -74,7 +74,7 @@
 //   const [currentIndex, setCurrentIndex] = useState(0);
 //   // ✅ State for handling swipe gestures
 //   const [touchStartX, setTouchStartX] = useState<number | null>(null);
-  
+
 //   const currentMedia = mediaUrls[currentIndex];
 
 //   const next = () => {
@@ -163,36 +163,47 @@
 //   );
 // }
 
+"use client";
 
-'use client';
-
-import React, { useState, TouchEvent } from 'react';
-import { MediaUrlType } from '@/types/SellerTypes';
-import clsx from 'clsx';
+import React, { useState, TouchEvent } from "react";
+import { MediaUrlType } from "@/types/SellerTypes";
+import clsx from "clsx";
+import { useSwipeable } from "react-swipeable";
 
 type Props = {
   mediaUrls: MediaUrlType[];
   isDialogMode?: boolean;
 };
 
-export default function SidecarCarousel({ mediaUrls, isDialogMode = false }: Props) {
+export default function SidecarCarousel({
+  mediaUrls,
+  isDialogMode = false,
+}: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
-  
+
   const currentMedia = mediaUrls[currentIndex];
 
-  const next = () => setCurrentIndex((prev) => (prev < mediaUrls.length - 1 ? prev + 1 : prev));
+  const next = () =>
+    setCurrentIndex((prev) => (prev < mediaUrls.length - 1 ? prev + 1 : prev));
   const prev = () => setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
 
-  const handleTouchStart = (e: TouchEvent) => setTouchStartX(e.targetTouches[0].clientX);
-  const handleTouchEnd = (e: TouchEvent) => {
-    if (touchStartX === null) return;
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchEndX - touchStartX;
-    if (diff > 50) prev();
-    else if (diff < -50) next();
-    setTouchStartX(null);
-  };
+  // const handleTouchStart = (e: TouchEvent) => setTouchStartX(e.targetTouches[0].clientX);
+  // const handleTouchEnd = (e: TouchEvent) => {
+  //   if (touchStartX === null) return;
+  //   const touchEndX = e.changedTouches[0].clientX;
+  //   const diff = touchEndX - touchStartX;
+  //   if (diff > 50) prev();
+  //   else if (diff < -50) next();
+  //   setTouchStartX(null);
+  // };
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => next(),
+    onSwipedRight: () => prev(),
+    preventScrollOnSwipe: true, // Prevents vertical scrolling when swiping horizontally
+    trackMouse: false, // Don't track mouse movements as swipes
+  });
 
   return (
     <div
@@ -200,33 +211,35 @@ export default function SidecarCarousel({ mediaUrls, isDialogMode = false }: Pro
         "relative flex items-center justify-center w-full h-full",
         isDialogMode && "md:px-16"
       )}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      {...handlers}
     >
-      {currentMedia.type === 'Video' ? (
+      {currentMedia.type === "Video" ? (
         <video
           src={currentMedia.media_url}
-          controls autoPlay muted
+          controls
+          autoPlay
+          muted
           className="max-w-full max-h-full object-contain"
         />
       ) : (
         <img
-          src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(currentMedia.media_url)}`}
+          src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(
+            currentMedia.media_url
+          )}`}
           alt="Instagram post media"
           className="max-w-full max-h-full object-contain"
         />
       )}
 
       {/* ✅ Container for Bottom Controls (Buttons and Indicators) */}
-      <div className="hidden md:flex absolute bottom-4 left-1/2 -translate-x-1/2 w-full  flex-col items-center gap-2 z-10">
-        
+      <div className="flex absolute bottom-4 left-1/2 -translate-x-1/2 w-full  flex-col items-center gap-2 z-10">
         {/* ✅ Next/Prev Text Buttons */}
-        <div className="flex justify-between w-full max-w-xs px-4">
+        <div className="hidden md:flex justify-between w-full max-w-xs px-4">
           {/* Previous Button */}
-          <button 
+          <button
             onClick={prev}
             className={clsx(
-              "text-white text-sm font-semibold opacity-80 hover:opacity-100 transition",
+              "text-black px-2 py-1 rounded-md  bg-white text-sm font-semibold opacity-80 hover:opacity-100 transition",
               currentIndex === 0 && "opacity-30 pointer-events-none" // Hide if it's the first slide
             )}
           >
@@ -234,11 +247,12 @@ export default function SidecarCarousel({ mediaUrls, isDialogMode = false }: Pro
           </button>
 
           {/* Next Button */}
-          <button 
+          <button
             onClick={next}
             className={clsx(
-              "text-white text-sm font-semibold opacity-80 hover:opacity-100 transition",
-              currentIndex === mediaUrls.length - 1 && "opacity-30 pointer-events-none" // Hide if it's the last slide
+              "text-black px-2 py-1 rounded-md  bg-white text-sm font-semibold opacity-80 hover:opacity-100 transition",
+              currentIndex === mediaUrls.length - 1 &&
+                "opacity-30 pointer-events-none" // Hide if it's the last slide
             )}
           >
             Next
@@ -252,7 +266,7 @@ export default function SidecarCarousel({ mediaUrls, isDialogMode = false }: Pro
               key={index}
               className={clsx(
                 "h-2 w-2 rounded-full transition-all duration-300",
-                currentIndex === index ? "bg-white" : "bg-white/50"
+                currentIndex === index ? "bg-black" : "bg-white"
               )}
             />
           ))}
