@@ -20,7 +20,7 @@ const AmbassadorBenefits: React.FC<Props> = ({ screenSize = 'sm' }) => {
           <div className="flex relative flex-col items-center px-8 py-4">
             {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
             <Image src="/CollegeAmbassador/money.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 245} height={screenSize === 'sm' ? 190 : 245} className="" />
-            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5">Earn up to 25,000/Month</span>
+            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5">Earn up to Rs 25,000/Month</span>
             <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>
               Promote India's fastest-growing hyper local fashion marketplace and earn for every successful referral, event, and content initiative</span>
           </div>

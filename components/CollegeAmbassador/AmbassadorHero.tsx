@@ -35,7 +35,7 @@ export default function AmbassadorHero({ screenSize = 'sm' }: Props) {
             ${screenSize === 'md' ? 'w-full' : ''}
             ${screenSize === 'lg' ? 'w-[400px]' : ''}
             ${screenSize === 'xl' ? 'w-[585px]' : ''}
-                text-white text-[14px] lg:text-[20px] mt-2`} style={{ fontWeight: 400 }}>Step into the booming fashion e-commerce industry and unlock your potential with earning potential of more than 25,000</span>
+                text-white text-[14px] lg:text-[20px] mt-2`} style={{ fontWeight: 400 }}>Step into the booming fashion e-commerce industry and unlock your potential with earning potential of more than Rs 25,000</span>
           </div>
           <button className="text-[18px] text-white w-fit bg-black rounded px-[28px] py-[10px]">
             Start Earning
