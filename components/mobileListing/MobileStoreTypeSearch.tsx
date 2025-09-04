@@ -94,7 +94,7 @@ export default function MobileStoreTypeSearch({
           return (
             <div
               key={idx}
-              className="flex items-center gap-3 bg-[#F8F8F8] hover:bg-[#e7e7e7] py-3 px-4 rounded-2xl cursor-pointer transition-all"
+              className="flex items-center gap-2 bg-[#F8F8F8] hover:bg-[#e7e7e7] py-3 px-2 md:px-4 rounded-2xl cursor-pointer transition-all"
               onClick={() => handleSearchTypeClick(type)}
             >
               <div className="relative w-10 h-10 flex-shrink-0">
@@ -102,10 +102,10 @@ export default function MobileStoreTypeSearch({
                   src={storeImage?.url || "/Homepage/tailor.svg"}
                   alt={type.store_type}
                   fill
-                  sizes="40px"
+                  sizes="30px md:40px"
                 />
               </div>
-              <span className="text-[12px] md:text-base text-black" style={{ fontWeight: 400 }}>
+              <span className="text-xs md:text-base text-black" style={{ fontWeight: 400 }}>
                 {type.store_type}
               </span>
             </div>
