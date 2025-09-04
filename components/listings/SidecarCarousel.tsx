@@ -180,7 +180,7 @@ export default function SidecarCarousel({
   isDialogMode = false,
 }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  // const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   const currentMedia = mediaUrls[currentIndex];
 

@@ -41,26 +41,6 @@ export default function ApifyPostGallery({ posts }: Props) {
             className="relative w-full aspect-[3/4] overflow-hidden bg-black"
             onClick={() => openDialog(index)}
           >
-            {/* {post.media_type === 'Image' || post.media_type === 'Sidecar' ? (
-              <img
-                src={post.display_url}
-                // src={`/api/proxy-image?url=${encodeURIComponent(post.media_urls[0].media_url)}`}
-                alt="Instagram post"
-                
-                className="object-cover w-full h-full"
-                
-              />
-            ) : post.media_type === 'Video' ? (
-              <video
-                src={post.display_url}
-                className="object-cover w-full h-full"
-                autoPlay
-                muted
-                loop
-                playsInline
-              />
-            ) : null} */}
-
             <Image
               // src={`/api/proxy-image?url=${encodeURIComponent(post.display_url)}`}
               src={`https://image-proxy.ranarahul16-rr.workers.dev/?url=${encodeURIComponent(
