@@ -163,7 +163,7 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
   //   );
   // }
   return (
-    <div className="flex flex-col h-full max-h-[100vh] bg-white">
+    <div className="sticky top-1 flex flex-col h-full max-h-[100vh] bg-white">
       {onClose && (
         <div className="flex items-center justify-between p-4 border-b">
           <h1
