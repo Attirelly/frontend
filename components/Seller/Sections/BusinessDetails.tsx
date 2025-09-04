@@ -1032,7 +1032,6 @@ export default function BusinessDetailsComponent({
           : ""
         : prev
     );
-  // },[]);
   }, [businessDetailsData]);
 
   useEffect(() => {
@@ -1140,7 +1139,7 @@ export default function BusinessDetailsComponent({
       });
     }
     cityInitializedRef.current = true;
-  }, [ cities, cityOptions]);
+  }, [businessDetailsData, cities, cityOptions]);
 
   useEffect(() => {
     if (selectedCityOption?.value) {
@@ -1181,7 +1180,7 @@ export default function BusinessDetailsComponent({
       });
     }
     areaInitializedRef.current = true;
-  }, [ areas, areaOptions]);
+  }, [businessDetailsData, areas, areaOptions]);
 
   useEffect(() => {
     if (
@@ -1209,7 +1208,7 @@ export default function BusinessDetailsComponent({
       });
     }
     pincodeInitializedRef.current = true;
-  }, [ pincodes, pincodeOptions]);
+  }, [businessDetailsData, pincodes, pincodeOptions]);
 
   useEffect(() => {
     if (selectedCityOption?.value) {
@@ -1263,7 +1262,7 @@ export default function BusinessDetailsComponent({
         returnDays: Number(retDays) || 0,
         exchangeDays: Number(excDays) || 0,
       });
-      // setStoreNameString(brandName);
+      setStoreNameString(brandName);
     }
   }, [
     ownerName,
@@ -1733,313 +1732,4 @@ const RadioGroup: FC<{
     </div>
   </div>
 );
-
-
-// "use client";
-// import { useEffect, useState, type FC, forwardRef } from "react";
-// import dynamic from "next/dynamic";
-// import { api } from "@/lib/axios";
-// import { useSellerStore } from "@/store/sellerStore";
-// import { City, Area, BrandType, GenderType, Pincode, SelectOption, Category } from "@/types/SellerTypes";
-// import selectStyles from "@/utils/selectStyles";
-// import { toast } from "sonner";
-
-// // STEP 1: Import React Hook Form and Zod
-// import { useForm, Controller } from "react-hook-form";
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import { z } from "zod";
-
-// const Select = dynamic(() => import("react-select").then((mod) => mod.default), {
-//   ssr: false,
-// });
-
-// // STEP 2: Define a single validation schema with Zod
-// // This replaces the giant useEffect for validation and all manual error checking.
-// const businessDetailsSchema = z.object({
-//   ownerName: z.string().min(1, "Store owner name is required"),
-//   ownerEmail: z.string().min(1, "Email is required").email("Please enter a valid email address"),
-//   brandName: z.string().min(1, "Store name is required"),
-//   businessWpNum: z.string().length(10, "Must be a 10-digit number"),
-//   brandTypes: z.array(z.object({ id: z.string(), store_type: z.string() })).min(1, "Please select at least one store type"),
-//   categories: z.array(z.object({ value: z.string(), label: z.string() })).min(1, "Select at least one category").max(3, "You can select up to 3 categories"),
-//   genders: z.array(z.object({ id: z.string(), gender_value: z.string() })).min(1, "Please select a gender"),
-//   returnAvailable: z.string({ required_error: "Please select an option" }),
-//   returnDays: z.number().min(0).optional(),
-//   exchangeAvailable: z.string({ required_error: "Please select an option" }),
-//   exchangeDays: z.number().min(0).optional(),
-//   city: z.object({ value: z.string(), label: z.string() }, { required_error: "City is required" }).nullable(),
-//   area: z.object({ value: z.string(), label: z.string() }).nullable(),
-//   pincode: z.object({ value: z.string(), label: z.string() }, { required_error: "Pincode is required" }).nullable(),
-//   brandAddress: z.string().url("Please enter a valid URL").optional().or(z.literal('')),
-// });
-
-// // Create a TypeScript type from the schema
-// type BusinessDetailsFormValues = z.infer<typeof businessDetailsSchema>;
-
-// export default function BusinessDetailsComponent({ onValidationChange }: { onValidationChange?: (isValid: boolean) => void; }) {
-//   const { setBusinessDetailsData, businessDetailsData, sellerNumber, setStoreNameString } = useSellerStore();
-
-//   // STEP 3: Remove all useState calls for form fields. Initialize one useForm hook instead.
-//   const {
-//     register,
-//     handleSubmit,
-//     control,
-//     watch,
-//     setValue,
-//     formState: { errors, isValid },
-//   } = useForm<BusinessDetailsFormValues>({
-//     resolver: zodResolver(businessDetailsSchema),
-//     mode: 'onChange', // Validate on change to provide real-time feedback
-//     defaultValues: {
-//       ownerName: businessDetailsData?.ownerName || "",
-//       ownerEmail: businessDetailsData?.ownerEmail || "",
-//       brandName: businessDetailsData?.brandName || "",
-//       businessWpNum: businessDetailsData?.businessWpNum || "",
-//       brandTypes: businessDetailsData?.brandTypes || [],
-//       categories: (businessDetailsData?.categories || []).map(c => ({ value: c.category_id, label: c.name })),
-//       genders: businessDetailsData?.genders || [],
-//       returnAvailable: businessDetailsData?.returnDays !== undefined ? (businessDetailsData.returnDays > 0 ? 'Yes' : 'No') : undefined,
-//       returnDays: businessDetailsData?.returnDays || 0,
-//       exchangeAvailable: businessDetailsData?.exchangeDays !== undefined ? (businessDetailsData.exchangeDays > 0 ? 'Yes' : 'No') : undefined,
-//       exchangeDays: businessDetailsData?.exchangeDays || 0,
-//       city: businessDetailsData?.city?.[0] ? { value: businessDetailsData.city[0].id, label: businessDetailsData.city[0].name } : null,
-//       area: businessDetailsData?.area?.[0] ? { value: businessDetailsData.area[0].id, label: businessDetailsData.area[0].name } : null,
-//       pincode: businessDetailsData?.pinCode?.[0] ? { value: businessDetailsData.pinCode[0].id, label: businessDetailsData.pinCode[0].code } : null,
-//       brandAddress: businessDetailsData?.brandAddress || "",
-//     },
-//   });
-
-//   // Keep state for data fetched from APIs
-//   const [brandTypes, setBrandTypes] = useState<BrandType[]>([]);
-//   const [genders, setGenders] = useState<GenderType[]>([]);
-//   const [cities, setCities] = useState<City[]>([]);
-//   const [cityOptions, setCityOptions] = useState<SelectOption[]>([]);
-//   const [areas, setAreas] = useState<Area[]>([]);
-//   const [areaOptions, setAreaOptions] = useState<SelectOption[]>([]);
-//   const [pincodes, setPincodes] = useState<Pincode[]>([]);
-//   const [pincodeOptions, setPincodeOptions] = useState<SelectOption[]>([]);
-//   const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
-//   const [sameAsOwner, setSameAsOwner] = useState(true);
-
-//   // Watch for changes in specific fields to create dependent logic
-//   const returnAvailable = watch("returnAvailable");
-//   const exchangeAvailable = watch("exchangeAvailable");
-//   const selectedCityOption = watch("city");
-
-//   // This useEffect now simply reports the form's validity to the parent
-//   useEffect(() => {
-//     onValidationChange?.(isValid);
-//   }, [isValid, onValidationChange]);
-  
-//   // Update dependent fields, like clearing Area/Pincode when City changes
-//   useEffect(() => {
-//     if(selectedCityOption) {
-//       const filteredAreas = areas.filter((area) => area.city_id === selectedCityOption.value).map((area) => ({ value: area.id, label: area.name }));
-//       setAreaOptions(filteredAreas);
-//       const filteredPincodes = pincodes.filter((p) => p.city_id === selectedCityOption.value).map((p) => ({ value: p.id, label: p.code }));
-//       setPincodeOptions(filteredPincodes);
-//     }
-//   }, [selectedCityOption, areas, pincodes]);
-
-//   useEffect(() => {
-//     if (sameAsOwner) {
-//       setValue("businessWpNum", sellerNumber || "", { shouldValidate: true });
-//     }
-//   }, [sameAsOwner, sellerNumber, setValue]);
-
-
-//   // STEP 4: Create the onSubmit handler. It only runs if validation succeeds.
-//   const onSubmit = (data: BusinessDetailsFormValues) => {
-//     console.log("Form submitted successfully!", data);
-//     // You can now update your Zustand store with the clean data object
-//     const finalData = {
-//         ...data,
-//         brandTypes: data.brandTypes,
-//         categories: data.categories.map(c => ({ category_id: c.value, name: c.label })),
-//         genders: data.genders,
-//         city: data.city ? [cities.find(c => c.id === data.city!.value)!] : [],
-//         area: data.area ? [areas.find(a => a.id === data.area!.value)!] : [],
-//         pinCode: data.pincode ? [pincodes.find(p => p.id === data.pincode!.value)!] : [],
-//     };
-//     // setBusinessDetailsData(finalData);
-//     setStoreNameString(data.brandName);
-//     toast.success("Details saved successfully!");
-//   };
-
-//   useEffect(() => {
-//     const fetchInitialData = async () => {
-//       try {
-//         const [storeTypesRes, gendersRes, citiesRes, areasRes, pincodeRes, categoriesRes] = await Promise.all([
-//           api.get("/stores/store_types"),
-//           api.get("/genders/"),
-//           api.get("/location/cities/"),
-//           api.get("/location/areas/"),
-//           api.get("/location/pincodes/"),
-//           api.get("/categories/get_category_by_level/3"),
-//         ]);
-//         setBrandTypes(storeTypesRes.data);
-//         setGenders(gendersRes.data);
-//         setCities(citiesRes.data);
-//         setAreas(areasRes.data);
-//         setPincodes(pincodeRes.data);
-//         setCategoryOptions(categoriesRes.data.map((cat: Category) => ({ value: cat.category_id, label: cat.name })));
-//         setCityOptions(citiesRes.data.map((c: City) => ({ value: c.id, label: c.name })));
-//       } catch (error) {
-//         console.error("Error fetching initial data:", error);
-//       }
-//     };
-//     fetchInitialData();
-//   }, []);
-
-//   return (
-//     <form onSubmit={handleSubmit(onSubmit)} className="p-4 sm:p-6 rounded-2xl space-y-4 md:space-y-6 mx-auto bg-white text-black">
-//       <Section title="Store owner details" subtitle="This is for internal data, customers won't see this.">
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//           <div>
-//             <label className="block text-xs sm:text-sm font-medium mb-1 text-black">Store owner number</label>
-//             <input type="text" defaultValue={sellerNumber || ""} disabled className="w-full border rounded px-3 py-2 bg-gray-100" />
-//           </div>
-//           <InputField label="Email Address" type="email" {...register("ownerEmail")} required error={errors.ownerEmail?.message} />
-//           <InputField label="Store owner name" {...register("ownerName")} required error={errors.ownerName?.message} />
-//         </div>
-//       </Section>
-
-//       <Section title="Store details" subtitle="Customers will see these details on Attirelly">
-//         <div className="space-y-4">
-//           <InputField label="Store name" {...register("brandName")} required error={errors.brandName?.message} />
-//           <div>
-//             <InputField label="Store whatsapp number" type="tel" {...register("businessWpNum")} disabled={sameAsOwner} error={errors.businessWpNum?.message} />
-//             <label className="text-sm flex items-center gap-2 text-black mt-1">
-//               <input type="checkbox" checked={sameAsOwner} onChange={(e) => setSameAsOwner(e.target.checked)} />
-//               Same as owner number
-//             </label>
-//           </div>
-//           <Controller name="brandTypes" control={control} render={({ field }) => ( <ToggleChips label="Store Type" items={brandTypes} selected={field.value || []} error={errors.brandTypes?.message} toggle={(item) => { const current = field.value || []; const exists = current.some((t: BrandType) => t.id === item.id); const newValue = exists ? current.filter((t: BrandType) => t.id !== item.id) : [...current, item]; field.onChange(newValue); }} /> )} />
-//           <Controller name="categories" control={control} render={({ field }) => ( <MultiSelectField label="Expertise in" options={categoryOptions} {...field} error={errors.categories?.message} /> )} />
-//           <Controller name="genders" control={control} render={({ field }) => ( <ToggleChips label="Genders Catered" items={genders} selected={field.value || []} error={errors.genders?.message} toggle={(item) => { const current = field.value || []; const exists = current.some((g: GenderType) => g.id === item.id); const newValue = exists ? current.filter((g: GenderType) => g.id !== item.id) : [...current, item]; field.onChange(newValue); }} /> )} />
-//         </div>
-//       </Section>
-
-//       <Section title="Return & Exchange" subtitle="Define your store's policies.">
-//         <div className="space-y-4">
-//           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-//             <Controller name="returnAvailable" control={control} render={({field}) => ( <RadioGroup label="Return Available" options={["Yes", "No"]} {...field} required /> )}/>
-//             {returnAvailable === "Yes" && <InputField label="Return Days" type="number" {...register("returnDays", {valueAsNumber: true})} />}
-//           </div>
-//           {errors.returnAvailable && <p className="text-red-500 text-sm">{errors.returnAvailable.message}</p>}
-//           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-4">
-//             <Controller name="exchangeAvailable" control={control} render={({field}) => ( <RadioGroup label="Exchange Available" options={["Yes", "No"]} {...field} required /> )}/>
-//             {exchangeAvailable === "Yes" && <InputField label="Exchange Days" type="number" {...register("exchangeDays", {valueAsNumber: true})} />}
-//           </div>
-//           {errors.exchangeAvailable && <p className="text-red-500 text-sm">{errors.exchangeAvailable.message}</p>}
-//         </div>
-//       </Section>
-
-//       <Section title="Brand location" subtitle="Help customers find you.">
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//           <Controller name="city" control={control} render={({field}) => ( <SelectField label="City" options={cityOptions} {...field} error={errors.city?.message} onChange={(val) => { field.onChange(val); setValue("area", null); setValue("pincode", null); }} /> )}/>
-//           <Controller name="area" control={control} render={({field}) => ( <SelectField label="Area" options={areaOptions} {...field} isDisabled={!selectedCityOption} error={errors.area?.message} /> )}/>
-//           <Controller name="pincode" control={control} render={({field}) => ( <SelectField label="Pincode" options={pincodeOptions} {...field} isDisabled={!selectedCityOption} error={errors.pincode?.message} /> )}/>
-//           <InputField label="Enter Google Map link of store" {...register("brandAddress")} placeholder="https://maps.app.goo.gl/..." error={errors.brandAddress?.message} />
-//         </div>
-//       </Section>
-
-//       <button type="submit" className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:bg-gray-400">
-//         Save & Continue
-//       </button>
-//     </form>
-//   );
-// }
-
-
-// // Utility Components
-// const RequiredLabel: FC<{ children: React.ReactNode }> = ({ children }) => (
-//  <label className="block text-xs sm:text-sm font-medium mb-1 text-black">
-//    {children} <span className="text-red-500">*</span>
-//  </label>
-// );
-
-// const Section: FC<{ title: string; subtitle: string; children: React.ReactNode; }> = ({ title, subtitle, children }) => (
-//   <div className="p-4 sm:p-6 space-y-4 rounded-2xl shadow-sm bg-white">
-//     <h2 className="text-base sm:text-lg font-semibold mb-1 text-black">{title}</h2>
-//     <p className="text-xs sm:text-sm text-gray-500 mb-4">{subtitle}</p>
-//     <div className="-mx-4 sm:-mx-6 border-t border-gray-300"></div>
-//     <div className="pt-4">{children}</div>
-//   </div>
-// );
-
-// const InputField: FC<any> = ({ label, required, error, ...props }) => (
-//   <div>
-//     {required ? <RequiredLabel>{label}</RequiredLabel> : <label className="block text-xs sm:text-sm font-medium mb-1 text-black">{label}</label>}
-//     <input
-//       {...props}
-//       className={`w-full border rounded px-3 py-2 text-black placeholder-gray-400 ${error ? 'border-red-500' : 'border-gray-300'}`}
-//     />
-//     {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-//   </div>
-// );
-
-// const ToggleChips: FC<any> = ({ label, items, selected, toggle, error }) => (
-//  <div>
-//     <RequiredLabel>{label}</RequiredLabel>
-//     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-//       {items.map((item: any) => {
-//         const text = item.store_type || item.gender_value;
-//         const isSelected = selected.some((s: any) => s.id === item.id);
-//         return (
-//           <label key={item.id} className={`flex items-center gap-2 px-3 py-2 border rounded cursor-pointer ${ isSelected ? "bg-gray-100 border-gray-500" : "bg-white border-gray-500" }`}>
-//             <input type="checkbox" checked={isSelected} onChange={() => toggle(item)} className="accent-black" />
-//             <span className={`font-medium text-xs sm:text-sm ${isSelected ? "text-black" : "text-gray-500"}`}>{text}</span>
-//           </label>
-//         );
-//       })}
-//     </div>
-//     {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-//  </div>
-// );
-
-// const SelectField: FC<any> = ({ label, options, error, ...props }) => (
-//  <div>
-//     <RequiredLabel>{label}</RequiredLabel>
-//     <Select options={options} {...props} styles={selectStyles} classNamePrefix="react-select" className="text-black text-sm" />
-//     {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-//  </div>
-// );
-
-// const MultiSelectField: FC<any> = ({ label, options, value, onChange, error }) => (
-//  <div>
-//     <RequiredLabel>{label}</RequiredLabel>
-//     <Select
-//         isMulti
-//         options={options}
-//         value={value}
-//         onChange={(selected) => {
-//             if (Array.isArray(selected) && selected.length > 3) {
-//                 toast.error("Maximum 3 entries allowed");
-//                 return;
-//             }
-//             onChange(selected);
-//         }}
-//         closeMenuOnSelect={false}
-//         styles={selectStyles}
-//         classNamePrefix="react-select"
-//         className="text-black text-sm"
-//     />
-//     {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-//  </div>
-// );
-
-// const RadioGroup: FC<any> = ({ label, options, name, value, onChange, required }) => (
-//  <div>
-//     {required ? <RequiredLabel>{label}</RequiredLabel> : <label className="block text-xs sm:text-sm font-medium mb-2">{label}</label>}
-//     <div className="flex flex-wrap gap-4">
-//       {options.map((opt: string) => (
-//         <label key={opt} className={`flex items-center gap-2 px-4 py-2 border rounded cursor-pointer ${ value === opt ? "bg-gray-100 border-gray-500" : "bg-white border-gray-500" }`}>
-//           <input type="radio" className="accent-black" name={name} value={opt} checked={value === opt} onChange={(e) => onChange(e.target.value)} />
-//           <span className={`font-medium text-xs sm:text-sm ${value === opt ? "text-black" : "text-gray-500"}`}>{opt}</span>
-//         </label>
-//       ))}
-//     </div>
-//  </div>
-// );
 

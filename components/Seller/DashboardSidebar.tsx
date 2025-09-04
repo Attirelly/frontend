@@ -1,101 +1,80 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { useSellerStore } from "@/store/sellerStore";
 
-// Note: Some titles have been shortened for a cleaner mobile display.
+// --- Data (Unchanged) ---
 const sections = [
-  {
-    id: "brand",
-    title: "Business Details",
-    iconUrl: "/OnboardingSections/business_details.png",
-  },
-  {
-    id: "price",
-    title: "Price Filters",
-    iconUrl: "/OnboardingSections/price_filters.png",
-  },
-  {
-    id: "market",
-    title: "Where to Sell",
-    iconUrl: "/OnboardingSections/where_to_sell.png",
-  },
-  {
-    id: "social",
-    title: "Social Links",
-    iconUrl: "/OnboardingSections/social_links.png",
-  },
-  {
-    id: "photos",
-    title: "Store Photos",
-    iconUrl: "/OnboardingSections/store_photos.png",
-  },
-  {
-    id: "one_product",
-    title: "Add Single",
-    iconUrl: "/OnboardingSections/business_details.png",
-  },
-  {
-    id: "bulk_products",
-    title: "Add Bulk",
-    iconUrl: "/OnboardingSections/business_details.png",
-  },
-  {
-    id: "all_products",
-    title: "All Products",
-    iconUrl: "/OnboardingSections/business_details.png",
-  },
-  {
-    id: "qr_code",
-    title: "QR Code",
-    iconUrl: "/OnboardingSections/business_details.png",
-  },
+  { id: "brand", title: "Business Details", iconUrl: "/OnboardingSections/business_details.png" },
+  { id: "price", title: "Price Filters", iconUrl: "/OnboardingSections/price_filters.png" },
+  { id: "market", title: "Where to Sell", iconUrl: "/OnboardingSections/where_to_sell.png" },
+  { id: "social", title: "Social Links", iconUrl: "/OnboardingSections/social_links.png" },
+  { id: "photos", title: "Store Photos", iconUrl: "/OnboardingSections/store_photos.png" },
+  { id: "one_product", title: "Add Single", iconUrl: "/OnboardingSections/business_details.png" },
+  { id: "bulk_products", title: "Add Bulk", iconUrl: "/OnboardingSections/business_details.png" },
+  { id: "all_products", title: "All Products", iconUrl: "/OnboardingSections/business_details.png" },
+  { id: "qr_code", title: "QR Code", iconUrl: "/OnboardingSections/business_details.png" },
 ];
 
 const sectionGroups = [
-  {
-    heading: "Store Profile",
-    ids: ["brand", "price", "market", "social", "photos"],
-  },
-  {
-    heading: "Add Products",
-    ids: ["one_product", "bulk_products", "all_products"],
-  },
+  { heading: "Store Profile", ids: ["brand", "price", "market", "social", "photos"] },
+  { heading: "Add Products", ids: ["one_product", "bulk_products", "all_products"] },
   { heading: "QR Code", ids: ["qr_code"] },
 ];
 
-export default function DashboardSidebar({
-  selected,
-  onSelect,
-}: {
-  selected: string;
-  onSelect: (id: string) => void;
-}) {
-  const {
-    sellerId,
-    storeId,
-    businessDetailsValid,
-    businessDetailsData,
-    priceFiltersValid,
-    whereToSellData,
-    priceFiltersData,
-    socialLinksData,
-    storePhotosData,
-    storePhotosValid,
-  } = useSellerStore();
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
-    Object.fromEntries(sectionGroups.map((g) => [g.heading, true]))
+// --- Extracted MobileSidebar Component ---
+const MobileSidebar = ({ selected, onSelect }) => {
+  const scrollContainerRef = useRef(null);
+  const scrollPositionRef = useRef(0); // Ref to store the scrollLeft value
+
+  // This effect preserves the scroll position across re-renders
+  useLayoutEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    // Restore scroll position after a re-render
+    scrollContainer.scrollLeft = scrollPositionRef.current;
+
+    const handleScroll = () => {
+      scrollPositionRef.current = scrollContainer.scrollLeft;
+    };
+
+    scrollContainer.addEventListener("scroll", handleScroll);
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
+  }, []); // Empty dependency array means this runs only once on mount
+
+  return (
+    <nav className="w-full bg-white p-2 shadow-md rounded-lg">
+      <div
+        ref={scrollContainerRef}
+        className="flex flex-row items-center space-x-2 overflow-x-auto whitespace-nowrap scrollbar-none"
+      >
+        {sections.map((section) => (
+          <button
+            key={section.id}
+            onClick={() => onSelect(section.id)}
+            className={`flex flex-col items-center justify-center p-2 rounded-lg transition min-w-[90px] ${
+              selected === section.id
+                ? "bg-gray-200"
+                : "bg-transparent hover:bg-gray-100"
+            }`}
+          >
+            <img
+              src={section.iconUrl}
+              alt={section.title}
+              className="w-7 h-7 mb-1 rounded-full object-cover"
+            />
+            <span className="text-xs font-medium text-center">{section.title}</span>
+          </button>
+        ))}
+      </div>
+    </nav>
   );
+};
 
-  const toggleGroup = (heading: string) => {
-    setOpenGroups((prev) => ({ ...prev, [heading]: !prev[heading] }));
-  };
-
-  const handleUpdate = async () => {
-    // This function remains unchanged
-  };
-
-  const DesktopSidebar = () => (
+// --- Extracted DesktopSidebar Component ---
+const DesktopSidebar = ({ selected, onSelect, openGroups, toggleGroup }) => {
+  return (
     <div className="bg-gray-100 rounded-2xl md:w-80 lg:w-96 flex-shrink-0 self-start space-y-6 text-black">
       {sectionGroups.map((group) => (
         <div className="bg-white p-4 rounded-2xl" key={group.heading}>
@@ -105,7 +84,7 @@ export default function DashboardSidebar({
           >
             <h3 className="text-md font-semibold">{group.heading}</h3>
             <span className="text-sm text-gray-500">
-              {openGroups[group.heading] ? "^" : "⌄"}
+              {openGroups[group.heading] ? "▲" : "▼"}
             </span>
           </div>
           {openGroups[group.heading] && (
@@ -117,12 +96,11 @@ export default function DashboardSidebar({
                   <div
                     key={section.id}
                     onClick={() => onSelect(section.id)}
-                    className={`flex items-start gap-4 p-2 cursor-pointer rounded-2xl border transition 
-                      ${
-                        selected === section.id
-                          ? "border-black bg-gray-100"
-                          : "border-gray-300 hover:bg-gray-50"
-                      }`}
+                    className={`flex items-start gap-4 p-2 cursor-pointer rounded-2xl border transition ${
+                      selected === section.id
+                        ? "border-black bg-gray-100"
+                        : "border-gray-300 hover:bg-gray-50"
+                    }`}
                   >
                     <img
                       src={section.iconUrl}
@@ -141,69 +119,34 @@ export default function DashboardSidebar({
       ))}
     </div>
   );
+};
 
-  const MobileSidebar = () => {
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
+// --- Main DashboardSidebar Component ---
+export default function DashboardSidebar({ selected, onSelect }) {
+  const {
+    // ... your useSellerStore hooks remain unchanged
+  } = useSellerStore();
 
-    // This effect runs whenever the 'selected' section changes.
-    useEffect(() => {
-      if (scrollContainerRef.current) {
-        // Find the currently active button within the scroll container.
-        const activeButton =
-          scrollContainerRef.current.querySelector<HTMLButtonElement>(
-            `[data-section-id="${selected}"]`
-          );
+  const [openGroups, setOpenGroups] = useState(
+    Object.fromEntries(sectionGroups.map((g) => [g.heading, true]))
+  );
 
-        if (activeButton) {
-          // If the active button is found, scroll it into the center of the view.
-          activeButton.scrollIntoView({
-            behavior: "smooth", // For a smooth scrolling animation
-            inline: "nearest", // Horizontally align to the center
-            block: "nearest", // Keep vertical alignment
-          });
-        }
-      }
-    }, [selected]); // Dependency array ensures this runs only when 'selected' changes.
-
-    return (
-      <nav className="w-full bg-white p-2 shadow-md rounded-lg">
-        <div
-          ref={scrollContainerRef} // Attach the ref to the scrollable container
-          className="flex flex-row items-center space-x-2 overflow-x-auto whitespace-nowrap scrollbar-none"
-        >
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              data-section-id={section.id} // Add a data attribute for easy targeting
-              onClick={() => onSelect(section.id)}
-              className={`flex flex-col items-center justify-center p-2 rounded-lg transition min-w-[90px] ${
-                selected === section.id
-                  ? "bg-gray-200"
-                  : "bg-transparent hover:bg-gray-100"
-              }`}
-            >
-              <img
-                src={section.iconUrl}
-                alt={section.title}
-                className="w-7 h-7 mb-1 rounded-full object-cover"
-              />
-              <span className="text-xs font-medium text-center">
-                {section.title}
-              </span>
-            </button>
-          ))}
-        </div>
-      </nav>
-    );
+  const toggleGroup = (heading) => {
+    setOpenGroups((prev) => ({ ...prev, [heading]: !prev[heading] }));
   };
 
   return (
     <>
       <div className="block md:hidden w-full">
-        <MobileSidebar />
+        <MobileSidebar selected={selected} onSelect={onSelect} />
       </div>
       <div className="hidden md:block">
-        <DesktopSidebar />
+        <DesktopSidebar
+          selected={selected}
+          onSelect={onSelect}
+          openGroups={openGroups}
+          toggleGroup={toggleGroup}
+        />
       </div>
     </>
   );
