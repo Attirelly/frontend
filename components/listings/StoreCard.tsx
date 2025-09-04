@@ -240,7 +240,7 @@ export default function StoreCard({
       {/* Store Image */}
       {/* ✅ 2. Image size is responsive: full-width on mobile, fixed-width on desktop. */}
       {/* Aspect ratio is maintained for a consistent look on mobile. */}
-      <div className="relative w-full md:w-[256px] aspect-[1] md:h-[224px] md:aspect-auto overflow-hidden flex-shrink-0">
+      <div className="relative w-full md:w-[256px] aspect-[1] md:h-[224px] md:aspect-auto  flex-shrink-0">
         <Image
           src={imageUrl}
           alt={storeName}
@@ -248,7 +248,7 @@ export default function StoreCard({
           className="object-cover object-top rounded-xl"
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
-        {discount && (
+        {/* {discount && (
           <div
             className={`absolute bottom-0 left-0 mb-4 w-fit h-7 flex items-center pl-2 pr-10 overflow-hidden bg-[linear-gradient(to_right,_#2563eb_60%,_transparent)] ${manrope.className} text-white text-xs font-medium`}
           >
@@ -261,6 +261,31 @@ export default function StoreCard({
             />
             Upto {discount}% OFF
           </div>
+        )} */}
+        {instagramFollowers && (
+          <div className="md:hidden absolute -bottom-5 -left-1">
+            <Image
+            src="/ListingPageHeader/curved_background.svg"
+            alt="Instagram Background"
+            width={180}
+            height={20}
+            className=""/>
+
+            <div
+            className={`absolute bottom-0 left-0 w-fit h-9 flex items-start pl-4 pr-10 pt-1 overflow-hidden ${manrope.className} text-black text-xs font-medium`}
+          >
+            <Image
+              src="/OnboardingSections/instagram.svg"
+              alt="Instagram"
+              width={15}
+              height={15}
+              className="mr-2"
+            />
+            {formatNumberStr(instagramFollowers)} Followers
+          </div>
+
+          </div>
+          
         )}
       </div>
 
@@ -280,7 +305,7 @@ export default function StoreCard({
               </h3>
             </div>
             {instagramFollowers && (
-              <div className="flex-shrink-0 flex items-center gap-1 text-xs text-[#333333] pt-1.5">
+              <div className="hidden flex-shrink-0 md:flex items-center gap-1 text-xs text-[#333333] pt-1.5">
                 <Image
                   src="/OnboardingSections/instagram.svg"
                   alt="Instagram"
