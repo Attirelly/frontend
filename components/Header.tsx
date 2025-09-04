@@ -10,7 +10,7 @@ interface HeaderProps {
 export default function Header({ title, actions }: HeaderProps) {
   return (
           
-    <header className="flex justify-between items-center px-6 py-2 md:py-4 bg-white">
+    <header className="flex justify-between items-center px-6 py-2 bg-white">
       <h1 className={`${rosario.className} text-[34px] text-[#373737] cursor-pointer font-[600px]`}>{title}</h1>
       <div className="px-6 py-2 rounded-full 
              bg-white border border-gray-300 
