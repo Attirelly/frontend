@@ -27,6 +27,7 @@ export default function ProductContainer({
     activeFacet,
     selectedPriceRange,
     priceBounds,
+    setIsResultsLoading,
   } = useProductFilterStore();
 
   const { query, city, area, storeType, sortBy } = useHeaderStore();
@@ -92,6 +93,7 @@ export default function ProductContainer({
         }
       }
       filterClauses.push(priceFilterString);
+      setIsResultsLoading(true);
 
       const finalFilterString = filterClauses.join(" AND ");
       let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
@@ -116,6 +118,7 @@ export default function ProductContainer({
         setProducts([]);
         setBuffer([]);
         setResults(0);
+        setIsResultsLoading(false);
         return;
       } else {
         setNoResultFound(false);
@@ -159,12 +162,14 @@ export default function ProductContainer({
       }
 
       setLoading(false);
+      setIsResultsLoading(false);
     } catch (error: any) {
       if (error.name !== "CanceledError" && error.name !== "AbortError") {
         console.error("Error fetching products:", error);
       }
     } finally {
       setLoading(false);
+      // setIsResultsLoading(false);
     }
   };
 
