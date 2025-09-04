@@ -329,7 +329,8 @@ export default function StoreCard({
             <p className="text-sm text-[#5F5F5F]">{location}</p>
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-1">
+          <div className="flex flex-col flex-wrap gap-2 mt-1">
+            <div>
             {storeTypes.map((type, idx) => (
               <span
                 key={idx}
@@ -339,14 +340,19 @@ export default function StoreCard({
                 {type}
               </span>
             ))}
-            {priceRanges?.map((type, idx) => (
-              <span
-                key={idx}
-                className="text-xs bg-[#F5F5F5] px-3 py-1 rounded-full text-black"
-              >
-                {type}
-              </span>
-            ))}
+            </div>
+            <div>
+              {priceRanges &&
+                  [...new Set(priceRanges)].map((type) => (
+                    <span
+                      key={type} // Use the unique price range as the key
+                      className="text-xs bg-[#F5F5F5] px-3 py-1 rounded-full text-black"
+                      style={{ fontWeight: 400 }}
+                    >
+                      {type}
+                    </span>
+                  ))}
+            </div>
           </div>
         </div>
         {bestSelling && bestSelling.length > 0 && (
