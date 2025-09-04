@@ -20,20 +20,20 @@ const AmbassadorBenefits: React.FC<Props> = ({ screenSize = 'sm' }) => {
           <div className="flex relative flex-col items-center px-8 py-4">
             {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
             <Image src="/CollegeAmbassador/money.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 245} height={screenSize === 'sm' ? 190 : 245} className="" />
-            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5">Earn up to Rs 25,000/Month</span>
+            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5 text-center">Earn up to Rs 25,000/Month</span>
             <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>
               Promote India's fastest-growing hyper local fashion marketplace and earn for every successful referral, event, and content initiative</span>
           </div>
           <div className="flex flex-col items-center px-8 py-4">
             {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
             <Image src="/CollegeAmbassador/people_web.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 245} height={screenSize === 'sm' ? 190 : 245} className="" />
-            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5">Real Industry Exposure</span>
+            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5 text-center">Real Industry Exposure</span>
             <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>Get hands-on experience in the world of fashion-tech, marketing, and influencer outreach</span>
           </div>
           <div className="flex flex-col items-center px-8 py-4">
             {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
-            <Image src="/CollegeAmbassador/two_hand.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 245} height={screenSize === 'sm' ? 190 : 245} className="" />
-            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5">Gain practical Experience</span>
+            <Image src="/CollegeAmbassador/two_hand.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 260} height={screenSize === 'sm' ? 190 : 245} className="" />
+            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5 text-center">Gain practical Experience</span>
             <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>Learn how to build and promote your brand through an exciting 0 → 100 journey</span>
           </div>
         </div>
@@ -43,9 +43,9 @@ const AmbassadorBenefits: React.FC<Props> = ({ screenSize = 'sm' }) => {
       {/* Section 2 */}
       <div className="w-full px-[20px] md:px-[40px]">
         <div className="relative flex flex-col lg:flex-row lg:h-[347px] border border-[#D8D8D8] bg-[#F7F9FC] rounded-xl mx-auto overflow-hidden">
-          <div className="flex flex-col items-center lg:my-[94px] lg:ml-[40px] lg:w-[647px] lg:h-[189px] gap-4">
+          <div className="flex flex-col items-center lg:my-[94px] lg:ml-[40px] lg:w-[647px] lg:h-[189px] lg:items-start gap-4">
             <span
-              className="text-[24px] md:text-[36px] text-[#0B0B0B]"
+              className="text-[24px] md:text-[36px] text-[#0B0B0B] text-center lg:text-left"
               style={{ fontWeight: 800 }}
             >
               Why Attirelly

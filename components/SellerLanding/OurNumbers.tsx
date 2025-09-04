@@ -8,6 +8,7 @@ import DesignerStoreType from "./DesignerStoreType";
 import RetailStoreType from "./RetailStoreType";
 import TailorStoreType from "./TailorStoreType";
 import StylistStoreType from "./StylistStoreType";
+import Link from "next/link";
 
 const numbers = [
   {
@@ -71,13 +72,13 @@ export default function OurNumbers({ screenSize = 'sm' }: Props) {
       </div>
 
       {/* Section 2 */}
-      <div className={`w-full 
+      <div className={`w-fit px-8 
           ${screenSize === 'lg' ? 'px-[40px]' : ''}
           ${screenSize === 'xl' ? 'px-[80px]' : ''}`}>
 
         <div className={`flex flex-col lg:flex-row
           bg-[#F7F9FC] rounded-xl`}>
-          <div className={`flex flex-col lg:my-[94px] ml-[40px] w-[332px] md:w-[647px] h-[233px] gap-4 items-center
+          <div className={`flex flex-col lg:my-[94px] ml-[40px] w-[332px] md:w-[647px] h-[233px] gap-4 items-center lg:items-start
           ${screenSize !== 'xl' && screenSize !== 'lg' ? 'text-center' : ''}`}>
             <span
               className="text-[24px] lg:text-[36px] text-[#1B1C57]"
@@ -92,9 +93,9 @@ export default function OurNumbers({ screenSize = 'sm' }: Props) {
               Integrate your Instagram, Shopify, Pinterest board, Facebook to
               Attirelly and manage everything at once click
             </span>
-            <button className="bg-black rounded p-2 text-white w-fit mt-2">
+            <Link href="/seller_signup" className="bg-black rounded p-2 text-white w-fit mt-2 cursor-pointer">
               Start Selling
-            </button>
+            </Link>
           </div>
           <div className="relative flex justify-center">
             {/* <span className={`${rosario.className} absolute top-[44%] right-[23%] z-10 text-[29px] text-black`} style={{ fontWeight: 600 }}>Attirelly</span> */}
@@ -103,13 +104,14 @@ export default function OurNumbers({ screenSize = 'sm' }: Props) {
               alt="spider web"
               width={570}
               height={400}
-              className="hidden lg:flex" />
-            <Image
+              // className="hidden lg:flex" 
+              />
+            {/* <Image
               src="/SellerLanding/spider_web.svg"
               alt="spider web"
               width={570}
               height={400}
-              className="flex lg:hidden" />
+              className="flex lg:hidden" /> */}
           </div>
         </div>
 
@@ -121,7 +123,7 @@ export default function OurNumbers({ screenSize = 'sm' }: Props) {
         <span className="text-[24px] md:text-[32px] text-[#1B1C57]" style={{ fontWeight: 700 }}>Who can join?</span>
         <span className="text-[14px] md:text-[18px] text-[#1B1C57] mb-8 text-center px-5" style={{ fontWeight: 400 }}>if you sell ethnic wear, ranging from affordable to luxury wear, Attirelly is for you. We work with:</span>
         {/* <StoreTypeTabs defaultValue={process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE || ''}/> */}
-        <StoreTypeTabs />
+        <StoreTypeTabs context="user" defaultValue="f923d739-4c06-4472-9bfd-bb848b32594b"/>
         {storeType?.store_type === 'Designer Label'
           ? <DesignerStoreType screenSize={screenSize}/> :
           storeType?.store_type === 'Retail Store'
@@ -196,9 +198,9 @@ export default function OurNumbers({ screenSize = 'sm' }: Props) {
             Attirelly charges 0% commission rate across all product sales, allowing sellers to retain their full earnings on every sale
 
           </span>
-          <button className="bg-black rounded p-2 text-white w-fit mt-2">
+          <Link href="/seller_signup" className="bg-black rounded p-2 text-white w-fit mt-2 cursor-pointer">
             Start Selling
-          </button>
+          </Link>
         </div>
 
         <div className="flex justify-end">

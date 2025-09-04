@@ -327,47 +327,51 @@ export default function StoreTypeTabs({
     //     </div>
     //   ))}
     // </div>
+    <>
+    
+    {context?.toLowerCase() === 'user' ? (
 
-    // <div className="grid w-full max-w-sm grid-cols-2 gap-y-4 md:flex md:gap-2 md:w-fit md:max-w-fit md:items-center md:rounded-full md:p-2">
-    //           {tabs.map((tab, index) => (
-    //             <React.Fragment key={tab.value}>
-    //               {/* Wrapper for button and mobile divider */}
-    //               <div className="relative flex w-full justify-center">
-    //                 <button
-    //                   className={clsx(
-    //                     manrope.className,
-    //                     'py-2 rounded-full transition-all duration-200 text-base text-center font-medium',
-    //                     // Mobile-first sizing
-    //                     'w-[150px]',
-    //                     // Desktop sizing overrides
-    //                     'md:py-2 md:px-4 md:mx-0',
-    //                     // Conditional styling based on selection
-    //                     selectedStoreType?.id === tab.value
-    //                       ? // Selected styles: black on mobile, white w/ shadow on desktop
-    //                         'bg-black text-white md:shadow'
-    //                       : // Default styles: white w/ border on mobile, transparent on desktop
-    //                         'bg-[#F5F5F5] text-black border border-gray-300 md:border-none md:text-[#565656] hover:md:text-black'
-    //                   )}
-    //                   onClick={() => handleTabClick(tab)}
-    //                 >
-    //                   {tab.label}
-    //                 </button>
+      <div className="grid w-full max-w-sm grid-cols-2 gap-y-4 md:flex md:gap-2 md:w-fit md:max-w-fit md:items-center md:rounded-full md:p-2">
+              {tabs.map((tab, index) => (
+                <React.Fragment key={tab.value}>
+                  {/* Wrapper for button and mobile divider */}
+                  <div className="relative flex w-full justify-center">
+                    <button
+                      className={clsx(
+                        manrope.className,
+                        'py-2 rounded-full transition-all duration-200 text-base text-center font-medium',
+                        // Mobile-first sizing
+                        'w-[150px]',
+                        // Desktop sizing overrides
+                        'md:py-2 md:px-4 md:mx-0',
+                        // Conditional styling based on selection
+                        selectedStoreType?.id === tab.value
+                          ? // Selected styles: black on mobile, white w/ shadow on desktop
+                            'bg-black text-white md:shadow'
+                          : // Default styles: white w/ border on mobile, transparent on desktop
+                            'bg-[#F5F5F5] text-black border border-gray-300 md:border-none md:text-[#565656] hover:md:text-black'
+                      )}
+                      onClick={() => handleTabClick(tab)}
+                    >
+                      {tab.label}
+                    </button>
 
-    //                 {/* --- Mobile Divider --- */}
-    //                 {/* This divider is only visible on mobile (md:hidden) */}
-    //                 {/* It appears on the right of the first item in each row (index 0 and 2) */}
-    //                 {index % 2 === 0 && (
-    //                   <div className="absolute right-0 top-0 h-full w-px bg-gray-300 md:hidden" />
-    //                 )}
-    //               </div>
+                    {/* --- Mobile Divider --- */}
+                    {/* This divider is only visible on mobile (md:hidden) */}
+                    {/* It appears on the right of the first item in each row (index 0 and 2) */}
+                    {index % 2 === 0 && (
+                      <div className="absolute right-0 top-0 h-full w-px bg-gray-300 md:hidden" />
+                    )}
+                  </div>
 
-    //             </React.Fragment>
-    //           ))}
-    //         </div>
+                </React.Fragment>
+              ))}
+            
+        </div>
 
-    //   );
+    ) : (
 
-    <div
+      <div
       ref={scrollContainerRef}
       className={clsx(
         // Mobile: Flex container with horizontal scrolling
@@ -399,5 +403,10 @@ export default function StoreTypeTabs({
         </button>
       ))}
     </div>
+    )}
+
+    </>
+
+    
   );
 }

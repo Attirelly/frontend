@@ -9,6 +9,7 @@ import AmbassadorOurNumbers from "@/components/CollegeAmbassador/AmbassadorOurNu
 import AmbassadorRevolution from "@/components/CollegeAmbassador/AmbassadorRevolution";
 import AmbassadorSellerForm from "@/components/CollegeAmbassador/AmbassadorSellerForm";
 import { useEffect, useState } from "react";
+import AmbassadorWhoCanJoin from "@/components/CollegeAmbassador/AmbassadorWhoCanJoin";
 
 export default function SellerOnboardingPage() {
   const [screenSize, setScreenSize] = useState('sm');
@@ -49,8 +50,9 @@ export default function SellerOnboardingPage() {
       <AmbassadorHeader />
       <AmbassadorHero screenSize={screenSize} />
       <div className="absolute w-full top-[730px] lg:top-[548px] rounded-tl-4xl rounded-tr-4xl bg-white">
-        <section id="Why Attirelly?"><AmbassadorBenefits screenSize={screenSize} /></section>
-        <section id="Our Numbers"><AmbassadorOurNumbers screenSize={screenSize}/></section>
+        <section id="What Is Attirelly?"><AmbassadorBenefits screenSize={screenSize} /></section>
+        <section id="Benefits"><AmbassadorOurNumbers screenSize={screenSize}/></section>
+        <section id="Who Can Join"><AmbassadorWhoCanJoin screenSize={screenSize}/></section>
         <section id="Future Roadmap"><AmbassadorRevolution screenSize={screenSize}/></section>  
         <section id="FAQ"><FAQ /></section>
         <section id="Contact Us"><AmbassadorSellerForm /></section>
