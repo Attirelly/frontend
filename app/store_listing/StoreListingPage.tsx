@@ -155,22 +155,22 @@ export default function StoreListingPage() {
   ]);
 
   const getHeading = () => {
-    // if (storeType && query && city) {
-    //   return `Showing ${storeType.store_type} for ${query} in ${city.name}`;
-    // }
-    // else if (storeType && query) {
-    //   return `Showing ${storeType.store_type} for ${query}`;
-    // }
-    // else if (storeType && city) {
-    //   return `Showing ${storeType.store_type} in ${city.name}`;
-    // }
-    // else
+    if (storeType && query && city) {
+      return `Showing ${storeType.store_type} for ${query} in ${city.name}`;
+    }
+    else if (storeType && query) {
+      return `Showing ${storeType.store_type} for ${query}`;
+    }
+    else if (storeType && city) {
+      return `Showing ${storeType.store_type} in ${city.name}`;
+    }
+    else
     if (query && city) {
       return `Showing stores for ${query} in ${city.name}`;
     }
-    // else if (storeType) {
-    //   return `Showing ${storeType.store_type}`;
-    // }
+    else if (storeType) {
+      return `Showing ${storeType.store_type}`;
+    }
     else if (query) {
       return `Showing stores for ${query}`;
     } else if (city) {
