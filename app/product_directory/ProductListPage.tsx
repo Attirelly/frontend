@@ -235,10 +235,10 @@ export default function ProductListPage() {
 
         {/* Content Section */}
         <div className="flex flex-col mt-5 items-center">
-          <hr className="border-t border-[#D9D9D9] w-full mt-5 mb-4" />
-          <div className="flex flex-col items-center w-full mt-8">
-            <div className="w-full px-4">
-              <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <hr className="border-t border-[#D9D9D9] w-full mt-2 mb-2 md:mt-4 md:mb-4" />
+          <div className="flex flex-col items-center w-full mt-4 md:mt-8">
+            <div className="w-full px-2">
+              <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4">
                 {/* Filter Column */}
                 <div className="hidden lg:block lg:col-span-1 sticky top-2">
                   <DynamicFilter context="product" />
