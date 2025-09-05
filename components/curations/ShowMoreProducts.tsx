@@ -50,10 +50,10 @@ export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductPro
         }
     }, []);
     return (
-        <div className="py-2 flex md:gap-5 lg:gap-10 overflow-x-auto scrollbar-none">
-
+        // <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 overflow-x-auto scrollbar-none gap-2 md:gap-4">
+        <div className="flex gap-2 overflow-x-scroll scrollbar-none">    
             {products.map((product, index) => (
-                <div key={index} className="flex-shrink-0">
+                <div key={index} className="flex-shrink-0 w-40 sm:w-50 md:w-60 lg:w-64">
                     <ProductCard {...product} />
                 </div>
             ))}
