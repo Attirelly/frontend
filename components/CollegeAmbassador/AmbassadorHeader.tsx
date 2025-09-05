@@ -5,10 +5,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 const res = [
-  { title: "Why Attirelly", id: "Why Attirelly?" },
+  { title: "What Is Attirelly", id: "What Is Attirelly?" },
   // { title: "How it works", id: "How it works" },
-  { title: "Benefits", id: "Our Numbers" },
-  { title: "Future Roadmap", id: "Future Roadmap" },
+  { title: "Benefits", id: "Benefits" },
+  { title: "Who Can Join", id: "Who Can Join" },
   { title: "FAQ", id: "FAQ" },
   { title: "Contact Us", id: "Contact Us" },
 ];
@@ -58,9 +58,10 @@ export default function AmbassadorHeader() {
         </div>
 
         <div className="flex justify-center p-[5px]">
-          <Link href="/seller_signup" className=" text-[12px] md:text-[18px] text-white w-fit bg-black rounded px-[20px] py-[6px] md:px-[28px] md:py-[10px]">
+          <button  className=" text-[12px] md:text-[18px] text-white w-fit bg-black rounded px-[20px] py-[6px] md:px-[28px] md:py-[10px]"
+          onClick={() => handleClick("Contact Us", "Contact Us")}>
             Join Attirelly
-          </Link>
+          </button>
         </div>
       </div>
       <div
@@ -87,12 +88,12 @@ export default function AmbassadorHeader() {
           })}
         </div>
         <div className="flex justify-center">
-          <Link
-            href="/seller_signin"
+          <button
             className="text-[18px] text-white w-fit bg-black rounded px-[28px] py-[10px]"
+            onClick={() => handleClick("Contact Us", "Contact Us")}
           >
             Join Attirelly
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -120,7 +121,7 @@ export default function AmbassadorHeader() {
           {res.map((item) => (
             <span
               key={item.id}
-              className={`text-lg cursor-pointer py-2 border-b border-gray-200 transition-colors duration-200 ${selected === item.title ? "text-black font-bold" : "text-gray-500 hover:text-black"
+              className={`text-lg ${item.title === 'Benefits' ? 'hidden lg:flex' : ''} cursor-pointer py-2 border-b border-gray-200 transition-colors duration-200 ${selected === item.title ? "text-black font-bold" : "text-gray-500 hover:text-black"
                 }`}
               style={{ fontWeight: selected === item.title ? 600 : 500 }}
               onClick={() => handleClick(item.title, item.id)}
@@ -129,13 +130,12 @@ export default function AmbassadorHeader() {
             </span>
           ))}
         </nav>
-        <a
-          href="/seller_signin"
+        <button
           className="mt-8 text-center text-lg text-white bg-black rounded px-6 py-3 transition-colors duration-200 hover:bg-gray-800"
-          onClick={() => setHamburgerMenu(false)}
+          onClick={() => handleClick("Contact Us", "Contact Us")}
         >
-          Seller Login
-        </a>
+          Join Attirelly
+        </button>
       </div>
       {/* Overlay to close sidebar */}
       {hamburgerMenu && (

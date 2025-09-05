@@ -101,7 +101,7 @@ export default function OurNumbers({ screenSize }: Props) {
       </div>
       </div>
       {/* Section 3 */}
-      <div className="flex flex-col items-center gap-4 px-2">
+{/* <div className="flex flex-col items-center gap-4 px-2">
         <span className="text-[24px] md:text-[32px] text-[#1B1C57]" style={{fontWeight:700}}>Who can join?</span>
         <span className="text-[14px] w-[350px] md:w-[450px] lg:w-full md:text-[18px] text-[#1B1C57] mb-8 text-center" style={{fontWeight:400}}>if you sell ethnic wear, ranging from affordable to luxury wear, Attirelly is for you. We work with:</span>
         <WhoCanJoinTabs defaultValue="Students"/>
@@ -113,8 +113,7 @@ export default function OurNumbers({ screenSize }: Props) {
         ? <InfluencerAmbassador screenSize={screenSize}/> :
         ambassadorType === 'Fashion'
         ? <FashionAmbassador screenSize={screenSize}/> : <div></div>}
-      </div>
-
+      </div> */}
       
     </div>
   );

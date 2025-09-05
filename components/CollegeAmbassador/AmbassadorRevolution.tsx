@@ -8,6 +8,14 @@ type Props = {
 
 export default function OurNumbers({ screenSize }: Props) {
     const { storeType } = useHeaderStore();
+
+    const handleClick = (title: string, id: string) => {
+    window.history.pushState(null, "", `#${id}`);
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
     return (
         <div className="px-10 lg:px-0">
 
@@ -27,7 +35,8 @@ export default function OurNumbers({ screenSize }: Props) {
                     Build, earn, and learn — all while being a trendsetter on your campus
 
                 </span>
-                <button className="bg-black rounded p-2 text-white w-fit mt-2">
+                <button className="bg-black rounded p-2 text-white w-fit mt-2 cursor-pointer"
+                onClick={() => handleClick("Contact Us", "Contact Us")}>
                     Apply Now
                 </button>
             </div>
