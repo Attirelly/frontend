@@ -67,7 +67,7 @@ export default function ProductContainer({
     if (storeTypeString) {
       facetFilters.push([`store_types:${storeTypeString}`]);
     }
-    return encodeURIComponent(JSON.stringify(filters));
+    return encodeURIComponent(JSON.stringify(facetFilters));
   };
 
   const fetchProducts = async (
@@ -80,6 +80,7 @@ export default function ProductContainer({
     );
 
     try {
+      console.log("Fetching products...", facetFilters, filters);
       let filterClauses: string[] = [];
       if (filters && !skipFilters) {
         filterClauses.push(filters);
