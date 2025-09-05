@@ -2,7 +2,7 @@
 import { api } from "@/lib/axios";
 import StoreCard from "./StoreCard";
 import { useHeaderStore } from "@/store/listing_header_store";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BrandType, City, StoreCardType } from "@/types/SellerTypes";
 import { useFilterStore } from "@/store/filterStore";
 import { event } from "@/lib/gtag";
@@ -28,8 +28,21 @@ export default function StoreContainerPage() {
   const [loading, setLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const [noResultFound, setNoResultFound] = useState(false);
-  const [differentLocationStoreIndex, setDifferentLocationStoreIndex] =
-    useState<number>(-1);
+
+
+  const differentLocationStoreIndex = useMemo(() => {
+  // findIndex is a cleaner version of your loop.
+  // It stops as soon as it finds a match.
+  return stores.findIndex((store) => {
+    const selectedCity = city?.name.toLowerCase();
+    const selectedArea = area?.name.toLowerCase();
+
+    const areaMismatch = selectedArea && store.location.toLowerCase().includes(selectedArea) === false;
+    const cityMismatch = selectedCity && store.location.toLowerCase().includes(selectedCity) === false;
+
+    return (selectedCity && cityMismatch) || (selectedArea && areaMismatch);
+  });
+}, [stores, city, area]);
 
   const buildFacetFilters = (
     facets: Record<string, string[]>,
@@ -132,30 +145,6 @@ export default function StoreContainerPage() {
       setFacets(data.facets, activeFacet);
       setTotalPages(data.total_pages);
 
-      let firstDifferentIndex = -1;
-
-      if (differentLocationStoreIndex === -1) {
-        for (let index = 0; index < data.hits.length; index++) {
-          const sc = data.hits[index];
-          const absoluteIndex = currentPage * BUFFER_SIZE + index;
-
-          if (
-            (city &&
-              sc.city &&
-              city.name.toLowerCase() !== sc.city.toLowerCase()) ||
-            (area &&
-              sc.area &&
-              area.name.toLowerCase() !== sc.area.toLowerCase())
-          ) {
-            setDifferentLocationStoreIndex(absoluteIndex);
-            break; // ✅ stop at the first mismatch
-          }
-        }
-      }
-
-      if (differentLocationStoreIndex === -1 && firstDifferentIndex !== -1) {
-        setDifferentLocationStoreIndex(firstDifferentIndex);
-      }
 
       const storeCards: StoreCardType[] = data.hits.map(
         (sc: any, index: number) => {
