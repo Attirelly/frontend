@@ -89,7 +89,7 @@ const MobileSidebar = ({ selected, onSelect }) => {
     <nav className="w-full p-2 rounded-lg text-black bg-white">
       <div
         ref={scrollContainerRef}
-        className="flex flex-row items-center space-x-2 overflow-x-auto whitespace-nowrap scrollbar-none"
+        className="flex flex-row items-stretch space-x-2 overflow-x-auto whitespace-nowrap scrollbar-none"
       >
         {sections.map((section) => (
           <button
@@ -106,7 +106,7 @@ const MobileSidebar = ({ selected, onSelect }) => {
               alt={section.title}
               className="w-7 h-7 mb-1 rounded-full object-cover"
             />
-            <div className="text-xs font-[400] text-center">
+            <div className="text-xs font-[400] text-center whitespace-normal">
               {section.title}
             </div>
           </button>

@@ -8,7 +8,6 @@ import { useFilterStore } from "@/store/filterStore";
 import { event } from "@/lib/gtag";
 import StoreCardSkeleton from "./skeleton/StoreCardSkeleton";
 import NoResultFound from "./NoResultFound";
-import { log } from "console";
 
 const ITEMS_PER_PAGE = 10;
 const BUFFER_SIZE = 60; // Fetch 60 stores at a time from the backend

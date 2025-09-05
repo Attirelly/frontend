@@ -181,7 +181,7 @@ export default function SellerOnboardingPage() {
         title="Attirelly"
         actions={
           <div>
-            <a href="tel:+918699892707" className="text-blue-500 text-sm hover:underline">
+            <a href="tel:+918699892707" className="text-blue-500 text-[10px] md:text-sm hover:underline">
               Need help? Call +91-8699892707
             </a>
           </div>
