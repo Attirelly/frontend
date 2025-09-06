@@ -2,6 +2,15 @@
 
 import { manrope } from "@/font";
 import { useState } from "react";
+import { api } from "@/lib/axios";
+import { toast } from "sonner";
+
+interface SellerFormData {
+  name: string;
+  college?: string;
+  phone: string;
+  city: string;
+}
 
 export default function SellerForm() {
   const [name, setName] = useState("");
@@ -14,7 +23,18 @@ export default function SellerForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isPhoneValid) return;
-    console.log({ name, college, phone, city });
+    const sellerData: SellerFormData = { name, college, phone, city };
+    try{
+      const res = api.post("/ambassador/upload_data", sellerData);
+      toast.success("Form submitted successfully!");
+      setName("");
+      setCollege("");
+      setPhone("");
+      setCity("");
+    } catch (error) {
+      toast.error("Failed to submit form. Please try again.");
+      return;
+    }
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +80,8 @@ export default function SellerForm() {
             {/* College */}
             <div>
               <label className="block text-sm text-[#1B1C57] mb-1">
-                College<span className="text-red-500">*</span>
+                College
+                {/* <span className="text-red-500">*</span> */}
               </label>
               <input
                 type="text"
@@ -103,8 +124,8 @@ export default function SellerForm() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={!name || !college || !city || !isPhoneValid}
-            className="bg-black text-white px-8 py-2 rounded-md text-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!name || !city || !isPhoneValid}
+            className="bg-black text-white px-8 py-2 rounded-md text-sm hover:opacity-90 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
             Submit
           </button>
