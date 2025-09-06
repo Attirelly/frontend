@@ -85,40 +85,25 @@ export default function SocialLoginButtons({ onSuccess }: { onSuccess: () => voi
     };
 
     return (
-        <div className="w-full">
-            {/* Divider */}
-            {/* <div className="flex items-center my-6">
-                <div className="flex-grow border-t border-gray-300 mx-4"></div>
-                <span className="text-gray-400 text-sm">or</span>
-                <div className="flex-grow border-t border-gray-300 mx-4"></div>
-            </div> */}
-
-            {/* Social login buttons */}
-            <div className={`${roboto.className} flex flex-col justify-center gap-[20px]`}
-                style={{ fontWeight: 500 }}>
-                {/* <button
-                    type="button"
-                    aria-label="Login with Facebook"
-                    onClick={handleFacebookLogin}
-                    className="w-[423px] h-[54px] rounded-xl bg-blue-500 shadow flex items-center justify-center hover:bg-blue-600 gap-2 cursor-pointer"
-                >
-                    <Image src="/Login/facebook_all_white.svg" alt="Facebook" width={24} height={24} />
-                    <span className='text-xl text-white'>Sign In with Facebook</span>
-                </button> */}
-                <button
-                    type="button"
-                    aria-label="Login with Google"
-                    onClick={() => handleGoogleLogin()}
-                    className="w-[338px] h-[25px] rounded-xs md:w-[423px] md:h-[54px] md:rounded-xl bg-white shadow-sm shadow-black/30 flex items-center justify-center hover:bg-gray-100 gap-2 cursor-pointer"
-                > 
-                    <div className='relative w-[19px] h-[19px] md:w-[24px] md:h-[24px]'>
-<Image src="/Login/google.svg" alt="Google" fill className='object-cover'/>
-                    </div>
-                    
-                    <span className='text-base md:text-xl text-gray-400'>Sign In with Google</span>
-                </button>
-
-            </div>
-        </div>
+         <div className="w-full">
+      <div
+        className={`${roboto.className} flex flex-col items-center gap-4`}
+        style={{ fontWeight: 500 }}
+      >
+        <button
+          type="button"
+          aria-label="Login with Google"
+          onClick={() => handleGoogleLogin()}
+          className="w-full sm:w-72 md:w-96 h-10 sm:h-12 md:h-14 rounded-lg bg-white shadow-sm shadow-black/30 flex items-center justify-center hover:bg-gray-100 gap-2 cursor-pointer"
+        >
+          <div className="relative w-5 h-5 sm:w-6 sm:h-6">
+            <Image src="/Login/google.svg" alt="Google" fill className="object-contain" />
+          </div>
+          <span className="text-sm sm:text-base md:text-lg text-gray-500">
+            Sign In with Google
+          </span>
+        </button>
+      </div>
+    </div>
     );
 }
