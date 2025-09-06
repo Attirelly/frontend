@@ -219,7 +219,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en"
+    className="overscroll-contain scroll-smooth"
+     suppressHydrationWarning>
       <head>
         {/* Google Analytics 4 */}
         {process.env.NEXT_PUBLIC_GA_ID && (
