@@ -24,6 +24,7 @@ import useAuthStore from "@/store/auth";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Link from "next/link";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
+import { useSwipeable } from 'react-swipeable';
 
 
 export default function ProductDetail() {
@@ -146,8 +147,8 @@ export default function ProductDetail() {
 
   const handleSendToWhatsAppClick = () => {
     setPendingWhatsApp(true);
-    if (!isCustomerAuthenticated()) {    
-      setSignIn(true);              
+    if (!isCustomerAuthenticated()) {
+      setSignIn(true);
     }
   };
 
@@ -243,9 +244,31 @@ Could you please confirm its availability and share more details.`;
     setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  const handlers = useSwipeable({
+    onSwipedLeft: () => nextImage(),
+    onSwipedRight: () => prevImage(),
+    preventScrollOnSwipe: true, // Prevents vertical scrolling when swiping horizontally
+    trackMouse: false, // Don't track mouse movements as swipes
+  });
+
+  const { ref: swipeableRef, ...restHandlers } = handlers;
+
+  // Creates a "callback ref" function
+  const handleRef = (el: HTMLDivElement | null) => {
+    // 1. Gives the element to the swipe library
+    swipeableRef(el);
+
+    // 2. Gives the element to your own ref object
+    imageContainerRef.current = el;
+  };
+
   if (!product) {
     return <div className="p-4"><LoadingSpinner /></div>;
   }
+
+
+
+
 
   return (
     <div className="w-full h-full bg-white">
@@ -257,11 +280,11 @@ Could you please confirm its availability and share more details.`;
             {/* Left: Product image */}
             <div className="flex flex-col items-center relative">
               <div
-                ref={imageContainerRef}
+                ref={handleRef}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
                 className="w-[370px] h-[370px] md:w-[600px] md:h-[600px] lg:w-[600px] lg:h-[600px] relative rounded-xl overflow-hidden"
-              >
+               {...restHandlers}>
                 <Image
                   ref={imageRef}
                   src={images[activeIndex]}
@@ -270,6 +293,18 @@ Could you please confirm its availability and share more details.`;
                   className="object-contain rounded-xl object-top"
                   onLoad={handleImageLoad}
                 />
+                <div>
+                {/* create bubbles here with horizontally centred and bottom-15  */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    {images.map((_, index) => (
+                        <div
+                            key={index}
+                            className={`w-2 h-2 rounded-full md:hidden ${index === activeIndex ? 'bg-black' : 'bg-gray-300'
+                                } transition-all duration-300`}
+                        />
+                    ))}
+                </div>
+            </div>
               </div>
 
               {lensPosition && (
