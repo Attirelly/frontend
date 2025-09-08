@@ -83,8 +83,8 @@ export default function ApifyPostGallery({ posts }: Props) {
           onClose={closeDialog}
           onNext={nextPost}
           onPrev={prevPost}
-          isFirst={currentIndex == 0 ? true : false}
-          isLast={currentIndex == posts.length - 1 ? true : false}
+          isFirst={currentIndex == 0}
+          isLast={currentIndex == posts.length - 1}
         />
       )}
     </>
