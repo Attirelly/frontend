@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/axios";
@@ -47,11 +46,6 @@ export default function MenWomenNavbar() {
   );
   const { setQuery } = useHeaderStore();
 
-  /**
-   * @internal
-   * useEffect for fetching category data on component mount
-   * Handles API call, filtering, and state management
-  */
   useEffect(() => {
     const fetchCategories = async () => {
       try {

@@ -1,5 +1,11 @@
 {
-  "entryPoints": ["./components"], 
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "./app",
+    "./components",
+    "./utils",
+    "./types"
+  ],
   "entryPointStrategy": "expand",
   "out": "docs",
   "tsconfig": "./tsconfig.json",
