@@ -201,6 +201,7 @@ import { manrope } from '@/font';
 import CardTypeFour from '../cards/CardTypeFour';
 import { api } from '@/lib/axios';
 import SectionElevenContainerSkeleton from '../skeleton/SectionElevenContainerSkeleton';
+import Link from 'next/link';
 
 interface CardData {
   id: string;
@@ -350,13 +351,13 @@ export default function SectionElevenContainer() {
                 className="flex-shrink-0 px-2"
                 style={{ width: `${cardWidthPercentage}%` }}
               >
-                <a href={`/store_profile/${card.id}`} target="_blank" rel="noopener noreferrer">
+                <Link href={`/store_profile/${card.id}`} target="_blank" rel="noopener noreferrer">
                   <CardTypeFour
                     imageUrl={card.imageUrl}
                     title={card.title}
                     description={card.description || ''}
                   />
-                </a>
+                  </Link>
               </div>
             ))}
           </div>
