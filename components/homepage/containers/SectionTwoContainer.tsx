@@ -252,6 +252,7 @@ export default function SectionTwoContainer() {
   }, []);
 
   // --- API FETCH LOGIC ---
+  console.log();
   useEffect(() => {
     const fetchSegmentInfo = async () => {
       setLoading(true);
