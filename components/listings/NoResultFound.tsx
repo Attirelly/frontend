@@ -1,6 +1,11 @@
 import { manrope } from "@/font";
 import Image from "next/image";
 
+/**
+ * 
+ * Component to display no result found
+ */
+
 export default function NoResultFound() {
   return (
     <div className={`${manrope.className} text-black flex flex-col items-center justify-start min-h-screen`} style={{fontWeight: 500}}>

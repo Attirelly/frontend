@@ -1,0 +1,15 @@
+# .documentation.yml
+title: "Frontend Documentation"
+description: "Documentation for Attirelly frontend: Components and App pages"
+toc:
+  - name: "Components"
+    description: "Reusable UI components"
+    files:
+      - "components/**/*.tsx"
+  - name: "Pages"
+    description: "Next.js App Router pages"
+    files:
+      - "app/**/*.tsx"
+
+
+

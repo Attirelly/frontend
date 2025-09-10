@@ -29,6 +29,7 @@ const STORE_TYPE_OPTIONS: BrandType[] = [
   { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" },
 ];
 
+
 export default function ProductListPage() {
   const router = useRouter();
   const pathname = usePathname();

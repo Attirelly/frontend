@@ -18,6 +18,11 @@ import ListingFooter from "@/components/listings/ListingFooter";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
 
+
+/**
+ * Homepage component
+ * @component
+ */
 export default function HomePage() {
     return (
         // Remove the background color from the outermost container

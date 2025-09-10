@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
  * @param arr - The input array
  * @param columns - Number of columns to split into
  * @returns An array of columns, each containing a portion of the original array
+ * @memberof MenWomenNavbar
  */
 const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
   const result = Array.from({ length: columns }, () => [] as T[]);
@@ -37,6 +38,8 @@ const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
  * - Splits subcategories into max 5 columns for clean layout.
  * - Supports navigation via Next.js router + dynamic links.
  * - Resets filters from product store when navigating.
+ * view in github( https://github.com/Attirelly/frontend/blob/main/components/listings/MenWomenNavbar.tsx )
+ * @component
  */
 export default function MenWomenNavbar() {
   const router = useRouter();
@@ -53,6 +56,7 @@ export default function MenWomenNavbar() {
  * - Calls backend API `/categories/descendants/`
  * - Filters only "Men" and "Women"
  * - Keeps only Ethnic Wear children
+ * @memberof MenWomenNavbar
  */
   useEffect(() => {
     const fetchCategories = async () => {
@@ -90,6 +94,7 @@ export default function MenWomenNavbar() {
 
    /**
    find the category being hovered
+   @memberof MenWomenNavbar
    */
   const category = categories.find(
     (c) => c.name.toLowerCase() === hoveredGender?.toLowerCase()
