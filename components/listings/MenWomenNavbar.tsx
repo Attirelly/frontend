@@ -47,7 +47,13 @@ export default function MenWomenNavbar() {
   );
   const { setQuery } = useHeaderStore();
 
-  // Fetch categories (Men/Women -> Ethnic wear -> Subcategories)
+  /**
+ * Effect: Fetch categories (Men/Women → Ethnic wear → Subcategories).
+ *
+ * - Calls backend API `/categories/descendants/`
+ * - Filters only "Men" and "Women"
+ * - Keeps only Ethnic Wear children
+ */
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -82,7 +88,9 @@ export default function MenWomenNavbar() {
     fetchCategories();
   }, []);
 
-  // Find the category being hovered (Men or Women)
+   /**
+   find the category being hovered
+   */
   const category = categories.find(
     (c) => c.name.toLowerCase() === hoveredGender?.toLowerCase()
   );
