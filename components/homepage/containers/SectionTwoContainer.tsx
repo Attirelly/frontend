@@ -213,6 +213,7 @@ import CardTypeSix from "../cards/CardTypeSix";
 import { useEffect, useState, useMemo } from "react";
 import { api } from "@/lib/axios";
 import SectionTwoContainerSkeleton from "../skeleton/SectionTwoContainerSkeleton";
+import Link from "next/link";
 
 interface CardData {
   id: string;
@@ -251,6 +252,7 @@ export default function SectionTwoContainer() {
   }, []);
 
   // --- API FETCH LOGIC ---
+  console.log();
   useEffect(() => {
     const fetchSegmentInfo = async () => {
       setLoading(true);
@@ -344,12 +346,12 @@ export default function SectionTwoContainer() {
           {name}
         </span>
         {viewAll && (
-          <a href={viewAll} target="_blank" rel="noopener noreferrer" className="flex ml-auto items-center gap-1 lg:gap-2">
+          <Link href={viewAll} target="_blank" rel="noopener noreferrer" className="flex ml-auto items-center gap-1 lg:gap-2">
             <span className={`${manrope.className} text-sm lg:text-base`} style={{ fontWeight: 400 }}>
               View All
             </span>
             <Image src="/Homepage/view_all_arrow.svg" alt="View All" width={12} height={16} />
-          </a>
+          </Link>
         )}
       </div>
 
@@ -376,13 +378,13 @@ export default function SectionTwoContainer() {
                 className="flex-shrink-0 px-2"
                 style={{ width: `${100 / displayProducts.length}%` }}
               >
-                <a href={card?.categoryLandingUrl || "#"} target="_blank" rel="noopener noreferrer">
+                <Link href={card?.categoryLandingUrl || "#"} target="_blank" rel="noopener noreferrer">
                   <CardTypeSix
                     imageUrl={card.imageUrl}
                     title={card.title}
                     description={card.description || ""}
                   />
-                </a>
+                </Link>
               </div>
             ))}
           </div>

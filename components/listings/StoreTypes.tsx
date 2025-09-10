@@ -375,7 +375,7 @@ export default function StoreTypeTabs({
       ref={scrollContainerRef}
       className={clsx(
         // Mobile: Flex container with horizontal scrolling
-        "flex w-full items-center gap-2 overflow-x-auto p-2 scrollbar-none",
+        "flex w-full items-center justify-center gap-2 overflow-x-auto p-2 scrollbar-none",
         // Desktop: Overrides for the pill-style container
         "md:w-fit md:max-w-fit md:rounded-full md:overflow-x-visible"
       )}
