@@ -45,6 +45,7 @@ export default function MenWomenNavbar() {
     null
   );
   const { setQuery } = useHeaderStore();
+  console.log();
 
   useEffect(() => {
     const fetchCategories = async () => {
