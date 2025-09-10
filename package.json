@@ -7,13 +7,9 @@
     "build": "next build",
     "start": "next start -p 3000 -H 0.0.0.0",
     "lint": "next lint",
-    "docs:md": "documentation build components/**/*.tsx app/**/*.tsx -f md -o docs",
-    "docs:html": "documentation build components/**/*.tsx app/**/*.tsx -f html -o docs",
-    "docs:serve": "documentation serve components/**/*.tsx app/**/*.tsx",
-    "docs:components": "documentation build components/**/*.tsx -f html -o docs/components",
-    "docs:pages": "documentation build app/**/page.tsx -f html -o docs/pages",
-    "docs:all": "npm run docs:components && npm run docs:pages",
-    "docs:final": "npm run docs:all documentation build -c .documentation.yml -f html -o docs"
+    "docs:components": "documentation build components/**/*.tsx -f html -o docs/components.html",
+  "docs:pages": "documentation build app/**/page.tsx -f html -o docs/pages.html",
+  "docs:all": "npm run docs:components && npm run docs:pages"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
