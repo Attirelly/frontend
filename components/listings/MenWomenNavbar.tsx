@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
  * @param columns - Number of columns to split into
  * @returns An array of columns, each containing a portion of the original array
  */
- const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
+export const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
   const result = Array.from({ length: columns }, () => [] as T[]);
   arr.forEach((item, index) => {
     result[index % columns].push(item); // Distribute items column-wise
@@ -48,8 +48,10 @@ export default function MenWomenNavbar() {
   const { setQuery } = useHeaderStore();
 
   /**
- useEffect to call api to fetch categories and their descendents, filter them on basis on men and women and use only ethnic wear categories
- */
+   * @internal
+   * useEffect for fetching category data on component mount
+   * Handles API call, filtering, and state management
+  */
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -84,7 +86,10 @@ export default function MenWomenNavbar() {
     fetchCategories();
   }, []);
 
-  // Find the category being hovered (Men or Women)
+  /**
+   * @internal
+   * Find the category object for the currently hovered gender
+   */
   const category = categories.find(
     (c) => c.name.toLowerCase() === hoveredGender?.toLowerCase()
   );
@@ -126,13 +131,12 @@ export default function MenWomenNavbar() {
             {columns.map((column, colIndex) => (
               <div
                 key={colIndex}
-                className={`p-4 w-full ${
-                  colIndex === 0
-                    ? "rounded-bl-xl"
-                    : colIndex === Math.min(category.children.length - 1, 4)
+                className={`p-4 w-full ${colIndex === 0
+                  ? "rounded-bl-xl"
+                  : colIndex === Math.min(category.children.length - 1, 4)
                     ? "rounded-br-xl"
                     : ""
-                }`}
+                  }`}
                 style={{
                   backgroundColor: colIndex % 2 === 0 ? "#f9f9f9" : "#ffffff",
                 }}

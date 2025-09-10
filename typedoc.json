@@ -3,8 +3,9 @@
   "entryPointStrategy": "expand",
   "out": "docs",
   "tsconfig": "./tsconfig.json",
-  "excludePrivate": true,
-  "excludeProtected": true,
-  "excludeExternals": true,
+  "excludePrivate": false,
+  "excludeProtected": false,
+  "excludeExternals": false,
+  "excludeInternal": false,
   "skipErrorChecking": true
 }
