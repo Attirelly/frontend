@@ -31,13 +31,14 @@ export const metadata = {
   title: "Attirelly",
   description: "Discover the best Designer and Ethnic Wear",
   icons: {
-    icon: [{ url: '/favicon.png', sizes: "196x196", type: "image/png" }],
+    // icon: [{ url: '/favicon.png', sizes: "196x196", type: "image/png" }],
+    icon:'/favicon.png',
     apple: [{ url: "/icons/apple-icon-180.png" }],
   },
   appleTouchIcon: "/icons/apple-icon-180.png",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "black",
     startupImage: [
       {
         url: "/icons/apple-splash-2048-2732.jpg",
