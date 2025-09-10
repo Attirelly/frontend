@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
  * @param columns - Number of columns to split into
  * @returns An array of columns, each containing a portion of the original array
  */
-const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
+ const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
   const result = Array.from({ length: columns }, () => [] as T[]);
   arr.forEach((item, index) => {
     result[index % columns].push(item); // Distribute items column-wise
@@ -47,7 +47,9 @@ export default function MenWomenNavbar() {
   );
   const { setQuery } = useHeaderStore();
 
-  // Fetch categories (Men/Women -> Ethnic wear -> Subcategories)
+  /**
+ useEffect to call api to fetch categories and their descendents, filter them on basis on men and women and use only ethnic wear categories
+ */
   useEffect(() => {
     const fetchCategories = async () => {
       try {
