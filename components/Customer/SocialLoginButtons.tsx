@@ -26,7 +26,7 @@ type FacebookLoginResponse = {
  * - **Google Login**:
  *   - Uses `useGoogleLogin` from `@react-oauth/google`
  *   - Sends Google access token to backend API (`/users/google`)
- *   - Updates user state in {@link useAuthStore}
+ *   - Updates user state in `useAuthStore`
  *   - Calls `onSuccess` callback if login is successful
  * - **Facebook Login**:
  *   - Uses the Facebook SDK (`window.FB.login`)
@@ -38,10 +38,10 @@ type FacebookLoginResponse = {
  *
  * ## Imports
  * - **Next.js**: `Image` for optimized SVG rendering
- * - **State Management**: {@link useAuthStore} for updating authentication state
- * - **API Client**: {@link api} from `@/lib/axios` for backend requests
+ * - **State Management**: `useAuthStore` for updating authentication state
+ * - **API Client**: `api` from `@/lib/axios` for backend requests
  * - **Google Auth**: `useGoogleLogin` from `@react-oauth/google`
- * - **Fonts**: {@link roboto} for button typography
+ * - **Fonts**: `roboto` for button typography
  * - **Notifications**: `toast` from `sonner` for error feedback
  *
  * ## Props

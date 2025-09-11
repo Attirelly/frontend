@@ -37,10 +37,10 @@ type Props = {
  *   so it stays aligned with the header.
  * 
  * ## Imports
- * - **Fonts**: {@link manrope}, {@link rosario} from `@/font`
+ * - **Fonts**: `manrope`, `rosario` from `@/font`
  * - **State (Zustand Stores)**:
- *   - {@link useAuthStore} for authentication state
- *   - {@link useCategoryStore} for category data
+ *   - `useAuthStore` for authentication state
+ *   - `useCategoryStore` for category data
  * - **Key Components**:
  *   - {@link CustomerSignIn} (login modal)
  *   - {@link MobileSidebarMenu} (slide-out navigation menu)
