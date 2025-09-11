@@ -34,7 +34,7 @@ type Props = {
  *   - `Link` for navigation
  *   - `Image` for optimized images
  * - **React**: `useState`
- * - **State Management**: {@link useAuthStore} from `@/store/auth`
+ * - **State Management**: `useAuthStore` from `@/store/auth`
  * - **Utilities**: {@link logout} from `@/utils/logout`
  * - **Key Components**: {@link MobileMenWomenNavbar}
  * - **Icons**: `ChevronDown`, `ChevronUp` from `lucide-react`

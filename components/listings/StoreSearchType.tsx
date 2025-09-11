@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { manrope } from "@/font";
 import Image from "next/image";
-import { styleText } from "util";
 
 const StoreTypeImage = [
   { name: "Designer Label", url: "/Homepage/designer_labels.svg" },
@@ -22,6 +21,47 @@ interface StoreType {
   description?: string;
 }
 
+/**
+ * StoreSearchType Component
+ *
+ * A UI component that displays a list of store categories for users to select from.
+ * It typically appears as a modal or dropdown when the main search bar is focused but empty.
+ *
+ * ## Features
+ * - Renders a grid of store types (e.g., "Boutiques", "Designer Label") with corresponding icons.
+ * - Fetches the list of store types dynamically from an API on component mount.
+ * - Navigates the user to a filtered store listing page when a type is selected.
+ * - Automatically closes when the user clicks outside of its container.
+ * - Manages state for:
+ * - The list of store types fetched from the API.
+ * - Its own visibility, controlled by props and global state.
+ *
+ * ## Data Flow
+ * 1.  On component mount, `useEffect` triggers a data fetch for store types.
+ * 2.  An API call is made to get the list of available store types.
+ * 3.  The fetched data is stored in the `storeTypesList` state, triggering a re-render.
+ * 4.  The component maps over this state to render the list, matching each type with a local image from the `StoreTypeImage` constant.
+ * 5.  A click on a store type triggers `handleSearchTypeClick`, which constructs a URL and navigates the user.
+ * 6.  A separate `useEffect` hook listens for clicks outside the component to call the `onClose` prop and hide it.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `useEffect`, `useRef`, `useState` from `react`; `useRouter` from `next/navigation`; `Image` from `next/image`.
+ * - **State (Zustand Stores)**:
+ *    - `useHeaderStore` for managing global header and search state.
+ * - **Utilities**:
+ *    - `api` from `@/lib/axios` for API calls.
+ *    - `manrope` from `@/font` for styling.
+ *
+ * ## API Calls
+ * - `GET /stores/store_types`: Fetches the list of all available store types on mount.
+ *
+ * ## Props
+ * @param {object} props - The props for the component.
+ * @param {boolean} [props.visible=false] - Controls the visibility of the component.
+ * @param {() => void} props.onClose - A callback function invoked to signal that the component should be closed.
+ *
+ * @returns {JSX.Element | null} The rendered component, or null if it is not visible.
+ */
 export default function StoreSearchType({
   visible = false,
   onClose,

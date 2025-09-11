@@ -9,14 +9,6 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { useProductFilterStore } from "@/store/filterStore";
 import { useRouter } from "next/navigation";
 
-/**
- * Utility function to split an array into multiple columns.
- * 
- * @template T - The type of array elements
- * @param arr - The input array
- * @param columns - Number of columns to split into
- * @returns An array of columns, each containing a portion of the original array
- */
 export const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
   const result = Array.from({ length: columns }, () => [] as T[]);
   arr.forEach((item, index) => {
@@ -27,15 +19,45 @@ export const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
 
 /**
  * MenWomenNavbar Component
- * 
- * This navigation component shows top-level categories for **Men** and **Women**.
- * On hover, it expands into a mega-menu with subcategories (Ethnic wear → SubCat2 → SubCat3).
- * 
- * Features:
- * - Fetches category data from backend API (`/categories/descendants/`).
- * - Splits subcategories into max 5 columns for clean layout.
- * - Supports navigation via Next.js router + dynamic links.
- * - Resets filters from product store when navigating.
+ *
+ * A navigation component that displays "Men" and "Women" top-level links.
+ * On hover, it reveals a detailed mega-menu of subcategories fetched from an API.
+ *
+ * ## Features
+ * - Renders the primary "Men" and "Women" navigation links.
+ * - Fetches and processes nested category data on component mount.
+ * - Displays a dynamic mega-menu on hover with relevant subcategories.
+ * - Organizes subcategories into a clean, multi-column layout (up to 5 columns).
+ * - Handles navigation to product directory pages upon clicking a category.
+ * - Manages state for:
+ *    - The processed category data.
+ *    - The currently hovered navigation link ("Men" or "Women").
+ *
+ * ## Data Flow
+ * 1.  `useEffect` triggers a data fetch on the initial component render.
+ * 2.  An API call is made to fetch all category descendants.
+ * 3.  The raw data is filtered to isolate only the "Men" and "Women" parent categories.
+ * 4.  For each gender category, it extracts the children of the "Ethnic Wear" subcategory.
+ * 5.  The processed data is stored in the `categories` state, triggering a re-render.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `useEffect`, `useState` from `react`; `Link`, `useRouter` from Next.js; `toast` from `sonner`.
+ * - **State (Zustand Stores)**:
+ *    - `useHeaderStore` for managing the global search query.
+ *    - `useProductFilterStore` for filter-related actions.
+ * - **Types**:
+ *    - {@link Category}, {@link SubCat1}, {@link SubCat2} from `@/types/CategoryTypes`
+ * - **Utilities**:
+ *    - `api` from `@/lib/axios` for API calls.
+ *    - `manrope` from `@/font` for styling.
+ *
+ * ## API Calls
+ * - `GET /categories/descendants/`: Fetches the entire category tree for processing on mount.
+ *
+ * ## Props
+ * This component does not accept any props.
+ *
+ * @returns {JSX.Element} The rendered Men & Women navigation component.
  */
 export default function MenWomenNavbar() {
   const router = useRouter();

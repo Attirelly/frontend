@@ -23,6 +23,58 @@ type Props = {
   className?: string;
 };
 
+/**
+ * ListingPageHeader Component
+ *
+ * The primary header component for the desktop version of the website.
+ *
+ * ## Features
+ * - Displays a multi-section header bar with:
+ * - **Logo** (links to the homepage).
+ * - **Main Navigation** using the {@link MenWomenNavbar} component.
+ * - **Combined Search Bar** with location and text search capabilities.
+ * - Location filtering by City or Area using a searchable dropdown.
+ * - Debounced, real-time search suggestions for products, stores, and categories.
+ * - Highlights matching text in search results for better visibility.
+ * - **User Authentication** status, showing a "Login" button or the user's name
+ * with a logout dropdown.
+ * - Manages state for:
+ * - Search focus and suggestion dropdown visibility.
+ * - Customer sign-in modal.
+ * - User menu (logout) dropdown.
+ *
+ * ## Imports
+ * - **Fonts**: `rubik`, `manrope`, `rosario` from `@/font`
+ * - **State (Zustand Stores)**:
+ *    - `useHeaderStore` for managing location and search query state.
+ *    - `useProductFilterStore` for filter-related actions.
+ *    - `useAuthStore` for user authentication state.
+ * - **Key Components**:
+ *    - {@link MenWomenNavbar} (main category navigation)
+ *    - {@link CustomerSignIn} (login modal)
+ *    - {@link StoreSearchType} (UI element for search)
+ * - `react-select` (for the location dropdown, loaded dynamically)
+ * - **Libraries**:
+ *    - `next/dynamic`, `next/link`, `next/image`, `next/navigation` (Next.js utilities)
+ *    - `sonner` (`toast`) for notifications
+ * - **Types**:
+ *    - {@link Area}, {@link City}, {@link SelectOption} from `@/types/SellerTypes`
+ * - **Utilities**:
+ *    - `api` from `@/lib/axios` for API calls
+ *    - `logout` from `@/utils/logout`
+ *    - `customStyles` for styling the `react-select` component
+ *
+ * ## API Calls
+ * - `POST /search/search_suggestion`: Fetches dynamic search suggestions based on user input and location filters.
+ * - `GET /location/cities/`: Fetches the list of all available cities on mount.
+ * - `GET /location/areas/`: Fetches the list of all available areas on mount.
+ *
+ * ## Props
+ * @param {object} props - Component props
+ * @param {string} [props.className] - Optional CSS class for styling the root container.
+ *
+ * @returns {JSX.Element} The rendered desktop header component.
+ */
 export default function ListingPageHeader({ className }: Props) {
   const router = useRouter();
   const {
@@ -57,6 +109,10 @@ export default function ListingPageHeader({ className }: Props) {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
 
+
+  /**
+   * Prefetches key routes for faster navigation.
+   */
   useEffect(() => {
     router.prefetch("/store_listing");
     router.prefetch("/product_directory");
@@ -64,12 +120,15 @@ export default function ListingPageHeader({ className }: Props) {
     router.prefetch("/");
   }, [router]);
 
+  /**
+   * Handles the "Enter" key press in the search input.
+   * if pressed and the search input is not empty, it navigates to the product directory with the current search query.
+   * Also resets relevant states and filters.
+   */
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       const trimmed = tempQuery.trim();
-      console.log(trimmed);
-
       setShowDropdown(false);
       setShowStoreType(false);
       setTempQuery("");
@@ -82,6 +141,13 @@ export default function ListingPageHeader({ className }: Props) {
     }
   };
 
+  /**
+   * Fetches search suggestions based on the current temporary query and selected location filters.
+   * Updates the state with the fetched suggestions and shows the dropdown.
+   * If there's an error during the fetch, it logs the error to the console.
+   *
+   * This function is debounced in the `useEffect` hook to limit API calls while typing.
+   */
   const handleSearchQuerySuggestion = async () => {
     try {
       let tempStr = "";
@@ -110,6 +176,9 @@ export default function ListingPageHeader({ className }: Props) {
     }
   };
 
+  /**
+   * Fetches all cities for the location filter.
+   */
   useEffect(() => {
     const fetchCities = async () => {
       try {
@@ -122,6 +191,9 @@ export default function ListingPageHeader({ className }: Props) {
     fetchCities();
   }, []);
 
+  /**
+   * Fetches all areas for the location filter.
+   */
   useEffect(() => {
     const fetchAreas = async () => {
       try {
@@ -134,6 +206,12 @@ export default function ListingPageHeader({ className }: Props) {
     fetchAreas();
   }, []);
 
+  /**
+   * Effect hook that triggers search suggestions fetching when the temporary query changes.
+   * - If the query length is less than 4, it clears suggestions and hides the dropdown.
+   * - If the query length is exactly 4, it fetches suggestions immediately.
+   * - For longer queries, it debounces the fetch by 100ms to limit API calls while typing.
+   */
   useEffect(() => {
     if (tempQuery.length < 4) {
       setStoreSuggestions([]);
@@ -156,6 +234,10 @@ export default function ListingPageHeader({ className }: Props) {
     return () => clearTimeout(debounce);
   }, [tempQuery]);
 
+  /**
+   * Effect hook that handles clicks outside the dropdown.
+   * If a click occurs outside, it hides the dropdown, store type selector, and removes focus from the search input.
+   */
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -171,6 +253,11 @@ export default function ListingPageHeader({ className }: Props) {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [searchFocus]);
 
+
+  /**
+   * Effect hook that handles clicks outside the user menu to close it.
+   * If a click occurs outside, it hides the logout dropdown.
+   */
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -186,6 +273,10 @@ export default function ListingPageHeader({ className }: Props) {
     };
   }, []);
 
+  /**
+   * Handles clicks on search suggestions.
+   * If a suggestion is clicked, it navigates to the product directory with the selected suggestion.
+   */
   const handleSuggestionClick = (value: string) => {
     setSearchFocus(false);
     setShowDropdown(false);
@@ -193,6 +284,10 @@ export default function ListingPageHeader({ className }: Props) {
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
+  /**
+   * Handles clicks on category suggestions.
+   * If a category is clicked, it navigates to the product directory with the selected category.
+   */
   const handleCategoryClick = (category: string) => {
     setSearchFocus(false);
     setShowDropdown(false);
@@ -202,18 +297,22 @@ export default function ListingPageHeader({ className }: Props) {
       `/product_directory?categories=${encodeURIComponent(category)}`
     );
   };
-  const handleProductClick = (value: string) => {
-    setSearchFocus(false);
-    setShowDropdown(false);
-    router.push(`product_detail/${value}`);
-  };
 
+
+  /**
+   * Handles clicks on store suggestions.
+   * If a store is clicked, it navigates to the store profile page of the selected store.
+   */
   const handleStoreClick = (storeID: string) => {
     setSearchFocus(false);
     setShowDropdown(false);
     router.push("/store_profile/" + storeID);
   };
 
+  /**
+   * Handles navigation to the store listing page with the current search query.
+   * Resets relevant states and filters before navigating.
+   */
   const handleStoreListRoute = () => {
     setSearchFocus(false);
     setShowDropdown(false);
@@ -221,16 +320,10 @@ export default function ListingPageHeader({ className }: Props) {
     router.push("/store_listing?search=" + encodeURIComponent(value));
   };
 
-  // const cityOptions: SelectOption[] = [
-  //   { value: "", label: "All Cities", name: "All Cities", country: "" },
-  //   ...cities.map((c) => ({
-  //     value: c.id,
-  //     label: c.name,
-  //     name: c.name,
-  //     country: "India",
-  //   })),
-  // ];
-
+  /**
+   * Groups options for the location selector.
+   * Includes "All Cities", individual cities, and areas with their respective metadata.
+   */
   const groupedOptions: SelectOption[] = [
     { value: "", label: "All Cities", name: "All Cities", country: "" },
     ...(allCity ?? []).map((c) => ({
@@ -250,6 +343,9 @@ export default function ListingPageHeader({ className }: Props) {
     })),
   ];
 
+  /* Determines the currently selected option in the location selector based on the selected area or city.
+   * Defaults to "All Cities" if neither is selected.
+   */
   const selectedOption: SelectOption =
     area != null
       ? {
@@ -267,7 +363,13 @@ export default function ListingPageHeader({ className }: Props) {
         }
       : // : cityOptions[0];
         groupedOptions[0];
-
+      
+  /**
+   * Highlights matching text within a string based on a query.
+   * @param text - The text to search within.
+   * @param query - The query string to match.
+   * @returns A JSX element with highlighted matching text.
+   */
   function highlightMatch(text: string, query: string) {
     const defaultClasses = `${manrope.className} text-base text-gray-400`;
 
@@ -330,6 +432,7 @@ export default function ListingPageHeader({ className }: Props) {
                   alt="Location"
                   className="opacity-100"
                 />
+                {/* show only 7 options when not searched */}
                 <Select
                   options={
                     locationSearchInput.trim() === ""
@@ -463,44 +566,11 @@ export default function ListingPageHeader({ className }: Props) {
                               {cat?.subcategory3.includes("Kurta")
                                 ? `${cat?.subcategory3} (${cat?.category})`
                                 : cat?.subcategory3}
-                              {/* <img
-                                src="/SuggestionBox/top_right_arrow.svg"
-                                alt="Arrow"
-                                className="w-3 h-3"
-                              /> */}
                             </button>
                           ))}
                         </div>
                       </div>
                     )}
-
-                    {/* products and stores */}
-
-                    {/* {products.length > 0 && (
-                      <div className="px-4 py-3">
-                        <div className="text-gray-500 text-sm mb-2">
-                          PRODUCTS
-                        </div>
-                        {products.map((product, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center gap-3 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
-                            onClick={() =>
-                              handleProductClick(product.product_id)
-                            }
-                          >
-                            <img
-                              src={product.image || "/placeholder.png"}
-                              alt={product.product_name}
-                              className="w-10 h-10 rounded-md object-cover bg-gray-200"
-                            />
-                            <span className="font-medium text-sm">
-                              {product.product_name}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )} */}
 
                     {stores.length > 0 && (
                       <div
@@ -556,19 +626,8 @@ export default function ListingPageHeader({ className }: Props) {
 
           {/* <div className="flex justify-center"> */}
           <div className="flex items-center gap-6 text-sm w-full justify-end">
-            {/* <img
-                src="/ListingPageHeader/shopping_cart_2.svg"
-                alt="Cart"
-                className="opacity-100 w-[32px] h-[32px]"
-              />
-              <div className="w-px h-10 bg-gray-300"></div> */}
             {!user ? (
               <div className="flex items-center gap-2">
-                {/* <img
-                  src="/ListingPageHeader/user_logo.svg"
-                  alt="User"
-                  className="opacity-100"
-                /> */}
                 <span
                   className={`${manrope.className} text-base text-[#373737] cursor-pointer`}
                   style={{ fontWeight: 400 }}

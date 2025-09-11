@@ -35,15 +35,15 @@ type Props = {
  *   - `Image` (optimized images)
  *   - `dynamic` (lazy load `react-select`)
  *   - `useRouter` from `next/navigation` (routing)
- * - **State Management**: {@link useHeaderStore} from `@/store/listing_header_store`
- * - **Types**: {@link SelectOption} from `@/types/SellerTypes`
+ * - **State Management**: `useHeaderStore` from `@/store/listing_header_store`
+ * - **Types**: `SelectOption` from `@/types/SellerTypes`
  * - **Utilities**:
  *   - {@link customStyles} from `@/utils/selectStyles` (react-select styling)
- *   - {@link manrope} font from `@/font`
+ *   - `manrope` font from `@/font`
  * - **Key Components**:
  *   - {@link MobileStoreTypeSearch} for store-type selection UI
  * - **Notifications**: `toast` from `sonner`
- * - **API Client**: {@link api} from `@/lib/axios`
+ * - **API Client**: `api` from `@/lib/axios`
  *
  * ## APIs
  * - `GET /location/cities/` → fetches available cities

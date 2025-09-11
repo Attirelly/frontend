@@ -41,8 +41,8 @@ interface StoreType {
  *   - `useRouter` from `next/navigation` for programmatic navigation
  *   - `Image` for optimized images
  * - **React**: `useEffect`, `useState`, `useRef`
- * - **State Management**: {@link useHeaderStore} from `@/store/listing_header_store`
- * - **API Client**: {@link api} from `@/lib/axios`
+ * - **State Management**: `useHeaderStore` from `@/store/listing_header_store`
+ * - **API Client**: `api` from `@/lib/axios`
  * - **Fonts**: `manrope` from `@/font`
  *
  * ## APIs

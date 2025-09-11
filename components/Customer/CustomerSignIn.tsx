@@ -23,7 +23,7 @@ interface CustomerSignInProps {
  *
  * ## Imports
  * - **Next.js**: `Image` for optimized image rendering
- * - **Fonts**: {@link manrope} for consistent typography
+ * - **Fonts**: `manrope` for consistent typography
  * - **Custom Components**: {@link SocialLoginButtons} for Google/Facebook authentication
  *
  * ## Props

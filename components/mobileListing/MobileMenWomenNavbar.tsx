@@ -38,17 +38,13 @@ const getCategoryByGender = (
  *   - `Image` for optimized images
  *   - `useRouter` from `next/navigation` for programmatic routing
  * - **State Management (Zustand Stores)**:
- *   - {@link useCategoryStore} (provides categories)
- *   - {@link useProductFilterStore} (manages product filter state)
- * - **Fonts**: {@link manrope} from `@/font`
+ *   - `useCategoryStore` (provides categories)
+ *   - `useProductFilterStore` (manages product filter state)
+ * - **Fonts**: `manrope` from `@/font`
  * - **Types**: {@link Category}, {@link SubCat1}, {@link SubCat2} from `@/types/CategoryTypes`
  *
  * ## Utility
  * - `getCategoryByGender`: Helper to fetch the correct category tree for the selected gender.
- *
- * ## Zustand Stores
- * - Category Store: {@link useCategoryStore}
- * - Product Filter Store: {@link useProductFilterStore}
  *
  * ## Types
  * - Category: {@link Category}
