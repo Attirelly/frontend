@@ -9,6 +9,10 @@ import { Range } from "react-range";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { X } from "lucide-react";
 
+/**
+ * @interface DynamicFilterProps
+ * @description Defines the props for the DynamicFilter component.
+ */
 type DynamicFilterProps = {
   context: "store" | "product";
   onClose?: () => void;
@@ -45,6 +49,32 @@ const priceStartMap: { [storeType: string]: { [priceRange: string]: string } } =
     // Add other store types here...
   };
 
+/**
+ * A versatile and context-aware component for displaying and managing filters.
+ *
+ * This component dynamically renders a list of filterable attributes (facets) based on the
+ * provided `context`. It can function as a standard sidebar for desktop or as a closable
+ * panel for mobile. It integrates deeply with Zustand stores to manage filter state globally.
+ *
+ * ### State Management
+ * - **Contextual Store**: Based on the `context` prop, it dynamically hooks into either `useFilterStore` (for stores) or `useProductFilterStore` (for products). This allows the component to be reused across different parts of the application.
+ * - **Local State**: It uses local React state to manage UI concerns like the open/closed state of accordion sections, search terms within facets, and the value of the price range slider.
+ *
+ * ### Price Range Slider
+ * For the `'product'` context, the component includes a price range slider. To prevent excessive API calls while the user is dragging the slider, it uses a debouncing technique. The slider's value is held in a local state (`localPriceRange`) and is only synced to the global Zustand store 500ms after the user has stopped making changes.
+ *
+ * ### Conditional Rendering
+ * The component's appearance and functionality change based on its props:
+ * - The `context` prop determines which facets are shown (e.g., the price slider only appears for 'product').
+ * - The presence of the `onClose` prop transforms the component into a modal-like view with a dedicated header and footer.
+ *
+ * @param {DynamicFilterProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered filter component or a skeleton loader.
+ * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
+ * @see {@link https://github.com/react-component/slider | react-range (Range Slider) Documentation}
+ * @see {@link https://lucide.dev/ | Lucide React (Icons)}
+ * @see {@link https://nextjs.org/docs/pages/api-reference/components/image | Next.js Image Component}
+ */
 const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
   const filterStore =
     context === "store" ? useFilterStore() : useProductFilterStore();
@@ -71,7 +101,11 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
       setLocalPriceRange(priceBounds);
     }
   }, [context, priceBounds]);
-
+  /**
+   * this useEffect is use to keep the local price range and global price range in sync
+   * if global selectedPrice range is changed
+   * local price range is also change to make it in sync
+   */
   useEffect(() => {
     const currentGlobalPrice = selectedPriceRange || priceBounds;
     if (
@@ -81,7 +115,12 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
       setLocalPriceRange(currentGlobalPrice);
     }
   }, [selectedPriceRange, priceBounds]);
-
+  /**
+   * if local price range is change
+   * global price range is updated
+   * setTimeout is used so that its not trigger
+   * at every moment the user slide the price range
+   */
   useEffect(() => {
     if (context !== "product") return;
 
@@ -114,6 +153,7 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
     });
     setOpenFacets(defaultOpen);
   }, [facets]);
+
   const handleSearchChange = (facetName: string, value: string) => {
     setSearchTerms((prev) => ({
       ...prev,
@@ -138,31 +178,13 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
     resetFilters();
     setLocalPriceRange(priceBounds);
   };
-
+  /**
+   * if dynamic filter is loading set the skimmer effect
+   */
   if (loading) return <DynamicFilterSkeleton />;
 
-  // if (isCollapsed) {
-  //   return (
-  //     <div className="sticky top-2 z-10">
-  //       <div className="w-fit px-3 py-2 bg-white flex items-center">
-  //         <button
-  //           className="flex items-center gap-2 text-sm font-medium text-gray-700"
-  //           onClick={() => setIsCollapsed(false)}
-  //         >
-  //           <span>Refine</span>
-  //           <Image
-  //             src="/ListingPageHeader/left_pointing_arrow.svg"
-  //             alt="expand"
-  //             width={16}
-  //             height={16}
-  //             className="rotate-180"
-  //           />
-  //         </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
   return (
+    //filter is sticky , always visible on screen
     <div className="sticky top-1 flex flex-col h-full max-h-[100vh] bg-white">
       {onClose && (
         <div className="flex items-center justify-between p-4 border-b">
@@ -183,17 +205,6 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
         className={`${manrope.className} flex-grow p-4 overflow-y-auto scrollbar-thin`}
         style={{ fontWeight: 600 }}
       >
-        {/* <div className="flex items-center justify-between mb-3">
-          <h1 className="text-[#1F2937]">Refine</h1>
-          <button onClick={() => setIsCollapsed(true)}>
-            <Image
-              src="/ListingPageHeader/left_pointing_arrow.svg"
-              alt="collapse"
-              width={20}
-              height={20}
-            />
-          </button>
-        </div> */}
         <div className="flex flex-col">
           {!onClose && (
             <div className="flex items-center justify-between mb-3">
@@ -231,7 +242,6 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
           </div>
         </div>
 
-        {/* <hr className="my-4 border-[#D9D9D9]" /> */}
         <div className="flex flex-col gap-5">
           {Object.entries(facets).map(([facetName, values]) => {
             const fName = formatFacetName(facetName);

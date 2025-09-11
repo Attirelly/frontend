@@ -1,133 +1,31 @@
-// 'use client';
-
-// import React, { use, useEffect, useState } from 'react';
-// import clsx from 'clsx';
-// import { SelectOption, BrandType } from '@/types/SellerTypes';
-// import { api } from '@/lib/axios';
-// import { toast } from 'sonner';
-// import { useHeaderStore } from '@/store/listing_header_store';
-// import { event } from '@/lib/gtag';
-// import { manrope } from '@/font';
-// import StoreTypeTabsSkeleton from './skeleton/StoreTypeHeaderSkeleton';
-
-// interface StoreTypeTabsProps {
-//     //   tabs: SelectOption[];
-//     //   onChange: (value: string) => void;
-//     defaultValue?: string;
-// }
-
-// export default function StoreTypeTabs({
-//     //   tabs,
-//     //   onChange,
-//     defaultValue,
-// }: StoreTypeTabsProps) {
-//     const { setStoreType, storeType } = useHeaderStore();
-//     const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
-//     const [tabs, setTabs] = useState<SelectOption[]>([]);
-//     const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(null);
-//     const [loading, setLoading] = useState(true);
-//     const handleTabClick = (value: SelectOption) => {
-//         const storeType: BrandType = {
-//             id: value.value,
-//             store_type: value.label
-//         }
-//         event({
-//             action: "Store Type Select",
-//             params: {
-//                 "Store Type": value.label
-//             }
-//         });
-//         setSelectedStoreType(storeType);
-//         setStoreType(storeType);
-//         // onChange(value);
-//     };
-//     //
-
-//     useEffect(() => {
-//     const fetchStoreTypes = async () => {
-//         try {
-//             setLoading(true);
-//             const res = await api.get("stores/store_types");
-
-//             setStoreTypes(res.data);
-//             const options: SelectOption[] = res.data.map((t: BrandType) => ({
-//                 label: t.store_type,
-//                 value: t.id
-//             }));
-//             setTabs(options);
-
-//             // Prefer storeType from Zustand, fallback to defaultValue
-//             const initialId = storeType?.id ?? defaultValue;
-
-//             if (initialId) {
-//                 const initialOption = res.data.find((t: BrandType) => t.id === initialId);
-//                 if (initialOption) {
-//                     const storeTypeObj: BrandType = {
-//                         id: initialOption.id,
-//                         store_type: initialOption.store_type,
-//                     };
-//                     setSelectedStoreType(storeTypeObj);
-//                     setStoreType(storeTypeObj); // update Zustand
-//                 }
-//             }
-//         }
-//         catch (error) {
-//             toast.error("Failed to fetch store types");
-//         }
-//         finally {
-//             setLoading(false);
-//         }
-//     };
-
-//     fetchStoreTypes();
-// }, [defaultValue, storeType?.id, setStoreType]);
-
-//     if(loading){
-//         return <StoreTypeTabsSkeleton/>
-//     }
-//     return (
-//         <div className="flex bg-[#F5F5F5] rounded-full overflow-hidden w-fit px-2 py-2">
-//             {tabs.map((tab, index) => (
-//                 <div key={tab.value} className="flex items-center">
-//                     <button
-//                         className={clsx(
-//                             manrope.className,
-//                             'px-4 py-2 rounded-full transition-all duration-200 mx-2 text-base',
-//                             selectedStoreType?.id === tab.value
-//                                 ? 'bg-white shadow text-black'
-//                                 : 'text-[#565656] hover:text-black'
-//                         )}
-//                         style={{fontWeight:500}}
-//                         onClick={() => handleTabClick(tab)}
-//                     >
-//                         {tab.label}
-//                     </button>
-
-//                     {index !== tabs.length - 1 && (
-//                         <div className="h-6 border-r border-gray-300 mx-2" />
-//                     )}
-//                 </div>
-//             ))}
-//         </div>
-//     );
-// }
-
 "use client";
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { SelectOption, BrandType } from "@/types/SellerTypes";
-import { toast } from "sonner";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { event } from "@/lib/gtag";
 import { manrope } from "@/font";
 import StoreTypeTabsSkeleton from "./skeleton/StoreTypeHeaderSkeleton";
 
+/**
+ * @interface StoreTypeTabsProps
+ * @description Defines the props for the StoreTypeTabs component.
+ */
 interface StoreTypeTabsProps {
+  /**
+   * @description The default value (ID) to select if no store type is already set in the global state.
+   * This is used for initializing the component's state from a parent that isn't connected to the store.
+   */
   defaultValue?: string;
+  /**
+   * @description A context string that alters the component's layout and available options.
+   * - `'products'`: Filters tabs to "Retail Store" & "Designer Label" and uses a horizontal scroll layout.
+   * - `'user'`: Shows all tabs in a 2-column grid layout on mobile.
+   * - `undefined` (or other): Shows all tabs in the default horizontal scroll layout.
+   */
   context?: string;
 }
-
 const HARD_CODED_STORE_TYPES: BrandType[] = [
   { id: "f923d739-4c06-4472-9bfd-bb848b32594b", store_type: "Retail Store" },
   { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" },
@@ -140,7 +38,7 @@ export default function StoreTypeTabs({
   context,
 }: StoreTypeTabsProps) {
   const { setStoreType, storeType } = useHeaderStore();
-  const [storeTypes, setStoreTypes] = useState<BrandType[]>([]);
+  const [setStoreTypes] = useState<BrandType[]>([]);
   const [tabs, setTabs] = useState<SelectOption[]>([]);
   const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(
     null
@@ -163,9 +61,12 @@ export default function StoreTypeTabs({
     setSelectedStoreType(storeTypeObj);
     setStoreType(storeTypeObj);
   };
-
+    /**
+   * This effect handles the scrolling behavior to center the active tab.
+   * It runs synchronously after the DOM is updated to prevent visual flicker, which is
+   * why `useLayoutEffect` is chosen over `useEffect`.
+   */
   useLayoutEffect(() => {
-    // This effect handles the scrolling behavior after the DOM has been updated
     if (scrollContainerRef.current && selectedStoreType) {
       const container = scrollContainerRef.current;
       const activeTab = container.querySelector(
@@ -189,50 +90,11 @@ export default function StoreTypeTabs({
     }
   }, [selectedStoreType]); // Re-run whenever the selected tab changes
 
-  //   useEffect(() => {
-  //     try {
-  //       setLoading(true);
-  //       setStoreTypes(HARD_CODED_STORE_TYPES);
-
-  //       if (context?.toLowerCase() === "products") {
-  //         const options: SelectOption[] = HARD_CODED_STORE_TYPES.filter(st => st.store_type === "Retail Store" ||
-  //             st.store_type == "Designer Label"
-  //         ).map((t) => ({
-  //           label: t.store_type,
-  //           value: t.id,
-  //         }));
-  //         setTabs(options);
-  //       }
-  //       else{
-  //         const options: SelectOption[] = HARD_CODED_STORE_TYPES.map((t) => ({
-  //           label: t.store_type,
-  //           value: t.id,
-  //         }));
-  //         setTabs(options);
-  //       }
-
-  //       // Set initial selected store type
-  //       const initialId = storeType?.id ?? defaultValue;
-  //       if (initialId) {
-  //         const initialOption = HARD_CODED_STORE_TYPES.find(
-  //           (t) => t.id === initialId
-  //         );
-  //         if (initialOption) {
-  //           const storeTypeObj: BrandType = {
-  //             id: initialOption.id,
-  //             store_type: initialOption.store_type,
-  //           };
-  //           setSelectedStoreType(storeTypeObj);
-  //           setStoreType(storeTypeObj);
-  //         }
-  //       }
-  //     } catch (err) {
-  //       toast.error("Failed to load store types");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }, [defaultValue, storeType, setStoreType]);
-
+  /**
+   * This effect handles the initialization of the component's state.
+   * It sets up the available tabs based on the context and determines the
+   * initial selected tab from the global state or props.
+   */
   useEffect(() => {
     setLoading(true);
     setStoreTypes(HARD_CODED_STORE_TYPES);
@@ -279,54 +141,6 @@ export default function StoreTypeTabs({
   if (loading) return <StoreTypeTabsSkeleton />;
 
   return (
-    // <div className="mx-auto md:mx-0 flex bg-[#F5F5F5] rounded-full overflow-hidden w-fit px-2 py-2 ">
-    //   {tabs.map((tab, index) => (
-    //     <div key={tab.value} className="flex items-center">
-    //       <button
-    //         className={clsx(
-    //           manrope.className,
-    //           "px-4 py-2 rounded-full transition-all duration-200 mx-2 text-base",
-    //           selectedStoreType?.id === tab.value
-    //             ? "bg-white shadow text-black"
-    //             : "text-[#565656] hover:text-black"
-    //         )}
-    //         style={{ fontWeight: 500 }}
-    //         onClick={() => handleTabClick(tab)}
-    //       >
-    //         {tab.label}
-    //       </button>
-    //       {index !== tabs.length - 1 && (
-    //         <div className="h-6 border-r border-gray-300 mx-2" />
-    //       )}
-    //     </div>
-    //   ))}
-    // </div>
-
-    //    <div className="grid grid-cols-2 gap-y-2 gap-x-2 md:flex md:flex-wrap md:justify-around justify-items-center rounded-full md:w-fit p-1">
-    //   {tabs.map((tab, index) => (
-    //     <div key={tab.value} className="flex items-center flex-shrink-0">
-    //       <button
-    //         className={clsx(
-    //           manrope.className,
-    //           "px-2 py-1.5 md:px-4 md:py-2 rounded-full transition-all duration-200 text-sm md:text-base",
-    //           "w-[150px] bg-[#F5F5F5] border border-gray-300",
-    //           selectedStoreType?.id === tab.value
-    //             ? "bg-black shadow text-white"
-    //             : "text-[#565656] hover:text-black"
-    //         )}
-    //         style={{ fontWeight: 500 }}
-    //         onClick={() => handleTabClick(tab)}
-    //       >
-    //         {tab.label}
-    //       </button>
-
-    //       {/* ✅ Mobile: divider after every odd index (i.e. between 2 items in a row) */}
-    //       {index % 2 === 0 && (
-    //         <div className="h-full w-px bg-gray-300 md:hidden" />
-    //       )}
-    //     </div>
-    //   ))}
-    // </div>
     <>
     
     {context?.toLowerCase() === 'user' ? (
@@ -404,9 +218,6 @@ export default function StoreTypeTabs({
       ))}
     </div>
     )}
-
     </>
-
-    
   );
 }
