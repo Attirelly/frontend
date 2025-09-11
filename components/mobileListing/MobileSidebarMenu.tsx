@@ -13,10 +13,49 @@ type Props = {
   onLoginClick: () => void;
 };
 
+/**
+ * MobileSidebarMenu Component
+ *
+ * A mobile-friendly sidebar navigation drawer for authenticated and guest users.
+ *
+ * ## Features
+ * - **Authentication-aware navigation**:
+ *   - If logged out → shows "Login" option
+ *   - If logged in → shows a collapsible user menu with logout option
+ * - **Category navigation**: embeds {@link MobileMenWomenNavbar} for product browsing
+ * - **Seller links**:
+ *   - Seller Sign-In
+ *   - Seller Sign-Up
+ * - **Logout handling**: calls {@link logout} utility and clears user session
+ * - Responsive design with a slide-in sidebar optimized for mobile devices
+ *
+ * ## Imports
+ * - **Next.js**:
+ *   - `Link` for navigation
+ *   - `Image` for optimized images
+ * - **React**: `useState`
+ * - **State Management**: {@link useAuthStore} from `@/store/auth`
+ * - **Utilities**: {@link logout} from `@/utils/logout`
+ * - **Key Components**: {@link MobileMenWomenNavbar}
+ * - **Icons**: `ChevronDown`, `ChevronUp` from `lucide-react`
+ *
+ * ## Props
+ * @param {object} props - Component props
+ * @param {() => void} props.onClose - Callback to close the sidebar
+ * @param {() => void} props.onLoginClick - Callback to open the login modal
+ *
+ * @returns {JSX.Element} The rendered mobile sidebar menu
+ */
+
 export default function MobileSidebarMenu({ onClose, onLoginClick }: Props) {
   const { user } = useAuthStore();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
+  /**
+   * This is OnClick function for logout button
+   * it calls utility function ( logout ) to logout the user and clear user state
+   * it triggers onClose callback function to close the Sidebar
+   */
   const handleLogout = () => {
     logout(); // Trigger the logout function
     onClose();  // Close the sidebar after logging out

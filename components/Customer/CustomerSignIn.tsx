@@ -7,6 +7,35 @@ interface CustomerSignInProps {
   onSuccess: () => void;
 }
 
+/**
+ * CustomerSignIn Component
+ *
+ * A modal component for customer authentication on Attirelly.
+ *
+ * ## Features
+ * - Displays a **centered modal** with a background overlay
+ * - Two-column grid layout:
+ *   - Left: promotional/branding image
+ *   - Right: text and social login buttons
+ * - Provides a close button (`✕`) to dismiss the modal
+ * - Triggers `onSuccess` callback on successful login
+ * - Responsive design (single-column on small screens, two-column on larger)
+ *
+ * ## Imports
+ * - **Next.js**: `Image` for optimized image rendering
+ * - **Fonts**: {@link manrope} for consistent typography
+ * - **Custom Components**: {@link SocialLoginButtons} for Google/Facebook authentication
+ *
+ * ## Props
+ * @param {object} props - Component props
+ * @param {() => void} props.onClose - Callback to close the modal
+ * @param {() => void} props.onSuccess - Callback triggered after successful sign-in
+ *
+ * @returns {JSX.Element} The rendered sign-in modal
+ *
+ */
+
+
 export default function CustomerSignIn({ onClose, onSuccess }: CustomerSignInProps) {
   const img = '/Login/CustomerLogin.svg';
 

@@ -1,13 +1,8 @@
-// components/SocialLoginButtons.tsx
 'use client';
-
-import { useRouter } from 'next/navigation';
 import useAuthStore from '@/store/auth';
-
 import Image from 'next/image';
 import { useGoogleLogin } from '@react-oauth/google';
 import { api } from '@/lib/axios';
-import { useEffect } from 'react';
 import { roboto } from '@/font';
 import { toast } from 'sonner';
 
@@ -22,13 +17,55 @@ type FacebookLoginResponse = {
     };
 };
 
+/**
+ * SocialLoginButtons Component
+ *
+ * Provides authentication via **Google** and **Facebook** using third-party SDKs.
+ *
+ * ## Features
+ * - **Google Login**:
+ *   - Uses `useGoogleLogin` from `@react-oauth/google`
+ *   - Sends Google access token to backend API (`/users/google`)
+ *   - Updates user state in {@link useAuthStore}
+ *   - Calls `onSuccess` callback if login is successful
+ * - **Facebook Login**:
+ *   - Uses the Facebook SDK (`window.FB.login`)
+ *   - Sends Facebook access token & userID to backend API (`/users/facebook`)
+ *   - Updates user state and calls `onSuccess`
+ * - **Error Handling**:
+ *   - Displays error messages via `toast` (Google) or `alert` (Facebook)
+ * - Responsive button design styled with `roboto` font
+ *
+ * ## Imports
+ * - **Next.js**: `Image` for optimized SVG rendering
+ * - **State Management**: {@link useAuthStore} for updating authentication state
+ * - **API Client**: {@link api} from `@/lib/axios` for backend requests
+ * - **Google Auth**: `useGoogleLogin` from `@react-oauth/google`
+ * - **Fonts**: {@link roboto} for button typography
+ * - **Notifications**: `toast` from `sonner` for error feedback
+ *
+ * ## Props
+ * @param {object} props - Component props
+ * @param {() => void} props.onSuccess - Callback executed after a successful login
+ *
+ * ## Returns
+ * @returns {JSX.Element} The rendered set of social login buttons
+ *
+ * ## APIs
+ * - **POST /users/google** → Authenticate with Google OAuth access token
+ * - **POST /users/facebook** → Authenticate with Facebook OAuth access token
+ */
+
 export default function SocialLoginButtons({ onSuccess }: { onSuccess: () => void }) {
     const { fetchUser } = useAuthStore();
-    const router = useRouter();
-    useEffect(() => {
-        router.prefetch("/customer_dashboard")
-    }, [])
-    // ----------------- Google Login -----------------
+
+    /**
+     * This function is OnClick function for Google sign in button
+     * useGoogleLogin is called
+     * Backend api is called using user data
+     * if successfully executed - onSucces is called
+     * if login is failed - alert is given and process is terminated
+     */
     const handleGoogleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {

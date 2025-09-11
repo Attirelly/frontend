@@ -1,5 +1,3 @@
-// components/listings/MobileStoreTypeSearch.tsx
-
 'use client';
 
 import { api } from "@/lib/axios";
@@ -23,6 +21,41 @@ interface StoreType {
   description?: string;
 }
 
+/**
+ * MobileStoreTypeSearch Component
+ *
+ * A mobile-friendly dropdown/popup component for exploring stores by type.
+ *
+ * ## Features
+ * - Fetches available store types from the API (`/stores/store_types`)
+ * - Displays store types in a **grid layout** with icons
+ * - Supports click-outside detection to close the component
+ * - On selecting a store type:
+ *   - Clears the global search query (`useHeaderStore`)
+ *   - Navigates to `/store_listing?store_type=<type>`
+ *   - Calls the `onClose` callback to close the dropdown
+ * - Visibility is fully controlled by the parent component
+ *
+ * ## Imports
+ * - **Next.js**:
+ *   - `useRouter` from `next/navigation` for programmatic navigation
+ *   - `Image` for optimized images
+ * - **React**: `useEffect`, `useState`, `useRef`
+ * - **State Management**: {@link useHeaderStore} from `@/store/listing_header_store`
+ * - **API Client**: {@link api} from `@/lib/axios`
+ * - **Fonts**: `manrope` from `@/font`
+ *
+ * ## APIs
+ * - `GET /stores/store_types` → Fetches store types from backend
+ *
+ * ## Props
+ * @param {object} props - Component props
+ * @param {boolean} [props.visible=false] - Controls visibility of the component
+ * @param {() => void} props.onClose - Callback to close the component
+ *
+ * @returns {JSX.Element | null} The rendered component, or `null` if not visible
+ */
+
 export default function MobileStoreTypeSearch({
   visible = false,
   onClose,
@@ -35,8 +68,10 @@ export default function MobileStoreTypeSearch({
   const containerRef = useRef<HTMLDivElement>(null);
   const [storeTypesList, setStoreTypesList] = useState<StoreType[]>([]);
 
-  // Fetch store types when the component mounts
+  
   useEffect(() => {
+  
+    //  Api to fetch store types store in database
     const fetchStoreTypes = async () => {
       try {
         const res = await api.get("/stores/store_types");
@@ -67,13 +102,19 @@ export default function MobileStoreTypeSearch({
     return null;
   }
 
+  /**
+   * When user clicks any store type button
+   * query is set to empty string
+   * redirect url is created with route to store listing with default store type
+   * onClose is called to close the store types dropdown
+   */
   const handleSearchTypeClick = (type: StoreType) => {
     setQuery("");
     const redirect_url = type?.store_type
       ? "/store_listing?store_type=" + type.store_type
       : "/store_listing";
     router.push(redirect_url);
-    onClose(); // Close the component after a selection is made
+    onClose();
   };
 
   return (
