@@ -13,22 +13,49 @@ import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import StoreTypeTabs from "@/components/listings/StoreTypes";
 import { BrandType } from "@/types/SellerTypes";
-import { Filter } from "lucide-react";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
-
-// const STORE_TYPE_OPTIONS = [
-//   { store_type: "Retail Store", id: process.env.NEXT_PUBLIC_RETAIL_STORE_TYPE },
-//   {
-//     store_type: "Designer Label",
-//     id: process.env.NEXT_PUBLIC_DESIGNER_STORE_TYPE,
-//   },
-// ];
 
 const STORE_TYPE_OPTIONS: BrandType[] = [
   { id: "f923d739-4c06-4472-9bfd-bb848b32594b", store_type: "Retail Store" },
   { id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17", store_type: "Designer Label" },
 ];
 
+/**
+ * The primary component for displaying a filterable and sortable list of products.
+ *
+ * This component acts as the main orchestrator for the product listing page. It manages a
+ * complex, two-way data synchronization between the browser's URL search parameters and the
+ * application's state, which is managed by Zustand stores. This architecture ensures that
+ * the page state is always shareable, bookmarkable, and preserved through browser history.
+ *
+ * ### State Management
+ * The component's state is distributed between two Zustand stores and local React state:
+ * - **`useHeaderStore`**: Manages global search queries, location (city/area), and store type.
+ * - **`useProductFilterStore`**: Manages detailed product facets (e.g., color, size), price range, and the fetched results.
+ * - **Local `useState`**: Handles UI-specific state, such as the visibility of the mobile filter panel.
+ *
+ * ### URL Synchronization
+ * Two `useEffect` hooks create a robust synchronization mechanism:
+ * 1.  **URL to State**: On mount or URL change, the first effect reads the `searchParams`, parses them, and initializes the Zustand stores.
+ * 2.  **State to URL**: After initialization, the second effect listens for changes in the Zustand stores and updates the URL using `router.replace()`, ensuring the URL always reflects the current view.
+ *
+ * ### API Calls
+ * This component does not make direct API calls. Instead, it relies on the imported Zustand stores (`useHeaderStore` and `useProductFilterStore`) to handle all interactions with the backend. It consumes state like `results` and `isResultsLoading` that are managed within those stores. The stores are responsible for fetching product data, filter options, and location data.
+ *
+ * ### Key Components & Libraries
+ * - **{@link DynamicFilter}**: Renders the filter sidebar/panel.
+ * - **{@link ProductContainer}**: Renders the grid of product results.
+ * - **{@link StoreTypeTabs}**: Renders the tabs for selecting "Retail Store" or "Designer Label".
+ * - **{@link SortByDropdown}**: Renders the dropdown for sorting results.
+ * - **{@link ListingPageHeader}**: Renders the main header for desktop views.
+ * - **{@link ListingMobileHeader}**: Renders the main header for mobile views.
+ * - **{@link ListingFooter}**: Renders the page footer.
+ *
+ * @returns {JSX.Element} The fully rendered product listing page.
+ * @see {@link https://nextjs.org/docs/app/api-reference/functions/use-search-params | Next.js useSearchParams}
+ * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
+ * @see {@link https://fusejs.io/ | Fuse.js Documentation}
+ */
 export default function ProductListPage() {
   const router = useRouter();
   const pathname = usePathname();
@@ -47,14 +74,15 @@ export default function ProductListPage() {
     storeType,
     allStoreType,
   } = useHeaderStore();
+
   const {
     results,
     initializeFilters,
     selectedFilters,
     selectedPriceRange,
-    activeFacet,
     isResultsLoading,
   } = useProductFilterStore();
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [matchedStoreType, setMatchedStoreType] = useState<string | null>(null);
@@ -64,7 +92,9 @@ export default function ProductListPage() {
     threshold: 0.4,
   });
 
-  // url to state
+/**
+ * url params is used to update the zustand and local state 
+ */
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
     const initialSelectedFilters: Record<string, string[]> = {};
@@ -84,7 +114,10 @@ export default function ProductListPage() {
       )
     )
       return;
-
+/**
+ * fetch the selected filters from url params 
+ * skip the params we know will not be there in selected params 
+ */
     params.forEach((value, key) => {
       if (
         key !== "search" &&
@@ -98,17 +131,19 @@ export default function ProductListPage() {
       }
     });
 
-    // Only perform the lookup if the master lists have been loaded
-    console.log("all city", allCity);
+/**
+ * in url params will only have city name 
+ * fetching the city object from allCity
+ */
     if (allCity && allCity.length > 0 && cityName) {
       const cityObject = allCity.find((c) => c.name === cityName);
-      console.log("url_city", cityObject);
       if (cityObject) setCity(cityObject);
     }
-
+/**
+ * same as done for city
+ */
     if (allArea && allArea.length > 0 && areaName) {
       const areaObject = allArea.find((a) => a.name === areaName);
-      console.log(areaObject);
       if (areaObject) setArea(areaObject);
     }
     let initialPriceRange: [number, number] | null = null;
@@ -155,6 +190,10 @@ export default function ProductListPage() {
     setStoreType,
   ]);
 
+/**
+ * effect to update the url params 
+ * on change of state 
+ */
   useEffect(() => {
     if (!isReadyFlag) return;
     const oldparams = new URLSearchParams(searchParams);
