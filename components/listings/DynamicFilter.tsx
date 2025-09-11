@@ -289,7 +289,7 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
                           <label className="text-sm text-gray-600 mb-1 block">
                             Range
                           </label>
-
+                          {/* range component from react-range */}
                           <Range
                             step={100}
                             min={priceBounds[0]}

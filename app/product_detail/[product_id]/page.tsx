@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
@@ -9,7 +8,6 @@ import {
   ChevronRight,
   ChevronUp,
   RefreshCcw,
-  Truck,
 } from "lucide-react";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import ListingFooter from "@/components/listings/ListingFooter";
@@ -24,9 +22,53 @@ import useAuthStore from "@/store/auth";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Link from "next/link";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
-import { useSwipeable } from 'react-swipeable';
+import { useSwipeable } from "react-swipeable";
 
-
+/**
+ * A comprehensive client-side component for displaying the details of a single product.
+ *
+ * This page fetches and renders all information related to a product, including its variants (colors, sizes),
+ * description, and seller details. It is highly interactive, featuring an advanced image gallery with thumbnails,
+ * swipe support, and a hover-to-zoom magnifier. It also includes a "Buy on WhatsApp" feature that
+ * integrates with an authentication flow.
+ *
+ * ### State Management
+ * - **Local State (`useState`)**: Manages a wide range of UI state, including the selected product variant (color, size),
+ * the active image in the gallery, the state of collapsible sections, and the logic for the hover-to-zoom feature.
+ * - **Global State (`useAuthStore`)**: Uses a Zustand store to check the user's authentication status, which is required
+ * before initiating the "Buy on WhatsApp" action.
+ *
+ * ### Image Gallery Features
+ * - **Thumbnail Navigation**: A sliding window of thumbnails allows for quick navigation through product images. The logic handles shifting the visible thumbnails as the user navigates.
+ * - **Swipe Gestures**: The `react-swipeable` library is used to enable swiping between images on touch devices.
+ * - **Hover-to-Zoom Magnifier**: On desktop, hovering over the main image reveals a magnified preview, allowing users to inspect product details closely.
+ *
+ * ### "Buy on WhatsApp" Flow
+ * This feature provides a direct line to the seller. It follows an authentication-gated flow:
+ * 1.  User clicks the button, setting a `pendingWhatsApp` flag.
+ * 2.  The app checks if the user is authenticated.
+ * 3.  If not, a sign-in modal is displayed.
+ * 4.  Upon successful sign-in, the app detects the pending flag and proceeds to open WhatsApp with a pre-filled message.
+ *
+ * ### API Endpoints
+ * **`GET /products/:product_id`**
+ * Fetches the complete data for a single product, including all its variants, images, and attributes.
+ * - **`:product_id`** (string): The unique ID of the product from the URL.
+ *
+ * **`GET /stores/store_basic`**
+ * Fetches essential public information about the seller's store, such as the store name and WhatsApp number.
+ * - **`store_id`** (query param, string): The ID of the store associated with the product.
+ *
+ * @returns {JSX.Element} The rendered Product Detail Page or a loading spinner if data is being fetched.
+ * @see {@link https://nextjs.org/docs/app/api-reference/functions/use-params | Next.js useParams}
+ * @see {@link https://axios-http.com/docs/intro | Axios Documentation}
+ * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
+ * @see {@link https://github.com/FormidableLabs/react-swipeable | react-swipeable Documentation}
+ * @see {@link ShowMoreProducts}
+ * @see {@link CustomerSignIn}
+ * @see {@link ListingPageHeader}
+ * @see {@link ListingFooter}
+ */
 export default function ProductDetail() {
   const { user } = useAuthStore();
   const params = useParams();
@@ -40,9 +82,9 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState<Color | null>(null);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0); // k 
-  const [startIndex, setStartIndex] = useState(0);  //  i 
-  const [endIndex, setEndIndex] = useState(4);     //   j 
+  const [activeIndex, setActiveIndex] = useState(0); // k
+  const [startIndex, setStartIndex] = useState(0); //  i
+  const [endIndex, setEndIndex] = useState(4); //   j
   const [storeBasicInfo, setStoreBasicInfo] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
@@ -56,45 +98,59 @@ export default function ProductDetail() {
     y: number;
   } | null>(null);
 
-
   const ZOOM_FACTOR = 2; // Adjust this value as needed
   const LENS_WIDTH = 150;
   const LENS_HEIGHT = 100;
   const ORIGINAL_IMAGE_WIDTH = 600;
   const ORIGINAL_IMAGE_HEIGHT = 600; // your image container size
 
+  /**
+   * Handles mouse movement over the main image to position the zoom lens.
+   */
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
     // Ensure lens stays within image bounds
-    const boundedX = Math.max(0, Math.min(x - LENS_WIDTH / 2, rect.width - LENS_WIDTH));
-    const boundedY = Math.max(0, Math.min(y - LENS_HEIGHT / 2, rect.height - LENS_HEIGHT));
+    const boundedX = Math.max(
+      0,
+      Math.min(x - LENS_WIDTH / 2, rect.width - LENS_WIDTH)
+    );
+    const boundedY = Math.max(
+      0,
+      Math.min(y - LENS_HEIGHT / 2, rect.height - LENS_HEIGHT)
+    );
 
     setLensPosition({ x: boundedX, y: boundedY });
   };
+
+  /**
+   * Hides the zoom lens when the mouse leaves the image area.
+   */
   const handleMouseLeave = () => {
     setLensPosition(null);
   };
 
   const imageRef = useRef<HTMLImageElement>(null);
   const [ratio, setRatio] = useState<number>(1);
-
+  /**
+   * Calculates the aspect ratio of the loaded image to correct the zoom magnifier.
+   * This is crucial for preventing non-square images from appearing distorted in the zoom preview.
+   */
   const handleImageLoad = () => {
     if (imageRef.current) {
       const naturalWidth = imageRef.current.naturalWidth;
       const naturalHeight = imageRef.current.naturalHeight;
-      const containerWidth = 600;
-      const containerHeight = 600;
       const ratioio = naturalWidth / naturalHeight;
       console.log(ratio);
       setRatio(ratioio);
     }
   };
 
-
-
+  /**
+   * Effect to fetch the main product details when the component mounts or the product ID changes.
+   */
   useEffect(() => {
     async function fetchProductDetails() {
       try {
@@ -115,7 +171,9 @@ export default function ProductDetail() {
 
     fetchProductDetails();
   }, [product_id]);
-
+  /**
+   * Effect to fetch basic store information after the product data (and thus store_id) has been loaded.
+   */
   useEffect(() => {
     async function fetchStoreBasicInfo() {
       try {
@@ -135,30 +193,49 @@ export default function ProductDetail() {
 
   const isCustomerAuthenticated = () => {
     return Boolean(user?.id); // Or session value / cookie
-  }
+  };
 
+  /**
+   * Effect to handle the pending WhatsApp action after a user successfully logs in.
+   */
   useEffect(() => {
-    if (!pendingWhatsApp) return;
-    if (isCustomerAuthenticated()) {
+    // If there's a pending WhatsApp action and the user is now authenticated, proceed.
+    if (pendingWhatsApp && isCustomerAuthenticated()) {
       sendToWhatsApp();
-      setPendingWhatsApp(false);
+      setPendingWhatsApp(false); // Reset the flag after the action is taken.
     }
-  }, [pendingWhatsApp, user?.id]);
+  }, [pendingWhatsApp, user?.id]); // Reruns when the pending flag or user status changes.
 
+  /**
+   * Initiates the "Buy on WhatsApp" flow, checking for authentication first.
+   */
   const handleSendToWhatsAppClick = () => {
-    setPendingWhatsApp(true);
+    setPendingWhatsApp(true); // Set the intent flag.
     if (!isCustomerAuthenticated()) {
-      setSignIn(true);
+      setSignIn(true); // If not logged in, show the sign-in modal.
+    } else {
+      sendToWhatsApp(); // If already logged in, proceed immediately.
     }
   };
 
+  /**
+   * Constructs a pre-filled message and opens a WhatsApp chat link in a new tab.
+   */
   const sendToWhatsApp = async () => {
     // setSignIn(true);
     try {
-      const phoneNumber = (storeBasicInfo?.whatsapp_number).substring(0, 5) === "11111" ? "9915916707" : storeBasicInfo?.whatsapp_number;
+      const phoneNumber =
+        (storeBasicInfo?.whatsapp_number).substring(0, 5) === "11111"
+          ? "9915916707"
+          : storeBasicInfo?.whatsapp_number;
       const storeName = storeBasicInfo?.store_name || "Store"; // fallback if not available
       const productName = product?.title || "";
-      const variant = "color : " + selectedColor?.color_name + " " + "size : " + selectedSize?.size_name || "";
+      const variant =
+        "color : " +
+          selectedColor?.color_name +
+          " " +
+          "size : " +
+          selectedSize?.size_name || "";
       const price = "₹" + (selectedVariant?.mrp || "");
       const productLink = window.location.href; // current page link
 
@@ -179,6 +256,11 @@ Could you please confirm its availability and share more details.`;
     }
   };
 
+  /**
+   * Finds and sets the correct product variant based on the user's selected color and size.
+   * @param color The newly selected color object.
+   * @param size The newly selected size object.
+   */
   const updateVariantBySelection = (color: Color | null, size: Size | null) => {
     if (!product) return;
     if (!color && !size) return;
@@ -222,11 +304,11 @@ Could you please confirm its availability and share more details.`;
           self.findIndex((v) => v.size_id === value.size_id) === index
       ) || [];
 
-  const images = (selectedVariant?.images?.length
-    ? selectedVariant.images
-    : product?.images || []
+  const images = (
+    selectedVariant?.images?.length
+      ? selectedVariant.images
+      : product?.images || []
   ).map((img) => img.image_url);
-
 
   const nextImage = () => {
     if (activeIndex === endIndex) {
@@ -263,17 +345,17 @@ Could you please confirm its availability and share more details.`;
   };
 
   if (!product) {
-    return <div className="p-4"><LoadingSpinner /></div>;
+    return (
+      <div className="p-4">
+        <LoadingSpinner />
+      </div>
+    );
   }
-
-
-
-
 
   return (
     <div className="w-full h-full bg-white">
-      <ListingMobileHeader className='block lg:hidden' />
-      <ListingPageHeader className='hidden lg:block' />
+      <ListingMobileHeader className="block lg:hidden" />
+      <ListingPageHeader className="hidden lg:block" />
       <div className="mx-auto lg:w-[1300px] flex flex-col gap-2">
         <div className="w-full flex flex-col mt-1 md:mt-10 mb-10">
           <div className="flex flex-col gap-4 lg:flex-row lg:gap-20">
@@ -284,7 +366,8 @@ Could you please confirm its availability and share more details.`;
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
                 className="w-[370px] h-[370px] md:w-[600px] md:h-[600px] lg:w-[600px] lg:h-[600px] relative rounded-xl overflow-hidden"
-               {...restHandlers}>
+                {...restHandlers}
+              >
                 <Image
                   ref={imageRef}
                   src={images[activeIndex]}
@@ -294,19 +377,20 @@ Could you please confirm its availability and share more details.`;
                   onLoad={handleImageLoad}
                 />
                 <div>
-                {/* create bubbles here with horizontally centred and bottom-15  */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {/* create bubbles here with horizontally centred and bottom-15  */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                     {images.map((_, index) => (
-                        <div
-                            key={index}
-                            className={`w-2 h-2 rounded-full md:hidden ${index === activeIndex ? 'bg-black' : 'bg-gray-300'
-                                } transition-all duration-300`}
-                        />
+                      <div
+                        key={index}
+                        className={`w-2 h-2 rounded-full md:hidden ${
+                          index === activeIndex ? "bg-black" : "bg-gray-300"
+                        } transition-all duration-300`}
+                      />
                     ))}
+                  </div>
                 </div>
-            </div>
               </div>
-
+              {/* Zoom Lens element, only visible on desktop during hover */}
               {lensPosition && (
                 <div
                   className="absolute pointer-events-none transition-all hidden lg:flex duration-75 ease-linear"
@@ -337,8 +421,11 @@ Could you please confirm its availability and share more details.`;
                   {images.slice(startIndex, startIndex + 5).map((src, idx) => (
                     <div
                       key={idx}
-                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${startIndex + idx === activeIndex ? "border-black" : "border-gray-300"
-                        }`}
+                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${
+                        startIndex + idx === activeIndex
+                          ? "border-black"
+                          : "border-gray-300"
+                      }`}
                       onClick={() => setActiveIndex(startIndex + idx)}
                     >
                       <Image
@@ -354,7 +441,9 @@ Could you please confirm its availability and share more details.`;
                 <button
                   className="p-2 rounded-xl bg-black disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   onClick={nextImage}
-                  disabled={activeIndex === endIndex && endIndex === images.length - 1}
+                  disabled={
+                    activeIndex === endIndex && endIndex === images.length - 1
+                  }
                 >
                   <ChevronRight size={20} />
                 </button>
@@ -372,22 +461,35 @@ Could you please confirm its availability and share more details.`;
                     height: LENS_HEIGHT * ZOOM_FACTOR * 2,
                     backgroundImage: `url(${images[activeIndex]})`,
                     backgroundRepeat: "no-repeat",
-                    backgroundSize: `${ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio}px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
-                    backgroundPosition: `-${lensPosition.x * ZOOM_FACTOR * 2 * ratio}px -${lensPosition.y * ZOOM_FACTOR * 2}px`,
+                    backgroundSize: `${
+                      ORIGINAL_IMAGE_WIDTH * ZOOM_FACTOR * 2 * ratio
+                    }px ${ORIGINAL_IMAGE_HEIGHT * ZOOM_FACTOR * 2}px`,
+                    backgroundPosition: `-${
+                      lensPosition.x * ZOOM_FACTOR * 2 * ratio
+                    }px -${lensPosition.y * ZOOM_FACTOR * 2}px`,
                   }}
                 />
               )}
               <p className="text-[24px] font-medium leading-9.5 tracking-normal">
-                By <Link href={`/store_profile/${product?.store_id}`} className="hover:text-gray-500">{storeBasicInfo?.store_name}</Link>
+                By{" "}
+                <Link
+                  href={`/store_profile/${product?.store_id}`}
+                  className="hover:text-gray-500"
+                >
+                  {storeBasicInfo?.store_name}
+                </Link>
               </p>
               <h1 className="text-[20px] text-[#7D7D7D] font-medium tracking-tighter md:mt-2">
                 {product?.title
-                  ? product.title.charAt(0).toUpperCase() + product.title.slice(1)
+                  ? product.title.charAt(0).toUpperCase() +
+                    product.title.slice(1)
                   : ""}
               </h1>
 
-              <div className="flex items-center gap-4 md:mt-4 pb-4 mb-4
-            border-b border-dashed border-[#A3A3A3] border-[0.5]px">
+              <div
+                className="flex items-center gap-4 md:mt-4 pb-4 mb-4
+            border-b border-dashed border-[#A3A3A3] border-[0.5]px"
+              >
                 {selectedVariant?.mrp === selectedVariant?.price ? (
                   <p className="text-[24px] font-medium">
                     ₹{selectedVariant?.mrp.toLocaleString()}
@@ -429,10 +531,11 @@ Could you please confirm its availability and share more details.`;
                         onClick={() =>
                           updateVariantBySelection(selectedColor, size)
                         }
-                        className={`border rounded-sm min-w-[57px] min-h-[30px] md:min-w-19 md:min-h-10 px-1 ${selectedSize?.size_id === size.size_id
-                          ? "border-black font-semibold bg-[#EBEBEB]"
-                          : "border-gray-300"
-                          }`}
+                        className={`border rounded-sm min-w-[57px] min-h-[30px] md:min-w-19 md:min-h-10 px-1 ${
+                          selectedSize?.size_id === size.size_id
+                            ? "border-black font-semibold bg-[#EBEBEB]"
+                            : "border-gray-300"
+                        }`}
                       >
                         {size.size_name}
                       </button>
@@ -447,22 +550,34 @@ Could you please confirm its availability and share more details.`;
                   <p className="text-[15px] md:text-lg font-medium">
                     <span className="text-[#7D7D7D]">Available Color </span>
                   </p>
-                  <div className="flex gap-4 mt-2 md:mt-5"> {/* Increased gap slightly for the ring */}
+                  <div className="flex gap-4 mt-2 md:mt-5">
+                    {" "}
+                    {/* Increased gap slightly for the ring */}
                     {colors.map((color) => {
-                      const isSelected = selectedColor?.color_id === color.color_id;
+                      const isSelected =
+                        selectedColor?.color_id === color.color_id;
                       return (
-                        <div key={color.color_id} className="flex flex-col items-center">
+                        <div
+                          key={color.color_id}
+                          className="flex flex-col items-center"
+                        >
                           <button
                             className={`w-8 h-8 md:w-10 md:h-10 rounded-full border border-gray-300 transition-all duration-200
-                ${isSelected ? "ring-2 ring-black ring-offset-2" : ""
-                              }`}
-                            style={{ backgroundColor: color.hex_code || "#ccc" }}
-                            onClick={() => updateVariantBySelection(color, selectedSize)}
+                ${isSelected ? "ring-2 ring-black ring-offset-2" : ""}`}
+                            style={{
+                              backgroundColor: color.hex_code || "#ccc",
+                            }}
+                            onClick={() =>
+                              updateVariantBySelection(color, selectedSize)
+                            }
                           />
                           {/* ✅ Emphasize the text of the selected color */}
                           <span
-                            className={`text-sm mt-2 transition-colors duration-200 ${isSelected ? "font-semibold text-black" : "text-gray-500"
-                              }`}
+                            className={`text-sm mt-2 transition-colors duration-200 ${
+                              isSelected
+                                ? "font-semibold text-black"
+                                : "text-gray-500"
+                            }`}
                           >
                             {color.color_name}
                           </span>
@@ -479,7 +594,13 @@ Could you please confirm its availability and share more details.`;
                 onClick={handleSendToWhatsAppClick}
               >
                 {/* <FaWhatsapp size={36} /> */}
-                <FaWhatsapp size={typeof window !== "undefined" && window.innerWidth < 768 ? 24 : 36} />
+                <FaWhatsapp
+                  size={
+                    typeof window !== "undefined" && window.innerWidth < 768
+                      ? 24
+                      : 36
+                  }
+                />
                 Buy on WhatsApp
               </button>
 
@@ -487,7 +608,10 @@ Could you please confirm its availability and share more details.`;
               {!product.shopify_id && (
                 <div className="mt-8">
                   <div className="flex justify-between items-center border-b border-0.25 border-[#CCCCCC] mb-2">
-                    <h1 className="w-full text-[13px] md:text-xl py-2 md:py-5" style={{ fontWeight: 500 }}>
+                    <h1
+                      className="w-full text-[13px] md:text-xl py-2 md:py-5"
+                      style={{ fontWeight: 500 }}
+                    >
                       Product Details
                     </h1>
                     <button
@@ -512,7 +636,10 @@ Could you please confirm its availability and share more details.`;
                             <div className="text-sm font-40 text-[#766874]">
                               {item.name}
                             </div>
-                            <div className="text-base mt-2" style={{ fontWeight: 500 }}>
+                            <div
+                              className="text-base mt-2"
+                              style={{ fontWeight: 500 }}
+                            >
                               {item.value}
                             </div>
                           </li>
@@ -523,7 +650,10 @@ Could you please confirm its availability and share more details.`;
                         <h2 className="font-400 mb-1 text-[#766874]">
                           Care Instructions
                         </h2>
-                        <p className="text-base mt-2" style={{ fontWeight: 500 }}>
+                        <p
+                          className="text-base mt-2"
+                          style={{ fontWeight: 500 }}
+                        >
                           Do not wash with white clothes, Do not use hard
                           detergents
                         </p>
@@ -536,7 +666,10 @@ Could you please confirm its availability and share more details.`;
               {/* Product Description */}
               <div className="mt-4 md:mt-8">
                 <div className="flex justify-between items-center border-b border-0.25 border-[#CCCCCC] mb-2">
-                  <h1 className="w-full text-[13px] md:text-xl py-2 md:py-5" style={{ fontWeight: 500 }}>
+                  <h1
+                    className="w-full text-[13px] md:text-xl py-2 md:py-5"
+                    style={{ fontWeight: 500 }}
+                  >
                     Product Description
                   </h1>
                   <button
@@ -557,7 +690,9 @@ Could you please confirm its availability and share more details.`;
 
                 {!isProductDescriptionCollapse && (
                   <div>
-                    <div className="text-[14px] text-black">{product?.description}</div>
+                    <div className="text-[14px] text-black">
+                      {product?.description}
+                    </div>
                   </div>
                 )}
               </div>
@@ -574,15 +709,21 @@ Could you please confirm its availability and share more details.`;
                         height={18}
                         className="text-black inline-block self-start"
                       />
-
                     </div>
                     <div className="flex flex-col">
-                      <span className=" text-[13px] md:text-base" style={{ fontWeight: 700 }}>Free Delivery</span>
-                      <p className="text-[10px] md:text-[14px] text-[#726C6C]" style={{ fontWeight: 400 }}>
+                      <span
+                        className=" text-[13px] md:text-base"
+                        style={{ fontWeight: 700 }}
+                      >
+                        Free Delivery
+                      </span>
+                      <p
+                        className="text-[10px] md:text-[14px] text-[#726C6C]"
+                        style={{ fontWeight: 400 }}
+                      >
                         Enter your Postal code for Delivery Availability
                       </p>
                     </div>
-
                   </div>
 
                   {storeBasicInfo?.return_days > 0 && (
@@ -597,17 +738,25 @@ Could you please confirm its availability and share more details.`;
                             height={18}
                             className="text-black inline-block"
                           />
-
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-[13px] md:text-base" style={{ fontWeight: 700 }}>Return Delivery</span>
-                          <p className="text-[10px] md:text-[14px] text-[#726C6C]" style={{ fontWeight: 400 }}>
-                            Free {storeBasicInfo?.return_days} days Delivery Return.{" "}
-                            <span className="underline cursor-pointer">Details</span>
+                          <span
+                            className="text-[13px] md:text-base"
+                            style={{ fontWeight: 700 }}
+                          >
+                            Return Delivery
+                          </span>
+                          <p
+                            className="text-[10px] md:text-[14px] text-[#726C6C]"
+                            style={{ fontWeight: 400 }}
+                          >
+                            Free {storeBasicInfo?.return_days} days Delivery
+                            Return.{" "}
+                            <span className="underline cursor-pointer">
+                              Details
+                            </span>
                           </p>
                         </div>
-
-
                       </div>
                     </div>
                   )}
@@ -616,22 +765,32 @@ Could you please confirm its availability and share more details.`;
                       <hr className="border-t border-[#E4E4E4]" />
                       <div className="flex flex-row px-4 gap-2">
                         <div className="flex items-center">
-                          <RefreshCcw size={18} className="text-black inline-block self-start" />
-
+                          <RefreshCcw
+                            size={18}
+                            className="text-black inline-block self-start"
+                          />
                         </div>
                         <div className="flex flex-col gap">
-                          <span className="text-[13px] md:text-base" style={{ fontWeight: 700 }}>Exchange Delivery</span>
-                          <p className="text-[10px] md:text-[14px] text-[#726C6C]" style={{ fontWeight: 400 }}>
-                            Free {storeBasicInfo?.exchange_days} days Delivery Exchange.{" "}
-                            <span className="underline cursor-pointer">Details</span>
+                          <span
+                            className="text-[13px] md:text-base"
+                            style={{ fontWeight: 700 }}
+                          >
+                            Exchange Delivery
+                          </span>
+                          <p
+                            className="text-[10px] md:text-[14px] text-[#726C6C]"
+                            style={{ fontWeight: 400 }}
+                          >
+                            Free {storeBasicInfo?.exchange_days} days Delivery
+                            Exchange.{" "}
+                            <span className="underline cursor-pointer">
+                              Details
+                            </span>
                           </p>
                         </div>
-
                       </div>
                     </div>
                   )}
-
-
                 </div>
               </div>
             </div>
@@ -642,14 +801,16 @@ Could you please confirm its availability and share more details.`;
         <div className="px-10 w-full flex flex-col mx-auto">
           <hr
             className="border-t border-gray-300 hidden md:block"
-          // style={{
-          //   borderImage:
-          //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
-          //   borderImageSlice: 1,
-          // }}
+            // style={{
+            //   borderImage:
+            //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
+            //   borderImageSlice: 1,
+            // }}
           />
 
-          <div className={`${roboto.className} flex mt-4 md:mt-16 justify-between items-center`}>
+          <div
+            className={`${roboto.className} flex mt-4 md:mt-16 justify-between items-center`}
+          >
             <span
               className="text-[20px] md:text-[28px] text-[#141414]"
               style={{ fontWeight: 600 }}
@@ -661,7 +822,8 @@ Could you please confirm its availability and share more details.`;
               style={{ fontWeight: 500 }}
               onClick={() => {
                 router.push(
-                  `/store_profile/${product?.store_id
+                  `/store_profile/${
+                    product?.store_id
                   }?defaultButton=${encodeURIComponent("Products")}`
                 );
               }}
@@ -690,7 +852,7 @@ Could you please confirm its availability and share more details.`;
             console.log("success");
             setSignIn(false);
             if (pendingWhatsApp) {
-              sendToWhatsApp();        // Proceed now
+              sendToWhatsApp(); // Proceed now
               setPendingWhatsApp(false);
             }
           }}

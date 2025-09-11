@@ -10,10 +10,39 @@ const optionsMap: { label: string; value: string }[] = [
   { label: "Discount: High to Low", value: "discount_desc" },
 ];
 
+
+/**
+ * A dropdown component that allows users to select a sort order for a list.
+ *
+ * This component displays the currently selected sort option and, when clicked, reveals a
+ * list of available options. The component's state is managed through a combination of
+ * local state for UI visibility and a global Zustand store for the selected sort value.
+ *
+ * ### State Management
+ * - **Zustand (`useHeaderStore`)**: The component reads the current `sortBy` value from this global
+ * store and calls the `setSortBy` action to update it. This makes the sort state accessible
+ * to other components, such as the one responsible for fetching and displaying the sorted data.
+ * - **React `useState`**: A simple boolean state (`isOpen`) is used to control the
+ * visibility of the dropdown menu itself.
+ *
+ * ### Behavior
+ * - Clicking the main button toggles the dropdown's visibility.
+ * - Clicking an option within the dropdown updates the global `sortBy` state via Zustand and
+ * immediately closes the dropdown.
+ *
+ * @returns {JSX.Element} A dropdown menu for sorting.
+ * @see {@link https://react.dev/reference/react/useState | React useState Hook}
+ * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
+ */
+
 const SortByDropdown: React.FC = () => {
+  // Global state for getting and setting the sort-by value.
   const { sortBy, setSortBy } = useHeaderStore();
+  // Local state to manage the dropdown's open/closed status.
   const [isOpen, setIsOpen] = useState(false);
 
+  // Find the display label corresponding to the currently selected sortBy value from the store.
+  // This cleanly separates the logical value (e.g., 'date_desc') from the user-friendly text.
   const selectedLabel =
     optionsMap.find((option) => option.value === sortBy)?.label || "date_desc";
 
@@ -36,7 +65,7 @@ const SortByDropdown: React.FC = () => {
           }`}
         />
       </button>
-
+      {/* The dropdown menu is conditionally rendered based on the `isOpen` state. */}
       {isOpen && (
         <div className="absolute z-20 mt-2 w-full bg-white border rounded-lg shadow-lg">
           {optionsMap.map((option) => (

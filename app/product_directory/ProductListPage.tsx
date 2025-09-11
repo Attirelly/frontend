@@ -4,7 +4,6 @@ import ListingFooter from "@/components/listings/ListingFooter";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import ProductContainer from "@/components/listings/ProductContainer";
 import SortByDropdown from "@/components/listings/SortByDropdown";
-import StoreTypeButtons from "@/components/listings/StoreTypeButtons";
 import { manrope } from "@/font";
 import { useProductFilterStore } from "@/store/filterStore";
 import { useHeaderStore } from "@/store/listing_header_store";
