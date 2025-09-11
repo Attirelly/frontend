@@ -1,77 +1,3 @@
-// // components/Card.tsx
-// import Image from "next/image";
-// import { manrope } from "@/font";
-
-// interface CardProps {
-//   imageUrl: string;
-//   title: string;
-//   description?: string;
-//   screenSize?: string;
-// }
-
-// const CardTypeFour: React.FC<CardProps> = ({
-//   imageUrl,
-//   title,
-//   description,
-//   screenSize = "sm",
-// }) => {
-//   return (
-//     <div
-//       className={`${manrope.className} relative
-//                   ${screenSize === "sm" ? "w-[120px] h-[120px]" : ""}
-//                   ${screenSize === "md" ? "w-[140px] h-[140px]" : ""}
-//                   ${screenSize === "lg" ? "w-[175px] h-[175px]" : ""}
-//                   ${screenSize === "xl" ? "w-[200px] h-[200px]" : ""}
-//      overflow-hidden rounded-sm`}
-//     >
-//       {/* Background Image */}
-//       <div className="absolute inset-0 z-0">
-//         <Image
-//           src={imageUrl}
-//           alt={title}
-//           fill
-//           className="object-cover object-top"
-//           priority
-//         />
-//       </div>
-
-//       {/* Overlay */}
-//       <div className="absolute inset-0 bg-transparent z-10" />
-
-//       {/* Discount Badge */}
-//       {/* <div className="absolute top-0 right-0 z-20 bg-black text-white text-sm font-semibold px-3 py-1 rounded-bl-xl shadow-md">
-//         Sale : {discountText} %
-//       </div> */}
-
-//       {/* Text Content */}
-//       <div className="flex flex-col items-center justify-center absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 mb-4 text-white mx-auto">
-//         <h3
-//           className={`${screenSize === "sm" ? "text-[14px]" : ""}
-//                   ${screenSize === "md" ? "text-[16px]" : ""}
-//                   ${screenSize === "lg" ? "text-[18px]" : ""}
-//                   ${screenSize === "xl" ? "text-[20px]" : ""}
-//                   whitespace-nowrap text-white`}
-//           style={{ fontWeight: 400 }}
-//         >
-//           {title}
-//         </h3>
-//         <h2
-//           className={`${screenSize === "sm" ? "text-[9px]" : ""}
-//                   ${screenSize === "md" ? "text-[11px]" : ""}
-//                   ${screenSize === "lg" ? "text-[13px]" : ""}
-//                   ${screenSize === "xl" ? "text-[16px]" : ""}
-//                   whitespace-nowrap text-white`}
-//           style={{ fontWeight: 400 }}
-//         >
-//           {description}
-//         </h2>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CardTypeFour;
-
 import Image from "next/image";
 import { manrope } from "@/font";
 
@@ -81,6 +7,42 @@ interface CardProps {
   description?: string;
 }
 
+/**
+ * CardTypeFour component
+ * 
+ * A reusable, presentational card component that displays an item with a
+ * full-bleed square background image and overlaid text content.
+ *
+ * ## Features
+ * - Displays a prominent background image that covers the entire card.
+ * - **Square Aspect Ratio**: Maintains a fixed 1:1 aspect ratio, making it fluid and responsive to its parent container's width.
+ * - **Gradient Overlay**: Includes a semi-transparent black gradient from the bottom upwards to ensure the white text content is always readable.
+ * - **Hover Effect**: The background image smoothly scales up on user hover for a dynamic visual effect.
+ * - Shows a `title` and an optional `description` overlaid at the bottom of the card with responsive font sizes.
+ * - **Performance Optimized**: Includes a detailed `sizes` attribute on the `next/image` component to ensure optimal image loading across different devices.
+ *
+ * ## Logic Flow
+ * - This component is purely presentational and stateless.
+ * - It receives all data to be displayed (image URL, title, description) via props.
+ * - The `description` is only rendered if it is provided as a prop.
+ * - The layout is achieved using `absolute` positioning for the image, gradient, and text within a `relative` parent container.
+ * - The hover animation is handled by Tailwind's `group` and `group-hover` utilities.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `Image` from `next/image` for optimized image rendering.
+ * - **Utilities**: `manrope` from `@/font` for consistent typography.
+ *
+ * ## API Calls
+ * - This component does not make any API calls.
+ *
+ * ## Props
+ * @param {object} props - The props for the component.
+ * @param {string} props.imageUrl - The URL of the background image to be displayed.
+ * @param {string} props.title - The main title text to be displayed on the card.
+ * @param {string} [props.description] - Optional description text displayed below the title.
+ *
+ * @returns {JSX.Element} The rendered card component.
+ */
 const CardTypeFour: React.FC<CardProps> = ({
   imageUrl,
   title,

@@ -8,6 +8,44 @@ const res = [
     // {image:"/Homepage/CardTypeFive.svg", url:"https://maps.app.goo.gl/mF7SE4ScTkoc7eYEA"},
     // {image:"/Homepage/CardTypeOne.svg", url:"https://maps.app.goo.gl/toHDxmqNqLffRFRH8"},
 ];
+
+
+/**
+ * HeroSection component
+ * 
+ * A responsive and interactive image carousel (slider) component,
+ * typically used as the main hero section on a homepage.
+ *
+ * ## Features
+ * - Displays a full-width, clickable image that serves as a link.
+ * - **Automatic Sliding**: Cycles through a list of images automatically every 5 seconds.
+ * - **Manual Navigation**: Includes "Previous" and "Next" arrow buttons for desktop users.
+ * - **Swipe Gestures**: Supports touch-based left and right swipes for navigation on mobile devices.
+ * - **Slide Indicators**: Shows a series of dots ("bubbles") at the bottom to indicate the current slide and total number of slides.
+ * - The carousel loops infinitely in both directions.
+ *
+ * ## Logic Flow
+ * 1.  The component uses a local constant array `res` as its data source, where each item has an image and a URL.
+ * 2.  A `useState` hook (`currIndex`) tracks the index of the currently visible slide.
+ * 3.  A `useEffect` hook sets up an interval that automatically increments `currIndex` every 5 seconds, creating the auto-play functionality. The modulo (`%`) operator is used to ensure the slideshow loops.
+ * 4.  `handleNext` and `handlePrev` functions allow for manual updates to `currIndex` via button clicks.
+ * 5.  The `useSwipeable` hook from the `react-swipeable` library is configured to call these handler functions on user swipes.
+ * 6.  The main `Image` component's `src` and the `onClick` URL are determined by the current slide at `res[currIndex]`.
+ *
+ * ## Key Data Structures
+ * - **res**: A local constant array of objects. Each object must contain an `image` property (a string path to the image) and a `url` property (the destination link).
+ *
+ * ## Imports
+ * - **Core/Libraries**: `useEffect`, `useState` from `react`; `Image` from `next/image`; `useSwipeable` from `react-swipeable` for touch gestures.
+ *
+ * ## API Calls
+ * - This component does not make any API calls; it uses a hardcoded array (`res`) for its content.
+ *
+ * ## Props
+ * - This component does not accept any props.
+ *
+ * @returns {JSX.Element} The rendered image carousel component.
+ */
 export default function HeroSection() {
     const [currIndex, setCurrIndex] = useState(0);
     const maxIndex = res.length - 1;

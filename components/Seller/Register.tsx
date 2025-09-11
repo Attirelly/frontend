@@ -9,6 +9,60 @@ import axios from "axios";
 import Header from "@/components/Header";
 import { toast } from "sonner";
 
+/**
+ * SellerSignup component
+ * 
+ * The main registration page for new sellers. This component manages a two-step sign-up process
+ * using phone number and OTP verification. It handles user validation, OTP logic, rate-limiting,
+ * account creation, and final redirection to the onboarding flow.
+ *
+ * ## Features
+ * - A two-step form: phone number input followed by OTP verification.
+ * - **Phone Number Validation**: Checks for a valid 10-digit number and ensures the user agrees to terms before proceeding.
+ * - **Pre-registration Check**: Verifies that the phone number is not already registered before sending an OTP.
+ * - **OTP Input**: A user-friendly 6-digit input with auto-focusing and proper backspace handling.
+ * - **Resend OTP**: A button to resend the OTP that becomes available after a 60-second cooldown.
+ * - **Rate Limiting**: If OTP verification fails too many times, the form is temporarily blocked, and a message displays when the user can try again.
+ * - **Account Creation & Redirection**: Upon successful verification, it registers the new user, logs them in, and routes them to the seller onboarding page.
+ *
+ * ## Logic Flow
+ * 1.  On mount, the `useSellerStore` is reset to ensure a clean state for the new user.
+ * 2.  The page initially displays a form for the user's phone number and a terms & conditions checkbox.
+ * 3.  On submit, it first calls `GET /users/new_user_auth` to check if the phone number is available.
+ * 4.  If the number is already registered (403 error), an error toast is shown.
+ * 5.  If available, it calls `POST /otp/send_otp` to send a verification code.
+ * 6.  The UI then switches to the 6-digit OTP input view, and a 60-second resend timer starts.
+ * 7.  The user enters the OTP and submits again.
+ * 8.  The `POST /otp/verify_otp` API is called. If verification fails with a 403 error (too many attempts), the component enters a blocked state.
+ * 9.  If OTP verification is successful, it proceeds to call `POST /users/register_user` to create the account.
+ * 10. Immediately after registration, it calls `POST /users/login` to create a session.
+ * 11. Finally, it redirects the new seller to the onboarding flow at `/seller_signup/sellerOnboarding`.
+ *
+ * ## Imports
+ * - **Core/Libraries**:
+ * - `useEffect`, `useRef`, `useState` from `react`: For managing component lifecycle, state, and references.
+ * - `useRouter`, `Link`, `Image` from `next/navigation`: For routing and optimized images.
+ * - `axios`: For error type checking (e.g., `isAxiosError`).
+ * - `toast` from `sonner`: For displaying user-friendly notifications.
+ * - **State (Zustand Stores)**:
+ * - `useSellerStore`: For managing global state related to the new seller's session (e.g., setting the seller ID).
+ * - **Key Components**:
+ * - {@link Header}: The reusable header component for the page.
+ * - **Utilities**:
+ * - `api` from `@/lib/axios`: The configured Axios instance for API calls.
+ *
+ * ## API Calls
+ * - GET `/users/new_user_auth`: Checks if a phone number is available for registration before sending an OTP.
+ * - POST `/otp/send_otp`: Sends the initial OTP and handles resend requests.
+ * - POST `/otp/verify_otp`: Verifies the OTP entered by the user.
+ * - POST `/users/register_user`: Creates a new user account after successful OTP verification.
+ * - POST `/users/login`: Logs the newly registered user in to create a session.
+ *
+ * ## Props
+ * - This is a page component and does not accept any props.
+ *
+ * @returns {JSX.Element} The rendered seller sign-up page.
+ */
 export default function SellerSignup() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
@@ -27,11 +81,15 @@ export default function SellerSignup() {
   const router = useRouter();
   const testing_phone = "7015241757";
 
+  /**
+     * prefetching necessary routes
+     */
   useEffect(() => {
     resetSellerStore();
     router.prefetch("/seller_signup/sellerOnboarding");
   }, []);
 
+  // resend times logic
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (sendOTP && resendTimer > 0) {
@@ -40,6 +98,7 @@ export default function SellerSignup() {
     return () => clearTimeout(timer);
   }, [resendTimer, sendOTP]);
 
+  // time for user is blocked to request for another otp 
   useEffect(() => {
     if (isBlocked && blockedUntil) {
       const now = new Date();
@@ -57,6 +116,10 @@ export default function SellerSignup() {
     }
   }, [isBlocked, blockedUntil]);
 
+  /**
+     * when user enters some input on first box, automatically upadate the otp and
+     * move to next box
+     */
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return; // allow only digits
     const newOtp = [...otp];
@@ -69,6 +132,7 @@ export default function SellerSignup() {
     }
   };
 
+  // logic for backspace key to update otp state and move to prev box
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       const newOtp = [...otp];
@@ -78,6 +142,7 @@ export default function SellerSignup() {
     }
   };
 
+  // API to resend OTP only if minimum time to resend otp is complete
   const handleResendOTP = async () => {
     if (resendTimer > 0) return;
 
@@ -92,6 +157,19 @@ export default function SellerSignup() {
     }
   };
 
+  /**
+     * Form submit logic
+     * If form is submitted with mobile number i.e sendOtp is false
+     *  - throws alert if phone number is not valid or user did not accept T&C
+     *  - checks if user is already registered, if yes shows error
+     *  - trigger api to send otp
+     *  - set sendOtp to true
+     * If form is submitted with OTP i.e. sendOtp is true
+     *  - check if otp length is valid, if not return error
+     *  - trigger api to verify otp
+     *  - if successfully verified, send api to create/register user
+     *  - route to seller onboarding
+     */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (sendOTP) {
@@ -146,33 +224,6 @@ export default function SellerSignup() {
           toast.error("OTP not correct");
         }
       }
-
-      // if (fullOtp === '123456') {
-      //     try {
-      //         const payload = {
-      //             "contact_number": phone.toString(),
-      //             "role": "admin"
-      //         }
-      //         const response = await api.post('/users/register_user', payload)
-
-      //         console.log(response)
-      //         const newSellerId = response.data.id
-      //         console.log(newSellerId)
-      //         setSellerId(newSellerId)
-      //         await api.post("/users/login", { contact_number: phone });
-
-      //         router.push('/seller_signup/sellerOnboarding');
-
-      //     }
-      //     catch (error) {
-      //         console.error('Error fetching stores by section:', error);
-      //         toast.error('Failed to sign up!');
-      //     }
-      // }
-      // else {
-      //     alert('wrong otp');
-      //     return;
-      // }
     } else {
       if (!isPhoneValid) {
         alert("Please enter a valid 10-digit number.");

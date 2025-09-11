@@ -1,69 +1,3 @@
-// // components/Card.tsx
-// import Image from "next/image";
-// import { manrope } from "@/font";
-
-// interface CardProps {
-//   imageUrl: string;
-//   title: string;
-//   description?: string;
-//   screenSize?:string;
-// }
-
-// const CardTypeSix: React.FC<CardProps> = ({ imageUrl, title, description, screenSize='sm' }) => {
-//   return (
-//     <div>
-//     <div
-//       className={`${manrope.className} relative
-//       ${screenSize === 'sm' ? 'w-[170px] h-[250px]' : ''}
-//       ${screenSize === 'md' ? 'w-[210px] h-[310px]' : ''}
-//       ${screenSize === 'lg' ? 'w-[250px] h-[310px]' : ''}
-//       ${screenSize === 'xl' ? 'w-[293px] h-[333px]' : ''}
-//       rounded-2xl overflow-hidden`}
-//     >
-//       {/* Background Image */}
-//       <div className="absolute inset-0 z-0">
-//         <Image
-//           src={imageUrl}
-//           alt={title}
-//           fill
-//           className="object-cover object-top"
-//           priority
-//         />
-//       </div>
-
-//       {/* Overlay */}
-//       {/* <div className="absolute inset-0 bg-transparent z-10" /> */}
-
-//       {/* Text Content */}
-//       <div className="flex flex-col items-center justify-center absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 pb-7 text-white mx-auto">
-      
-//         <h2 className="text-[16px] whitespace-nowrap" style={{ fontWeight: 400 }}>
-//           {description}
-//         </h2>
-//         <button
-//           className="w-[75px] h-[24px] lg:w-[100px] lg:h-[32px] text-sm bg-white text-black mt-4"
-//           style={{ fontWeight: 500 }}
-//         >
-//           SHOP NOW
-//         </button>
-//       </div>
-//     </div>
-
-//     <h3
-//         className="text-[13px] lg:text-[20px] text-black font-extrabold whitespace-nowrap z-50 text-center mt-2"
-//         style={{ fontWeight: 500 }}
-//       >
-//         <div>{title}</div>
-//       </h3>
-
-//     </div>
-      
-//   );
-// };
-
-// export default CardTypeSix;
-
-
 import Image from "next/image";
 import { manrope } from "@/font";
 
@@ -73,7 +7,42 @@ interface CardProps {
   description?: string;
 }
 
-// REMOVED: The screenSize prop is gone.
+/**
+ * CardTypeSix component
+ * 
+ * A reusable, presentational card component designed as a strong call-to-action (CTA).
+ * It features a full-bleed image with an overlaid description and "SHOP NOW" button,
+ * with the main title displayed below the card.
+ *
+ * ## Features
+ * - Displays a prominent background image in a container with a fixed 3:4 portrait aspect ratio.
+ * - **Gradient Overlay**: Includes a semi-transparent black gradient from the bottom upwards to ensure the overlaid content is always readable.
+ * - **Hover Effect**: The background image smoothly scales up on user hover for a dynamic visual effect.
+ * - **Distinct Layout**: Overlays a `description` and a "SHOP NOW" button on the image, while the main `title` is rendered separately underneath the card.
+ * - **Responsive**: Typography and button padding adjust for different screen sizes.
+ * - **Performance Optimized**: Includes a `sizes` attribute on the `next/image` component for optimal image loading.
+ *
+ * ## Logic Flow
+ * - This component is purely presentational and stateless.
+ * - It receives all data to be displayed (image URL, title, description) via props.
+ * - The image card section uses `absolute` positioning for its layers within a `relative` parent. The entire component then stacks this card above the title.
+ * - The hover animation is handled by Tailwind's `group` and `group-hover` utilities.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `Image` from `next/image` for optimized image rendering.
+ * - **Utilities**: `manrope` from `@/font` for consistent typography.
+ *
+ * ## API Calls
+ * - This component does not make any API calls.
+ *
+ * ## Props
+ * @param {object} props - The props for the component.
+ * @param {string} props.imageUrl - The URL of the background image to be displayed.
+ * @param {string} props.title - The main title text, displayed *below* the card.
+ * @param {string} [props.description] - Optional description text, displayed *on* the card above the button.
+ *
+ * @returns {JSX.Element} The rendered CTA card component.
+ */
 const CardTypeSix: React.FC<CardProps> = ({ imageUrl, title, description }) => {
   return (
     // This outer div now just acts as a container for the card and its title below.

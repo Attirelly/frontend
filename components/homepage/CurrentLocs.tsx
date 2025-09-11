@@ -10,6 +10,38 @@ const locs = [
     { location: "Mohali" },
 ];
 
+/**
+ * CurrentLocs component
+ * 
+ * A static, presentational component used to display the cities where the business
+ * currently operates and the logos of its supporting organizations.
+ *
+ * ## Features
+ * - Displays a "CURRENTLY OPERATING IN" section with a list of cities.
+ * - The list of cities is rendered in a responsive grid that adjusts from 2 to 3 columns based on screen size.
+ * - Displays a "Supported By" section with the logos of key partners or supporters.
+ * - This is a stateless component with no internal logic or data fetching.
+ *
+ * ## Logic Flow
+ * - The component is purely presentational and does not manage any state or side effects.
+ * - The list of operating locations is dynamically rendered by mapping over the `locs` constant array.
+ * - The supporter logos are rendered as static `Image` components.
+ *
+ * ## Key Data Structures
+ * - **locs**: A local constant array of objects, where each object contains a `location` property (string) representing a city name.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `Image` from `next/image` for optimized image rendering.
+ * - **Utilities**: `manrope` from `@/font` for consistent typography.
+ *
+ * ## API Calls
+ * - This component does not make any API calls.
+ *
+ * ## Props
+ * - This component does not accept any props.
+ *
+ * @returns {JSX.Element} The rendered "Current Locations" section.
+ */
 export default function CurrentLocs() {
   return (
     <div
