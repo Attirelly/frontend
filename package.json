@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p 3000 -H 0.0.0.0",
     "lint": "next lint",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "docs:watch": "nodemon --exec \"npm run docs\" --watch app --watch components --watch utils --watch types --ext ts,tsx"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
@@ -31,6 +32,7 @@
     "lucide-react": "^0.511.0",
     "next": "^15.5.0",
     "next-themes": "^0.4.6",
+    "nodemon": "^3.1.10",
     "qs": "^6.14.0",
     "react": "^19.1.1",
     "react-cropper": "^2.3.3",
