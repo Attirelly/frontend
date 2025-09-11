@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { api } from '@/lib/axios';
 import { Category, SubCat1, SubCat2 } from '@/types/CategoryTypes';
 import { manrope } from '@/font';
 import Link from 'next/link';
-import { useHeaderStore } from '@/store/listing_header_store';
 import { useProductFilterStore } from '@/store/filterStore';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -20,6 +18,46 @@ const getCategoryByGender = (
   return categoriesFiltered.find((c) => c.name.toLowerCase() === gender.toLowerCase());
 };
 
+/**
+ * MobileMenWomenNavbar Component
+ *
+ * A responsive mobile navigation menu for browsing Men's and Women's **Ethnic Wear** categories.
+ *
+ * ## Features
+ * - Provides collapsible, accordion-style navigation optimized for mobile devices.
+ * - Allows switching between **Men** and **Women** tabs.
+ * - Dynamically filters and renders categories from the global store.
+ * - Supports nested subcategories with expand/collapse behavior.
+ * - Navigates to a product listing page (`/product_directory`) when a category is selected.
+ *
+ * ## Imports
+ * - **React**: `useEffect`, `useState`
+ * - **Notification**: `toast` from `sonner`
+ * - **Next.js**:
+ *   - `Link` for client-side navigation
+ *   - `Image` for optimized images
+ *   - `useRouter` from `next/navigation` for programmatic routing
+ * - **State Management (Zustand Stores)**:
+ *   - {@link useCategoryStore} (provides categories)
+ *   - {@link useProductFilterStore} (manages product filter state)
+ * - **Fonts**: {@link manrope} from `@/font`
+ * - **Types**: {@link Category}, {@link SubCat1}, {@link SubCat2} from `@/types/CategoryTypes`
+ *
+ * ## Utility
+ * - `getCategoryByGender`: Helper to fetch the correct category tree for the selected gender.
+ *
+ * ## Zustand Stores
+ * - Category Store: {@link useCategoryStore}
+ * - Product Filter Store: {@link useProductFilterStore}
+ *
+ * ## Types
+ * - Category: {@link Category}
+ * - Sub Category 1: {@link SubCat1}
+ * - Sub Category 2: {@link SubCat2}
+ *
+ * @returns {JSX.Element | null} The rendered mobile navigation menu,
+ *          or `null` if categories are not yet loaded.
+ */
 export default function MobileMenWomenNavbar() {
   const router = useRouter();
   const { categories } = useCategoryStore();
@@ -30,6 +68,7 @@ export default function MobileMenWomenNavbar() {
   const [openSubcats, setOpenSubcats] = useState<string[]>([]);
 
   useEffect(() => {
+    // Logic to filter the global categories for a cleaner mobile menu
     const fetchCategories = async () => {
       try {
         const menAndWomen = categories.filter(
@@ -61,6 +100,7 @@ export default function MobileMenWomenNavbar() {
   const selectedCategory = getCategoryByGender(categoriesFiltered, selectedGender);
 
   const handleSubcatToggle = (subcatId: string) => {
+    // Toggles the visibility of a sub-category's children
     setOpenSubcats(prevOpenSubcats => 
         prevOpenSubcats.includes(subcatId)
             ? prevOpenSubcats.filter(id => id !== subcatId) // Remove if already open

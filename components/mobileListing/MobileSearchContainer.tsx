@@ -1,5 +1,4 @@
 'use client';
-
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
@@ -7,10 +6,8 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { SelectOption } from "@/types/SellerTypes";
 import customStyles from "@/utils/selectStyles";
 import { manrope } from "@/font";
-import StoreSearchType from "../listings/StoreSearchType";
 import MobileStoreTypeSearch from "./MobileStoreTypeSearch";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import { api } from "@/lib/axios";
 
@@ -19,6 +16,50 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 type Props = {
   onClose: () => void;
 };
+
+
+/**
+ * MobileSearchContainer Component
+ *
+ * A full-screen mobile search interface providing a rich search experience
+ * for products and stores. Includes:
+ * - Location selector (city/area) using a grouped `react-select` dropdown
+ * - Search input with live suggestions (stores, products, categories)
+ * - Conditional rendering of store type options when input is short
+ * - Debounced API calls for fetching search suggestions
+ * - Navigation to product listings, categories, or store profiles
+ *
+ * ## Imports
+ * - **React**: `useEffect`, `useState`, `useRef`
+ * - **Next.js**:
+ *   - `Image` (optimized images)
+ *   - `dynamic` (lazy load `react-select`)
+ *   - `useRouter` from `next/navigation` (routing)
+ * - **State Management**: {@link useHeaderStore} from `@/store/listing_header_store`
+ * - **Types**: {@link SelectOption} from `@/types/SellerTypes`
+ * - **Utilities**:
+ *   - {@link customStyles} from `@/utils/selectStyles` (react-select styling)
+ *   - {@link manrope} font from `@/font`
+ * - **Key Components**:
+ *   - {@link MobileStoreTypeSearch} for store-type selection UI
+ * - **Notifications**: `toast` from `sonner`
+ * - **API Client**: {@link api} from `@/lib/axios`
+ *
+ * ## APIs
+ * - `GET /location/cities/` → fetches available cities
+ * - `GET /location/areas/` → fetches available areas/sub-locations
+ * - `POST /search/search_suggestion` → fetches search suggestions
+ *   - store suggestions
+ *   - product suggestions
+ *   - categories
+ *   - stores
+ *
+ * ## Props
+ * @param {object} props - Component props
+ * @param {() => void} props.onClose - Callback to close the search container
+ *
+ * @returns {JSX.Element} The rendered mobile search container
+ */
 
 export default function MobileSearchContainer({ onClose }: Props) {
   const router = useRouter();
@@ -48,7 +89,11 @@ export default function MobileSearchContainer({ onClose }: Props) {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
+  
   useEffect(() => {
+    /**
+   * this api fetches cities stored in database
+   */
     const fetchCities = async () => {
       try {
         const res = await api.get("/location/cities/");
@@ -59,6 +104,9 @@ export default function MobileSearchContainer({ onClose }: Props) {
     };
     fetchCities();
 
+    /**
+   * this api fetches areas/subloaction stored in database
+   */
     const fetchAreas = async () => {
       try {
         const res = await api.get("/location/areas/");
@@ -70,8 +118,10 @@ export default function MobileSearchContainer({ onClose }: Props) {
     fetchAreas();
   }, [setAllCity, setAllArea]);
 
+  /**
+   * useEffect to close whole Mobile search container/screen
+   */
   useEffect(() => {
-    console.log("on close use effect");
     const handleClickOutside = (event: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         onClose();
@@ -84,17 +134,11 @@ export default function MobileSearchContainer({ onClose }: Props) {
 
   }, [onClose]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const trimmed = tempQuery.trim();
-      onClose();
-      if (trimmed !== "") {
-        router.push("/product_directory?search=" + encodeURIComponent(trimmed));
-      }
-    }
-  };
-
+  /**
+   * - user clicks on search logo on search bar
+   * - OnClose is triggered which closes the Mobile search screen
+   * - if some input is present in search bar, then route to product_directory with search params
+  */
   const handleSearchClick = () => {
       const trimmed = tempQuery.trim();
       onClose();
@@ -102,8 +146,25 @@ export default function MobileSearchContainer({ onClose }: Props) {
         router.push("/product_directory?search=" + encodeURIComponent(trimmed));
       }
   };
-  
 
+  /**
+   * same logic as handleSearchClick but it works when
+   * user presses enter while cursor is on search bar
+   */
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearchClick();
+    }
+  };
+
+  /**
+   * fetch query search suggestions and it fetches
+   * - store suggestions
+   * - product suggestions
+   * - categories
+   * - stores
+   */
   const handleSearchQuerySuggestion = async () => {
     try {
       let tempStr = "";
@@ -131,21 +192,23 @@ export default function MobileSearchContainer({ onClose }: Props) {
     }
   };
 
+  /**
+   * if length of user input < 4 
+   * then avoid fetching suggestion and show store types dropdown
+   * 
+   * as soon as user input length = 4 or more
+   * then call handleSearchQuerySuggestion() for fetching suggestions
+   */
   useEffect(() => {
-    console.log("temp query use effect");
     if (tempQuery.length < 4) {
       setStoreSuggestions([]);
       setProductSuggestions([]);
       setStores([]);
       setProducts([]);
       setShowDropdown(false);
-      // if (tempQuery.length === 0 && searchFocus) {
       if (searchFocus) {
       setShowStoreType(true);
       } 
-      // else {
-      //   setShowStoreType(false);
-      // }
       return;
     }
     
@@ -161,6 +224,9 @@ export default function MobileSearchContainer({ onClose }: Props) {
     return () => clearTimeout(debounce);
   }, [tempQuery]);
 
+  /**
+   * on clicking outside the dropdown for suggestions, close dropdown
+   */
    useEffect(() => {
     console.log("handle outside click use effect");
     const handleClickOutside = (e: MouseEvent) => {
@@ -178,6 +244,12 @@ export default function MobileSearchContainer({ onClose }: Props) {
   }, [showStoreType]);
 
 
+  /**
+   * creating one grouped React select option which contains
+   * - All cities label
+   * - Cities
+   * - Areas
+   */
   const groupedOptions: SelectOption[] = [
     { value: "", label: "All Cities", name: "All Cities", country: "" },
     ...(allCity ?? []).map((c) => ({
@@ -198,6 +270,10 @@ export default function MobileSearchContainer({ onClose }: Props) {
   ];
 
 
+  /**
+   * creating selectedOption which contains id, name, city/country name 
+   * if selection option is either city or area 
+   */
   const selectedOption: SelectOption =
     area != null
       ? {
@@ -215,6 +291,10 @@ export default function MobileSearchContainer({ onClose }: Props) {
         }
         : groupedOptions[0];
 
+  /**
+   * This function is used to highlight the suggestion partially based on
+   * query input by user
+   */
   function highlightMatch(text: string, query: string) {
     const defaultClasses = `${manrope.className} text-base text-[#464646]`;
 
@@ -248,11 +328,18 @@ export default function MobileSearchContainer({ onClose }: Props) {
     );
   }
 
+  /**
+   * functions to handle click on
+   * - Suggestion : route to product directory with 'search' search params
+   * - Category : rotue to product directory with 'category' search params
+   * - Store : route to store profile page with store id
+   * - View All : route to store listing page with 'search' search params
+   */
+
   const handleSuggestionClick = (value: string) => {
     onClose();
     setTempQuery("");
     setSearchFocus(false);
-    console.log("SC");
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
@@ -260,14 +347,13 @@ export default function MobileSearchContainer({ onClose }: Props) {
     onClose();
     setTempQuery("");
     setSearchFocus(false);
-    console.log("CC");
     router.push(`/product_directory?categories=${encodeURIComponent(category)}`);
   };
 
   const handleStoreClick = (storeID: string) => {
     onClose();
+    setTempQuery("");
     setSearchFocus(false);
-    console.log("StC");
     router.push("/store_profile/" + storeID);
   };
 
@@ -275,7 +361,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
     onClose();
     setSearchFocus(false);
     const value = tempQuery;
-    console.log("StLR");
+    setTempQuery("");
     router.push("/store_listing?search=" + encodeURIComponent(value));
   };
 

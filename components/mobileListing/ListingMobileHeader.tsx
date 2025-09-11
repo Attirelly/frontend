@@ -1,8 +1,6 @@
-// ListingMobileHeader.tsx
 'use client';
 import { manrope, rosario } from "@/font";
 import useAuthStore from "@/store/auth";
-import { logout } from "@/utils/logout";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import CustomerSignIn from "../Customer/CustomerSignIn";
@@ -20,6 +18,53 @@ type Props = {
   customerSignIn?: boolean;
 };
 
+/**
+ * ListingMobileHeader Component
+ * 
+ * A responsive header component optimized for mobile devices.
+ * 
+ * ## Features
+ * - Displays a mobile header bar with:
+ *   - **Hamburger menu** (opens a sidebar navigation)
+ *   - **Search icon** (opens a full-screen search modal)
+ *   - **Logo** (links to homepage)
+ * - Manages state for:
+ *   - Mobile sidebar
+ *   - Search modal
+ *   - Customer sign-in modal
+ *   - Logout dropdown
+ * - Dynamically adjusts sidebar position (`absolute` / `fixed`) based on scroll
+ *   so it stays aligned with the header.
+ * 
+ * ## Imports
+ * - **Fonts**: {@link manrope}, {@link rosario} from `@/font`
+ * - **State (Zustand Stores)**:
+ *   - {@link useAuthStore} for authentication state
+ *   - {@link useCategoryStore} for category data
+ * - **Key Components**:
+ *   - {@link CustomerSignIn} (login modal)
+ *   - {@link MobileSidebarMenu} (slide-out navigation menu)
+ *   - {@link MobileSearchContainer} (full-screen search overlay)
+ * - **Libraries**:
+ *   - `next/image`, `next/link` (Next.js utilities)
+ *   - `framer-motion` (`motion`, `AnimatePresence`) for animations
+ *   - `axios` instance (`api`) for API calls
+ *   - `sonner` (`toast`) for notifications
+ * - **Types**:
+ *   - {@link Category} from `@/types/CategoryTypes`
+ * 
+ * ## API Calls
+ * - `GET categories/descendants/`: Fetches product categories on mount
+ *   and updates the category store.
+ * 
+ * ## Props
+ * @param {object} props - Component props
+ * @param {string} [props.className] - Optional CSS class for styling the header container
+ * @param {boolean} [props.customerSignIn=false] - If true, opens the sign-in modal on mount
+ * 
+ * @returns {JSX.Element} The rendered mobile header component
+ */
+
 export default function ListingMobileHeader({
   className,
   customerSignIn = false,
@@ -35,7 +80,12 @@ export default function ListingMobileHeader({
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const hamburgerRef = useRef<HTMLDivElement | null>(null);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLDivElement | null>(null);
 
+  /**
+   * Fetches product categories from the API on component mount.
+   * On success, it updates the category store. On failure, it shows a toast error.
+   */
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -49,6 +99,10 @@ export default function ListingMobileHeader({
     fetchCategories();
   }, [setCategories]);
 
+  /**
+   * Adds a global event listener to handle clicks outside of the user menu and
+   * the mobile sidebar to close them.
+   */
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -74,8 +128,12 @@ export default function ListingMobileHeader({
 
   const [sidebarPosition, setSidebarPosition] = useState<'absolute' | 'fixed'>('absolute');
   const [sidebarTop, setSidebarTop] = useState(50);
-  const headerRef = useRef<HTMLDivElement | null>(null);
-
+  
+  /**
+   * Handles the scroll event to change the sidebar's position and top offset.
+   * It dynamically switches between `absolute` and `fixed` positioning to keep
+   * the sidebar aligned with the header when the page is scrolled.
+   */
   useEffect(() => {
     const handleScroll = () => {
       if (!headerRef.current) return;
@@ -122,52 +180,6 @@ export default function ListingMobileHeader({
           </Link>
         </div>
         <div className="flex items-center gap-[15px]">
-          {/* {!user ? (
-            <div className="flex items-center gap-2">
-              <span
-                className={`text-base text-[#373737] cursor-pointer`}
-                style={{ fontWeight: 400 }}
-                onClick={() => setSignIn(true)}
-              >
-                Login
-              </span>
-            </div>
-          ) : (
-            <div className="relative" ref={userMenuRef}>
-              <div
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={() => setShowLogout((prev) => !prev)}
-              >
-                <Image
-                  src="/ListingPageHeader/user_logo.svg"
-                  alt="User"
-                  width={24}
-                  height={24}
-                  className="opacity-100"
-                />
-                <span
-                  className={`${manrope.className} text-base text-[#373737] cursor-pointer`}
-                  style={{ fontWeight: 400 }}
-                  onClick={() => setSignIn(true)}
-                >
-                  {user.name}
-                </span>
-              </div>
-              {showLogout && (
-                <div className="absolute top-full right-0 mt-2 bg-white border rounded shadow-md z-50 p-2 w-32">
-                  <button
-                    className="w-full text-left text-[#373737] hover:bg-gray-100 px-2 py-1 text-sm"
-                    onClick={() => {
-                      logout();
-                      setShowLogout(false);
-                    }}
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          )} */}
           <Image
             src="/ListingMobileHeader/search_lens.svg"
             alt="Search Lens"
