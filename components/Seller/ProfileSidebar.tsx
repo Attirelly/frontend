@@ -135,7 +135,48 @@ const DesktopView = ({ selected, onSelect, furthestStep }) => {
 };
 
 
-// --- Main ProfileSidebar Component (Unchanged) ---
+/**
+ * ProfileSidebar component
+ * 
+ * The primary navigation sidebar for the multi-step Seller Onboarding process.
+ * It visually represents the steps, tracks user progress, and allows navigation between unlocked sections.
+ * It provides a responsive layout, showing a horizontal scrollbar on mobile and a vertical list on desktop.
+ *
+ * ## Features
+ * - **Responsive Design**: Renders two distinct layouts for mobile vs. desktop screens using CSS.
+ * - **Mobile View**: A compact, horizontally scrollable bar of icons and titles.
+ * - **Desktop View**: A taller, vertical list of sections with icons, titles, and descriptions.
+ * - **Progress Tracking**: Uses a `furthestStep` value from the global store to disable navigation to sections the user has not yet reached, enforcing a linear onboarding flow.
+ * - **Stateful Navigation**: Highlights the currently `selected` section, which is controlled by the parent component.
+ * - **Interactive**: Clicking on an unlocked section triggers the `onSelect` callback to notify the parent of a navigation change.
+ * - **Scroll Preservation**: The mobile view uses `useLayoutEffect` to remember and restore its horizontal scroll position, preventing the scrollbar from resetting on re-renders.
+ *
+ * ## Logic Flow
+ * 1.  The main `ProfileSidebar` component fetches the `furthestStep` from the `useSellerStore`.
+ * 2.  It acts as a responsive switcher, rendering either the internal `MobileView` or `DesktopView` component based on screen size.
+ * 3.  It passes the `selected`, `onSelect`, and `furthestStep` props down to the appropriate view.
+ * 4.  Both `MobileView` and `DesktopView` map over the `sections` array to render the list of navigation items.
+ * 5.  For each item, they check if its index is greater than `furthestStep`. If so, the item is visually disabled and the `onClick` handler is prevented.
+ * 6.  The `MobileView` component contains a `useLayoutEffect` hook that saves the `scrollLeft` position of its container to a `useRef` on every scroll event. When the component re-renders, it uses the stored ref value to restore the scroll position.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `useRef`, `useState`, `useEffect`, `useLayoutEffect` from `react`.
+ * - **State (Zustand Stores)**:
+ * - `useSellerStore`: For retrieving the user's onboarding progress (`furthestStep`).
+ *
+ * ## Key Data Structures
+ * - **sections**: A local constant array of objects, where each object defines a step in the onboarding process with an `id`, `title`, `description`, and `iconUrl`.
+ *
+ * ## API Calls
+ * - This component does not make any API calls.
+ *
+ * ## Props
+ * @param {object} props - The props for the component.
+ * @param {string} props.selected - The ID of the currently active section, used for highlighting.
+ * @param {(id: string) => void} props.onSelect - A callback function that is called with the section ID when a user clicks a navigation item.
+ *
+ * @returns {JSX.Element} The rendered responsive sidebar for the onboarding process.
+ */
 export default function ProfileSidebar({
     selected,
     onSelect,
