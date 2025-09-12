@@ -1,12 +1,27 @@
 "use client";
 import { useState, useEffect, useMemo, ChangeEvent, useRef } from "react";
-import { Search, Upload, Download, Users, Filter, ChevronDown, ChevronUp, Eye, Check, X } from "lucide-react";
+import {
+  Search,
+  Upload,
+  Download,
+  Users,
+  Filter,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  Check,
+  X,
+} from "lucide-react";
 import { api } from "@/lib/axios";
 import Link from "next/link";
 import { toast } from "sonner";
 import SortBySellerCRM from "@/components/admin/SortBySellerCRM";
 import { useAdminStore } from "@/store/admin_store";
 
+/**
+ * @typedef {object} Seller
+ * @description Defines the structure for a single seller's data within the CRM.
+ */
 type Seller = {
   id?: string;
   name?: string;
@@ -29,11 +44,19 @@ type Seller = {
   location?: string; // Added for CSV compatibility
 };
 
+/**
+ * @typedef {object} SortConfig
+ * @description Defines the state for client-side sorting of the table.
+ */
 type SortConfig = {
   key: keyof Seller;
-  direction: 'ascending' | 'descending';
+  direction: "ascending" | "descending";
 };
 
+/**
+ * @typedef {[string, number]} FacetEntry
+ * @description Represents a single facet value and its count (e.g., ['Mumbai', 25]).
+ */
 type FacetEntry = [string, number];
 type Facets = { [key: string]: FacetEntry[] };
 
@@ -46,9 +69,35 @@ type QueryParams = {
   filters?: {
     [key: string]: string[];
   };
-  sort_by: string
+  sort_by: string;
 };
 
+/**
+ * A comprehensive CRM dashboard page for viewing, searching, filtering, and managing sellers.
+ *
+ * This component is the main interface for administrators to interact with seller data. It features
+ * server-side pagination, searching, and filtering to handle large datasets efficiently. It also
+ * includes client-side features like table sorting and bulk actions with optimistic UI updates.
+ *
+ * ### State Management
+ * - **Local State (`useState`, `useRef`)**: Manages the UI, including the list of `sellers` for the current page, `search` terms, `selectedFacets`, pagination state, and loading indicators.
+ * - **Global State (`useAdminStore`)**: A Zustand store is used to manage the `sortBy` criteria, allowing other components (like `SortBySellerCRM`) to interact with the sorting state.
+ *
+ * ### Features
+ * - **Server-Side Data Operations**: Search, filtering, and pagination are all handled by the backend API to ensure performance with a large number of sellers.
+ * - **Debounced Search**: The search input is debounced to prevent excessive API calls while the user is typing.
+ * - **Optimistic UI Updates**: When performing bulk status changes, the UI is updated instantly, providing a responsive feel. If the API call fails, the changes are reverted.
+ * - **Collapsible Filter Sidebar**: The filter panel can be collapsed to maximize screen space for the data table.
+ *
+ * ### API Endpoints
+ * **`GET /search/search_store`**: The primary endpoint for fetching seller data and facets. It accepts parameters for querying, filtering, sorting, and pagination.
+ * **`PATCH /stores/bulk-active`**: Updates the active/inactive status for a list of selected sellers.
+ *
+ * @returns {JSX.Element} A fully interactive admin dashboard for seller management.
+ * @see {@link SortBySellerCRM}
+ * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
+ * @see {@link https://lucide.dev/ | Lucide React Icons}
+ */
 export default function Home() {
   const { sortBy } = useAdminStore();
   const [sellers, setSellers] = useState<Seller[]>([]);
@@ -71,6 +120,11 @@ export default function Home() {
   const [totalItems, setTotalItems] = useState(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  /**
+   * Builds the facet filter string required by the backend search API.
+   * @param facets - The selected facets from the component's state.
+   * @returns A URL-encoded JSON string representing the selected filters.
+   */
   const buildFacetFilters = (facets: Record<string, string[]>): string => {
     const filters: string[][] = [];
 
@@ -80,14 +134,19 @@ export default function Home() {
       }
     }
 
-
     const encoded = encodeURIComponent(JSON.stringify(filters));
     return encoded;
   };
 
+  /**
+   * A helper function to check if a specific seller ID is in the selection list.
+   */
   const isSelected = (id: string) => selectedSellerIds.includes(id);
 
-  // Debounce search input
+  /**
+   * This effect debounces the user's search input. It waits for 500ms after the user
+   * stops typing before updating the `debouncedSearch` state, which in turn triggers the API fetch.
+   */
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
@@ -107,24 +166,25 @@ export default function Home() {
     );
   };
 
-  // Handle bulk status change
+  /**
+   * Handles the bulk status change (Activate/Deactivate) for all selected sellers.
+   * It uses an optimistic UI update strategy for a better user experience.
+   */
   const handleBulkStatusChange = async (newStatus: boolean) => {
     if (selectedSellerIds.length === 0) return;
 
     const originalFilteredSellers = JSON.parse(JSON.stringify(filteredSellers));
     const originalSellers = JSON.parse(JSON.stringify(sellers));
 
-    const updatedFilteredSellers = filteredSellers.map(
-      (seller) =>
-        selectedSellerIds.includes(seller.id!)
-          ? { ...seller, status: newStatus }
-          : { ...seller }
+    const updatedFilteredSellers = filteredSellers.map((seller) =>
+      selectedSellerIds.includes(seller.id!)
+        ? { ...seller, status: newStatus }
+        : { ...seller }
     );
-    const updatedSellers = sellers.map(
-      (seller) =>
-        selectedSellerIds.includes(seller.id!)
-          ? { ...seller, status: newStatus }
-          : { ...seller }
+    const updatedSellers = sellers.map((seller) =>
+      selectedSellerIds.includes(seller.id!)
+        ? { ...seller, status: newStatus }
+        : { ...seller }
     );
 
     setSellers(updatedSellers);
@@ -145,8 +205,9 @@ export default function Home() {
       alert("Failed to update stores. Changes reverted.");
     }
   };
-
-  // Fetch sellers data with pagination and filters
+  /**
+   * Fetches sellers from the backend based on the current state of search, filters, pagination, and sorting.
+   */
   const fetchSellers = async (params: QueryParams) => {
     setLoading(true);
     try {
@@ -160,16 +221,19 @@ export default function Home() {
       );
 
       const sortParams = params.sortField
-        ? `&sortField=${params.sortField}&sortDirection=${params.sortDirection || "asc"
-        }`
+        ? `&sortField=${params.sortField}&sortDirection=${
+            params.sortDirection || "asc"
+          }`
         : "";
 
       const algoia_facets = buildFacetFilters(selectedFacets);
 
-
       const res = await api.get(
-        `/search/search_store?query=${params.query || ""}&page=${(params.page || 1) - 1
-        }&limit=${params.limit || 50}&facetFilters=${algoia_facets}&sort_by=${params.sort_by}`
+        `/search/search_store?query=${params.query || ""}&page=${
+          (params.page || 1) - 1
+        }&limit=${params.limit || 50}&facetFilters=${algoia_facets}&sort_by=${
+          params.sort_by
+        }`
       );
 
       const data = res.data;
@@ -194,7 +258,8 @@ export default function Home() {
 
       setSellers(sellers);
       // setTotalItems(data.total || data.hits.length);
-
+      
+      // Transform the API facet response into the structure required by the UI.
       const newFacets: Facets = {
         city: Object.entries(data.facets?.city || {}),
         area: Object.entries(data.facets?.area || {}),
@@ -222,7 +287,14 @@ export default function Home() {
       filters: selectedFacets,
       sort_by: sortBy,
     });
-  }, [debouncedSearch, currentPage, itemsPerPage, sortConfig, selectedFacets, sortBy]);
+  }, [
+    debouncedSearch,
+    currentPage,
+    itemsPerPage,
+    sortConfig,
+    selectedFacets,
+    sortBy,
+  ]);
 
   // Handle search
   const handleSearch = (query: string) => {
@@ -290,7 +362,7 @@ export default function Home() {
             email: email?.trim(),
             location: location?.trim(),
             category: category?.trim(),
-            status: status?.trim() === 'true',
+            status: status?.trim() === "true",
           };
         })
         .filter((s) => s.name && s.email);
@@ -300,11 +372,22 @@ export default function Home() {
       setCurrentPage(1);
 
       const newFacets: Facets = {
-        location: [...new Set(uploaded.map((s) => s.location).filter(Boolean))].map(item => [item!, 1]),
-        category: [...new Set(uploaded.map((s) => s.category).filter(Boolean))].map(item => [item!, 1]),
-        status: [...new Set(uploaded.map((s) => String(s.status)))].map(item => [item, 1]),
-        email: [...new Set(uploaded.map((s) => s.email))].map(item => [item, 1]),
-        name: [...new Set(uploaded.map((s) => s.name).filter(Boolean))].map(item => [item!, 1]),
+        location: [
+          ...new Set(uploaded.map((s) => s.location).filter(Boolean)),
+        ].map((item) => [item!, 1]),
+        category: [
+          ...new Set(uploaded.map((s) => s.category).filter(Boolean)),
+        ].map((item) => [item!, 1]),
+        status: [...new Set(uploaded.map((s) => String(s.status)))].map(
+          (item) => [item, 1]
+        ),
+        email: [...new Set(uploaded.map((s) => s.email))].map((item) => [
+          item,
+          1,
+        ]),
+        name: [...new Set(uploaded.map((s) => s.name).filter(Boolean))].map(
+          (item) => [item!, 1]
+        ),
       };
       setFacets(newFacets);
     };
@@ -316,8 +399,7 @@ export default function Home() {
     const header = "id,name,email,area,city,status\n";
     const rows = filteredSellers
       .map(
-        (s) =>
-          `${s.id},${s.name},${s.email},${s.area},${s.city},${s.status}`
+        (s) => `${s.id},${s.name},${s.email},${s.area},${s.city},${s.status}`
       )
       .join("\n");
     const blob = new Blob([header + rows], { type: "text/csv" });
@@ -332,17 +414,21 @@ export default function Home() {
 
   // Toggle view all facets
   const toggleViewAll = (facet: string) => {
-    setViewAll(prev => ({
+    setViewAll((prev) => ({
       ...prev,
-      [facet]: !prev[facet]
+      [facet]: !prev[facet],
     }));
   };
 
   // Request sort
   const requestSort = (key: keyof Seller) => {
-    let direction: 'ascending' | 'descending' = 'ascending';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction: "ascending" | "descending" = "ascending";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "ascending"
+    ) {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
@@ -355,43 +441,35 @@ export default function Home() {
       const aValue = a[sortConfig.key];
       const bValue = b[sortConfig.key];
 
-      const aString = Array.isArray(aValue) ? aValue.join(', ') : String(aValue || '');
-      const bString = Array.isArray(bValue) ? bValue.join(', ') : String(bValue || '');
+      const aString = Array.isArray(aValue)
+        ? aValue.join(", ")
+        : String(aValue || "");
+      const bString = Array.isArray(bValue)
+        ? bValue.join(", ")
+        : String(bValue || "");
 
       if (aString < bString) {
-        return sortConfig.direction === 'ascending' ? -1 : 1;
+        return sortConfig.direction === "ascending" ? -1 : 1;
       }
       if (aString > bString) {
-        return sortConfig.direction === 'ascending' ? 1 : -1;
+        return sortConfig.direction === "ascending" ? 1 : -1;
       }
       return 0;
     });
   }, [filteredSellers, sortConfig]);
 
-  // Pagination logic
-  // const totalItems = sortedSellers.length;
-  // const totalPages = Math.ceil(totalItems / itemsPerPage);
-  // const indexOfLastItem = currentPage * itemsPerPage;
-  // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  // const currentItems = sortedSellers.slice(indexOfFirstItem, indexOfLastItem);
-
-  // console.log(currentItems)
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   // Get sort direction indicator
   const getSortIndicator = (key: keyof Seller) => {
     if (!sortConfig || sortConfig.key !== key) return null;
-    return sortConfig.direction === 'ascending' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />;
+    return sortConfig.direction === "ascending" ? (
+      <ChevronUp className="w-4 h-4" />
+    ) : (
+      <ChevronDown className="w-4 h-4" />
+    );
   };
 
-  // const handleClickView = (id: string) => {
-  //     
-  // };
-
-  // const handleLocationRoute = () => {
-  //      
-  //      window.open(locationUrl, '_blank', 'noopener,noreferrer');
-  //   };
 
   return (
     <div className="min-h-screen">
@@ -460,18 +538,30 @@ export default function Home() {
 
         <div className="flex gap-6">
           {/* Sidebar Filters */}
-          <div className={`transition-all duration-300 ${showFilters ? 'w-80' : 'w-12'}`}>
+          <div
+            className={`transition-all duration-300 ${
+              showFilters ? "w-80" : "w-12"
+            }`}
+          >
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Filter className="w-5 h-5 text-gray-600" />
-                  {showFilters && <h2 className="text-xl font-semibold text-gray-800">Filters</h2>}
+                  {showFilters && (
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      Filters
+                    </h2>
+                  )}
                 </div>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  {showFilters ? <ChevronUp className="w-5 h-5 text-black" /> : <ChevronDown className="w-5 h-5 text-black" />}
+                  {showFilters ? (
+                    <ChevronUp className="w-5 h-5 text-black" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-black" />
+                  )}
                 </button>
               </div>
 
@@ -485,7 +575,7 @@ export default function Home() {
                           className="flex items-center text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
                         >
                           <span className="capitalize mr-1">
-                            {facet.replace('_', ' ')}: {value}
+                            {facet.replace("_", " ")}: {value}
                           </span>
                           <button
                             onClick={() => handleFacetChange(facet, value)}
@@ -500,44 +590,49 @@ export default function Home() {
                 )}
               </div>
 
-              {showFilters && Object.keys(facets).map((facet) => (
-                <div key={facet} className="mb-6">
-                  <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
-                    {facet.replace('_', ' ')}
-                  </h3>
-                  <div className="space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
-                    {facets[facet]
-                      .slice(0, viewAll[facet] ? facets[facet].length : 5)
-                      .map(([value, count]) => (
-                        <label
-                          key={value}
-                          className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+              {showFilters &&
+                Object.keys(facets).map((facet) => (
+                  <div key={facet} className="mb-6">
+                    <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
+                      {facet.replace("_", " ")}
+                    </h3>
+                    <div className="space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
+                      {facets[facet]
+                        .slice(0, viewAll[facet] ? facets[facet].length : 5)
+                        .map(([value, count]) => (
+                          <label
+                            key={value}
+                            className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={
+                                selectedFacets[facet]?.includes(value) || false
+                              }
+                              onChange={() => handleFacetChange(facet, value)}
+                              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <span className="text-sm text-gray-700 flex-1">
+                              {value}
+                            </span>
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                              {count}
+                            </span>
+                          </label>
+                        ))}
+                      {facets[facet].length > 5 && (
+                        <button
+                          onClick={() => toggleViewAll(facet)}
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                         >
-                          <input
-                            type="checkbox"
-                            checked={selectedFacets[facet]?.includes(value) || false}
-                            onChange={() => handleFacetChange(facet, value)}
-                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                          <span className="text-sm text-gray-700 flex-1">
-                            {value}
-                          </span>
-                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                            {count}
-                          </span>
-                        </label>
-                      ))}
-                    {facets[facet].length > 5 && (
-                      <button
-                        onClick={() => toggleViewAll(facet)}
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                      >
-                        {viewAll[facet] ? "Show Less" : `View All (${facets[facet].length})`}
-                      </button>
-                    )}
+                          {viewAll[facet]
+                            ? "Show Less"
+                            : `View All (${facets[facet].length})`}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
@@ -600,109 +695,142 @@ export default function Home() {
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort('name')}
+                          onClick={() => requestSort("name")}
                         >
                           <div className="flex items-center gap-2">
-                            Name {getSortIndicator('name')}
+                            Name {getSortIndicator("name")}
                           </div>
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort('email')}
+                          onClick={() => requestSort("email")}
                         >
                           <div className="flex items-center gap-2">
-                            Email {getSortIndicator('email')}
+                            Email {getSortIndicator("email")}
                           </div>
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort('mobile')}
+                          onClick={() => requestSort("mobile")}
                         >
                           <div className="flex items-center gap-2">
-                            Mobile {getSortIndicator('mobile')}
+                            Mobile {getSortIndicator("mobile")}
                           </div>
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort('area')}
+                          onClick={() => requestSort("area")}
                         >
                           <div className="flex items-center gap-2">
-                            Area {getSortIndicator('area')}
+                            Area {getSortIndicator("area")}
                           </div>
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort('city')}
+                          onClick={() => requestSort("city")}
                         >
                           <div className="flex items-center gap-2">
-                            City {getSortIndicator('city')}
+                            City {getSortIndicator("city")}
                           </div>
                         </th>
-                        {/* <th
-                          className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort('created_at')}
-                        >
-                          <div className="flex items-center gap-2">
-                            Created At {getSortIndicator('created_at')}
-                          </div>
-                        </th> */}
-                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Type</th>
-                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expertise</th>
-                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
-                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Created At
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Store Type
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Expertise
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Gender
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Progress
+                        </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort('status')}
+                          onClick={() => requestSort("status")}
                         >
                           <div className="flex items-center gap-2">
-                            Status {getSortIndicator('status')}
+                            Status {getSortIndicator("status")}
                           </div>
                         </th>
-                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {sellers.length === 0 ? (
                         <tr>
-                          <td colSpan={10} className="px-6 py-12 text-center text-gray-500">
+                          <td
+                            colSpan={10}
+                            className="px-6 py-12 text-center text-gray-500"
+                          >
                             <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                            <p className="text-lg font-medium">No sellers found</p>
-                            <p className="text-sm">Try adjusting your search or filters</p>
+                            <p className="text-lg font-medium">
+                              No sellers found
+                            </p>
+                            <p className="text-sm">
+                              Try adjusting your search or filters
+                            </p>
                           </td>
                         </tr>
                       ) : (
                         sellers.map((seller) => (
-                          <tr key={seller.id} className="hover:bg-gray-50 transition-colors">
+                          <tr
+                            key={seller.id}
+                            className="hover:bg-gray-50 transition-colors"
+                          >
                             <td className="px-4 py-4">
                               <input
                                 type="checkbox"
                                 checked={isSelected(seller.id!)}
-                                onChange={() => handleCheckboxChange(seller.id!)}
+                                onChange={() =>
+                                  handleCheckboxChange(seller.id!)
+                                }
                                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                               />
                             </td>
                             <td className="px-4 py-4 w-fit">
-                              <div className="text-sm font-medium text-gray-900">{seller.name}</div>
+                              <div className="text-sm font-medium text-gray-900">
+                                {seller.name}
+                              </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-900">{seller.email}</div>
+                              <div className="text-sm text-gray-900">
+                                {seller.email}
+                              </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-900">{seller.mobile}</div>
+                              <div className="text-sm text-gray-900">
+                                {seller.mobile}
+                              </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{seller.area}</div>
+                              <div className="text-sm text-gray-900">
+                                {seller.area}
+                              </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{seller.city}</div>
+                              <div className="text-sm text-gray-900">
+                                {seller.city}
+                              </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">
                                 {seller.created_at ? (
                                   <>
-                                    <div>{seller.created_at.toLocaleDateString()}</div>
-                                    <div>{seller.created_at.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                    <div>
+                                      {seller.created_at.toLocaleDateString()}
+                                    </div>
+                                    <div>
+                                      {seller.created_at.toLocaleTimeString(
+                                        [],
+                                        { hour: "2-digit", minute: "2-digit" }
+                                      )}
+                                    </div>
                                   </>
                                 ) : (
                                   "N/A"
@@ -712,7 +840,10 @@ export default function Home() {
                             <td className="px-4 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.store_types?.map((type, idx) => (
-                                  <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                  <span
+                                    key={idx}
+                                    className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                  >
                                     {type}
                                   </span>
                                 ))}
@@ -721,7 +852,10 @@ export default function Home() {
                             <td className="px-4 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.outfits?.map((outfit, idx) => (
-                                  <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                  <span
+                                    key={idx}
+                                    className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                  >
                                     {outfit}
                                   </span>
                                 ))}
@@ -730,7 +864,10 @@ export default function Home() {
                             <td className="px-4 py-4">
                               <div className="flex flex-wrap gap-1">
                                 {seller.genders?.map((gender, idx) => (
-                                  <span key={idx} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                  <span
+                                    key={idx}
+                                    className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                  >
                                     {gender}
                                   </span>
                                 ))}
@@ -747,18 +884,28 @@ export default function Home() {
                               </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
-                              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${seller.status
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                                }`}>
+                              <span
+                                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                                  seller.status
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-red-100 text-red-800"
+                                }`}
+                              >
                                 {seller.status ? "Active" : "Inactive"}
                               </span>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               {/* <Link href={`/seller_dashboard/${seller.id}`} target="blank" rel="noopener noreferrer"> */}
-                              <Link href={`/seller_dashboard?storeId=${encodeURIComponent(seller.id ?? "")}`} target="blank" rel="noopener noreferrer">
-                                <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                                // onClick={() => handleClickView(seller.id)}
+                              <Link
+                                href={`/seller_dashboard?storeId=${encodeURIComponent(
+                                  seller.id ?? ""
+                                )}`}
+                                target="blank"
+                                rel="noopener noreferrer"
+                              >
+                                <button
+                                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                  // onClick={() => handleClickView(seller.id)}
                                 >
                                   <Eye className="w-4 h-4 mr-1" />
                                   View
@@ -785,20 +932,22 @@ export default function Home() {
                     <button
                       onClick={() => paginate(1)}
                       disabled={currentPage === 1}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === 1
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-blue-500 text-white hover:bg-blue-600'
-                        }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        currentPage === 1
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
+                      }`}
                     >
                       First
                     </button>
                     <button
                       onClick={() => paginate(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === 1
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-blue-500 text-white hover:bg-blue-600'
-                        }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        currentPage === 1
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
+                      }`}
                     >
                       Previous
                     </button>
@@ -820,10 +969,11 @@ export default function Home() {
                         <button
                           key={pageNum}
                           onClick={() => paginate(pageNum)}
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === pageNum
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-blue-500 text-white hover:bg-blue-600'
-                            }`}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            currentPage === pageNum
+                              ? "bg-blue-600 text-white"
+                              : "bg-blue-500 text-white hover:bg-blue-600"
+                          }`}
                         >
                           {pageNum}
                         </button>
@@ -833,20 +983,22 @@ export default function Home() {
                     <button
                       onClick={() => paginate(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === totalPages
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-blue-500 text-white hover:bg-blue-600'
-                        }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        currentPage === totalPages
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
+                      }`}
                     >
                       Next
                     </button>
                     <button
                       onClick={() => paginate(totalPages)}
                       disabled={currentPage === totalPages}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentPage === totalPages
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-blue-500 text-white hover:bg-blue-600'
-                        }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        currentPage === totalPages
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
+                      }`}
                     >
                       Last
                     </button>
