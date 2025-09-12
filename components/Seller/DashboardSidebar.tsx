@@ -165,7 +165,51 @@ const DesktopSidebar = ({ selected, onSelect, openGroups, toggleGroup }) => {
   );
 };
 
-// --- Main DashboardSidebar Component ---
+/**
+ * DashboardSidebar component
+ * 
+ * The primary navigation component for the Seller Dashboard. It provides a responsive UI
+ * that adapts from a horizontal scrolling bar on mobile to a collapsible, grouped sidebar on desktop.
+ *
+ * ## Features
+ * - **Responsive Design**: Renders two distinct layouts for mobile vs. desktop screens using CSS.
+ * - **Mobile View**: A compact, horizontally scrollable bar of icons and titles that is touch-friendly.
+ * - **Desktop View**: A taller, vertical sidebar with collapsible sections (e.g., "Store Profile", "Add Products") for better organization.
+ * - **Stateful Navigation**: Highlights the currently `selected` section passed in via props.
+ * - **Interactive**: Clicking on a section triggers the `onSelect` callback to notify the parent component of a navigation change.
+ * - **Scroll Preservation**: The mobile sidebar remembers its horizontal scroll position across re-renders for a seamless user experience.
+ *
+ * ## Logic Flow
+ * 1.  The main `DashboardSidebar` component acts as a responsive switcher, rendering either a `MobileSidebar` or a `DesktopSidebar` based on screen size.
+ * 2.  It manages the state for the collapsible desktop groups (`openGroups`) and provides a function (`toggleGroup`) to handle their open/closed state.
+ * 3.  **DesktopSidebar Logic**:
+ *        - It maps over the `sectionGroups` constant to create the collapsible sections.
+ *        - The visibility of each section's content is controlled by the `openGroups` state passed down from the parent.
+ *        - It then maps over the `ids` within each group to render the individual navigation items.
+ * 4.  **MobileSidebar Logic**:
+ *        - It renders a horizontally scrollable `div` containing all navigation items from the `sections` array.
+ *        - A `useLayoutEffect` hook is used to remember and restore the `scrollLeft` position, preventing the scrollbar from resetting on parent component updates.
+ * 5.  In both views, the `selected` prop is used to apply active styles, and the `onSelect` callback is fired on click.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `useRef`, `useState`, `useEffect`, `useLayoutEffect` from `react`.
+ * - **State (Zustand Stores)**:
+ *    - `useSellerStore`: (Imported but not directly used in this snippet) To access global seller state.
+ *
+ * ## Key Data Structures
+ * - **sections**: A local constant array of objects, where each object defines a navigation item with an `id`, `title`, and `iconUrl`.
+ * - **sectionGroups**: A local constant array of objects that defines the structure for the desktop sidebar, grouping `section` IDs under a `heading`.
+ *
+ * ## API Calls
+ * - This component does not make any API calls.
+ *
+ * ## Props
+ * @param {object} props - The props for the component.
+ * @param {string} props.selected - The ID of the currently active section, used for highlighting.
+ * @param {(id: string) => void} props.onSelect - A callback function that is called with the section ID when a user clicks a navigation item.
+ *
+ * @returns {JSX.Element} The rendered responsive sidebar.
+ */
 export default function DashboardSidebar({ selected, onSelect }) {
   const {
     // ... your useSellerStore hooks remain unchanged

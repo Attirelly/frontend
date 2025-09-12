@@ -54,6 +54,11 @@ const sectionOrder = ['brand', 'price', 'market', 'social', 'photos'];
  *    - {@link ProfileSidebar}: The navigation sidebar for the onboarding steps.
  *    - {@link NextPrevNavigation}: The back/next buttons for navigating between steps.
  *    - {@link ProtectedRoute}: A higher-order component that protects the page from unauthorized access.
+ *    - {@link SocialLinksComponent} : The form for managing social media and website links.
+ *    - {@link BusinessDetailsComponent} : The form for managing core business and brand details.
+ *    - {@link PriceFiltersComponent} : The form for setting price ranges and average prices.
+ *    - {@link WhereToSellComponent} : The form for specifying online/offline market presence.
+ *    - {@link StorePhotosComponent} : The form for uploading profile and banner images.
  * - All section form components (e.g., `BusinessDetailsComponent`, `SocialLinksComponent`).
  * - **Hooks**:
  *    - `useUpdateStore`: A custom hook that encapsulates the logic for saving store data.
