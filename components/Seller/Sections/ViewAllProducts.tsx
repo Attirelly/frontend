@@ -1,723 +1,3 @@
-// // "use client";
-
-// // import React, { use, useEffect, useState } from "react";
-// // import { Table, Tag, Switch, Button, Upload, message } from "antd";
-// // import { UploadOutlined } from "@ant-design/icons";
-// // import ProductFilters from "@/components/ProductFilters";
-// // import ProductTable from "@/components/ProductsTable";
-// // import LoadingSpinner from "@/components/ui/LoadingSpinner";
-// // import { api } from "@/lib/axios";
-// // import { useSellerStore } from "@/store/sellerStore";
-// // import type {
-// //   ProductFiltersType,
-// //   Product,
-// //   FilterOptions,
-// // } from "@/types/ProductTypes";
-// // import Image from "next/image";
-// // import { useRouter } from "next/navigation";
-// // import {
-// //   useFormActions
-// // } from "@/store/product_upload_store";
-
-// // export default function ProductsPage({
-// //   batchId = null,
-// // }: {
-// //   batchId?: string | null;
-// // }) {
-// //   const { setCurrentStep } = useFormActions();
-
-// //   const {
-// //     products,
-// //     setProducts,
-// //     filterOptions,
-// //     setFilterOptions,
-// //     hasFetchedProducts,
-// //     setHasFetchedProducts,
-// //     storeId,
-// //   } = useSellerStore();
-
-// //   const [filteredData, setFilteredData] = useState<Product[]>([]);
-// //   const [selectedRows , setSelectedRows] = useState<>() ;
-// //   const [isReady, setIsReady] = useState(false);
-// //   const [pagination, setPagination] = useState({
-// //     current: 1,
-// //     pageSize: 10,
-// //   });
-// //   const [filters, setFilters] = useState<ProductFiltersType>({
-// //     category: [],
-// //     pmCat: [],
-// //     subCat1: [],
-// //     subCat2: [],
-// //     subCat3: [],
-// //     size: [],
-// //     color: [],
-// //     // fabric: [],
-// //     rentAvailable: null,
-// //     status: [],
-// //     // city: null,
-// //     // subLocation: [],
-// //     productName: [],
-// //     sku: [],
-// //     imageUploadStatus: null,
-// //     source: [],
-// //   });
-
-// //   const router = useRouter()
-
-// //   useEffect(() => {
-
-// //     const fetchInitialData = async () => {
-// //       try {
-// //         const url = batchId
-// //           ? `/products/products_by_store_async/${storeId}?batch_id=${batchId}`
-// //           : `/products/products_by_store_async/${storeId}`;
-// //         const res = await api.get(url); // Adjust this to your actual endpoint
-// //         const json = res.data;
-// //         setFilteredData(json.table_data);
-// //         setProducts(json.table_data);
-// //         setHasFetchedProducts(true);
-// //         setFilterOptions({
-// //           categories: json.categories,
-// //           sizes: json.sizes,
-// //           colors: json.colors,
-// //           statuses: [],
-// //           productNames: json.product_names,
-// //           skus: json.skus,
-// //           image_upload_statuses: [],
-// //           source: [],
-// //         });
-// //         setIsReady(true);
-// //       } catch (err) {
-// //         setIsReady(true);
-// //         console.error("Error fetching data", err);
-// //       }
-// //     };
-
-// //     const sortedData = products.sort((a, b) => {
-// //       if (a.status === true && b.status !== true) return -1;
-// //       if (a.status !== true && b.status === true) return 1;
-// //       return 0;
-// //     });
-// //     setProducts(sortedData);
-
-// //     fetchInitialData();
-// //   }, [
-// //     hasFetchedProducts,
-// //     setHasFetchedProducts,
-// //     setProducts,
-// //     setFilterOptions,
-// //   ]);
-
-// //   useEffect(() => {
-// //     // Prefetch current page items
-// //     const start = (pagination.current - 1) * pagination.pageSize;
-// //     const end = start + pagination.pageSize;
-// //     const currentPageData = products.slice(start, end);
-// //     currentPageData.forEach((product) => {
-// //       router.prefetch(`/product_upload/${product.product_id}`);
-// //     });
-// //   }, [pagination, products]);
-
-// //   const handleImageUpload = (record: Product) => {
-// //     // message.success(`Image uploaded for ${record.product_name}`);
-// //     // setCurrentStep(6);
-// //     window.open(`/product_upload/${record.product_id}?step=6`, '_blank', 'noopener,noreferrer');
-// //   };
-
-// //   const columns = [
-// //     {
-// //       title: "Image",
-// //       dataIndex: "image",
-// //       render: (_: any, record: Product) => {
-
-// //         const record_images = record?.images || [];
-
-// //         const imageSrc =
-// //           Array.isArray(record_images) && record_images.length > 0
-// //             ? record_images[0]
-// //             : "/window.svg"; // A fallback image stored in public folder
-
-// //         return (
-// //           <Image
-// //             src={imageSrc}
-// //             alt="product_image"
-// //             width={60}
-// //             height={60}
-// //             style={{ objectFit: "cover", borderRadius: "4px" }}
-// //           />
-// //         );
-// //       },
-// //     },
-// //     {
-// //       title: "Product Name",
-// //       dataIndex: "product_name",
-// //     },
-// //     {
-// //       title: "System SKU ID",
-// //       dataIndex: "sku",
-// //     },
-// //     {
-// //       title: "Primary Category",
-// //       render: (_: any, record: Product) => {
-// //         const level1Category = record.category?.find(
-// //           (cat: any) => cat.level === 1
-// //         );
-// //         return level1Category?.name || "-";
-// //       },
-// //     },
-// //     {
-// //       title: "Sub Category 1",
-// //       render: (_: any, record: Product) => {
-// //         const level1Category = record.category?.find(
-// //           (cat: any) => cat.level === 2
-// //         );
-// //         return level1Category?.name || "-";
-// //       },
-// //     },
-// //     {
-// //       title: "Sub Category 2",
-// //       render: (_: any, record: Product) => {
-// //         const level1Category = record.category?.find(
-// //           (cat: any) => cat.level === 3
-// //         );
-// //         return level1Category?.name || "-";
-// //       },
-// //     },
-// //     {
-// //       title: "Sub Category 3",
-// //       render: (_: any, record: Product) => {
-// //         const level1Category = record.category?.find(
-// //           (cat: any) => cat.level === 4
-// //         );
-// //         return level1Category?.name || "-";
-// //       },
-// //     },
-// //     {
-// //       title: "Size",
-// //       dataIndex: "size",
-// //     },
-// //     {
-// //       title: "Color",
-// //       dataIndex: "color",
-// //     },
-// //     {
-// //       title: "MRP",
-// //       dataIndex: "price",
-// //     },
-// //     {
-// //       title: "Store Price",
-// //       dataIndex: "price",
-// //       sorter: (a: Product, b: Product) => a.price - b.price,
-// //       sortDirections: ['ascend', 'descend'] as ('ascend' | 'descend')[],
-// //     },
-// //     // {
-// //     //   title: "Available for Rent",
-// //     //   dataIndex: "rent",
-// //     //   render: (rent: boolean) => (rent === true ? "Yes" : "No"),
-// //     // },
-// //     {
-// //       title: "Source",
-// //       dataIndex: "shopify_id",
-// //       render: (shopify_id: string) =>
-// //         shopify_id === null ? "Self" : "Shopify",
-// //     },
-// //     {
-// //       title: "Status",
-// //       dataIndex: "active",
-// //       render: (status: Product["status"]) => (
-// //         <Tag color={status === true ? "green" : "volcano"}>
-// //           {status === true ? "Active" : "Inactive"}
-// //         </Tag>
-// //       ),
-// //     },
-// //     {
-// //       title: "Image Upload",
-// //       render: (_: any, record: Product) => (
-// //         // <Upload showUploadList={false}>
-// //         <Button
-// //           icon={<UploadOutlined />}
-// //           onClick={(e) => {
-// //             e.stopPropagation();
-// //             handleImageUpload(record);
-// //           }}
-// //         >
-// //           Upload
-// //         </Button>
-// //         // </Upload>
-// //       ),
-// //     },
-// //   ];
-
-// //   const result = products.filter((item) => {
-// //     const primaryCat =
-// //       item.category?.find((cat) => cat.level === 1)?.name || "";
-// //     const sub_Cat1 = item.category?.find((cat) => cat.level === 2)?.name || "";
-// //     const sub_Cat2 = item.category?.find((cat) => cat.level === 3)?.name || "";
-// //     const sub_Cat3 = item.category?.find((cat) => cat.level === 4)?.name || "";
-// //     const derivedSource = item.shopify_id === null ? "Self" : "Shopify";
-// //     console.log(item.shopify_id, derivedSource)
-
-// //     return (
-// //       (!filters.pmCat.length || filters.pmCat.includes(primaryCat)) &&
-// //       // (!filters.subCat1.length || filters.subCat1.includes(sub_Cat1)) &&
-// //       (!filters.subCat2.length || filters.subCat2.includes(sub_Cat2)) &&
-// //       (!filters.subCat3.length || filters.subCat3.includes(sub_Cat3)) &&
-// //       (!filters.size.length || filters.size.includes(item.size)) &&
-// //       (!filters.color.length || filters.color.includes(item.color)) &&
-// //       // (filters.rentAvailable === null || filters.rentAvailable === item.rent) &&
-// //       (!filters.status.length || filters.status.includes(item.status)) &&
-// //       (!filters.productName.length ||
-// //         filters.productName.includes(item.product_name)) &&
-// //       (!filters.sku.length || filters.sku.includes(item.sku)) &&
-// //       (!filters.imageUploadStatus ||
-// //         filters.imageUploadStatus === item.imageUploadStatus) &&
-// //       (!filters.source.length || filters.source.includes(derivedSource))
-// //     );
-// //   });
-
-// //   if (!isReady || !filterOptions) {
-// //     return <LoadingSpinner />;
-// //   }
-// //   return (
-// //     // <div style={{ display: "flex-col" }} className="space-y-4 flex-col">
-// //     <div style={{ display: "flex-col" }} className="space-y-4 flex-col w-4xl">
-// //       <ProductFilters
-// //         filters={filters}
-// //         setFilters={setFilters}
-// //         filterOptions={filterOptions}
-// //       />
-// //       <div style={{ flexGrow: 1 }}>
-// //         <h3>Products</h3>
-// //         <ProductTable
-// //           columns={columns}
-// //           data={result}
-// //           rowKey={"variant_id"}
-// //           pagination={pagination}
-// //           onPaginationChange={(page, pageSize) =>
-// //             setPagination({ current: page, pageSize })
-// //           }
-// //           onRow={(record) => ({
-// //             onClick: () => {
-// //               // router.push(`/product_upload/${record.product_id}`);
-// //               window.open(`/product_upload/${record.product_id}`, '_blank', 'noopener,noreferrer');
-// //             },
-// //             style: { cursor: "pointer" },
-// //           })}
-// //         />
-// //       </div>
-// //     </div>
-// //   );
-// // }
-
-// "use client";
-
-// import React, { use, useEffect, useState } from "react";
-// import { Table, Tag, Switch, Button, Upload, message, Checkbox } from "antd";
-// import { UploadOutlined } from "@ant-design/icons";
-// import ProductFilters from "@/components/ProductFilters";
-// import ProductTable from "@/components/ProductsTable";
-// import LoadingSpinner from "@/components/ui/LoadingSpinner";
-// import { api } from "@/lib/axios";
-// import { useSellerStore } from "@/store/sellerStore";
-// import type {
-//   ProductFiltersType,
-//   Product
-// } from "@/types/ProductTypes";
-// import Image from "next/image";
-// import { useRouter } from "next/navigation";
-// import { useFormActions } from "@/store/product_upload_store";
-
-
-// interface ProductVariantIDs {
-//   product_id: string;
-//   variant_id: string;
-// }
-
-// export default function ProductsPage({
-//   batchId = null,
-// }: {
-//   batchId?: string | null;
-// }) {
-//   const { setCurrentStep } = useFormActions();
-
-//   const {
-//     products,
-//     setProducts,
-//     filterOptions,
-//     setFilterOptions,
-//     hasFetchedProducts,
-//     setHasFetchedProducts,
-//     storeId,
-//   } = useSellerStore();
-
-//   const [filteredData, setFilteredData] = useState<Product[]>([]);
-//   const [isReady, setIsReady] = useState(false);
-//   const [pagination, setPagination] = useState({
-//     current: 1,
-//     pageSize: 30,
-//   });
-//   const [filters, setFilters] = useState<ProductFiltersType>({
-//     category: [],
-//     pmCat: [],
-//     subCat1: [],
-//     subCat2: [],
-//     subCat3: [],
-//     size: [],
-//     color: [],
-//     // fabric: [],
-//     rentAvailable: null,
-//     status: [],
-//     // city: null,
-//     // subLocation: [],
-//     productName: [],
-//     sku: [],
-//     imageUploadStatus: null,
-//     source: [],
-//   });
-
-//   const [selectedRowKeys, setSelectedRowKeys] = useState<ProductVariantIDs[]>([]);
-//   const [loading, setLoading] = useState(false);
-
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     const fetchInitialData = async () => {
-//       try {
-//         const url = batchId
-//           ? `/products/products_by_store/${storeId}?batch_id=${batchId}`
-//           : `/products/products_by_store/${storeId}`;
-//         const res = await api.get(url); // Adjust this to your actual endpoint
-//         const json = res.data;
-//         setFilteredData(json.table_data);
-//         setProducts(json.table_data);
-//         setHasFetchedProducts(true);
-//         setFilterOptions({
-//           categories: json.categories,
-//           sizes: json.sizes,
-//           colors: json.colors,
-//           statuses: [],
-//           productNames: json.product_names,
-//           skus: json.skus,
-//           image_upload_statuses: [],
-//           source: [],
-//         });
-//         setIsReady(true);
-//       } catch (err) {
-//         setIsReady(true);
-//         console.error("Error fetching data", err);
-//       }
-//     };
-
-//     const sortedData = products.sort((a, b) => {
-//       if (a.status === true && b.status !== true) return -1;
-//       if (a.status !== true && b.status === true) return 1;
-//       return 0;
-//     });
-//     setProducts(sortedData);
-
-//     fetchInitialData();
-//   }, [
-//     hasFetchedProducts,
-//     setHasFetchedProducts,
-//     setProducts,
-//     setFilterOptions,
-//   ]);
-
-//   useEffect(() => {
-//     // Prefetch current page items
-//     const start = (pagination.current - 1) * pagination.pageSize;
-//     const end = start + pagination.pageSize;
-//     const currentPageData = products.slice(start, end);
-//     currentPageData.forEach((product) => {
-//       router.prefetch(`/product_upload/${product.product_id}`);
-//     });
-//   }, [pagination, products]);
-
-//   const handleImageUpload = (record: Product) => {
-//     window.open(
-//       `/product_upload/${record.product_id}?step=6`,
-//       "_blank",
-//       "noopener,noreferrer"
-//     );
-//   };
-
-//   const handleBulkStatusChange = async (status: boolean) => {
-//     if (selectedRowKeys.length === 0) {
-//       message.warning("Please select at least one product");
-//       return;
-//     }
-
-//     setLoading(true);
-//     try {
-//       // Call your API to update status for selected products
-//       console.log("selectedRowkeys" , selectedRowKeys)
-//       await api.post("/products/bulk_product_status_change", {
-//         rows: selectedRowKeys,
-//         status: status,
-//       });
-
-//       // Update local state
-//       console.log("selectedRowKeys", selectedRowKeys);
-//       const updatedProducts = products.map((product) => {
-//       const isSelected = selectedRowKeys.some(
-//         (selected) =>
-//           selected.product_id === product.product_id &&
-//           selected.variant_id === product.variant_id
-//       );
-//       if (isSelected) {
-//     console.log(
-//       `Updating product ${product.product_id} | variant ${product.variant_id} from status=${product.status} to status=${status}`
-//     );
-//   }
-
-//       return isSelected ? { ...product, status } : product;
-//     });
-//       console.log("updated products",updatedProducts);
-//       setProducts(updatedProducts);
-//       // setFilteredData(updatedProducts);
-//       // setFilters((prev) => ({ ...prev }));
-//       setSelectedRowKeys([]);
-//       message.success(
-//         `Successfully updated ${selectedRowKeys.length} product(s) to ${
-//           status ? "Active" : "Inactive"
-//         }`
-//       );
-//     } catch (error) {
-//       message.error("Failed to update product statuses");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const columns = [
-//     {
-//       title: "Image",
-//       dataIndex: "image",
-//       render: (_: any, record: Product) => {
-//         const record_images = record?.images || [];
-//         const imageSrc =
-//           Array.isArray(record_images) && record_images.length > 0
-//             ? record_images[0]
-//             : "/window.svg";
-
-//         return (
-//           <Image
-//             src={imageSrc}
-//             alt="product_image"
-//             width={60}
-//             height={60}
-//             style={{ objectFit: "cover", borderRadius: "4px" , objectPosition :"top" }}
-//           />
-//         );
-//       },
-//     },
-//     {
-//       title: "Product Name",
-//       dataIndex: "product_name",
-//     },
-//     {
-//       title: "System SKU ID",
-//       dataIndex: "sku",
-//     },
-//     {
-//       title: "Primary Category",
-//       render: (_: any, record: Product) => {
-//         const level1Category = record.category?.find(
-//           (cat: any) => cat.level === 1
-//         );
-//         return level1Category?.name || "-";
-//       },
-//     },
-//     {
-//       title: "Sub Category 1",
-//       render: (_: any, record: Product) => {
-//         const level1Category = record.category?.find(
-//           (cat: any) => cat.level === 2
-//         );
-//         return level1Category?.name || "-";
-//       },
-//     },
-//     {
-//       title: "Sub Category 2",
-//       render: (_: any, record: Product) => {
-//         const level1Category = record.category?.find(
-//           (cat: any) => cat.level === 3
-//         );
-//         return level1Category?.name || "-";
-//       },
-//     },
-//     {
-//       title: "Sub Category 3",
-//       render: (_: any, record: Product) => {
-//         const level1Category = record.category?.find(
-//           (cat: any) => cat.level === 4
-//         );
-//         return level1Category?.name || "-";
-//       },
-//     },
-//     {
-//       title: "Size",
-//       dataIndex: "size",
-//     },
-//     {
-//       title: "Color",
-//       dataIndex: "color",
-//     },
-//     {
-//       title: "MRP",
-//       dataIndex: "mrp",
-//     },
-//     {
-//       title: "Store Price",
-//       dataIndex: "price",
-//       sorter: (a: Product, b: Product) => a.price - b.price,
-//       sortDirections: ["ascend", "descend"] as ("ascend" | "descend")[],
-//     },
-//     {
-//       title: "Discount",
-//       dataIndex: "discount",
-//       sorter: (a: Product, b: Product) => a.discount - b.discount,
-//       sortDirections: ["ascend", "descend"] as ("ascend" | "descend")[],
-//     },
-//     {
-//       title: "Source",
-//       dataIndex: "shopify_id",
-//       render: (shopify_id: string) =>
-//         shopify_id === null ? "Self" : "Shopify",
-//     },
-//     {
-//       title: "Status",
-//       dataIndex: "status",
-//       render: (status: Product["status"]) => (
-//         <Tag color={status === true ? "green" : "volcano"}>
-//           {status === true ? "Active" : "Inactive"}
-//         </Tag>
-//       ),
-//     },
-//     {
-//       title: "Image Upload",
-//       render: (_: any, record: Product) => (
-//         <Button
-//           icon={<UploadOutlined />}
-//           onClick={(e) => {
-//             e.stopPropagation();
-//             handleImageUpload(record);
-//           }}
-//         >
-//           Upload
-//         </Button>
-//       ),
-//     },
-//   ];
-//   const result = products.filter((item) => {
-//     const primaryCat =
-//       item.category?.find((cat) => cat.level === 1)?.name || "";
-//     const sub_Cat1 = item.category?.find((cat) => cat.level === 2)?.name || "";
-//     const sub_Cat2 = item.category?.find((cat) => cat.level === 3)?.name || "";
-//     const sub_Cat3 = item.category?.find((cat) => cat.level === 4)?.name || "";
-//     const derivedSource = item.shopify_id === null ? "Self" : "Shopify";
-
-//     return (
-//       (!filters.pmCat.length || filters.pmCat.includes(primaryCat)) &&
-//       (!filters.subCat2.length || filters.subCat2.includes(sub_Cat2)) &&
-//       (!filters.subCat3.length || filters.subCat3.includes(sub_Cat3)) &&
-//       (!filters.size.length || filters.size.includes(item.size)) &&
-//       (!filters.color.length || filters.color.includes(item.color)) &&
-//       (!filters.status.length || filters.status.includes(item.status)) &&
-//       (!filters.productName.length ||
-//         filters.productName.includes(item.product_name)) &&
-//       (!filters.sku.length || filters.sku.includes(item.sku)) &&
-//       (!filters.imageUploadStatus ||
-//         filters.imageUploadStatus === item.imageUploadStatus) &&
-//       (!filters.source.length || filters.source.includes(derivedSource))
-//     );
-//   });
-
-//   // const rowSelection = {
-//   //   selectedRowKeys,selectedRows,
-//   //   onChange: (selectedKeys: React.Key[]) => {
-//   //     setSelectedRowKeys(selectedKeys);
-//   //   },
-//   // };
-
-//   if (!isReady || !filterOptions) {
-//     return <LoadingSpinner />;
-//   }
-
-//   return (
-//     <div style={{ display: "flex-col" }} className="space-y-4 flex-col w-4xl">
-//       <ProductFilters
-//         filters={filters}
-//         setFilters={setFilters}
-//         filterOptions={filterOptions}
-//       />
-//       <div style={{ marginBottom: 16 }}>
-//         <Button
-//           type="primary"
-//           onClick={() => handleBulkStatusChange(true)}
-//           disabled={selectedRowKeys.length === 0}
-//           loading={loading}
-//           style={{ marginRight: 8 }}
-//         >
-//           Activate Selected
-//         </Button>
-//         <Button
-//           danger
-//           onClick={() => handleBulkStatusChange(false)}
-//           disabled={selectedRowKeys.length === 0}
-//           loading={loading}
-//         >
-//           Deactivate Selected
-//         </Button>
-//         <span style={{ marginLeft: 8 }}>
-//           {selectedRowKeys.length > 0
-//             ? `Selected ${selectedRowKeys.length} items`
-//             : ""}
-//         </span>
-//       </div>
-//       <div style={{ flexGrow: 1 }}>
-//         <h3 className="text-black">Products</h3>
-//         <ProductTable
-//           columns={columns}
-//           data={result}
-//           rowKey={"variant_id"}
-//           pagination={pagination}
-//           onPaginationChange={(page, pageSize) =>
-//             setPagination({ current: page, pageSize })
-//           }
-//           onRow={(record) => ({
-//             onClick: () => {
-//               window.open(
-//                 `/product_upload/${record.product_id}`,
-//                 "_blank",
-//                 "noopener,noreferrer"
-//               );
-//             },
-//             style: { cursor: "pointer" },
-//           })}
-//           // rowSelection={rowSelection}
-//           rowSelection={{
-//             onChange: (selectedRowKeys, selectedRows) => {
-//             const selectedProductIds = selectedRows.map((row) => ({
-//               product_id: String(row.product_id ?? ""),
-//               variant_id: String(row.variant_id ?? ""),
-//             }));
-
-//             // Optional: store them in state or send to server
-//             setSelectedRowKeys(selectedProductIds);
-//             },
-//             getCheckboxProps: (record) => ({
-//               disabled: false, // you can disable checkbox based on record logic
-//               name: record.product_id, // not necessary, but semantic
-//             }),
-//           }}
-//         />
-//       </div>
-//     </div>
-//   );
-// }
-
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -732,13 +12,49 @@ import type { ProductFiltersType, Product } from "@/types/ProductTypes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useFormActions } from "@/store/product_upload_store";
-
+/**
+ * @interface ProductVariantIDs
+ * @description Defines the structure for identifying a specific product variant for bulk actions.
+ */
 interface ProductVariantIDs {
   product_id: string;
   variant_id: string;
 }
 
-export default function ViewAllProducts({ batchId = null }: { batchId?: string | null }) {
+/**
+ * A comprehensive page component for viewing, filtering, and managing a seller's products.
+ *
+ * This component displays a paginated and filterable table of all products associated with a
+ * seller. It is designed to handle two main scenarios: viewing all products for a store or
+ * viewing the results of a specific bulk upload or Shopify sync job (via the optional `batchId`).
+ * It includes features for client-side filtering, bulk status updates (activate/deactivate),
+ * and quick links to edit a product or upload its images.
+ *
+ * ### State Management
+ * - **Local State (`useState`)**: Manages the UI, including the `pagination` object for the table, the active `filters`, the `selectedRowKeys` for bulk actions, and the `loading` state for API calls.
+ * - **Global State (`useSellerStore`)**: It heavily relies on the Zustand `sellerStore` to persist the main list of `products`, `filterOptions`, and the `storeId`. This prevents re-fetching data unnecessarily when the component re-mounts.
+ *
+ * ### API Endpoints
+ * **`GET /products/products_by_store/:storeId`**: Fetches the list of all products for a given store. Can optionally be filtered to a specific batch job.
+ * - **`:storeId`** (string): The ID of the seller's store.
+ * - **`batch_id`** (query param, string, optional): The ID of a specific bulk upload job.
+ *
+ * **`POST /products/bulk_product_status_change`**: Updates the active/inactive status for a list of selected product variants.
+ * - **Request Body**: `{ rows: ProductVariantIDs[], status: boolean }`
+ *
+ * @param {object} props - The props for the component.
+ * @param {string | null} [props.batchId] - An optional ID for a bulk upload batch to display.
+ * @returns {JSX.Element} A full-featured product management page with a table and filters.
+ * @see {@link ProductFilters}
+ * @see {@link ProductTable}
+ * @see {@link https://ant.design/components/table | Ant Design Table}
+ * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
+ */
+export default function ViewAllProducts({
+  batchId = null,
+}: {
+  batchId?: string | null;
+}) {
   const { setCurrentStep } = useFormActions();
   const {
     products,
@@ -767,10 +83,17 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
     imageUploadStatus: null,
     source: [],
   });
-  const [selectedRowKeys, setSelectedRowKeys] = useState<ProductVariantIDs[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<ProductVariantIDs[]>(
+    []
+  );
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  /**
+   * This effect handles the initial data fetching for the component.
+   * It runs only if data hasn't been fetched before (`hasFetchedProducts` is false)
+   * or if a specific `batchId` is provided.
+   */
   useEffect(() => {
     const fetchInitialData = async () => {
       if (!storeId) return; // Prevent API call if storeId is not available yet
@@ -782,11 +105,13 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
         const res = await api.get(url);
         const json = res.data;
 
-        const sortedData = (json.table_data || []).sort((a: Product, b: Product) => {
+        const sortedData = (json.table_data || []).sort(
+          (a: Product, b: Product) => {
             if (a.status === true && b.status !== true) return -1;
             if (a.status !== true && b.status === true) return 1;
             return 0;
-        });
+          }
+        );
 
         setProducts(sortedData);
         setHasFetchedProducts(true);
@@ -810,15 +135,33 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
     if (!hasFetchedProducts) {
       fetchInitialData();
     } else {
-        setIsReady(true);
+      setIsReady(true);
     }
-  }, [storeId, batchId, hasFetchedProducts, setProducts, setFilterOptions, setHasFetchedProducts]);
+  }, [
+    storeId,
+    batchId,
+    hasFetchedProducts,
+    setProducts,
+    setFilterOptions,
+    setHasFetchedProducts,
+  ]);
 
-
+  /**
+   * Navigates the user to the media upload step for a specific product.
+   * @param {Product} record - The product record from the table row.
+   */
   const handleImageUpload = (record: Product) => {
-    window.open(`/product_upload/${record.product_id}?step=6`, "_blank", "noopener,noreferrer");
+    window.open(
+      `/product_upload/${record.product_id}?step=6`,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
+  /**
+   * Handles the bulk status change (Activate/Deactivate) for selected products.
+   * @param {boolean} status - The new status to apply (true for Active, false for Inactive).
+   */
   const handleBulkStatusChange = async (status: boolean) => {
     if (selectedRowKeys.length === 0) {
       message.warning("Please select at least one product");
@@ -830,6 +173,7 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
         rows: selectedRowKeys,
         status: status,
       });
+        // Optimistically update the UI to reflect the change immediately.
       const updatedProducts = products.map((product) => {
         const isSelected = selectedRowKeys.some(
           (selected) => selected.variant_id === product.variant_id
@@ -838,14 +182,16 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
       });
       setProducts(updatedProducts);
       setSelectedRowKeys([]);
-      message.success(`Successfully updated ${selectedRowKeys.length} product(s).`);
+      message.success(
+        `Successfully updated ${selectedRowKeys.length} product(s).`
+      );
     } catch (error) {
       message.error("Failed to update product statuses");
     } finally {
       setLoading(false);
     }
   };
-
+  // --- Ant Design Table Column Definitions ---
   const columns = [
     {
       title: "Image",
@@ -874,10 +220,10 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
       className: "hidden lg:table-cell text-xs sm:text-sm", // Hidden on mobile and tablet
     },
     {
-        title: "Price",
-        dataIndex: "price",
-        sorter: (a: Product, b: Product) => a.price - b.price,
-        className: "hidden md:table-cell text-xs sm:text-sm", // Hidden on mobile
+      title: "Price",
+      dataIndex: "price",
+      sorter: (a: Product, b: Product) => a.price - b.price,
+      className: "hidden md:table-cell text-xs sm:text-sm", // Hidden on mobile
     },
     {
       title: "Status",
@@ -905,9 +251,11 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
       ),
     },
   ];
-  
+
+  // Client-side filtering logic based on the `filters` state.
   const result = products.filter((item) => {
-    const primaryCat = item.category?.find((cat) => cat.level === 1)?.name || "";
+    const primaryCat =
+      item.category?.find((cat) => cat.level === 1)?.name || "";
     const sub_Cat2 = item.category?.find((cat) => cat.level === 3)?.name || "";
     const sub_Cat3 = item.category?.find((cat) => cat.level === 4)?.name || "";
     const derivedSource = item.shopify_id === null ? "Self" : "Shopify";
@@ -919,12 +267,12 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
       (!filters.size.length || filters.size.includes(item.size)) &&
       (!filters.color.length || filters.color.includes(item.color)) &&
       (!filters.status.length || filters.status.includes(item.status)) &&
-      (!filters.productName.length || filters.productName.includes(item.product_name)) &&
+      (!filters.productName.length ||
+        filters.productName.includes(item.product_name)) &&
       (!filters.sku.length || filters.sku.includes(item.sku)) &&
       (!filters.source.length || filters.source.includes(derivedSource))
     );
   });
-
 
   if (!isReady || !filterOptions) {
     return <LoadingSpinner />;
@@ -937,31 +285,33 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
         setFilters={setFilters}
         filterOptions={filterOptions}
       />
-      
+
       {/* Responsive Bulk Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-white rounded-lg shadow-sm">
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <Button
-                type="primary"
-                onClick={() => handleBulkStatusChange(true)}
-                disabled={selectedRowKeys.length === 0}
-                loading={loading}
-                className="w-full sm:w-auto"
-            >
-                Activate Selected
-            </Button>
-            <Button
-                danger
-                onClick={() => handleBulkStatusChange(false)}
-                disabled={selectedRowKeys.length === 0}
-                loading={loading}
-                 className="w-full sm:w-auto"
-            >
-                Deactivate Selected
-            </Button>
+          <Button
+            type="primary"
+            onClick={() => handleBulkStatusChange(true)}
+            disabled={selectedRowKeys.length === 0}
+            loading={loading}
+            className="w-full sm:w-auto"
+          >
+            Activate Selected
+          </Button>
+          <Button
+            danger
+            onClick={() => handleBulkStatusChange(false)}
+            disabled={selectedRowKeys.length === 0}
+            loading={loading}
+            className="w-full sm:w-auto"
+          >
+            Deactivate Selected
+          </Button>
         </div>
         <span className="text-sm text-gray-600 text-center sm:text-right">
-            {selectedRowKeys.length > 0 ? `Selected ${selectedRowKeys.length} items` : ""}
+          {selectedRowKeys.length > 0
+            ? `Selected ${selectedRowKeys.length} items`
+            : ""}
         </span>
       </div>
 
@@ -972,10 +322,16 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
           data={result}
           rowKey={"variant_id"}
           pagination={pagination}
-          onPaginationChange={(page, pageSize) => setPagination({ current: page, pageSize })}
+          onPaginationChange={(page, pageSize) =>
+            setPagination({ current: page, pageSize })
+          }
           onRow={(record) => ({
             onClick: () => {
-              window.open(`/product_upload/${record.product_id}`, "_blank", "noopener,noreferrer");
+              window.open(
+                `/product_upload/${record.product_id}`,
+                "_blank",
+                "noopener,noreferrer"
+              );
             },
             style: { cursor: "pointer" },
           })}
@@ -993,4 +349,3 @@ export default function ViewAllProducts({ batchId = null }: { batchId?: string |
     </div>
   );
 }
-
