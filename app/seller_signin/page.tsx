@@ -9,6 +9,55 @@ import Header from '@/components/Header';
 import axios, { AxiosError } from 'axios';
 import { toast, Toaster } from 'sonner';
 
+
+/**
+ * SellerSignup component
+ * 
+ * The main sign-in page for sellers. This component manages the entire phone number
+ * and OTP (One-Time Password) verification flow, including checking user status, sending/verifying OTPs,
+ * handling rate-limiting, and routing the user upon successful authentication.
+ *
+ * ## Features
+ * - A two-step form process: phone number input followed by OTP verification.
+ * - **Phone Number Validation**: Checks for a valid 10-digit number before proceeding.
+ * - **OTP Input**: A user-friendly 6-digit input with auto-focusing to the next field and proper backspace handling.
+ * - **Resend OTP**: A button to resend the OTP that becomes available after a 60-second cooldown timer.
+ * - **Rate Limiting**: If OTP verification fails too many times, the form is temporarily blocked, and a message displays when the user can try again.
+ * - **Conditional Routing**: After successful verification, the component checks the seller's onboarding status and routes them to either the onboarding page or their dashboard.
+ *
+ * ## Logic Flow
+ * 1.  The page initially displays a form asking for the seller's 10-digit phone number.
+ * 2.  Upon submission, the `handleSubmit` function first calls the `GET /users/user` API to check if the phone number is registered.
+ * 3.  If the user exists, it calls `GET /stores/get_store_section` to fetch their onboarding progress.
+ * 4.  It then calls `POST /otp/send_otp` to send a verification code to the user's phone.
+ * 5.  If the user does not exist (404 error), an error toast is shown, prompting them to sign up.
+ * 6.  Once the OTP is sent, the UI switches to the 6-digit OTP input view. A 60-second resend timer begins.
+ * 7.  The user enters the OTP and submits the form again.
+ * 8.  `handleSubmit` is called again, this time triggering the `POST /otp/verify_otp` API call.
+ * 9.  If verification fails with a 403 error (too many attempts), the component parses the block duration from the API response and enters a blocked state.
+ * 10. If verification is successful, it calls `POST /users/login` to create a session for the user. Based on their onboarding progress, it then redirects them to `/seller_signup/sellerOnboarding` or `/seller_dashboard`.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `useRef`, `useState`, `useEffect` from `react`; `useRouter`, `Link`, `Image` from Next.js; `axios` for error type checking; `toast` from `sonner`.
+ * - **State (Zustand Stores)**:
+ * - `useSellerStore`: For managing global state related to the seller's session (ID, number, etc.).
+ * - **Key Components**:
+ * - {@link Header}: The reusable header component for the page.
+ * - **Utilities**:
+ * - `api` from `@/lib/axios`: The configured Axios instance for API calls.
+ *
+ * ## API Calls
+ * - GET `/users/user`: Checks if a user is registered with the provided phone number.
+ * - GET `/stores/get_store_section`: Retrieves the user's current onboarding completion status.
+ * - POST `/otp/send_otp`: Requests the backend to send an OTP to the user's phone.
+ * - POST `/otp/verify_otp`: Submits the user-entered OTP for verification.
+ * - POST `/users/login`: Logs the user in and creates a session/token after successful OTP verification.
+ *
+ * ## Props
+ * - This is a page component and does not accept any props.
+ *
+ * @returns {JSX.Element} The rendered seller sign-in page.
+ */
 export default function SellerSignup() {
     const [phone, setPhone] = useState('');
     const [currSection, setCurrSection] = useState(0);
@@ -30,6 +79,9 @@ export default function SellerSignup() {
     const router = useRouter();
     const testing_phone = '7015241757'
 
+    /**
+     * prefetching necessary routes
+     */
     useEffect(() => {
 
         router.prefetch('/seller_dashboard');
@@ -37,6 +89,7 @@ export default function SellerSignup() {
 
     }, []);
 
+    // resend times logic
     useEffect(() => {
         let timer: NodeJS.Timeout;
         if (sendOTP && resendTimer > 0) {
@@ -45,6 +98,7 @@ export default function SellerSignup() {
         return () => clearTimeout(timer);
     }, [resendTimer, sendOTP]);
 
+    // time for user is blocked to request for another otp 
     useEffect(() => {
         if (isBlocked && blockedUntil) {
             const now = new Date();
@@ -62,6 +116,10 @@ export default function SellerSignup() {
         }
     }, [isBlocked, blockedUntil]);
 
+    /**
+     * when user enters some input on first box, automatically upadate the otp and
+     * move to next box
+     */
     const handleChange = (index: number, value: string) => {
         if (!/^\d*$/.test(value)) return; // allow only digits
         const newOtp = [...otp];
@@ -74,6 +132,7 @@ export default function SellerSignup() {
         }
     };
 
+    // logic for backspace key to update otp state and move to prev box
     const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
         if (e.key === 'Backspace' && !otp[index] && index > 0) {
             const newOtp = [...otp];
@@ -83,6 +142,7 @@ export default function SellerSignup() {
         }
     };
 
+    // API to resend OTP only if minimum time to resend otp is complete
     const handleResendOTP = async () => {
         if (resendTimer > 0) return;
 
@@ -105,6 +165,20 @@ export default function SellerSignup() {
         }
     }, [sendOTP]);
 
+    /**
+     * Form submit logic
+     * If form is submitted with mobile number i.e sendOtp is false
+     *  - throws alert if phone number is not valid
+     *  - checks if user is already registered, if not shows error
+     *  - set some user states
+     *  - trigger api to send otp
+     *  - set sendOtp to true
+     * If form is submitted with OTP i.e. sendOtp is true
+     *  - check if otp length is valid, if not return error
+     *  - trigger api to verify otp
+     *  - if successfully verified, send api to create jwt token
+     *  - if section progress is less than 5, redirect to seller Onboarding else route to sellerDashboard
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (sendOTP) {

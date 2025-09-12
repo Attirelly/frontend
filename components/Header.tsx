@@ -1,4 +1,3 @@
-// components/Header.tsx
 import { rosario, rubik } from '@/font';
 import React from 'react';
 
@@ -7,6 +6,36 @@ interface HeaderProps {
   actions?: React.ReactNode;
 }
 
+/**
+ * Header component
+ * 
+ * A simple, reusable, and generic header component. It provides a consistent
+ * layout with a title on the left and a flexible slot for actions on the right.
+ *
+ * ## Features
+ * - Displays a prominent `title` on the left side of the header.
+ * - Provides a flexible `actions` slot on the right, which can render any valid React node (e.g., a button, a link, an icon, etc.).
+ * - The actions slot is styled to look like a clean, pill-shaped container.
+ * - This is a stateless, presentational component designed for maximum reusability.
+ *
+ * ## Logic Flow
+ * - This component is purely presentational and has no internal logic or state.
+ * - It directly renders the `title` and `actions` props it receives from its parent.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `React` for creating the component.
+ * - **Utilities**: `rosario`, `rubik` from `@/font` for consistent typography.
+ *
+ * ## API Calls
+ * - This component does not make any API calls.
+ *
+ * ## Props
+ * @param {object} props - The props for the component.
+ * @param {string} props.title - The text to be displayed as the main title of the header.
+ * @param {React.ReactNode} [props.actions] - Any valid React element to be rendered in the actions slot on the right side.
+ *
+ * @returns {JSX.Element} The rendered header component.
+ */
 export default function Header({ title, actions }: HeaderProps) {
   return (
           
@@ -21,15 +50,3 @@ export default function Header({ title, actions }: HeaderProps) {
     </header>
   );
 }
-
-
-// export default function Header() {
-//   return (
-//     <header className="flex justify-between items-center px-6 py-4 border-b bg-white">
-//       <h1 className="text-xl font-bold">Attirelly</h1>
-//       <a href="tel:+919738383838" className="text-blue-500 text-sm hover:underline">
-//         Need help? Call +91 97-38-38-38-38
-//       </a>
-//     </header>
-//   );
-// }

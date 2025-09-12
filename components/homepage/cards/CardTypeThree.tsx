@@ -1,52 +1,3 @@
-// // components/Card.tsx
-// import Image from 'next/image';
-// import { manrope } from '@/font';
-
-// interface CardProps {
-//   imageUrl: string;
-//   discountText?: string;
-//   title: string;
-//   description?: string;
-// }
-
-// const CardTypeThree: React.FC<CardProps> = ({ imageUrl, discountText, title, description }) => {
-//   return (
-//     <div className={`${manrope.className} relative w-58 h-79 rounded-2xl overflow-hidden`}>
-//       {/* Background Image */}
-//       <div className="absolute inset-0 z-0">
-//         <Image
-//           src={imageUrl}
-//           alt={title}
-//           fill
-//           className="object-cover object-top"
-//           priority
-//         />
-//       </div>
-
-//       {/* Overlay */}
-//       <div className="absolute inset-0 bg-transparent z-10" />
-
-//       {/* Discount Badge */}
-//       {/* <div className="absolute top-0 right-0 z-20 bg-black text-white text-sm font-semibold px-3 py-1 rounded-bl-xl shadow-md">
-//         Sale : {discountText} %
-//       </div> */}
-
-//       {/* Text Content */}
-//       <div className="flex flex-col items-center justify-center absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20 pb-7 text-white mx-auto">
-//   <h3 className="text-[20px] whitespace-nowrap" style={{ fontWeight: 500 }}>
-//     {title}
-//   </h3>
-//   <h2 className="text-[16px] whitespace-nowrap" style={{ fontWeight: 400 }}>
-//     {description}
-//   </h2>
-// </div>
-//     </div>
-//   );
-// };
-
-// export default CardTypeThree;
-
-// components/cards/CardTypeThree.tsx
 import Image from 'next/image';
 import { manrope } from '@/font';
 
@@ -57,6 +8,43 @@ interface CardProps {
   description?: string;
 }
 
+
+/**
+ * CardTypeThree component
+ * 
+ * A reusable, presentational card component that displays an item with a
+ * full-bleed background image, a portrait aspect ratio, and overlaid text.
+ *
+ * ## Features
+ * - Displays a prominent background image that covers the entire card.
+ * - **Portrait Aspect Ratio**: Maintains a fixed portrait aspect ratio of 3:4, making it fluid and responsive to its parent container's width.
+ * - **Gradient Overlay**: Includes a semi-transparent black gradient from the bottom upwards to ensure the white text content is always readable against any background image.
+ * - **Hover Effect**: The background image smoothly scales up on user hover for a dynamic visual effect.
+ * - Shows a `title` and `description` overlaid at the bottom of the card with responsive font sizes.
+ * - **Performance Optimized**: Includes a detailed `sizes` attribute on the `next/image` component to ensure optimal image loading across different devices.
+ *
+ * ## Logic Flow
+ * - This component is purely presentational and stateless.
+ * - It receives all data to be displayed (image URL, title, description) via props.
+ * - The layout is achieved using `absolute` positioning for the image, gradient, and text within a `relative` parent container.
+ * - The hover animation is handled by Tailwind's `group` and `group-hover` utilities.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `Image` from `next/image` for optimized image rendering.
+ * - **Utilities**: `manrope` from `@/font` for consistent typography.
+ *
+ * ## API Calls
+ * - This component does not make any API calls.
+ *
+ * ## Props
+ * @param {object} props - The props for the component.
+ * @param {string} props.imageUrl - The URL of the background image to be displayed.
+ * @param {string} [props.discountText] - Optional text for a discount badge (unused in this implementation).
+ * @param {string} props.title - The main title text to be displayed on the card.
+ * @param {string} [props.description] - Optional description text displayed below the title.
+ *
+ * @returns {JSX.Element} The rendered card component.
+ */
 const CardTypeThree: React.FC<CardProps> = ({ imageUrl, title, description }) => {
   return (
     // CHANGED: The container is now fluid with a portrait aspect ratio.

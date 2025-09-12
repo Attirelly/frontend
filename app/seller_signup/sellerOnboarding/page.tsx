@@ -9,8 +9,7 @@ import PriceFiltersComponent from '@/components/Seller/Sections/PriceFilters';
 import WhereToSellComponent from '@/components/Seller/Sections/WhereToSell';
 import StorePhotosComponent from '@/components/Seller/Sections/StorePhotos';
 import NextPrevNavigation from '@/components/Seller/NextPrevNavigation';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useUpdateStore } from '@/utils/handleUpdate';
 import { toast } from 'sonner';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -19,10 +18,62 @@ import { City, Area, Pincode } from '@/types/SellerTypes';
 
 const sectionOrder = ['brand', 'price', 'market', 'social', 'photos'];
 
+
+/**
+ * SellerOnboardingPage component
+ * 
+ * The main page for the multi-step seller onboarding process. This component acts as a
+ * container that fetches existing seller data, renders the currently active form section,
+ * and handles navigation and data saving between the different steps.
+ *
+ * ## Features
+ * - A multi-step form broken down into distinct sections (Brand, Price, Market, Social, Photos).
+ * - **Stateful Sidebar Navigation**: A `ProfileSidebar` displays all sections, highlighting the active one and tracking completion. Users can navigate between unlocked sections.
+ * - **Dynamic Section Rendering**: A `renderSection` function uses a `switch` statement to display the correct form component based on the current `activeSection` state.
+ * - **Data Persistence**: On initial load, it fetches all existing data for the seller's store and populates a global Zustand store, ensuring progress is saved.
+ * - **Progress Tracking**: Tracks the `furthestStep` the user has reached to manage navigation access.
+ * - **Save on Navigation**: When the user clicks "Next", data for the current section is saved to the backend via the `handleUpdate` hook before proceeding.
+ * - **Protected Route**: The entire page is wrapped in a `ProtectedRoute`, ensuring only authenticated users with the correct role can access it.
+ *
+ * ## Logic Flow
+ * 1.  The `ProtectedRoute` wrapper first verifies the user's authentication and role.
+ * 2.  On component mount, a `useEffect` hook triggers `fetchInitialData`.
+ * 3.  `fetchInitialData` makes API calls (`GET /stores/store_by_owner` and `GET /stores/store_type_price_ranges`) using the `sellerId` from the global store.
+ * 4.  The response data is used to populate multiple slices of the `useSellerStore`, pre-filling all form sections with any existing data.
+ * 5.  The `activeSection` state (from the store) determines which form component is rendered via the `renderSection` function.
+ * 6.  The user interacts with the rendered form section, which updates the global Zustand store in real-time.
+ * 7.  When the user clicks "Next", the `goToNextSection` function is called. This function first calls the `handleUpdate` hook, which saves the current section's data from the store to the backend.
+ * 8.  If the save is successful, the `activeSection` state is updated to the next step in the `sectionOrder` array, causing the next form to be rendered.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `useEffect`, `useState` from `react`; `useRouter` from `next/navigation`; `toast` from `sonner`.
+ * - **State (Zustand Stores)**:
+ *    - `useSellerStore`: The central store for all seller and onboarding-related data.
+ * - **Key Components**:
+ *    - {@link Header}: The main page header.
+ *    - {@link ProfileSidebar}: The navigation sidebar for the onboarding steps.
+ *    - {@link NextPrevNavigation}: The back/next buttons for navigating between steps.
+ *    - {@link ProtectedRoute}: A higher-order component that protects the page from unauthorized access.
+ * - All section form components (e.g., `BusinessDetailsComponent`, `SocialLinksComponent`).
+ * - **Hooks**:
+ *    - `useUpdateStore`: A custom hook that encapsulates the logic for saving store data.
+ * - **Types**:
+ *    - {@link City}, {@link Area}, {@link Pincode}: TypeScript types for location data.
+ * - **Utilities**:
+ *    - `api` from `@/lib/axios`: The configured Axios instance for API calls.
+ *
+ * ## API Calls
+ * - GET `/stores/store_by_owner`: Fetches all existing data for the seller's store on initial load.
+ * - GET `/stores/store_type_price_ranges`: Fetches the price ranges associated with the store's type.
+ * - Triggers `UPDATE` and `CREATE` calls  via the `handleUpdate` hook when navigating to the next section.
+ *
+ * ## Props
+ * - This is a page component and does not accept any props.
+ *
+ * @returns {JSX.Element} The rendered seller onboarding page.
+ */
 export default function SellerOnboardingPage() {
   const { handleUpdate } = useUpdateStore();
-  // const [toastMessage, setToastMessage] = useState("");
-  //   const [toastType, setToastType] = useState<"success" | "error">("success");
   const {
     sellerId,
     sellerName,
@@ -39,12 +90,14 @@ export default function SellerOnboardingPage() {
     setFurthestStep,
     furthestStep
   } = useSellerStore();
-  
 
-  const router = useRouter();
-
+  /**
+   * fetch intial store data using seller id
+   * this is done to handle the case if seller onboarding was not complete previously 
+   * then start from the last section
+   * (data will be synced)
+   */
   useEffect(() => {
-    console.log(sellerName)
       if (!sellerId || !sellerName) return;
       const fetchInitialData = async () => {
         try {
@@ -60,11 +113,9 @@ export default function SellerOnboardingPage() {
   
           setStoreId(storeData.store_id);
           setStoreNameString(storeData.store_name);
-          // setQrId(storeData.qr_id);
   
           const priceRangeRes = await api.get('stores/store_type_price_ranges', { params: { store_id: storeData.store_id } });
-          
-  
+      
           setBusinessDetailsData({
             ownerName: sellerName || '',
             ownerEmail: sellerEmail || '',
@@ -81,8 +132,6 @@ export default function SellerOnboardingPage() {
             returnDays: storeData.return_days || 0,
             exchangeDays: storeData.exchange_days || 0,
           });
-  
-          // setBusinessDetailsValid(true);
   
           setPriceFiltersData({
             avgPriceMin: storeData.average_price_min || null,
@@ -113,15 +162,16 @@ export default function SellerOnboardingPage() {
   
         } catch (error) {
           console.error('Error fetching initial data:', error);
-          // alert('error fetching data, signin again');
         }
       };
       fetchInitialData();
     }, [sellerId]);
 
 
+  // set current index based on active section, if not any active section then set 'brand'
   const currentSectionIndex = sectionOrder.indexOf(activeSection ?? 'brand');
 
+  // function to render section based on active section
   const renderSection = () => {
     switch (activeSection) {
       case 'brand':
@@ -139,18 +189,17 @@ export default function SellerOnboardingPage() {
     }
   };
 
+  /**
+   * called when Next button is clicked, handleUpdate is called and next section is set
+   */
   const goToNextSection = async () => {
     const nextStep = currentSectionIndex + 1;
     
     const res = await handleUpdate(activeSection, true, Math.max(furthestStep, nextStep));
     if(res){
-      // setToastMessage("Store updated!");
-      // setToastType("success");
       toast.success("Store updated!")
     }
     else{
-      // setToastMessage("Store not updated!");
-      // setToastType("error");
       toast.error("Store not updated!")
       return;
     }
@@ -168,6 +217,9 @@ export default function SellerOnboardingPage() {
     }
   };
 
+  /**
+   * change active section when clicked on sidebar tabs
+   */
   const handleSidebarSelect = (key: string) => {
     if (sectionOrder.includes(key)) {
       setActiveSection(key);
