@@ -1,140 +1,3 @@
-// 'use client';
-
-// import React, { useEffect, useRef } from 'react';
-// import { instaMediaType } from '@/types/SellerTypes';
-// import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-// import { useHeaderStore } from '@/store/listing_header_store';
-// import { manrope, roboto } from '@/font';
-// import CorouselImages from './CorouselImages';
-
-// type Props = {
-//   isOpen: boolean;
-//   post: instaMediaType;
-//   onClose: () => void;
-//   onNext: () => void;
-//   onPrev: () => void;
-//   isFirst: boolean;
-//   isLast: boolean;
-// };
-
-// export default function PostDialogue({ isOpen, post, onClose, onNext, onPrev, isFirst, isLast }: Props) {
-//   const { profilePic, storeName } = useHeaderStore();
-//   const wrapperRef = useRef<HTMLDivElement | null>(null);
-//   useEffect(() => {
-//     const handleClickOutside = (e: MouseEvent) => {
-//       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-//         onClose();
-//       }
-//     };
-//     if (isOpen) document.addEventListener('mousedown', handleClickOutside);
-//     return () => document.removeEventListener('mousedown', handleClickOutside);
-//   }, [isOpen, onClose]);
-
-//   if (!isOpen) return null;
-//   console.log(post);
-
-//   return (
-//     <div className="fixed inset-0 z-50 bg-neutral-900/70 flex justify-center items-center ">
-//       <div
-//         ref={wrapperRef}
-//         className="relative flex max-w-[957px] max-h-[621px]"
-//       >
-//         <div className='flex rounded-2xl overflow-hidden'>
-//           <div className="flex justify-center items-center w-full h-full bg-black overflow-hidden">
-//           {post.media_type === 'CAROUSEL_ALBUM' ? (
-//             <CorouselImages key={post.id} mediaUrls={post.carousel_images} />
-//           ) :
-//           post.media_type === 'VIDEO' ? (
-//           //  <CustomVideoPlayer src={post.media_url} />
-//            <video
-//               src={post.media_url}
-//               controls
-//               autoPlay
-//               muted
-//               controlsList="nodownload noplaybackrate noremoteplayback"
-//               disablePictureInPicture
-//               // controlsList="nodownload"
-//               className="max-w-full max-h-full object-contain"
-//             />
-//           ) : (
-//             <img
-//               src={post.media_url}
-//               alt="Instagram post"
-//               className="max-w-full max-h-full object-contain"
-//             />
-//           )}
-//           </div>
-//           <div className={`${manrope.className} w-[519px] bg-white px-3 flex flex-col gap-[25px]`}
-//             style={{ fontWeight: 600 }}>
-//             <div className='flex pt-2 gap-4 items-center'>
-//               <img
-//                 src="/ListingPageHeader/insta_black_logo.svg"
-//                 alt='Instagram Logo'
-//                 className='w-6 h-6' />
-//               <span className='text-[20px] text-black' style={{fontWeight:700}}>{storeName}  x  Attirelly</span>
-//             </div>
-
-//             <hr className='border border-[#E8E8E8]'/>
-//             <span className='text-sm text-black' style={{ fontWeight: 400 }}>{post.caption || ''}</span>
-//             {/* <div className='text-sm flex gap-3'>
-//               <div className='flex flex-col items-center'>
-//                 <img
-//                   src='/heart.png'
-//                   alt='comments'
-//                   className='w-4 h-4' />
-//                 <span>{post.like_count} {post.like_count == 1 ? 'Like' : 'Likes'}</span>
-
-//               </div>
-//               <div className='flex flex-col items-center'>
-//                 <img
-//                   src='/comment.png'
-//                   alt='likes'
-//                   className='w-4 h-4' />
-//                 <span>{post.comments_count} {post.comments_count == 1 ? 'Comment' : 'Comments'}</span>
-//               </div>
-//             </div> */}
-//           </div>
-//         </div>
-
-//         {/* Close Button */}
-//         <button
-//           onClick={(e) => {
-//             e.stopPropagation();
-//             onClose();
-//           }}
-//           className="absolute top-[-40px] right-[-40px] text-black bg-white bg-black/70 rounded-full p-2"
-//         >
-//           <X size={22} />
-//         </button>
-
-//         {/* Navigation Arrows */}
-//         {!isFirst && (
-//           <button
-//             onClick={(e) => {
-//               e.stopPropagation();
-//               onPrev();
-//             }}
-//             className="absolute left-[-48px] top-1/2 transform -translate-y-1/2 text-black bg-white rounded-full p-2"
-//           >
-//             <ChevronLeft size={22} />
-//           </button>
-//         )}
-//         {!isLast && (
-//           <button
-//             onClick={(e) => {
-//               e.stopPropagation();
-//               onNext();
-//             }}
-//             className="absolute right-[-48px] top-1/2 transform -translate-y-1/2 text-black bg-white rounded-full p-2"
-//           >
-//             <ChevronRight size={22} />
-//           </button>
-//         )}
-
-//       </div>
-//     </div>
-//   );
-// }
 
 "use client";
 
@@ -145,17 +8,62 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { manrope } from "@/font";
 import CorouselImages from "./CorouselImages";
 import clsx from "clsx";
-
+/**
+ * @interface Props
+ * @description Defines the props for the PostDialogue component.
+ */
 type Props = {
+  /**
+   * @description A boolean that controls the visibility of the dialog.
+   */
   isOpen: boolean;
+  /**
+   * @description The Instagram post data object to be displayed.
+   */
   post: instaMediaType;
+  /**
+   * @description A callback function to be invoked when the dialog should be closed (e.g., by clicking the close button or outside the dialog).
+   */
   onClose: () => void;
+  /**
+   * @description A callback function to navigate to the next post in the sequence.
+   */
   onNext: () => void;
+  /**
+   * @description A callback function to navigate to the previous post in the sequence.
+   */
   onPrev: () => void;
+  /**
+   * @description A boolean indicating if the current post is the first in the list, used to hide the 'previous' button.
+   */
   isFirst: boolean;
+  /**
+   * @description A boolean indicating if the current post is the last in the list, used to hide the 'next' button.
+   */
   isLast: boolean;
 };
 
+/**
+ * A modal dialog component for displaying a detailed view of a single Instagram post.
+ *
+ * This component is designed to be a fully controlled, responsive modal. It takes all its data
+ * and state via props and communicates user actions (like closing or navigating) back to the
+ * parent component through callbacks. It can render different media types, including single images,
+ * videos, and carousels.
+ *
+ * ### Features
+ * - **Controlled Component**: Its visibility (`isOpen`) and content (`post`) are managed by the parent.
+ * - **Responsive Design**: Adapts its layout from a stacked vertical view on mobile to a side-by-side view on desktop.
+ * - **Click Outside to Close**: The dialog can be dismissed by clicking on the backdrop, a common and intuitive UX pattern.
+ * - **Media Handling**: Conditionally renders the correct media viewer (`<img>`, `<video>`, or the `CorouselImages` component) based on the `post.media_type`.
+ * - **Post Navigation**: Displays "next" and "previous" buttons, allowing the user to browse through a sequence of posts without closing the dialog.
+ *
+ * @param {Props} props - The props for the component.
+ * @returns {JSX.Element | null} The rendered dialog modal, or `null` if `isOpen` is false.
+ * @see {@link CorouselImages}
+ * @see {@link https://react.dev/reference/react/useEffect | React useEffect Hook}
+ * @see {@link https://lucide.dev/ | Lucide React Icons}
+ */
 export default function PostDialogue({
   isOpen,
   post,
