@@ -12,7 +12,11 @@ const StoreTypeImage = [
   { name: "Stylist", url: "/Homepage/styler.svg" },
 ];
 
-// ✅ Utility: safely parse and format number strings into K / M / B
+/**
+ * A utility function to format a number string into a compact, human-readable format.
+ * @param {string} [value] - The numeric string to format.
+ * @returns {string} The formatted string (e.g., "1.2K", "5.5M") or the original value if invalid.
+ */
 function formatNumberStr(value?: string) {
   if (!value) return "";
   const num = Number(value);
@@ -24,6 +28,25 @@ function formatNumberStr(value?: string) {
   return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, "") + "B";
 }
 
+/**
+ * A presentational component that displays the header information for a store's profile.
+ *
+ * This component is responsible for rendering the UI of the store header, including the profile
+ * picture, name, bio, stats (posts, followers, products), and action buttons (phone, share).
+ * It receives all its data via props and contains no data-fetching logic itself, making it a
+ * pure "dumb" component. It features a responsive layout that adapts for mobile and desktop views.
+ *
+ * ### Features
+ * - **Responsive Layout**: Displays a two-column layout on desktop and a stacked layout on mobile.
+ * - **Expandable Bio**: Long biographies are truncated with a "more" button to keep the UI clean.
+ * - **Interactive Buttons**: Includes buttons to open the store's location on a map, reveal the phone number, and copy the store's URL to the clipboard.
+ * - **Image Proxy**: Uses an image proxy for the store's profile picture for optimization and security.
+ *
+ * @param {StoreInfoType} props - The props object containing all the store's information to be displayed.
+ * @returns {JSX.Element} The rendered store information header.
+ * @see {@link https://nextjs.org/docs/pages/api-reference/components/image | Next.js Image Component}
+ * @see {@link https://sonner.emilkowal.ski/ | Sonner (for toast notifications)}
+ */
 export default function StoreInfoPage({
   id,
   imageUrl,
@@ -55,6 +78,9 @@ export default function StoreInfoPage({
     setShowPhone(!showPhone);
   };
 
+  /**
+   * Copies the current page URL to the user's clipboard and shows a confirmation toast.
+   */
   const handleCopyUrl = async () => {
     try {
       const currentUrl = window.location.href;

@@ -12,10 +12,42 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFilterStore } from "@/store/filterStore";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 
+/**
+ * The main component for displaying a filterable and searchable list of stores.
+ *
+ * This component serves as the central hub for the store listing experience. Its primary responsibility
+ * is to manage a two-way synchronization between the application's state (held in Zustand stores)
+ * and the browser's URL search parameters. This ensures that the page's state is always shareable,
+ * bookmarkable, and correctly handled by the browser's history.
+ *
+ * ### State Management
+ * The component's state is managed by two global Zustand stores:
+ * - **`useHeaderStore`**: Controls the global search query, location (city/area), and selected store type.
+ * - **`useFilterStore`**: Manages the detailed filter facets applied to the store list.
+ *
+ * ### URL Synchronization
+ * Two `useEffect` hooks create a robust synchronization mechanism:
+ * 1.  **URL to State**: On initial load or when the URL changes (e.g., browser back/forward), it parses the `searchParams` and populates the Zustand stores. A guard clause prevents this from running until all necessary data (like city/area lists) is available.
+ * 2.  **State to URL**: After the initial state is hydrated, this effect listens for any changes in the Zustand stores and updates the URL's search parameters accordingly using `router.replace()`. This keeps the URL as the single source of truth for the page's state.
+ *
+ * ### API Calls
+ * This component does not make direct API calls to fetch store data. It delegates this responsibility to its child component, {@link StoreContainerPage}, which consumes the state managed here.
+ *
+ * @returns {JSX.Element} The fully rendered store listing page.
+ * @see {@link https://nextjs.org/docs/app/api-reference/functions/use-router | Next.js useRouter}
+ * @see {@link https://nextjs.org/docs/app/api-reference/functions/use-pathname | Next.js usePathname}
+ * @see {@link https://nextjs.org/docs/app/api-reference/functions/use-search-params | Next.js useSearchParams}
+ * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
+ * @see {@link DynamicFilter}
+ * @see {@link StoreContainerPage}
+ * @see {@link StoreTypeTabs}
+ */
 export default function StoreListingPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  // --- State from global Zustand stores ---
   const {
     query,
     city,
@@ -29,15 +61,19 @@ export default function StoreListingPage() {
     allArea,
     allCity,
   } = useHeaderStore();
-  const [showFilters, setShowFilters] = useState(false);
-  const { results, initializeFilters, selectedFilters, selectedPriceRange } =
-    useFilterStore();
+  const { initializeFilters, selectedFilters } = useFilterStore();
 
   const [isReadyFlag, setIsReadyFlag] = useState<boolean>(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  // url to state update
+
+  /**
+   * This effect synchronizes the application's state FROM the URL's search parameters.
+   * It runs on component mount and whenever `searchParams` change. It parses all relevant
+   * query parameters and uses them to initialize the Zustand stores.
+   */
   useEffect(() => {
-    // return;
+    // Guard clause: Do not proceed until the master lists of cities, areas, and store types are loaded into the store.
+    // This prevents trying to match URL params against empty lists, avoiding race conditions.
     if (
       !(
         allCity &&
@@ -47,10 +83,10 @@ export default function StoreListingPage() {
         allStoreType &&
         allStoreType.length > 0
       )
-    )
+    ) {
       return;
+    }
 
-    console.log(searchParams);
     const params = new URLSearchParams(searchParams);
     const initialSelectedFilters: Record<string, string[]> = {};
     const search = params.get("search") || "";
@@ -58,7 +94,9 @@ export default function StoreListingPage() {
     const areaName = params.get("area");
     const storeTypeName = params.get("store_type");
 
+    // Iterate over all URL parameters to build the initial filter state object.
     params.forEach((value, key) => {
+      // Exclude special, non-facet parameters that are handled separately.
       if (
         key !== "search" &&
         key !== "sortBy" &&
@@ -75,12 +113,12 @@ export default function StoreListingPage() {
         }
       }
     });
-    // Only perform the lookup if the master lists have been loaded
+    // Find and set the full City object based on the name from the URL.
     if (allCity && allCity.length > 0 && cityName) {
       const cityObject = allCity.find((c) => c.name === cityName);
       if (cityObject) setCity(cityObject);
     }
-
+    // Find and set the full Area object based on the name from the URL.
     if (allArea && allArea.length > 0 && areaName) {
       const areaObject = allArea.find((a) => a.name === areaName);
       if (areaObject) setArea(areaObject);
@@ -88,6 +126,7 @@ export default function StoreListingPage() {
     if (search) {
       setQuery(search);
     }
+    // Find and set the full StoreType object based on the name from the URL.
     if (storeTypeName) {
       const storeTypeObject = allStoreType.find(
         (st) => st.store_type === storeTypeName
@@ -111,9 +150,14 @@ export default function StoreListingPage() {
     setArea,
   ]);
 
-  // state to url
+  /**
+   * This effect synchronizes the URL's search parameters FROM the application's state.
+   * It runs whenever a filter, location, or search term changes, but only after the
+   * `isReadyFlag` is true. It constructs a new URL and updates the browser's address bar.
+   */
 
   useEffect(() => {
+    // Guard clause: Do not run this effect until the state has been initialized from the URL.
     if (!isReadyFlag) return;
 
     const newparams = new URLSearchParams();
@@ -123,6 +167,7 @@ export default function StoreListingPage() {
 
     Object.entries(selectedFilters).forEach(([key, values]) => {
       if (values && values.length > 0) {
+        // Handle special key names for selected cities/areas from the filter panel.
         if (key === "city") {
           newparams.set("selectedCity", values.join(","));
         } else if (key === "area") {
@@ -153,25 +198,22 @@ export default function StoreListingPage() {
     pathname,
     router,
   ]);
-
+  /**
+   * Dynamically generates the main page heading based on the current filter and search state.
+   * @returns {string} A formatted heading string.
+   */
   const getHeading = () => {
     if (storeType && query && city) {
       return `Showing ${storeType.store_type} for ${query} in ${city.name}`;
-    }
-    else if (storeType && query) {
+    } else if (storeType && query) {
       return `Showing ${storeType.store_type} for ${query}`;
-    }
-    else if (storeType && city) {
+    } else if (storeType && city) {
       return `Showing ${storeType.store_type} in ${city.name}`;
-    }
-    else
-    if (query && city) {
+    } else if (query && city) {
       return `Showing stores for ${query} in ${city.name}`;
-    }
-    else if (storeType) {
+    } else if (storeType) {
       return `Showing ${storeType.store_type}`;
-    }
-    else if (query) {
+    } else if (query) {
       return `Showing stores for ${query}`;
     } else if (city) {
       return `Showing stores in ${city.name}`;
