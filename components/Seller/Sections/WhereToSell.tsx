@@ -55,6 +55,41 @@ const OPTIONS: Option[] = [
   },
 ];
 
+/**
+ * WhereToSellComponent component
+ * 
+ * A form component for the seller onboarding/dashboard where sellers specify their
+ * sales model: online-only, offline-only, or both.
+ *
+ * ## Features
+ * - Presents three clear, mutually exclusive options using styled radio buttons.
+ * - Each option includes an icon, a title, and a detailed description to help the user make an informed choice.
+ * - **Data Hydration**: On mount, it initializes its selection based on the existing `whereToSellData` from the global `useSellerStore`.
+ * - **Real-time State Sync**: A `useEffect` hook watches for changes in the user's selection and immediately updates the `useSellerStore` with the corresponding boolean flags (`isOnline`, `isBoth`).
+ *
+ * ## Logic Flow
+ * 1.  The component mounts and reads the `whereToSellData` from the Zustand store to set its initial `selected` state. It correctly maps the `isBoth` and `isOnline` boolean flags to one of three string options ('both', 'online', 'offline').
+ * 2.  It renders a list of styled radio button options by mapping over the `OPTIONS` constant array.
+ * 3.  When a user clicks on an option, the `onChange` handler calls `setSelected`, updating the component's local state.
+ * 4.  A `useEffect` hook is triggered by this change in the `selected` state.
+ * 5.  Inside the hook, it determines the correct boolean flags (`isOnline`, `isBoth`) that correspond to the user's choice and calls `setWhereToSellData` to update the global Zustand store.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `useState`, `useEffect` from `react`; `Image` from `next/image`.
+ * - **State (Zustand Stores)**:
+ *    - `useSellerStore`: For both reading and writing the `whereToSellData`.
+ *
+ * ## Key Data Structures
+ * - **OPTIONS**: A local constant array of objects, where each object defines the content for one of the three choices, including an `id`, `title`, `description`, and a JSX `icon`.
+ *
+ * ## API Calls
+ * - This component does not make any API calls.
+ *
+ * ## Props
+ * - This component does not accept any props.
+ *
+ * @returns {JSX.Element} The rendered "Where to Sell" selection form.
+ */
 export default function WhereToSellComponent() {
   const { setWhereToSellData, whereToSellData } = useSellerStore();
   const [selected, setSelected] = useState(
@@ -65,6 +100,12 @@ export default function WhereToSellComponent() {
       : 'offline'
   );
 
+  /**
+   * we have two states : isOnline and isBoth
+   * if isOnline is true : products are sold online only
+   * if isOffline is false : products are sold offline only
+   * if isBoth is true : products are sold both online and offline
+   */
   useEffect(() => {
     if (selected === 'both') {
       setWhereToSellData({ isOnline: false, isBoth: true });
