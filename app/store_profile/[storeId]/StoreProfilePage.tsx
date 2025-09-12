@@ -19,9 +19,43 @@ import ProductContainer from "@/components/listings/ProductContainer";
 import SortByDropdown from "@/components/listings/SortByDropdown";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 
+/**
+ * The main page component for displaying a single store's profile.
+ *
+ * This component acts as a central orchestrator, combining store information, posts, and
+ * a filterable product catalogue into a single view. It manages the state for which view
+ * is active ("Posts" or "Products") and handles the complex synchronization of filter
+ * states between the UI, global Zustand stores, and the URL's search parameters.
+ *
+ * ### View Management
+ * The page can display one of two main content sections at a time, controlled by the `viewType`
+ * state from the `useHeaderStore`:
+ * - **Posts View**: Renders the `PostGalleryContainer`.
+ * - **Products View**: Renders the `ProductContainer` along with the `DynamicFilter` sidebar.
+ *
+ * ### State & URL Synchronization
+ * A key feature of this component is its robust two-way data binding with the URL:
+ * 1.  **URL to State**: On initial load or when the URL changes (e.g., browser back/forward),
+ * an effect reads all relevant search parameters (`search`, `city`, `price`, etc.) and
+ * initializes the `useHeaderStore` and `useProductFilterStore` with these values.
+ * 2.  **State to URL**: A second effect listens for any changes in the global filter stores.
+ * When a filter is applied or changed, it constructs a new URL query string reflecting the
+ * current state and updates the URL using `router.replace()`. This ensures the page state
+ * is always bookmarkable and shareable.
+ *
+ * @returns {JSX.Element} The fully rendered store profile page.
+ * @see {@link StoreInfoContainer}
+ * @see {@link PostCatalogueButton}
+ * @see {@link PostGalleryContainer}
+ * @see {@link ProductContainer}
+ * @see {@link DynamicFilter}
+ * @see {@link https://nextjs.org/docs/app/api-reference/functions/use-router | Next.js useRouter}
+ * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
+ */
 export default function StoreProfilePage() {
   const router = useRouter();
   const pathname = usePathname();
+  // State from the global product filter store (Zustand).
   const searchParams = useSearchParams();
   const {
     setQuery,
@@ -44,7 +78,6 @@ export default function StoreProfilePage() {
     setFacetInit,
   } = useProductFilterStore();
 
-  const [showFilters, setShowFilters] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const params = useParams();
@@ -56,7 +89,11 @@ export default function StoreProfilePage() {
     setFacetInit(false);
   }, []);
 
-  //  initialise the state using url
+  /**
+   * This effect synchronizes the application's state FROM the URL's search parameters.
+   * It runs on initial load and whenever the URL changes, parsing all relevant query parameters
+   * and populating the Zustand stores to reflect the URL's state.
+   */
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
     const initialSelectedFilters: Record<string, string[]> = {};
@@ -113,6 +150,11 @@ export default function StoreProfilePage() {
     });
   }, [searchParams, initializeFilters, setQuery, setStoreType]);
 
+  /**
+   * This effect synchronizes the URL's search parameters FROM the application's state.
+   * It listens for changes in the filter stores and constructs a new URL query string
+   * to match the current state, ensuring the URL is always the source of truth.
+   */
   useEffect(() => {
     const oldparams = new URLSearchParams(searchParams);
     const newparams = new URLSearchParams();

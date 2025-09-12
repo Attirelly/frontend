@@ -1,66 +1,3 @@
-// 'use client';
-
-// import React, { useState } from 'react';
-// import { ChevronLeft, ChevronRight } from 'lucide-react';
-// import { CorouselImagesType} from '@/types/SellerTypes';
-
-// type Props = {
-//   mediaUrls: CorouselImagesType[];
-// };
-
-// export default function CarouselImages({ mediaUrls }: Props) {
-//   const [currentIndex, setCurrentIndex] = useState(0);
-//   const currentMedia = mediaUrls[currentIndex];
-
-//   const next = () => {
-//     if (currentIndex < mediaUrls.length - 1) setCurrentIndex(currentIndex + 1);
-//   };
-
-//   const prev = () => {
-//     if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
-//   };
-
-//   return (
-//     <div className="relative flex items-center justify-center w-full h-full">
-//       {currentMedia.media_type === 'VIDEO' ? (
-//         <video
-//           src={currentMedia.media_url}
-//           controls
-//             autoPlay
-//             muted
-//             controlsList="nodownload noplaybackrate noremoteplayback"
-//             disablePictureInPicture
-//           className="max-w-full max-h-full object-contain"
-//         />
-//       ) : (
-//         <img
-//           // src={currentMedia.media_url}
-//           src={currentMedia.media_url}
-//           alt="Instagram post media"
-//           className="max-w-full max-h-full object-contain"
-//         />
-//       )}
-
-//       {currentIndex > 0 && (
-//         <button
-//           onClick={prev}
-//           className="absolute left-2 top-1/2 -translate-y-1/2 text-white bg-black/60 p-1 rounded-full"
-//         >
-//           <ChevronLeft size={22} />
-//         </button>
-//       )}
-//       {currentIndex < mediaUrls.length - 1 && (
-//         <button
-//           onClick={next}
-//           className="absolute right-2 top-1/2 -translate-y-1/2 text-white bg-black/60 p-1 rounded-full"
-//         >
-//           <ChevronRight size={22} />
-//         </button>
-//       )}
-//     </div>
-//   );
-// }
-
 'use client';
 
 import React, { useState } from 'react';
@@ -68,11 +5,42 @@ import { CorouselImagesType } from '@/types/SellerTypes';
 import { useSwipeable } from 'react-swipeable';
 import clsx from 'clsx';
 
+/**
+ * @interface Props
+ * @description Defines the props for the CarouselImages component.
+ */
 type Props = {
+  /**
+   * @description An array of media objects, where each object contains a `media_url` and `media_type` ('IMAGE' or 'VIDEO').
+   */
   mediaUrls: CorouselImagesType[];
-  isDialogMode?: boolean; // Optional prop to add padding in dialog view
+  /**
+   * @description An optional boolean prop that adjusts the component's styling, such as adding padding, when it's used inside a dialog or modal.
+   * @default false
+   */
+  isDialogMode?: boolean;
 };
 
+/**
+ * A responsive and touch-enabled carousel component for displaying a series of images and videos.
+ *
+ * This component is designed to render media from an Instagram carousel post. It supports both
+ * click/tap navigation through on-screen buttons and intuitive swipe gestures for a mobile-first
+ * user experience, which also works with mouse dragging on desktop.
+ *
+ * ### Features
+ * - **Swipe Gestures**: Integrated with `react-swipeable` to allow users to swipe left and right to navigate through media.
+ * - **Responsive Controls**: Displays large, clear text buttons for navigation on desktop, while relying on swipe for mobile to maintain a clean UI.
+ * - **Slide Indicators**: Renders a series of dots to indicate the total number of slides and the current position.
+ * - **Mixed Media Support**: Correctly renders both `<img>` and `<video>` tags based on the `media_type` of the current slide.
+ * - **Context-Aware Styling**: The `isDialogMode` prop allows for adaptive styling when the component is used in different contexts, such as a full-screen modal.
+ *
+ * @param {Props} props - The props for the component.
+ * @returns {JSX.Element} A fully interactive media carousel.
+ * @see {@link https://github.com/FormidableLabs/react-swipeable | react-swipeable Documentation}
+ * @see {@link https://github.com/lukeed/clsx | clsx Documentation}
+ * @see {@link https://react.dev/reference/react/useState | React useState Hook}
+ */
 export default function CarouselImages({ mediaUrls, isDialogMode = false }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -149,7 +117,8 @@ export default function CarouselImages({ mediaUrls, isDialogMode = false }: Prop
           </button>
         </div>
 
-        {/* Slide Indicators */}
+        {/* Slide Indicator Dots */}
+        {/* Only show indicators if there is more than one slide. */}
         {mediaUrls.length > 1 && (
             <div className="flex gap-1.5">
                 {mediaUrls.map((_, index) => (

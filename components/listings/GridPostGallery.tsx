@@ -6,13 +6,55 @@ import PostDialogue from "./PostDialgue";
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/axios";
 
+/**
+ * @interface IdProp
+ * @description Defines the props for the GridPostGallery component.
+ */
 interface IdProp {
+  /**
+   * @description The unique identifier for the seller (store), used to fetch their Instagram posts.
+   */
   sellerId: string;
 }
 
-
-const BUFFER_LIMIT = 12; 
+// --- Infinite Scroll & Buffering Configuration ---
+/**
+ * @const {number} BUFFER_LIMIT
+ * @description The number of posts to move from the local buffer to the visible grid at a time when the user scrolls.
+ */
+const BUFFER_LIMIT = 12;
+/**
+ * @const {number} API_LIMIT
+ * @description The total number of posts to fetch from the backend in a single API call, which then populates the local buffer.
+ */
 const API_LIMIT = 48;
+
+/**
+ * A component that displays a grid of Instagram posts with a buffered infinite scroll mechanism.
+ *
+ * This component is designed for performance, fetching a large batch of posts from the backend and
+ * storing them in a client-side buffer. It then incrementally reveals these posts to the user in smaller
+ * chunks as they scroll down the page, providing a smooth and seamless experience without frequent
+ * loading indicators.
+ *
+ * ### Buffered Infinite Scroll
+ * 1.  **API Fetch (`fetchPosts`)**: Fetches a large batch of posts (`API_LIMIT`) from the backend and stores them in the `bufferPosts` state. It uses a cursor (`afterCursor`) for pagination.
+ * 2.  **UI Display (`loadFromBuffer`)**: An `IntersectionObserver` watches a target element at the bottom of the grid. When this element becomes visible, a smaller chunk of posts (`BUFFER_LIMIT`) is moved from the `bufferPosts` to the visible `posts` state.
+ * 3.  **Automatic Refetch**: When the buffer is depleted, `loadFromBuffer` automatically calls `fetchPosts` to get the next large batch from the API.
+ *
+ * ### API Endpoint
+ * **`GET /instagram/seller/:sellerId/data`**
+ * This endpoint fetches a paginated list of a seller's Instagram posts.
+ * - **`:sellerId`** (string): The unique ID of the store.
+ * - **`limit`** (query param, number): The number of posts to return.
+ * - **`after`** (query param, string, optional): The pagination cursor from the previous response.
+ *
+ * @param {IdProp} props - The props for the component.
+ * @returns {JSX.Element} An infinitely scrolling grid of Instagram posts.
+ * @see {@link PostDialogue}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API | Intersection Observer API}
+ * @see {@link https://axios-http.com/docs/intro | Axios Documentation}
+ */
 export default function GridPostGallery({ sellerId }: IdProp) {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
@@ -21,15 +63,20 @@ export default function GridPostGallery({ sellerId }: IdProp) {
   const [loading, setLoading] = useState(false);
   const [afterCursor, setAfterCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+
+  // --- Refs ---
+  // A ref to the target element that the IntersectionObserver will watch.
   const observerTarget = useRef(null);
+  // A ref to hold the AbortController for the current API request.
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  /**
+   * Fetches the next large batch of posts from the backend API and populates the local buffer.
+   * It uses an AbortController to cancel any ongoing fetch request if a new one is initiated.
+   */
 
-  useEffect(()=>{
-    fetchPosts();
-  },[])
-  // 🔹 fetch next 50 from backend
   const fetchPosts = async () => {
+    // Guard clauses to prevent unnecessary API calls.
     if (loading || !hasMore || !sellerId) return;
 
     // cancel previous request if still running
@@ -52,9 +99,11 @@ export default function GridPostGallery({ sellerId }: IdProp) {
       });
       const responseData = await response.data;
 
-      // put 50 items in buffer
+      // Populate the buffer with the new batch of posts.
       setBufferPosts(responseData.media);
+      // Update the cursor for the next fetch.
       setAfterCursor(responseData.paging.cursors?.after || null);
+      // Update the `hasMore` flag based on the presence of a next cursor.
       setHasMore(!!responseData.paging.cursors?.after);
     } catch (e: any) {
       if (e.name === "CanceledError") {
@@ -67,7 +116,11 @@ export default function GridPostGallery({ sellerId }: IdProp) {
     }
   };
 
-  // 🔹 move 12 from buffer → posts
+    /**
+   * Moves a smaller chunk of posts from the buffer to the visible `posts` state.
+   * If the buffer becomes empty, it triggers `fetchPosts` to get more data.
+   */
+
   const loadFromBuffer = () => {
     if (bufferPosts.length > 0) {
       const nextBatch = bufferPosts.slice(0, BUFFER_LIMIT);
@@ -78,8 +131,10 @@ export default function GridPostGallery({ sellerId }: IdProp) {
       fetchPosts();
     }
   };
-
-  // observer for infinite scroll
+  /**
+   * Effect to set up the IntersectionObserver for infinite scrolling.
+   * When the observer target becomes visible, it calls `loadFromBuffer`.
+   */
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -105,7 +160,10 @@ export default function GridPostGallery({ sellerId }: IdProp) {
     };
   }, [loading, hasMore, bufferPosts]);
 
-  // reset when seller changes
+  /**
+   * Effect to reset the component's state and trigger a fresh data fetch
+   * whenever the `sellerId` prop changes.
+   */
   useEffect(() => {
     setPosts([]);
     setBufferPosts([]);
@@ -181,9 +239,11 @@ export default function GridPostGallery({ sellerId }: IdProp) {
         ))}
       </div>
 
-      {/* Infinite scroll trigger */}
+      {/* This invisible div is the target for the IntersectionObserver. */}
+      {/* When it scrolls into view, more posts are loaded. */}
       <div ref={observerTarget} className="h-10" />
 
+      {/* Conditionally render the PostDialogue modal when a post is selected. */}
       {currentIndex !== null && (
         <PostDialogue
           isOpen={true}
@@ -191,10 +251,10 @@ export default function GridPostGallery({ sellerId }: IdProp) {
           onClose={closeDialog}
           onNext={nextPost}
           onPrev={prevPost}
-          isFirst={currentIndex == 0}
-          isLast={currentIndex == posts.length - 1}
+          isFirst={currentIndex === 0}
+          isLast={currentIndex === posts.length - 1}
         />
       )}
-    </>
+      </>
   );
 }
