@@ -1,4 +1,3 @@
-// import 'antd/dist/reset.css';
 import "@ant-design/v5-patch-for-react-19";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -214,6 +213,51 @@ export const metadata = {
   },
 }
 
+
+/**
+ * RootLayout 
+ * 
+ * The root layout component for the entire Next.js application. It wraps every page,
+ * providing a consistent HTML structure, global styles, fonts, context providers, and metadata.
+ *
+ * ## Features
+ * - **Global Metadata**: Exports a comprehensive `metadata` object for SEO and PWA configuration, including the site title, description, favicon, and extensive settings for Apple devices (home screen icons, splash screens).
+ * - **Font Loading**: Initializes and applies global fonts (`Geist` and `Geist Mono`) using `next/font/google`, making them available throughout the application via CSS variables.
+ * - **Global Context Providers**: Wraps the entire application in a nested structure of essential providers:
+ *    - `ThemeProvider`: For managing light/dark mode.
+ *    - `Providers`: A wrapper for other potential global providers (e.g., React Query).
+ *    - `AuthProvider`: For managing user authentication state globally.
+ * - **Global UI Components**: Renders the `Toaster` component from `sonner` at the root level, making notifications available on every page.
+ * - **Third-Party Scripts**: Conditionally injects the Google Analytics 4 (GA4) tracking script into the document head using `next/script`.
+ *
+ * ## Logic Flow
+ * - This is the top-level server component that wraps all other pages and layouts.
+ * - It receives the page content for the current route as its `children` prop.
+ * - It constructs the main `<html>` and `<body>` tags for every page.
+ * - The `className` on the `<body>` tag applies the CSS variables for the global fonts.
+ * - It makes global contexts (like theme and authentication) available to the entire application by rendering the provider components and passing the `children` into them.
+ *
+ * ## Metadata
+ * The exported `metadata` object is used by Next.js to generate `<meta>` tags in the document `<head>`.
+ * This includes crucial information for search engine optimization (SEO) and for how the application
+ * behaves when added to a user's home screen as a Progressive Web App (PWA), especially on Apple devices.
+ *
+ * ## Imports
+ * - **Core/Libraries**: `Metadata` type from `next`; `Geist`, `Geist_Mono` from `next/font/google`; `Toaster` from `sonner`; `Script` from `next/script`.
+ * - **Key Components & Providers**:
+ * - {@link Providers}: A custom wrapper for various context providers.
+ * - {@link AuthProvider}: A provider for managing global authentication state.
+ * - {@link ThemeProvider}: A provider for managing application themes (light/dark mode).
+ * - **Styles**:
+ * - `@ant-design/v5-patch-for-react-19`: A patch for using Ant Design with React 19.
+ * - `./globals.css`: The main global stylesheet for the application.
+ *
+ * ## Props
+ * @param {object} props - The props for the component.
+ * @param {React.ReactNode} props.children - The server component for the currently active page or nested layout.
+ *
+ * @returns {JSX.Element} The root HTML document structure for the application.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
