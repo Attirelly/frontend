@@ -4,6 +4,43 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { manrope, playfair_display } from '@/font';
 
+
+/**
+ * DynamicFilterSkeleton
+ * 
+ * A skeleton loader component that mimics the layout and structure of the main
+ * filter sidebar. It is displayed to the user while the actual filter data is being fetched,
+ * improving perceived performance and preventing content layout shifts.
+ *
+ * ## Features
+ * - **Layout Mimicry**: Carefully structured to match the key UI elements of the real filter component, including a main header, multiple filter sections, search bars, and lists of options.
+ * - **Shimmer Effect**: Uses the `react-loading-skeleton` library to render gray, shimmering placeholders for a modern loading aesthetic.
+ * - **Consistent Structure**: Uses loops to render a consistent and representative placeholder for multiple filter groups.
+ *
+ * ## Purpose
+ * This component's primary role is to enhance the User Experience (UX) during data loading periods.
+ * By rendering a component with the same dimensions as the final content, it prevents the page layout
+ * from jarringly shifting when the real data arrives (a problem known as Cumulative Layout Shift - CLS).
+ *
+ * ## Logic Flow
+ * - This component is purely presentational and stateless.
+ * - It has no internal logic or data fetching; it simply renders a static structure of placeholder elements.
+ *
+ * ## Imports
+ * - **Core/Libraries**:
+ *    - `Skeleton` from `react-loading-skeleton`: The primary component for creating placeholder elements.
+ *    - `react-loading-skeleton/dist/skeleton.css`: The necessary stylesheet for the skeleton library.
+ * - **Utilities**:
+ *    - `manrope`, `playfair_display` from `@/font`: For applying consistent font styles to the container.
+ *
+ * ## API Calls
+ * - This component does not make any API calls.
+ *
+ * ## Props
+ * - This component does not accept any props.
+ *
+ * @returns {JSX.Element} The rendered skeleton loader for the filter sidebar.
+ */
 export default function DynamicFilterSkeleton() {
   return (
     <div className="sticky top-20 z-10">
