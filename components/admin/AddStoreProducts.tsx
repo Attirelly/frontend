@@ -1,15 +1,16 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { api } from '@/lib/axios';
-import { AxiosError } from 'axios';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import Select from 'react-select';
-import { City, Area } from '@/types/SellerTypes';
-import { Image } from '@/types/ProductTypes';
-import customStyles from '@/utils/selectStyles';
+"use client";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { api } from "@/lib/axios";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Select from "react-select";
+import { City, Area } from "@/types/SellerTypes";
+import { Image } from "@/types/ProductTypes";
+import customStyles from "@/utils/selectStyles";
 
+/** @description Defines the structure for a Store object used in dropdowns. */
 interface Store {
   store_id: string;
   store_name: string;
@@ -17,6 +18,7 @@ interface Store {
   area: Area;
 }
 
+/** @description Defines the structure for a Category object. */
 interface Category {
   category_id: string;
   name: string;
@@ -24,6 +26,7 @@ interface Category {
   category_landing_url: string;
 }
 
+/** @description Defines the structure for a Product object used in dropdowns. */
 interface Product {
   product_id: string;
   title: string;
@@ -31,206 +34,277 @@ interface Product {
   images: Image[];
 }
 
+// Defines the number of rows to display in the form.
 const TOTAL_INPUTS = 10;
+
+/**
+ * A comprehensive admin page for creating and editing homepage "curations".
+ *
+ * This component functions as a dynamic form that changes its structure and behavior based on URL
+ * query parameters, specifically `curation_type` and `curation_id`. It can operate in either
+ * "create" mode (if no `curation_id` is present) or "edit" mode.
+ *
+ * ### Curation Types
+ * The form adapts to handle different types of content sections:
+ * - **`store`**: A list of selected stores.
+ * - **`product`**: A list of specific products from selected stores (uses dependent dropdowns).
+ * - **`subcat 3` / `subcat 4`**: A list of specific subcategories, each requiring a custom image and landing URL.
+ *
+ * ### State Management
+ * - All state is managed locally using React hooks (`useState`, `useEffect`).
+ * - State includes the master lists of data for dropdowns (`stores`, `products`, `categoryOptions`), as well as arrays that hold the user's selections for each row of the form (`storeSelections`, `productSelections`, `categorySelections`).
+ *
+ * ### Data Fetching
+ * - In **edit mode**, the component fetches the existing curation's data to pre-fill the form fields.
+ * - In both modes, it fetches the necessary master data (all stores, all products, or relevant categories) to populate the selection dropdowns.
+ *
+ * ### API Endpoints
+ * - **`GET /homepage/stores_by_section/:id`**: Fetches existing data for a 'store' curation.
+ * - **`GET /homepage/stores_and_products_by_section/:id`**: Fetches existing data for a 'product' curation.
+ * - **`GET /homepage/categories_by_section/:id`**: Fetches existing data for a 'category' curation.
+ * - **`GET /stores/`**, **`GET /products/`**, **`GET /categories/get_category_by_level/:level`**: Fetch master data for dropdowns.
+ * - **`POST /homepage/section`**: Creates a new curation section.
+ * - **`PUT /homepage/section/:id`**: Updates an existing curation section.
+ * - **`POST /stores/upload`**: Gets a presigned URL for uploading category images.
+ * - **`DELETE /products/delete_image`**: Deletes a previously uploaded image.
+ *
+ * @returns {JSX.Element} A dynamic form for managing homepage curations.
+ * @see {@link https://react-select.com/home | react-select Documentation}
+ */
 
 export default function AddStoreProduct() {
   const searchParams = useSearchParams();
-  const curation_type = searchParams.get('curation_type');
-  const curation_number = searchParams.get('curation_number');
-  const curation_id = searchParams.get('curation_id');
-  const curation_name = searchParams.get('curation_name');
-  const curation_url = searchParams.get('curation_url');
+  const curation_type = searchParams.get("curation_type");
+  const curation_number = searchParams.get("curation_number");
+  const curation_id = searchParams.get("curation_id");
+  const curation_name = searchParams.get("curation_name");
+  const curation_url = searchParams.get("curation_url");
 
   const rows = Array.from({ length: TOTAL_INPUTS });
   const [stores, setStores] = useState<Store[]>([]);
-  const [storeSelections, setStoreSelections] = useState<string[]>(Array(9).fill(''));
+  const [storeSelections, setStoreSelections] = useState<string[]>(
+    Array(9).fill("")
+  );
   const [products, setProducts] = useState<Product[]>([]);
-  const [productsByStore, setProductsByStore] = useState<Record<string, Product[]>>({});
-  const [productSelections, setProductSelections] = useState<string[]>(Array(9).fill(''));
-  const [curationName, setCurationName] = useState('');
-  const [viewAllUrl, setViewAllUrl] = useState('');
+  const [productsByStore, setProductsByStore] = useState<
+    Record<string, Product[]>
+  >({});
+  const [productSelections, setProductSelections] = useState<string[]>(
+    Array(9).fill("")
+  );
+  const [curationName, setCurationName] = useState("");
+  const [viewAllUrl, setViewAllUrl] = useState("");
   const [storesFromSection, setStoresFromSection] = useState<Store[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<Category[]>([]);
-  const [categorySelections, setCategorySelections] = useState<{ category_id: string, image_url: string, category_landing_url: string }[]>(Array(TOTAL_INPUTS).fill({ category_id: '', image_url: '', category_landing_url: '' }));
+  const [categorySelections, setCategorySelections] = useState<
+    { category_id: string; image_url: string; category_landing_url: string }[]
+  >(
+    Array(TOTAL_INPUTS).fill({
+      category_id: "",
+      image_url: "",
+      category_landing_url: "",
+    })
+  );
 
   const router = useRouter();
 
-
+  /**
+   * This effect runs only in "edit" mode (when a `curation_id` is present in the URL).
+   * It fetches the existing data for the curation and pre-fills the form fields.
+   */
   useEffect(() => {
+    // Guard clause: Only run if we are in edit mode.
     if (!curation_id) return;
-    setViewAllUrl(curation_url || '');
-    setCurationName(curation_name || '');
+    // Pre-fill the main curation name and URL from the query parameters.
+    setViewAllUrl(curation_url || "");
+    setCurationName(curation_name || "");
 
     const fetchStoresBySection = async () => {
       try {
-        const response = await api.get(`/homepage/stores_by_section/${curation_id}`);
+        const response = await api.get(
+          `/homepage/stores_by_section/${curation_id}`
+        );
         const fetchedStores: Store[] = response.data;
 
         setStoresFromSection(fetchedStores);
 
         const updatedSelections = [...storeSelections];
-        for (let i = 0; i < fetchedStores.length && i < updatedSelections.length; i++) {
+        for (
+          let i = 0;
+          i < fetchedStores.length && i < updatedSelections.length;
+          i++
+        ) {
           updatedSelections[i] = fetchedStores[i].store_id;
         }
         setStoreSelections(updatedSelections);
       } catch (error) {
-        console.error('Error fetching stores by section:', error);
+        console.error("Error fetching stores by section:", error);
       }
     };
 
     const fetchStoresAndProductsBySection = async () => {
       try {
-        const response = await api.get(`/homepage/stores_and_products_by_section/${curation_id}`);
-        const storeProductPairs: { store_id: string; product_id?: string }[] = response.data;
+        const response = await api.get(
+          `/homepage/stores_and_products_by_section/${curation_id}`
+        );
+        const storeProductPairs: { store_id: string; product_id?: string }[] =
+          response.data;
 
         // Set dropdown values row-wise
-        const updatedStoreSelections = storeProductPairs.map((pair) => pair.store_id);
-        const updatedProductSelections = storeProductPairs.map((pair) => pair.product_id || '');
+        const updatedStoreSelections = storeProductPairs.map(
+          (pair) => pair.store_id
+        );
+        const updatedProductSelections = storeProductPairs.map(
+          (pair) => pair.product_id || ""
+        );
 
         setStoreSelections(updatedStoreSelections);
         setProductSelections(updatedProductSelections);
       } catch (error) {
-        console.error('Error fetching stores and products by section:', error);
+        console.error("Error fetching stores and products by section:", error);
       }
     };
 
     const fetchCategoriesBySection = async () => {
       try {
-        const response = await api.get(`/homepage/categories_by_section/${curation_id}`);
-        const fetchedSelections: { category_id: string; image_url: string, category_landing_url: string }[] = response.data;
+        const response = await api.get(
+          `/homepage/categories_by_section/${curation_id}`
+        );
+        const fetchedSelections: {
+          category_id: string;
+          image_url: string;
+          category_landing_url: string;
+        }[] = response.data;
         console.log(fetchedSelections, "fetchedSelections");
 
         // preload into selections
         const updatedSelections = [...categorySelections];
-        for (let i = 0; i < fetchedSelections.length && i < updatedSelections.length; i++) {
+        for (
+          let i = 0;
+          i < fetchedSelections.length && i < updatedSelections.length;
+          i++
+        ) {
           updatedSelections[i] = fetchedSelections[i];
         }
         setCategorySelections(updatedSelections);
       } catch (error) {
-        console.error('Error fetching categories by section:', error);
+        console.error("Error fetching categories by section:", error);
       }
     };
-
-    if (curation_type === 'product') {
+    // Call the appropriate fetch function based on the curation type.
+    if (curation_type === "product") {
       fetchStoresAndProductsBySection();
-    }
-    else if (curation_type === 'store') {
+    } else if (curation_type === "store") {
       fetchStoresBySection();
-    }
-    else {
+    } else {
       fetchCategoriesBySection();
     }
-
   }, [curation_id]);
-  console.log(categories, "categories");
 
-  // useEffect(() => {
-  //   api
-  //     .get('/stores/')
-  //     .then((response) => {
-  //       setStores(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching stores:', error);
-  //     });
-  // }, []);
-
+  /**
+   * This effect fetches the necessary master data (all stores, all products, or relevant categories)
+   * to populate the selection dropdowns. The data it fetches depends on the `curation_type`.
+   */
   useEffect(() => {
-
+    // Fetches all products and groups them by store ID for the dependent dropdown.
     const fetchProducts = async () => {
       try {
-        const response = await api.get('/products/');
+        const response = await api.get("/products/");
         const fetchedProducts: Product[] = response.data;
         setProducts(fetchedProducts);
-        const grouped = fetchedProducts.reduce<Record<string, Product[]>>((acc, product) => {
-          if (!acc[product.store_id]) acc[product.store_id] = [];
-          acc[product.store_id].push(product);
-          return acc;
-        }, {});
+        const grouped = fetchedProducts.reduce<Record<string, Product[]>>(
+          (acc, product) => {
+            if (!acc[product.store_id]) acc[product.store_id] = [];
+            acc[product.store_id].push(product);
+            return acc;
+          },
+          {}
+        );
         setProductsByStore(grouped);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching products:", error);
       }
     };
-
+    // Fetches all stores.
     const fetchStores = async () => {
       api
-        .get('/stores/')
+        .get("/stores/")
         .then((response) => {
           setStores(response.data);
         })
         .catch((error) => {
-          console.error('Error fetching stores:', error);
+          console.error("Error fetching stores:", error);
         });
-
     };
-
+    // Fetches categories of a specific level.
     const fetchSubCat = async (level: number) => {
       try {
-        const response = await api.get(`categories/get_category_by_level/${level}`);
+        const response = await api.get(
+          `categories/get_category_by_level/${level}`
+        );
         const fetchedOptions: Category[] = response.data;
-        setCategoryOptions(fetchedOptions);   // 👈 separate options state
+        setCategoryOptions(fetchedOptions); // 👈 separate options state
       } catch (error) {
-        console.error('Error fetching sub categories', error);
+        console.error("Error fetching sub categories", error);
       }
     };
 
-
-    if (curation_type === 'product') {
+    // Call the appropriate fetch function(s) based on the current curation type.
+    if (curation_type === "product") {
       fetchStores();
       fetchProducts();
-    }
-    else if (curation_type === 'store') {
+    } else if (curation_type === "store") {
       fetchStores();
-    }
-    else if (curation_type === 'subcat 3') {
+    } else if (curation_type === "subcat 3") {
       fetchSubCat(3);
-    }
-    else {
+    } else {
       fetchSubCat(4);
     }
-
-
   }, [curation_type]);
 
-
-
+  /**
+   * Handles the form submission for updating an existing curation.
+   */
   const handleEdit = async () => {
     // if (!curationName.trim() || !viewAllUrl.trim()) {
     if (!curationName.trim()) {
-      alert('Curation name is required.');
+      alert("Curation name is required.");
       return;
     }
 
+    // (Additional validation logic for each curation type)
     const selectedStoreIds = storeSelections.filter((id) => id);
-    if (curation_type === 'product' || curation_type === 'store') {
+    if (curation_type === "product" || curation_type === "store") {
       if (selectedStoreIds.length === 0) {
-        alert('At least one valid store must be selected.');
+        alert("At least one valid store must be selected.");
         return;
       }
     }
 
     const selectedProductIds = productSelections.filter((id) => id);
-    if (curation_type === 'product') {
+    if (curation_type === "product") {
       if (selectedProductIds.length === 0) {
-        alert('At least one valid product must be selected.');
+        alert("At least one valid product must be selected.");
         return;
       }
       if (selectedStoreIds.length !== selectedProductIds.length) {
-        alert('Please select a product for each store.');
+        alert("Please select a product for each store.");
         return;
       }
-
     }
 
-    if (curation_type === 'subcat 3' || curation_type === 'subcat 4') {
-      const validCategories = categorySelections.filter(c => c.category_id && c.image_url);
+    if (curation_type === "subcat 3" || curation_type === "subcat 4") {
+      const validCategories = categorySelections.filter(
+        (c) => c.category_id && c.image_url
+      );
       if (validCategories.length === 0) {
-        alert('At least one valid category with image must be selected.');
+        alert("At least one valid category with image must be selected.");
         return;
       }
     }
+
+    // Payload construction
     const payload = {
       section_name: curationName,
       section_number: Number(curation_number) || 1,
@@ -238,52 +312,58 @@ export default function AddStoreProduct() {
       section_url: viewAllUrl,
       store_ids: storeSelections.filter((id) => id),
       product_ids: productSelections.filter((id) => id),
-      categories: categorySelections.filter(c => c.category_id && c.image_url && c.category_landing_url)
+      categories: categorySelections.filter(
+        (c) => c.category_id && c.image_url && c.category_landing_url
+      ),
     };
 
+    // api call
     try {
       await api.put(`/homepage/section/${curation_id}`, payload);
       toast.success("Curation submitted successfully!");
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      toast.error(err.response?.data?.message || 'Failed to update section.');
+      toast.error(err.response?.data?.message || "Failed to update section.");
     }
   };
 
+  /**
+   * Handles the form submission for creating a new curation.
+   */
   const handleCreate = async () => {
     // if (!curationName.trim() || !viewAllUrl.trim()) {
     if (!curationName.trim()) {
-      alert('Curation name is required.');
+      alert("Curation name is required.");
       return;
     }
 
     const selectedStoreIds = storeSelections.filter((id) => id);
-    if (curation_type === 'product' || curation_type === 'store') {
+    if (curation_type === "product" || curation_type === "store") {
       if (selectedStoreIds.length === 0) {
-        alert('At least one valid store must be selected.');
+        alert("At least one valid store must be selected.");
         return;
       }
     }
     const selectedProductIds = productSelections.filter((id) => id);
-    if (curation_type === 'product') {
+    if (curation_type === "product") {
       if (selectedProductIds.length === 0) {
-        alert('At least one valid product must be selected.');
+        alert("At least one valid product must be selected.");
         return;
       }
       if (selectedStoreIds.length !== selectedProductIds.length) {
-        alert('Please select a product for each store.');
+        alert("Please select a product for each store.");
         return;
       }
-
     }
-    if (curation_type === 'subcat 3' || curation_type === 'subcat 4') {
-      const validCategories = categorySelections.filter(c => c.category_id && c.image_url);
+    if (curation_type === "subcat 3" || curation_type === "subcat 4") {
+      const validCategories = categorySelections.filter(
+        (c) => c.category_id && c.image_url
+      );
       if (validCategories.length === 0) {
-        alert('At least one valid category with image must be selected.');
+        alert("At least one valid category with image must be selected.");
         return;
       }
     }
-
 
     const payload = {
       section_name: curationName,
@@ -292,38 +372,50 @@ export default function AddStoreProduct() {
       section_url: viewAllUrl,
       store_ids: selectedStoreIds,
       product_ids: productSelections.filter((id) => id),
-      categories: categorySelections.filter(c => c.category_id && c.image_url && c.category_landing_url)
+      categories: categorySelections.filter(
+        (c) => c.category_id && c.image_url && c.category_landing_url
+      ),
     };
 
     // return;
 
     try {
-      await api.post('/homepage/section', payload);
+      await api.post("/homepage/section", payload);
       toast.success("Curation submitted successfully!");
       router.replace("/admin/curationModule/createCuration");
-
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message || "Failed to create section.");
     }
   };
 
-
+  // --- Helper Functions & Derived State for Dropdowns ---
+  // Formats the raw store data for use with the react-select component.
 
   const storeOptions = stores.map((store) => ({
-    label: `${store.store_name} : ${store.city?.name}, ${store.area?.name} (ID: ${store.store_id.slice(0, 6)})`,
+    label: `${store.store_name} : ${store.city?.name}, ${
+      store.area?.name
+    } (ID: ${store.store_id.slice(0, 6)})`,
     value: store.store_id,
   }));
 
+  // Generates product options for a specific store, used in dependent dropdowns.
 
   const getProductOptions = (storeId: string) =>
     (productsByStore[storeId] || []).map((product) => ({
       label: product.title,
-      value: product.product_id,          // include SKU
-      image: product.images.length > 0 ? product.images[0].image_url : 'https://picsum.photos/200',      // include product image URL
+      value: product.product_id, // include SKU
+      image:
+        product.images.length > 0
+          ? product.images[0].image_url
+          : "https://picsum.photos/200", // include product image URL
     }));
 
-  // ✅ Move this helper inside your component
+  /**
+   * Handles the two-step image upload process for category images.
+   * @param {File} file - The image file to upload.
+   * @returns {Promise<string | null>} The final URL of the uploaded image, or null on failure.
+   */
   const uploadCategoryImage = async (file: File): Promise<string | null> => {
     try {
       const response = await api.post<{
@@ -355,16 +447,18 @@ export default function AddStoreProduct() {
     }
   };
 
+  /**
+   * Deletes a previously uploaded image from the S3 bucket via a backend endpoint.
+   */
   async function deleteImageFromS3(imageUrl: string) {
-      try {
-        await api.delete(`/products/delete_image`, {
-          data: { file_url: imageUrl },
-        });
-      } catch (error) {
-        console.error("Error deleting image from S3:", error);
-      }
+    try {
+      await api.delete(`/products/delete_image`, {
+        data: { file_url: imageUrl },
+      });
+    } catch (error) {
+      console.error("Error deleting image from S3:", error);
     }
-
+  }
 
   return (
     <div className="min-h-screen bg-white p-8">
@@ -372,7 +466,9 @@ export default function AddStoreProduct() {
 
       <div className="flex flex-wrap gap-6 mb-10 items-center">
         <div className="flex flex-col">
-          <label className="font-semibold mb-1 text-black">Curation Name<span className="text-red-500">*</span></label>
+          <label className="font-semibold mb-1 text-black">
+            Curation Name<span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             className="border rounded px-4 py-2 w-48 placeholder:text-gray-400 text-black"
@@ -382,7 +478,9 @@ export default function AddStoreProduct() {
         </div>
 
         <div className="flex flex-col">
-          <label className="font-semibold mb-1 text-black">View All URL Input</label>
+          <label className="font-semibold mb-1 text-black">
+            View All URL Input
+          </label>
           <input
             type="text"
             className="border rounded px-4 py-2 w-64 placeholder:text-gray-400 text-black"
@@ -398,7 +496,8 @@ export default function AddStoreProduct() {
           const selectedProductId = productSelections[index];
           const categoryId = categorySelections?.[index]?.category_id || "";
           const categoryImage = categorySelections?.[index]?.image_url || "";
-          const categoryLandingUrl = categorySelections?.[index]?.category_landing_url || "";
+          const categoryLandingUrl =
+            categorySelections?.[index]?.category_landing_url || "";
 
           return (
             <div key={index} className="flex gap-4 items-center">
@@ -408,19 +507,22 @@ export default function AddStoreProduct() {
                   {/* Store Dropdown */}
                   <div className="w-64">
                     <Select
-                      className={`border rounded w-64 ${storeId ? "border-green-400" : "border-gray-300"
-                        } text-black`}
+                      className={`border rounded w-64 ${
+                        storeId ? "border-green-400" : "border-gray-300"
+                      } text-black`}
                       placeholder="Select Store"
                       styles={customStyles}
                       options={storeOptions}
                       isClearable
                       value={
-                        storeOptions.find((opt) => opt.value === storeId) || null
+                        storeOptions.find((opt) => opt.value === storeId) ||
+                        null
                       }
                       onChange={(selectedOption) => {
                         const updatedStoreSelections = [...storeSelections];
                         const updatedProductSelections = [...productSelections];
-                        updatedStoreSelections[index] = selectedOption?.value || "";
+                        updatedStoreSelections[index] =
+                          selectedOption?.value || "";
                         updatedProductSelections[index] = ""; // Reset product on store change
                         setStoreSelections(updatedStoreSelections);
                         setProductSelections(updatedProductSelections);
@@ -466,7 +568,8 @@ export default function AddStoreProduct() {
               ) : null}
 
               {/* Category + Image Section + Landing URL */}
-              {(curation_type === "subcat 3" || curation_type === "subcat 4") && (
+              {(curation_type === "subcat 3" ||
+                curation_type === "subcat 4") && (
                 <>
                   {/* Category Dropdown */}
                   <div className="w-64">
@@ -480,13 +583,19 @@ export default function AddStoreProduct() {
                         value: cat.category_id,
                       }))}
                       value={
-                        categoryOptions.find((c) => c.category_id === categorySelections[index]?.category_id)
+                        categoryOptions.find(
+                          (c) =>
+                            c.category_id ===
+                            categorySelections[index]?.category_id
+                        )
                           ? {
-                            label: categoryOptions.find(
-                              (c) => c.category_id === categorySelections[index]?.category_id
-                            )?.name,
-                            value: categorySelections[index]?.category_id,
-                          }
+                              label: categoryOptions.find(
+                                (c) =>
+                                  c.category_id ===
+                                  categorySelections[index]?.category_id
+                              )?.name,
+                              value: categorySelections[index]?.category_id,
+                            }
                           : null
                       }
                       onChange={(selectedOption) => {
@@ -548,7 +657,9 @@ export default function AddStoreProduct() {
 
                               toast.success("Image deleted successfully!");
                             } catch (err: any) {
-                              toast.error(err.message || "Failed to delete image");
+                              toast.error(
+                                err.message || "Failed to delete image"
+                              );
                             }
                           }}
                         >
@@ -573,8 +684,6 @@ export default function AddStoreProduct() {
                       }}
                     />
                   </div>
-
-
                 </>
               )}
 
@@ -589,15 +698,20 @@ export default function AddStoreProduct() {
         })}
       </div>
 
-
       <div className="flex justify-between">
-        <button className="bg-gray-300 text-black rounded-full px-6 py-2">Back</button>
+        <button className="bg-gray-300 text-black rounded-full px-6 py-2">
+          Back
+        </button>
 
         <div className="flex gap-4">
           <button
             onClick={handleEdit}
             disabled={!curation_id}
-            className={`rounded-full px-6 py-2 ${curation_id ? 'bg-green-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+            className={`rounded-full px-6 py-2 ${
+              curation_id
+                ? "bg-green-600 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
           >
             Update
           </button>
@@ -605,7 +719,11 @@ export default function AddStoreProduct() {
           <button
             onClick={handleCreate}
             disabled={!!curation_id}
-            className={`rounded-full px-6 py-2 ${!curation_id ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+            className={`rounded-full px-6 py-2 ${
+              !curation_id
+                ? "bg-blue-600 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
           >
             Create
           </button>

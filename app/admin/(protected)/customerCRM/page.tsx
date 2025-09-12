@@ -3,6 +3,10 @@ import { api } from "@/lib/axios";
 import Link from "next/link";
 import { useEffect, useState, ChangeEvent } from "react";
 
+/**
+ * @typedef {object} Customer
+ * @description Defines the structure for a single customer's data.
+ */
 type Customer = {
   id: string;
   email: string;
@@ -16,47 +20,81 @@ type Customer = {
   created_at: string;
 };
 
+/**
+ * A client-side component that provides a CRM interface for viewing and managing customer data.
+ *
+ * This component fetches a complete list of customers on mount and then provides client-side
+ * tools for searching, filtering by date, and exporting the data. It's designed for administrative
+ * purposes to get an overview of the customer base.
+ *
+ * ### State Management
+ * - All state is managed locally within the component using React's `useState` and `useEffect` hooks.
+ * - This includes the master list of `customers`, the `filteredCustomers` list for display, search terms, and date range filters.
+ *
+ * ### Features
+ * - **Data Fetching**: Retrieves all customers from the API on initial load.
+ * - **Client-Side Filtering**: Allows users to filter the customer list by a search query (name or contact number) and by a "created at" date range.
+ * - **Debounced Search**: The search input is debounced by 500ms to prevent excessive re-filtering while the user is typing.
+ * - **CSV Functionality**: Includes buttons to download the currently filtered list of customers as a CSV file and to upload a CSV to replace the current data.
+ *
+ * ### API Endpoint
+ * **`GET /users/customer`**: Fetches the entire list of customer users. This endpoint is called once when the component mounts.
+ *
+ * @returns {JSX.Element} A fully interactive CRM page for customer management.
+ */
 export default function CustomerPage() {
+  // --- Local State ---
+  // The master list of all customers fetched from the API.
   const [customers, setCustomers] = useState<Customer[]>([]);
+  // The list of customers displayed to the user after applying filters.
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
+  // State for the main search input.
   const [search, setSearch] = useState("");
-  const [viewAll, setViewAll] = useState(false);
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
+  // State for the debounced search term that triggers filtering.
   const [debouncedSearch, setDebouncedSearch] = useState(search);
+  // State for the date range filter inputs.
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  
-
-
+  // State for tracking selected customers via checkboxes.
+  const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
 
   const isSelected = (id: string) => selectedCustomerIds.includes(id);
-  const hasFilters = search ||debouncedSearch || startDate || endDate;
+  const hasFilters = search || debouncedSearch || startDate || endDate;
 
+  /**
+   * Clears all active search and date filters, resetting the view to the full customer list.
+   */
   const clearAllFilters = () => {
-    setSearch("") ; 
+    setSearch("");
     setDebouncedSearch("");
     setStartDate("");
     setEndDate("");
   };
 
-  // Debounce search input
+  /**
+   * This effect debounces the user's search input. It waits for 500ms after the user
+   * stops typing before updating the `debouncedSearch` state, which triggers the filtering logic.
+   */
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
     }, 500);
+
+    // Cleanup function to clear the timeout if the user types again within the 500ms window.
 
     return () => {
       clearTimeout(handler);
     };
   }, [search]);
 
-  // Fetch customers
+  /**
+   * This effect fetches the initial list of all customers from the API when the component first mounts.
+   */
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const res = await api.get(`users/customer`);
         const data = res.data;
-        
 
         setCustomers(data);
         setFilteredCustomers(data);
@@ -72,6 +110,10 @@ export default function CustomerPage() {
     setSearch(query);
   };
 
+  /**
+   * This effect re-applies all client-side filters whenever the debounced search term,
+   * the master customer list, or the date range changes.
+   */
   useEffect(() => {
     filterCustomers(debouncedSearch);
   }, [debouncedSearch, customers, startDate, endDate]);
@@ -149,7 +191,9 @@ export default function CustomerPage() {
     };
     reader.readAsText(file);
   };
-
+  /**
+   * Generates and triggers the download of a CSV file containing the currently filtered customers.
+   */
   const handleDownloadCSV = () => {
     const header =
       "id,email,name,provider,gender,birthday,location,profile_pic,contact_number,created_at\n";
@@ -209,9 +253,9 @@ export default function CustomerPage() {
           </button>
         </div>
       </div>
-      <div 
-      // className="flex flex-row gap-2"
-      className="flex flex-col md:flex-row gap-4 w-full"
+      <div
+        // className="flex flex-row gap-2"
+        className="flex flex-col md:flex-row gap-4 w-full"
       >
         {/* Left Sidebar for Facets */}
         <div className="w-full md:w-[15%] p-4 border-2 border-solid border-gray-200 bg-gray-50 rounded-lg mb-8 md:mb-0">
@@ -238,10 +282,9 @@ export default function CustomerPage() {
             />
           </div>
           <div>
-        
             {/* Clear All Filters Button - Only shows when filters are active */}
             {hasFilters && (
-              <button 
+              <button
                 onClick={clearAllFilters}
                 className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition flex items-center gap-2 mt-2"
               >
@@ -316,12 +359,24 @@ export default function CustomerPage() {
                           onChange={() => handleCheckboxChange(customer.id)}
                         />
                       </td>
-                      <td className="px-4 py-3 border text-black">{customer.name}</td>
-                      <td className="px-4 py-3 border text-black">{customer.email}</td>
-                      <td className="px-4 py-3 border text-black">{customer.provider}</td>
-                      <td className="px-4 py-3 border text-black">{customer.gender}</td>
-                      <td className="px-4 py-3 border text-black">{customer.birthday}</td>
-                      <td className="px-4 py-3 border text-black">{customer.location}</td>
+                      <td className="px-4 py-3 border text-black">
+                        {customer.name}
+                      </td>
+                      <td className="px-4 py-3 border text-black">
+                        {customer.email}
+                      </td>
+                      <td className="px-4 py-3 border text-black">
+                        {customer.provider}
+                      </td>
+                      <td className="px-4 py-3 border text-black">
+                        {customer.gender}
+                      </td>
+                      <td className="px-4 py-3 border text-black">
+                        {customer.birthday}
+                      </td>
+                      <td className="px-4 py-3 border text-black">
+                        {customer.location}
+                      </td>
                       <td className="px-4 py-3 border text-black">
                         {customer.contact_number}
                       </td>
@@ -330,7 +385,11 @@ export default function CustomerPage() {
                       </td>
                       <td className="px-4 py-3 border text-center space-x-2 text-black">
                         <div className="flex gap-2 justify-center">
-                          <Link href={`/customer/${customer.id}`} target="_blank" rel="noopener noreferrer">
+                          <Link
+                            href={`/customer/${customer.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
                               View
                             </button>
