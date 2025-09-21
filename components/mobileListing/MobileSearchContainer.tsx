@@ -450,7 +450,7 @@ export default function MobileSearchContainer({ onClose }: Props) {
           ref={dropdownRef}>
           <input
             type="text"
-            placeholder="Saree for Mehndi"
+            placeholder="Find Your Style"
             className={`${manrope.className} w-full h-[40px] text-[16px] focus:outline-none text-[#0F0F0F] px-2`}
             style={{ fontWeight: 400 }}
             value={tempQuery}
