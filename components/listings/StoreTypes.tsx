@@ -38,7 +38,7 @@ export default function StoreTypeTabs({
   context,
 }: StoreTypeTabsProps) {
   const { setStoreType, storeType } = useHeaderStore();
-  const [setStoreTypes] = useState<BrandType[]>([]);
+  const [storeTypes , setStoreTypes] = useState<BrandType[]>([]);
   const [tabs, setTabs] = useState<SelectOption[]>([]);
   const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(
     null

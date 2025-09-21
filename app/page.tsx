@@ -58,10 +58,10 @@ export default function HomePage() {
   return (
     // Remove the background color from the outermost container
     <div className="w-full flex flex-col">
-      <div className="bg-white">
-        <ListingMobileHeader className="block lg:hidden" />
-        <ListingPageHeader className="hidden lg:block" />
+      <ListingMobileHeader className="block lg:hidden" />
+      <ListingPageHeader className="hidden lg:block" />
 
+      <div className="bg-white">
         <div className="lg:px-20">
           <HeroSection />
         </div>

@@ -404,7 +404,7 @@ export default function ListingPageHeader({ className }: Props) {
   }
 
   return (
-    <div className={`${className}`}>
+    <div className={`${className} sticky top-0 z-1000`}>
       <header className="bg-white shadow-[0_2px_1px_-1px_rgba(0,0,0,0.1)] h-[72px]">
         <div className="grid grid-cols-[0.5fr_0.5fr_2fr_1fr] items-center px-[83px] h-full">
           <div className="flex justify-center items-center">

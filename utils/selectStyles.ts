@@ -37,7 +37,7 @@ const customStyles: StylesConfig<any, false, GroupBase<any>> = {
   // Dropdown menu list
   menuList: (base) => ({
     ...base,
-    maxHeight: "400px",
+    maxHeight: "120px",
     overflowY: "auto",
     "::-webkit-scrollbar": {
       display: "none",
