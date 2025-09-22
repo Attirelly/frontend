@@ -97,7 +97,7 @@ export default function TwoOptionToggle({ options, defaultValue, context }: TwoO
   };
 
   return (
-    <div className="flex space-x-1.5">
+    <div className="flex space-x-2">
       {options.map((option) => {
         // Determine if the current option in the loop is the selected one.
         const isSelected = selected === option;
@@ -109,7 +109,7 @@ export default function TwoOptionToggle({ options, defaultValue, context }: TwoO
             key={option}
             onClick={() => setSelected(option)}
             // Dynamically apply classes for selected vs. unselected states.
-            className={`${manrope.className} flex items-center justify-center space-x-2 px-3 md:px-4 py-2 text-sm md:text-base w-[130px] rounded-full border transition ${
+            className={`${manrope.className} flex items-center justify-center space-x-2 px-3 md:px-4 py-1 text-sm md:text-base w-fit rounded-full border transition ${
               isSelected
                 ? 'bg-black text-white border-black' // Styles for the active/selected button.
                 : 'bg-white text-[#878787] border-[#878787] hover:border-black hover:text-black' // Styles for the inactive button.

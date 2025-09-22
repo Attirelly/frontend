@@ -97,7 +97,7 @@ export default function StoreTypeTabs({
    */
   useEffect(() => {
     setLoading(true);
-    setStoreTypes(HARD_CODED_STORE_TYPES);
+    // setStoreTypes(HARD_CODED_STORE_TYPES);
 
     let options: SelectOption[];
 
@@ -189,7 +189,7 @@ export default function StoreTypeTabs({
       ref={scrollContainerRef}
       className={clsx(
         // Mobile: Flex container with horizontal scrolling
-        "flex w-full items-center justify-center gap-2 overflow-x-auto p-2 scrollbar-none",
+        "flex w-full items-center justify-center gap-2 overflow-x-auto px-2 scrollbar-none",
         // Desktop: Overrides for the pill-style container
         "md:w-fit md:max-w-fit md:rounded-full md:overflow-x-visible"
       )}
@@ -201,11 +201,11 @@ export default function StoreTypeTabs({
           className={clsx(
             manrope.className,
             // Common styles
-            "py-2 rounded-full transition-all duration-300 text-base font-medium text-center",
+            "py-1 rounded-full transition-all duration-300 text-base font-medium text-center",
             // Prevent buttons from shrinking in the flex container
             "flex-shrink-0",
             // Sizing
-            "w-[150px] md:w-auto md:px-4",
+            "w-[125px] md:w-auto md:px-4",
             // Conditional styles based on selection
             selectedStoreType?.id === tab.value
               ? "bg-black text-white md:shadow"

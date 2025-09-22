@@ -54,7 +54,7 @@ export default function QrCodeGeneration() {
             if (!qrId) return;
 
             try {
-                const response = await api.get(`qrcode/qr_by_id/${qrId}`);
+                const response = await api.get(`/qrcode/qr_by_id/${qrId}`);
                 const data = response.data;
                 setQrImageUrl(data.qr_path);  // e.g., /uploads/abc.png
 
