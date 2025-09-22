@@ -91,9 +91,9 @@ export default function ProductListPage() {
     threshold: 0.4,
   });
 
-/**
- * url params is used to update the zustand and local state 
- */
+  /**
+   * url params is used to update the zustand and local state
+   */
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
     const initialSelectedFilters: Record<string, string[]> = {};
@@ -113,10 +113,10 @@ export default function ProductListPage() {
       )
     )
       return;
-/**
- * fetch the selected filters from url params 
- * skip the params we know will not be there in selected params 
- */
+    /**
+     * fetch the selected filters from url params
+     * skip the params we know will not be there in selected params
+     */
     params.forEach((value, key) => {
       if (
         key !== "search" &&
@@ -130,17 +130,17 @@ export default function ProductListPage() {
       }
     });
 
-/**
- * in url params will only have city name 
- * fetching the city object from allCity
- */
+    /**
+     * in url params will only have city name
+     * fetching the city object from allCity
+     */
     if (allCity && allCity.length > 0 && cityName) {
       const cityObject = allCity.find((c) => c.name === cityName);
       if (cityObject) setCity(cityObject);
     }
-/**
- * same as done for city
- */
+    /**
+     * same as done for city
+     */
     if (allArea && allArea.length > 0 && areaName) {
       const areaObject = allArea.find((a) => a.name === areaName);
       if (areaObject) setArea(areaObject);
@@ -189,10 +189,10 @@ export default function ProductListPage() {
     setStoreType,
   ]);
 
-/**
- * effect to update the url params 
- * on change of state 
- */
+  /**
+   * effect to update the url params
+   * on change of state
+   */
   useEffect(() => {
     if (!isReadyFlag) return;
     const oldparams = new URLSearchParams(searchParams);
@@ -252,15 +252,26 @@ export default function ProductListPage() {
           className={`${manrope.className} text-[#101010] mt-4 text-2xl lg:text-[32px]`}
           style={{ fontWeight: 500 }}
         >
-          {isResultsLoading
-            ? "" // or "Loading..."
-            : results > 0
-            ? query
-              ? `Showing Results for "${query}"`
-              : displayCategory
-              ? `Showing Results for "${displayCategory}"`
-              : ""
-            : "Sorry, no result found for your search"}
+          {isResultsLoading ? (
+            // Shimmer effect placeholder
+            <div
+              className={`${manrope.className} bg-gray-200 animate-pulse mt-4 rounded`}
+              style={{ fontWeight: 500, height: "32px", width: "400px" }}
+            ></div>
+          ) : (
+            <span
+              className={`${manrope.className} text-[#101010] mt-4 text-2xl lg:text-[32px]`}
+              style={{ fontWeight: 500 }}
+            >
+              {results > 0
+                ? query
+                  ? `Showing Results for "${query}"`
+                  : displayCategory
+                  ? `Showing Results for "${displayCategory}"`
+                  : ""
+                : "Sorry, no result found for your search"}
+            </span>
+          )}
         </span>
 
         {/* Store Type Selection */}
