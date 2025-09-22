@@ -42,6 +42,7 @@ export default function SellerOnboardingPage() {
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
+      console.log('shukla');
     }
   }
 }, []);
