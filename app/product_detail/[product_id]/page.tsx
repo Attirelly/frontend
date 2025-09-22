@@ -239,14 +239,14 @@ export default function ProductDetail() {
       const price = "₹" + (selectedVariant?.mrp || "");
       const productLink = window.location.href; // current page link
 
-      const message = `Hi ${storeName}, I'm interested in the following product listed on your Attirelly storepage:
+      const message = `Hi ${storeName}, I'm interested in the following product listed on Attirelly:
 
     Product Name: ${productName} 
     Variant: ${variant}
     Price: ${price}
     Link: ${productLink}
 
-Could you please confirm its availability and share more details.`;
+Could you please confirm its availability and share payment link.`;
 
       const encodedMessage = encodeURIComponent(message);
       const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;

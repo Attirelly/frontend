@@ -25,29 +25,29 @@ const priceRangeOrder = [
 ];
 
 const priceStartMap: { [storeType: string]: { [priceRange: string]: string } } =
-  {
-    "Designer Label": {
-      Affordable: "starts from 2,000/-",
-      Premium: "starts from 20,000/-",
-      Luxury: "starts from 50,000/-",
-    },
-    "Retail Store": {
-      Affordable: "starts from 500/-",
-      Premium: "starts from 2,500/-",
-      Luxury: "starts from 25,000/-",
-    },
-    Tailor: {
-      Affordable: "starts from 500/-",
-      Premium: "starts from 1,500/-",
-      Luxury: "starts from 5,000/-",
-    },
-    Stylist: {
-      Affordable: "starts from 500/-",
-      Premium: "starts from 2,000/-",
-      Luxury: "starts from 5,000/-",
-    },
-    // Add other store types here...
-  };
+{
+  "Designer Label": {
+    Affordable: "starts from 2,000/-",
+    Premium: "starts from 20,000/-",
+    Luxury: "starts from 50,000/-",
+  },
+  "Retail Store": {
+    Affordable: "starts from 500/-",
+    Premium: "starts from 2,500/-",
+    Luxury: "starts from 25,000/-",
+  },
+  Tailor: {
+    Affordable: "starts from 500/-",
+    Premium: "starts from 1,500/-",
+    Luxury: "starts from 5,000/-",
+  },
+  Stylist: {
+    Affordable: "starts from 500/-",
+    Premium: "starts from 2,000/-",
+    Luxury: "starts from 5,000/-",
+  },
+  // Add other store types here...
+};
 
 /**
  * A versatile and context-aware component for displaying and managing filters.
@@ -268,17 +268,16 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
                       {fName === "Area"
                         ? "Location"
                         : fName === "Primary Category"
-                        ? "Category"
-                        : fName}
+                          ? "Category"
+                          : fName}
                     </h2>
                     <Image
                       src="/ListingPageHeader/dropdown.svg"
                       alt="toggle"
                       width={20}
                       height={20}
-                      className={`transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform ${isOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </div>
 
@@ -308,17 +307,15 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
                                   className="h-1 bg-black rounded-full"
                                   style={{
                                     position: "absolute",
-                                    left: `${
-                                      ((localPriceRange[0] - priceBounds[0]) /
-                                        (priceBounds[1] - priceBounds[0])) *
+                                    left: `${((localPriceRange[0] - priceBounds[0]) /
+                                      (priceBounds[1] - priceBounds[0])) *
                                       100
-                                    }%`,
-                                    width: `${
-                                      ((localPriceRange[1] -
-                                        localPriceRange[0]) /
-                                        (priceBounds[1] - priceBounds[0])) *
+                                      }%`,
+                                    width: `${((localPriceRange[1] -
+                                      localPriceRange[0]) /
+                                      (priceBounds[1] - priceBounds[0])) *
                                       100
-                                    }%`,
+                                      }%`,
                                     top: 0,
                                     bottom: 0,
                                   }}
@@ -390,6 +387,7 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
                                   >
                                     <div className="flex justify-between items-center w-full space-x-2">
                                       <input
+                                      id={facet.name}
                                         type="checkbox"
                                         // checked={facet.selected}
                                         checked={(
@@ -400,18 +398,21 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
                                         }
                                         // className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
                                         // className="h-4 w-4 rounded border-gray-300 dark:border-black dark:bg-white accent-white dark:accent-white"
-                                        className=" h-4 w-4 rounded
-                                                    border border-gray-300
-                                                    bg-white
-                                                    checked:bg-black checked:border-black
-                                                    accent-black
-                                                    transition-colors duration-200"
+                                        className="
+                                            h-4 w-4 rounded
+                                            [color-scheme:light] 
+                                            bg-white dark:bg-white 
+                                            border border-gray-300 dark:border-gray-600
+                                            checked:bg-white checked:border-black
+                                            accent-black
+                                            transition-colors duration-200
+                                        "
                                       />
                                       <div className="flex justify-between w-full">
                                         <div className="flex-grow">
                                           {fName === "Area" ||
-                                          fName === "City" ||
-                                          fName === "Primary Category" ? (
+                                            fName === "City" ||
+                                            fName === "Primary Category" ? (
                                             // Case 1: Display name and count with special styling
                                             <div className="flex items-center justify-between">
                                               <span
@@ -448,11 +449,11 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
                                           {fName === "Price Ranges"
                                             ? storeType?.store_type &&
                                               priceStartMap[
-                                                storeType.store_type
+                                              storeType.store_type
                                               ]?.[facet.name]
                                               ? priceStartMap[
-                                                  storeType.store_type
-                                                ][facet.name]
+                                              storeType.store_type
+                                              ][facet.name]
                                               : ""
                                             : ""}
                                         </span>

@@ -98,15 +98,19 @@ export default function SellerLandingHeader() {
         }`}
       >
         <div className="flex justify-between items-center mb-6">
-          <span className={`${rosario.className} text-[30px] text-black`} style={{ fontWeight: 500 }}>
+          <Link
+            href="/"
+            className={`${rosario.className} text-[27px] text-black`}
+            style={{ fontWeight: 600 }}
+          >
             Attirelly
-          </span>
+          </Link>
           {/* <button onClick={() => setHamburgerMenu(false)}> */}
             <Image
               src="/ListingMobileHeader/cross_button.svg"
               alt="Close"
-              width={20}
-              height={20}
+              width={15}
+              height={15}
               onClick={() => setHamburgerMenu(false)}
               className="cursor-pointer"
             />
