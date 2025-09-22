@@ -23,6 +23,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Link from "next/link";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 import { useSwipeable } from "react-swipeable";
+import { hex } from "framer-motion";
 
 /**
  * A comprehensive client-side component for displaying the details of a single product.
@@ -556,6 +557,20 @@ Could you please confirm its availability and share payment link.`;
                     {colors.map((color) => {
                       const isSelected =
                         selectedColor?.color_id === color.color_id;
+
+                      const swatchStyle = {};
+                      const hexCode = color.hex_code;
+                      console.log("hexcode", hexCode)
+                      if (hexCode && hexCode.includes(",")) {
+                        // It's a gradient!
+                        const gradientColors = hexCode.split(",");
+                        swatchStyle.backgroundImage = `linear-gradient(to right, ${gradientColors.join(
+                          ", "
+                        )})`;
+                      } else {
+                        // It's a single, solid color.
+                        swatchStyle.backgroundColor = hexCode || "#ccc"; // Fallback for null/empty codes
+                      }
                       return (
                         <div
                           key={color.color_id}
@@ -564,9 +579,7 @@ Could you please confirm its availability and share payment link.`;
                           <button
                             className={`w-8 h-8 md:w-10 md:h-10 rounded-full border border-gray-300 transition-all duration-200
                 ${isSelected ? "ring-2 ring-black ring-offset-2" : ""}`}
-                            style={{
-                              backgroundColor: color.hex_code || "#ccc",
-                            }}
+                            style={swatchStyle}
                             onClick={() =>
                               updateVariantBySelection(color, selectedSize)
                             }

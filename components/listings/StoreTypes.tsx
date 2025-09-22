@@ -7,6 +7,7 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { event } from "@/lib/gtag";
 import { manrope } from "@/font";
 import StoreTypeTabsSkeleton from "./skeleton/StoreTypeHeaderSkeleton";
+import { useProductFilterStore } from "@/store/filterStore";
 
 /**
  * @interface StoreTypeTabsProps
@@ -38,11 +39,11 @@ export default function StoreTypeTabs({
   context,
 }: StoreTypeTabsProps) {
   const { setStoreType, storeType } = useHeaderStore();
-  const [storeTypes , setStoreTypes] = useState<BrandType[]>([]);
   const [tabs, setTabs] = useState<SelectOption[]>([]);
   const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(
     null
   );
+  const {totalHits}= useProductFilterStore();
   const [loading, setLoading] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 

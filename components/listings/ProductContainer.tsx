@@ -90,6 +90,7 @@ export default function ProductContainer({
     selectedPriceRange,
     priceBounds,
     setIsResultsLoading,
+    setTotalHits
   } = useProductFilterStore();
 
   const { query, city, area, storeType, sortBy } = useHeaderStore();
@@ -235,7 +236,7 @@ export default function ProductContainer({
       } else if (currentPage < data.total_pages - 1) {
         setPage((prev) => prev + 1);
       }
-
+      setTotalHits(data.total_hits)
       setLoading(false);
       setIsResultsLoading(false);
     } catch (error: any) {

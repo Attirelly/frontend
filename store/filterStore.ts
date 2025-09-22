@@ -39,6 +39,9 @@ interface FilterState {
   /**
    * @property {boolean} isResultsLoading - A flag to indicate if the main content (products/stores) is currently being fetched.
    */
+  totalHits:number;
+  setTotalHits:(result:number)=>void;
+
   isResultsLoading: boolean;
   /**
    * @action setIsResultsLoading - Sets the loading state for the main content.
@@ -132,6 +135,8 @@ function createFilterStore() {
     setActiveFacet: (facet: string | null) => set({ activeFacet: facet }),
     results: 0,
     setResults: (results: number) => set({ results }),
+    totalHits:0,
+    setTotalHits:(results:number)=>set({results}),
     isResultsLoading: true,
     setIsResultsLoading: (loading: boolean) =>
       set({ isResultsLoading: loading }),
