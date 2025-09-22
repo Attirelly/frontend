@@ -228,7 +228,6 @@ export default function MobileSearchContainer({ onClose }: Props) {
    * on clicking outside the dropdown for suggestions, close dropdown
    */
    useEffect(() => {
-    console.log("handle outside click use effect");
     const handleClickOutside = (e: MouseEvent) => {
       if (
         dropdownRef.current &&
