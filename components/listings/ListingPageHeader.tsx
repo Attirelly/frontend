@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { api } from "@/lib/axios";
@@ -22,6 +22,25 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 type Props = {
   className?: string;
 };
+
+// Add these new type definitions
+type SuggestionItem = {
+  type: "suggestion";
+  value: string;
+};
+
+type CategoryItem = {
+  type: "category";
+  data: { subcategory3: string; [key: string]: any }; // Be more specific if you can
+};
+
+type StoreItem = {
+  type: "store";
+  data: { store_id: string; [key: string]: any }; // Be more specific if you can
+};
+
+// Create a union of all possible suggestion types
+type AllSuggestionTypes = SuggestionItem | CategoryItem | StoreItem;
 
 /**
  * ListingPageHeader Component
@@ -105,10 +124,13 @@ export default function ListingPageHeader({ className }: Props) {
   const [showStoreType, setShowStoreType] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
   const [locationSearchInput, setLocationSearchInput] = useState("");
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
 
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   /**
    * Prefetches key routes for faster navigation.
@@ -120,14 +142,56 @@ export default function ListingPageHeader({ className }: Props) {
     router.prefetch("/");
   }, [router]);
 
+const allSuggestions: AllSuggestionTypes[] = useMemo(() => {
+  const combinedSuggestions: SuggestionItem[] = [...storeSuggestions, ...productSuggestions].map(
+    (value) => ({ type: "suggestion", value })
+  );
+  const categorySuggestions: CategoryItem[] = categories.map((data) => ({
+    type: "category",
+    data,
+  }));
+  const storeItems: StoreItem[] = stores.map((data) => ({ type: "store", data }));
+
+  return [...combinedSuggestions, ...categorySuggestions, ...storeItems];
+}, [storeSuggestions, productSuggestions, categories, stores]);
+
+
   /**
    * Handles the "Enter" key press in the search input.
    * if pressed and the search input is not empty, it navigates to the product directory with the current search query.
    * Also resets relevant states and filters.
    */
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((prevIndex) =>
+        prevIndex === allSuggestions.length - 1 ? 0 : prevIndex + 1
+      );
+      return;
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((prevIndex) =>
+        prevIndex <= 0 ? allSuggestions.length - 1 : prevIndex - 1
+      );
+      return;
+    }
+
     if (e.key === "Enter") {
       e.preventDefault();
+      // If a suggestion is highlighted, handle its specific action
+      if (activeIndex > -1) {
+        const activeItem = allSuggestions[activeIndex];
+        if (activeItem.type === "suggestion") {
+          handleSuggestionClick(activeItem.value);
+        } else if (activeItem.type === "category") {
+          handleCategoryClick(activeItem.data.subcategory3);
+        } else if (activeItem.type === "store") {
+          handleStoreClick(activeItem.data.store_id);
+        }
+        return; // Stop further execution
+      }
       const trimmed = tempQuery.trim();
       setShowDropdown(false);
       setShowStoreType(false);
@@ -213,6 +277,7 @@ export default function ListingPageHeader({ className }: Props) {
    * - For longer queries, it debounces the fetch by 100ms to limit API calls while typing.
    */
   useEffect(() => {
+    setActiveIndex(-1);
     if (tempQuery.length < 4) {
       setStoreSuggestions([]);
       setProductSuggestions([]);
@@ -234,6 +299,23 @@ export default function ListingPageHeader({ className }: Props) {
     return () => clearTimeout(debounce);
   }, [tempQuery]);
 
+  useEffect(() => {
+    if (activeIndex < 0 || !scrollContainerRef.current) return;
+
+    // Find the currently active element by its unique ID
+    const activeItemElement = document.getElementById(
+      `suggestion-item-${activeIndex}`
+    );
+
+    if (activeItemElement) {
+      // Scroll the element into the visible area of the container
+      activeItemElement.scrollIntoView({
+        block: "nearest", // Ensures minimal scrolling
+        behavior: "smooth", // For a smoother user experience
+      });
+    }
+  }, [activeIndex]); // This effect runs only when activeIndex changes
+
   /**
    * Effect hook that handles clicks outside the dropdown.
    * If a click occurs outside, it hides the dropdown, store type selector, and removes focus from the search input.
@@ -247,6 +329,7 @@ export default function ListingPageHeader({ className }: Props) {
         setShowDropdown(false);
         setShowStoreType(false);
         setSearchFocus(false);
+        setActiveIndex(-1); // *** NEW: Reset index on click outside ***
       }
     };
     document.addEventListener("click", handleClickOutside);
@@ -281,6 +364,7 @@ export default function ListingPageHeader({ className }: Props) {
     setSearchFocus(false);
     setShowDropdown(false);
     setTempQuery("");
+    setActiveIndex(-1); // *** NEW: Reset index on click ***
     router.push("/product_directory?search=" + encodeURIComponent(value));
   };
 
@@ -292,7 +376,7 @@ export default function ListingPageHeader({ className }: Props) {
     setSearchFocus(false);
     setShowDropdown(false);
     setTempQuery("");
-
+    setActiveIndex(-1); // *** NEW: Reset index on click ***
     router.push(
       `/product_directory?categories=${encodeURIComponent(category)}`
     );
@@ -306,6 +390,7 @@ export default function ListingPageHeader({ className }: Props) {
   const handleStoreClick = (storeID: string) => {
     setSearchFocus(false);
     setShowDropdown(false);
+    setActiveIndex(-1); // *** NEW: Reset index on click ***
     router.push("/store_profile/" + storeID);
   };
 
@@ -316,6 +401,7 @@ export default function ListingPageHeader({ className }: Props) {
   const handleStoreListRoute = () => {
     setSearchFocus(false);
     setShowDropdown(false);
+    setActiveIndex(-1); // *** NEW: Reset index on click ***
     const value = tempQuery;
     router.push("/store_listing?search=" + encodeURIComponent(value));
   };
@@ -402,6 +488,10 @@ export default function ListingPageHeader({ className }: Props) {
       </div>
     );
   }
+
+  const suggestionCount = storeSuggestions.length + productSuggestions.length;
+  const categoryOffset = suggestionCount;
+  const storeOffset = suggestionCount + categories.length;
 
   return (
     <div className={`${className} sticky top-0 z-1000`}>
@@ -518,13 +608,16 @@ export default function ListingPageHeader({ className }: Props) {
                 />
 
                 {showDropdown && (
-                  <div className="absolute top-10 transform -translate-x-10 mt-2 bg-white rounded-md shadow-lg max-h-[480px] overflow-y-auto scrollbar-none z-50 max-w-[500px] w-[400px]">
+                  <div ref={scrollContainerRef} className="absolute top-10 transform -translate-x-10 mt-2 bg-white rounded-md shadow-lg max-h-[480px] overflow-y-auto scrollbar-none z-50 max-w-[500px] w-[400px]">
                     <div className="flex flex-col gap-1">
                       {[...storeSuggestions, ...productSuggestions].map(
                         (suggestion, i) => (
                           <div
                             key={i}
-                            className="flex items-center gap-3 py-3 px-4 rounded-md hover:bg-gray-100 cursor-pointer"
+                            id={`suggestion-item-${i}`}
+                            className={`flex items-center gap-3 py-3 px-4 rounded-md cursor-pointer ${
+                              activeIndex === i ? "bg-gray-100" : "hover:bg-gray-100"
+                            }`}
                             onClick={() => handleSuggestionClick(suggestion)}
                           >
                             <img
@@ -556,9 +649,12 @@ export default function ListingPageHeader({ className }: Props) {
                           {categories.map((cat, i) => (
                             <button
                               key={i}
-                              className={
-                                "flex items-center gap-2 px-4 py-2 rounded-full text-sm text-black transition-all bg-gray-100 hover:bg-gray-200 cursor-pointer"
-                              }
+                              id={`suggestion-item-${categoryOffset + i}`}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm text-black transition-all cursor-pointer ${
+                                activeIndex === categoryOffset + i
+                                  ? "bg-gray-200"
+                                  : "bg-gray-100 hover:bg-gray-200"
+                              }`}
                               onClick={() =>
                                 handleCategoryClick(cat.subcategory3)
                               }
@@ -595,7 +691,12 @@ export default function ListingPageHeader({ className }: Props) {
                         {stores.map((store, i) => (
                           <div
                             key={i}
-                            className="flex items-center gap-3 py-2 hover:bg-gray-100 rounded-md cursor-pointer"
+                            id={`suggestion-item-${storeOffset + i}`}
+                            className={`flex items-center gap-3 py-2 rounded-md cursor-pointer ${
+                              activeIndex === storeOffset + i
+                                ? "bg-gray-100"
+                                : "hover:bg-gray-100"
+                            }`}
                             onClick={() => handleStoreClick(store.store_id)}
                           >
                             <img
