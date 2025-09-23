@@ -409,23 +409,25 @@ Could you please confirm its availability and share payment link.`;
                 />
               )}
 
-              <div className="mt-4 hidden md:flex items-center gap-2">
+              <div className="mt-4 w-full flex items-center justify-center gap-2 md:mt-6 md:gap-4">
+                {/* Previous Button */}
                 <button
-                  className="p-2 rounded-xl bg-black disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="flex-shrink-0 cursor-pointer rounded-lg border bg-white p-2 transition-transform active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 md:rounded-xl md:p-3"
                   onClick={prevImage}
                   disabled={startIndex === 0 && activeIndex === 0}
                 >
-                  <ChevronLeft size={16} />
+                  <ChevronLeft size={16} color="black" />
                 </button>
 
-                <div className="flex gap-2 overflow-x-auto">
+                {/* Scrollable Thumbnail Container */}
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-none md:gap-3">
                   {images.slice(startIndex, startIndex + 5).map((src, idx) => (
                     <div
                       key={idx}
-                      className={`w-16 h-20 relative border-2 rounded overflow-hidden cursor-pointer ${
+                      className={`relative flex-shrink-0 cursor-pointer overflow-hidden rounded-md border-2 duration-200 transition-all h-18 w-14 lg:h-20 lg:w-16 ${
                         startIndex + idx === activeIndex
                           ? "border-black"
-                          : "border-gray-300"
+                          : "border-gray-300 hover:border-gray-400"
                       }`}
                       onClick={() => setActiveIndex(startIndex + idx)}
                     >
@@ -439,14 +441,15 @@ Could you please confirm its availability and share payment link.`;
                   ))}
                 </div>
 
+                {/* Next Button */}
                 <button
-                  className="p-2 rounded-xl bg-black disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="flex-shrink-0 cursor-pointer rounded-lg border bg-white p-2 transition-transform active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 md:rounded-xl md:p-3"
                   onClick={nextImage}
                   disabled={
                     activeIndex === endIndex && endIndex === images.length - 1
                   }
                 >
-                  <ChevronRight size={20} />
+                  <ChevronRight size={16} color="black" />
                 </button>
               </div>
             </div>
@@ -560,7 +563,7 @@ Could you please confirm its availability and share payment link.`;
 
                       const swatchStyle = {};
                       const hexCode = color.hex_code;
-                      console.log("hexcode", hexCode)
+                      console.log("hexcode", hexCode);
                       if (hexCode && hexCode.includes(",")) {
                         // It's a gradient!
                         const gradientColors = hexCode.split(",");

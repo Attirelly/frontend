@@ -151,7 +151,7 @@ export default function ListingMobileHeader({
   }, []);
 
   return (
-    <div className={`${manrope.className} w-full bg-white text-black sticky top-0 z-1000`}>
+    <div className={`${manrope.className} w-full bg-white text-black sticky top-0 z-101`}>
       {/* Header bar */}
       <div
         className={`${className} w-full flex justify-between px-[21px] py-[8px] text-black h-[50px]`}

@@ -90,7 +90,6 @@ export default function ProductContainer({
     selectedPriceRange,
     priceBounds,
     setIsResultsLoading,
-    setTotalHits
   } = useProductFilterStore();
 
   const { query, city, area, storeType, sortBy } = useHeaderStore();
@@ -172,7 +171,7 @@ export default function ProductContainer({
       setIsResultsLoading(true);
 
       const finalFilterString = filterClauses.join(" AND ");
-      let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
+      let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}&only_active=true`;
 
       if (area) {
         searchUrl += `&area=${area.name}`;
@@ -236,7 +235,6 @@ export default function ProductContainer({
       } else if (currentPage < data.total_pages - 1) {
         setPage((prev) => prev + 1);
       }
-      setTotalHits(data.total_hits)
       setLoading(false);
       setIsResultsLoading(false);
     } catch (error: any) {
