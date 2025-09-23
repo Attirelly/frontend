@@ -171,7 +171,7 @@ export default function ProductContainer({
       setIsResultsLoading(true);
 
       const finalFilterString = filterClauses.join(" AND ");
-      let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
+      let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}&only_active=true`;
 
       if (area) {
         searchUrl += `&area=${area.name}`;

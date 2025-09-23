@@ -14,7 +14,7 @@ export default function ShowMoreProducts({ store_id, limit }: ShowMoreProductPro
     const fetchProducts = async (store_id: string) => {
         try {
             const res = await api.get(
-                `/search/search_product?query=${store_id}&page=0&limit=${limit}&filters=&facetFilters=`
+                `/search/search_product?query=${store_id}&page=0&limit=${limit}&only_active=true`
             );
             
             const data = res.data;
