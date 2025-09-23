@@ -285,11 +285,11 @@ export default function StoreListingPage() {
       {isFilterOpen && (
         <div
           onClick={() => setIsFilterOpen(false)}
-          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-102 bg-black/40 lg:hidden"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="fixed top-0 left-0 z-50 h-full w-full max-w-xs bg-white shadow-xl"
+            className="fixed top-0 left-0 z-102 h-full w-full max-w-xs bg-white shadow-xl"
           >
             <DynamicFilter
               context="store"

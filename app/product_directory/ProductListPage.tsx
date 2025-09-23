@@ -331,12 +331,12 @@ export default function ProductListPage() {
         // Backdrop
         <div
           onClick={() => setIsFilterOpen(false)}
-          className="fixed inset-0 z-100 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-102 bg-black/40 lg:hidden"
         >
           {/* Panel */}
           <div
             onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the panel
-            className="fixed top-0 left-0 z-50 h-full w-full max-w-xs bg-white shadow-xl mx-auto"
+            className="fixed top-0 left-0 z-102 h-full w-full max-w-xs bg-white shadow-xl mx-auto"
           >
             {/* The filter component is rendered here for mobile, with the 'onClose' prop */}
             <DynamicFilter
