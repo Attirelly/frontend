@@ -1,7 +1,7 @@
-'use client'; // Add this line at the top
+'use client';
 
-import { useState } from 'react'; // Import useState
-import { Search, SlidersHorizontal, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { Search, ChevronRight } from 'lucide-react'; // Removed SlidersHorizontal
 
 // --- TYPE DEFINITION ---
 interface Profile {
@@ -39,8 +39,9 @@ const profileData: Profile[] = [
   },
 ];
 
-// --- PROFILE CARD COMPONENT ---
-const ProfileCard = ({ profile }: { profile: Profile }) => {
+// --- MODIFIED: PROFILE CARD COMPONENT ---
+// It now accepts 'activeFilter' to conditionally display metrics.
+const ProfileCard = ({ profile, activeFilter }: { profile: Profile; activeFilter: string }) => {
   return (
     <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
       <div className="flex items-center space-x-3 sm:space-x-4">
@@ -50,9 +51,13 @@ const ProfileCard = ({ profile }: { profile: Profile }) => {
           <p className="text-xs sm:text-sm text-gray-500 flex flex-wrap items-center gap-x-2">
             <span>Followers: {profile.followers}</span>
             <span className="hidden sm:inline text-gray-300">·</span>
-            <span>Engagement: {profile.engagement}</span>
-            <span className="hidden sm:inline text-gray-300">·</span>
-            <span>Reach: {profile.reach}</span>
+            {/* --- CHANGE: Conditional Metric Display --- */}
+            {activeFilter === 'Engagement Rate' && (
+              <span>Engagement: {profile.engagement}</span>
+            )}
+            {activeFilter === 'Reach' && (
+              <span>Reach: {profile.reach}</span>
+            )}
           </p>
         </div>
       </div>
@@ -64,10 +69,11 @@ const ProfileCard = ({ profile }: { profile: Profile }) => {
 // --- MAIN PAGE COMPONENT ---
 const InstagramInsightsPage = () => {
   // --- STATE MANAGEMENT for filters ---
-  const [activeFilter, setActiveFilter] = useState('Reach');
+  const [activeFilter, setActiveFilter] = useState('Reach'); // Default filter is Reach
   const [activePeriod, setActivePeriod] = useState('7d');
   
-  const mainFilters = ['Followers Growth', 'Engagement Rate', 'Reach'];
+  // --- CHANGE: Removed 'Followers Growth' ---
+  const mainFilters = ['Engagement Rate', 'Reach'];
   const timePeriods = ['7d', '30d', '90d'];
 
   return (
@@ -77,25 +83,21 @@ const InstagramInsightsPage = () => {
         {/* Header Section */}
         <header className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold mb-6">Instagram Insights</h1>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-              <input 
-                type="text" 
-                placeholder="Search username..." 
-                className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 transition-shadow" 
-              />
-            </div>
-            <button className="w-full sm:w-auto p-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
-              <SlidersHorizontal size={20} className="mx-auto sm:mx-0" />
-            </button>
+          {/* --- CHANGE: Simplified header, removed filter button --- */}
+          <div className="relative w-full sm:max-w-xs">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <input 
+              type="text" 
+              placeholder="Search username..." 
+              className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 transition-shadow" 
+            />
           </div>
         </header>
 
-        {/* MODIFIED: Filters and Time Period Section */}
+        {/* Filters and Time Period Section */}
         <section className="mb-8">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-                {/* Main Filters with state */}
+                {/* Main Filters */}
                 <div className="flex items-center flex-wrap justify-center sm:justify-start gap-2">
                     {mainFilters.map((filter) => (
                         <button 
@@ -108,26 +110,30 @@ const InstagramInsightsPage = () => {
                     ))}
                 </div>
 
-                {/* Time Period Filter with state */}
-                <div className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
-                    {timePeriods.map((period) => (
-                         <button 
-                            key={period}
-                            onClick={() => setActivePeriod(period)}
-                            className={`px-5 py-1.5 rounded-md text-sm font-semibold transition-colors ${activePeriod === period ? 'bg-black text-white shadow-sm' : 'text-gray-500 hover:bg-white'}`}
-                        >
-                            {period}
-                        </button>
-                    ))}
-                </div>
+                {/* --- CHANGE: Conditionally render Time Period Filter --- */}
+                {/* This block now only shows when the 'Reach' filter is active */}
+                {activeFilter === 'Reach' && (
+                    <div className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
+                        {timePeriods.map((period) => (
+                             <button 
+                                 key={period}
+                                 onClick={() => setActivePeriod(period)}
+                                 className={`px-5 py-1.5 rounded-md text-sm font-semibold transition-colors ${activePeriod === period ? 'bg-black text-white shadow-sm' : 'text-gray-500 hover:bg-white'}`}
+                             >
+                                 {period}
+                             </button>
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
 
         {/* Profile List Section */}
         <section>
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            {/* --- CHANGE: Pass 'activeFilter' state down to each ProfileCard --- */}
             {profileData.map((profile) => (
-              <ProfileCard key={profile.username} profile={profile} />
+              <ProfileCard key={profile.username} profile={profile} activeFilter={activeFilter} />
             ))}
           </div>
         </section>

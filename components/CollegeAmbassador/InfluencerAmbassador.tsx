@@ -5,22 +5,22 @@ type Props = {
 };
 export default function InfluencerAmbassador({ screenSize }: Props) {
     return (
-        <div className="w-full bg-[#F7F9FC] rounded-4xl overflow-hidden">
-            <div className="flex flex-col gap-4 lg:flex-row lg:justify-between">
-                <div className={`${manrope.className} flex flex-col py-2 lg:py-[94px] items-center lg:items-start lg:pl-[80px]`}>
-
-                    <h2 className="text-[24px] lg:text-[36px] text-[#1B1C57] mb-4" style={{fontWeight:700}}>
+        <div className="w-full max-w-[90vw] lg:max-w-[90vw] mx-auto bg-[#F7F9FC] rounded-4xl overflow-hidden">
+            <div className="flex flex-col md:flex-row lg:flex-row lg:items-stretch lg:justify-between h-full">
+                {/* Content Section */}
+                <div className={`${manrope.className} flex flex-col py-8 px-6 md:py-12 md:px-8 lg:py-[60px] lg:pl-[50px] lg:pr-4 items-center md:items-start lg:items-start flex-1`}>
+                    <h2 className="text-[24px] md:text-[28px] lg:text-[36px] text-[#1B1C57] mb-6 text-center md:text-left lg:text-left whitespace-nowrap" style={{ fontWeight: 700 }}>
                         Ambassador for Influencers
                     </h2>
-                    <div>
-                        <ul className="space-y-2 text-[14px] lg:text-[18px] w-[320px] lg:w-full text-[#1B1C57]" style={{fontWeight:400}}>
-                            <li className="flex items-center gap-2">
-                                <span className="w-[10px] h-[10px] bg-gray-700 rounded-full"></span>
-                                <span>Build your personal brand both offline and online</span>
+                    <div className="w-full max-w-[500px] lg:max-w-none">
+                        <ul className="space-y-3 text-[14px] md:text-[16px] lg:text-[18px] text-[#1B1C57]" style={{ fontWeight: 400 }}>
+                            <li className="flex items-start gap-3">
+                                <span className="w-[10px] h-[10px] bg-gray-700 rounded-full mt-1 flex-shrink-0"></span>
+                                <span className="leading-relaxed">Build your personal brand both offline and online</span>
                             </li>
-                            <li className="flex items-center gap-2">
-                                <span className="w-[10px] h-[10px] bg-gray-700 rounded-full"></span>
-                                <span>Get access to followers of top Designer Labels, Fashion Stores and Stylists</span>
+                            <li className="flex items-start gap-3">
+                                <span className="w-[10px] h-[10px] bg-gray-700 rounded-full mt-1 flex-shrink-0"></span>
+                                <span className="leading-relaxed">Get access to followers of top Designer Labels, Fashion Stores and Stylists</span>
                             </li>
                             {/* <li className="flex items-center gap-2">
                                 <span className="w-[10px] h-[10px] bg-gray-700 rounded-full"></span>
@@ -30,26 +30,22 @@ export default function InfluencerAmbassador({ screenSize }: Props) {
                     </div>
 
                 </div>
-                {/* Image Section */}
-                <div className="flex items-end justify-center">
-                    {/* Background Camera Image */}
-                    {/* <Image
-                        src="/CollegeAmbassador/camera.svg"
-                        alt="Camera"
-                        width={400}
-                        height={400}
-                        className="absolute bottom-0 right-0  z-0"
-                    /> */}
-                    {/* Foreground Influencer Image */}
-                    <Image
+                {/* <Image
                         src="/CollegeAmbassador/influencer_person.svg"
                         alt="Influencer"
                         width={screenSize === 'sm' ? 280 : 500}
                         height={screenSize === 'sm' ? 143 : 286}
                         className=""
+                    /> */}
+                <div className="flex items-end justify-center md:justify-end lg:justify-end pt-6 px-6 md:pt-0 md:px-0 md:pr-[40px] lg:pr-[40px] md:flex-shrink-0 lg:flex-shrink-0 md:self-end lg:self-end">
+                    <Image
+                        src="/CollegeAmbassador/influencer_person.svg"
+                        alt="Influencer"
+                        width={500}
+                        height={300}
+                        className="w-2/3 h-auto max-w-[350px] md:w-[280px] md:h-auto lg:w-[286px] lg:h-auto object-contain transition-transform duration-300 ease-in-out"
                     />
                 </div>
-
             </div>
         </div>
     );
