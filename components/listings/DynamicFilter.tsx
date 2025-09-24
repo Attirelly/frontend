@@ -86,6 +86,7 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
     setPriceRange,
     selectedPriceRange,
     priceBounds,
+    storeTypes,
   } = filterStore;
   const { storeType } = useHeaderStore();
 
@@ -95,6 +96,7 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
   const [localPriceRange, setLocalPriceRange] = useState(
     selectedPriceRange || priceBounds
   );
+
 
   useEffect(() => {
     if (context === "product" && priceBounds) {
@@ -265,7 +267,13 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
         <div className="flex flex-col gap-5">
           {Object.entries(facets).map(([facetName, values]) => {
             const fName = formatFacetName(facetName);
-            if (fName === "Store Types" || fName === "Discount") return null;
+            if(fName==="Store Types"){
+              return null;
+            }
+            else if(fName === "Discount"){
+              return null ; 
+            }
+
             const isOpen = openFacets[facetName];
 
             const searchValue = searchTerms[facetName]?.toLowerCase() || "";

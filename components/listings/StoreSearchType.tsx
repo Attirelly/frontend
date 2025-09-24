@@ -72,7 +72,7 @@ export default function StoreSearchType({
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const [storeTypesList, setStoreTypesList] = useState<StoreType[]>([]);
-  const { setStoreType, searchFocus, setQuery } = useHeaderStore();
+  const { searchFocus, setQuery } = useHeaderStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchType, setShowSearchType] = useState(false);
 
