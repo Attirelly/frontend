@@ -70,7 +70,7 @@ const REFETCH_THRESHOLD = Math.round(BUFFER_SIZE * 0.2); // Refetch when 80% of 
  * - `sort_by`: The key to sort the results by (e.g., `price_asc`).
  * - `area` (optional): Filters results by a specific area.
  * - `city` (optional): Filters results by a specific city.
- * 
+ *
  * @param {ProductContainerProps} props - The props for the component.
  * @returns {JSX.Element} A grid of products, a skeleton loader, or a "no results" message.
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API | Intersection Observer API}
@@ -173,6 +173,8 @@ export default function ProductContainer({
       const finalFilterString = filterClauses.join(" AND ");
       let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
 
+      // let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}&only_active=true`;
+
       if (area) {
         searchUrl += `&area=${area.name}`;
       }
@@ -235,7 +237,6 @@ export default function ProductContainer({
       } else if (currentPage < data.total_pages - 1) {
         setPage((prev) => prev + 1);
       }
-
       setLoading(false);
       setIsResultsLoading(false);
     } catch (error: any) {

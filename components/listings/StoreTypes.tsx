@@ -38,7 +38,6 @@ export default function StoreTypeTabs({
   context,
 }: StoreTypeTabsProps) {
   const { setStoreType, storeType } = useHeaderStore();
-  const [storeTypes , setStoreTypes] = useState<BrandType[]>([]);
   const [tabs, setTabs] = useState<SelectOption[]>([]);
   const [selectedStoreType, setSelectedStoreType] = useState<BrandType | null>(
     null
@@ -188,11 +187,15 @@ export default function StoreTypeTabs({
       <div
       ref={scrollContainerRef}
       className={clsx(
-        // Mobile: Flex container with horizontal scrolling
-        "flex w-full items-center justify-center gap-2 overflow-x-auto px-2 scrollbar-none",
-        // Desktop: Overrides for the pill-style container
-        "md:w-fit md:max-w-fit md:rounded-full md:overflow-x-visible"
-      )}
+        // Mobile: Flex container with horizontal scrolling
+        "flex w-full items-center gap-2 overflow-x-auto px-2 scrollbar-none",
+        // Conditionally center tabs ONLY for the 'products' context
+        {
+          "justify-center": context === "products",
+        },
+        // Desktop: Overrides for the pill-style container
+        "md:w-fit md:max-w-fit md:rounded-full md:overflow-x-visible"
+      )}
     >
       {tabs.map((tab) => (
         <button

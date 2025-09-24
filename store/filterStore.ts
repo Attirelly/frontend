@@ -39,6 +39,7 @@ interface FilterState {
   /**
    * @property {boolean} isResultsLoading - A flag to indicate if the main content (products/stores) is currently being fetched.
    */
+
   isResultsLoading: boolean;
   /**
    * @action setIsResultsLoading - Sets the loading state for the main content.
