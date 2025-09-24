@@ -53,7 +53,7 @@ export default function SellerOnboardingPage() {
       <div className="absolute w-full top-[730px] lg:top-[548px] rounded-tl-4xl rounded-tr-4xl bg-white">
         <section id="What Is Attirelly?"><AmbassadorBenefits screenSize={screenSize} /></section>
         <section id="Benefits"><AmbassadorOurNumbers screenSize={screenSize}/></section>
-        <section id="Who Can Join"><AmbassadorWhoCanJoin screenSize={screenSize}/></section>
+        <section id="Who Can Join"><AmbassadorWhoCanJoin /></section>
         <section id="Future Roadmap"><AmbassadorRevolution screenSize={screenSize}/></section>  
         <section id="FAQ"><FAQ /></section>
         <section id="Contact Us"><AmbassadorSellerForm /></section>

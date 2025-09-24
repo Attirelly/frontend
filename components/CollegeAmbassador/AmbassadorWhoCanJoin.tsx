@@ -4,11 +4,9 @@ import HouseMakerAmbassador from "./HouseMakerAmbassador";
 import InfluencerAmbassador from "./InfluencerAmbassador";
 import FashionAmbassador from "./FashionAmbassador";
 import WhoCanJoinTabs from "./WhoCanJoinTabs";
-type Props = {
-  screenSize?: string;
-};
 
-export default function AmbassadorWhoCanJoin({ screenSize }: Props) {
+
+export default function AmbassadorWhoCanJoin() {
     const { ambassadorType } = useHeaderStore();
     return(
         <div className="flex flex-col items-center gap-4 px-2 md:px-10">
@@ -16,13 +14,13 @@ export default function AmbassadorWhoCanJoin({ screenSize }: Props) {
         <span className="text-[14px] w-[350px] md:w-[450px] lg:w-full md:text-[18px] text-[#1B1C57] mb-8 text-center" style={{fontWeight:400}}>if you sell ethnic wear, ranging from affordable to luxury wear, Attirelly is for you. We work with:</span>
         <WhoCanJoinTabs defaultValue="Students"/>
         {ambassadorType === 'Students' 
-        ? <StudentAmbassador screenSize={screenSize}/> : 
+        ? <StudentAmbassador /> : 
         ambassadorType === 'House makers' 
-        ? <HouseMakerAmbassador screenSize={screenSize}/> :
+        ? <HouseMakerAmbassador /> :
         ambassadorType === 'Influencers'
-        ? <InfluencerAmbassador screenSize={screenSize}/> :
+        ? <InfluencerAmbassador /> :
         ambassadorType === 'Fashion'
-        ? <FashionAmbassador screenSize={screenSize}/> : <div></div>}
+        ? <FashionAmbassador /> : <div></div>}
       </div>
     )
 }
