@@ -110,15 +110,15 @@ export default function PostCatalogueButton({
             <Image
               src={getIconPath(option)}
               alt={option}
-              width={16}
-              height={16}
-              className="w-4 h-4"
+              width={20}
+              height={20}
+              className={option === 'Products' ? 'w-6 h-6' : 'w-5 h-5'}
             />
             <span
               className={`uppercase ${
                 selected === option
-                  ? "text-black font-semibold"
-                  : "text-[#878787]"
+                 ? "text-black font-bold"
+                  : "text-gray-500" 
               }`}
             >
               {option}

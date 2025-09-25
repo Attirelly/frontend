@@ -8,127 +8,117 @@ type Props = {
 
 const AmbassadorBenefits: React.FC<Props> = ({ screenSize = 'sm' }) => {
   return (
-    <div className={`${manrope.className} flex flex-col gap-[104px]`}>
-      {/* Section 1 */}
-      <div className={`${manrope.className} flex flex-col mt-[23px] gap-[80px]`} style={{ fontWeight: 600 }}>
-        <div className="flex flex-col items-center" style={{ fontWeight: 400 }}>
-          <span className=" text-[24px] md:text-[32px] text-[#1B1C57] mb-4 text-center" style={{ fontWeight: 800 }}>Why become Attirelly Ambassador?</span>
-          <span className=" w-[346px] md:w-[602px] text-[14px] md:text-[20px] text-[#1B1C57] text-center">Everything you need about finding the best, safe and affordable storage space near you.</span>
+    <div className={`${manrope.className} flex flex-col gap-16 md:gap-20 lg:gap-[104px]`}>
+      {/* Section 1 - Benefits Cards */}
+      <div className={`${manrope.className} flex flex-col mt-6 md:mt-8 lg:mt-[23px] gap-12 md:gap-16 lg:gap-[80px]`}>
+        {/* Header */}
+        <div className="flex flex-col items-center px-4 sm:px-6 md:px-8">
+          <h2 className="text-[24px] md:text-[28px] lg:text-[32px] text-[#1B1C57] mb-4 text-center leading-tight" style={{ fontWeight: 800 }}>
+            Why become Attirelly Ambassador?
+          </h2>
+          <p className="max-w-[346px] md:max-w-[500px] lg:max-w-[602px] text-[14px] md:text-[16px] lg:text-[20px] text-[#1B1C57] text-center leading-relaxed" style={{ fontWeight: 400 }}>
+            Everything you need about finding the best, safe and affordable storage space near you.
+          </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row justify-center gap-[40px] mx-auto">
-          <div className="flex relative flex-col items-center px-8 py-4">
-            {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
-            <Image src="/CollegeAmbassador/money.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 245} height={screenSize === 'sm' ? 190 : 245} className="" />
-            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5 text-center">Earn up to Rs 25,000/Month</span>
-            <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>
-              Promote India's fastest-growing hyper local fashion marketplace and earn for every successful referral, event, and content initiative</span>
+        {/* Benefits Cards */}
+        <div className="flex flex-col md:flex-row lg:flex-row justify-center items-center lg:items-stretch gap-8 md:gap-10 lg:gap-[40px] px-4 sm:px-6 md:px-8 lg:px-0">
+          {/* Card 1 */}
+          <div className="flex flex-col items-center px-6 py-8 max-w-[320px] lg:max-w-[275px]">
+            <Image
+              src="/CollegeAmbassador/money.svg"
+              alt="zero commision"
+              width={245}
+              height={245}
+              className="w-2/5 h-auto max-w-[190px] md:w-3/5 md:max-w-[220px] lg:w-[245px] lg:h-[245px] object-contain transition-transform duration-300 ease-in-out hover:scale-105"
+            />
+            <h3 className="text-[18px] md:text-[22px] lg:text-[28px] text-[#1B1C57] mt-5 mb-3 text-center font-semibold">
+              Earn up to Rs 25,000/Month
+            </h3>
+            <p className="text-[#374151] text-sm md:text-base text-center leading-relaxed" style={{ fontWeight: 400 }}>
+              Promote India's fastest-growing hyper local fashion marketplace and earn for every successful referral, event, and content initiative
+            </p>
           </div>
-          <div className="flex flex-col items-center px-8 py-4">
-            {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
-            <Image src="/CollegeAmbassador/people_web.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 245} height={screenSize === 'sm' ? 190 : 245} className="" />
-            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5 text-center">Real Industry Exposure</span>
-            <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>Get hands-on experience in the world of fashion-tech, marketing, and influencer outreach</span>
+
+          {/* Card 2 */}
+          <div className="flex flex-col items-center px-6 py-8 max-w-[320px] lg:max-w-[275px]">
+            <Image
+              src="/CollegeAmbassador/people_web.svg"
+              alt="zero commision"
+              width={245}
+              height={245}
+              className="w-2/5 h-auto max-w-[190px] md:w-3/5 md:max-w-[220px] lg:w-[245px] lg:h-[245px] object-contain transition-transform duration-300 ease-in-out hover:scale-105"
+            />
+            <h3 className="text-[18px] md:text-[22px] lg:text-[28px] text-[#1B1C57] mt-5 mb-3 text-center font-semibold">
+              Real Industry Exposure
+            </h3>
+            <p className="text-[#374151] text-sm md:text-base text-center leading-relaxed" style={{ fontWeight: 400 }}>
+              Get hands-on experience in the world of fashion-tech, marketing, and influencer outreach
+            </p>
           </div>
-          <div className="flex flex-col items-center px-8 py-4">
-            {/* <Image src="/SellerLanding/bg_blue_lasso.svg" alt="bg blue" width={245} height={247} className="relative"/> */}
-            <Image src="/CollegeAmbassador/two_hand.svg" alt="zero commision" width={screenSize === 'sm' ? 190 : 260} height={screenSize === 'sm' ? 190 : 245} className="" />
-            <span className="text-[20px] md:text-[28px] text-[#1B1C57] mt-5 text-center">Gain practical Experience</span>
-            <span className="w-[275px] text-[#374151] text-sm text-center" style={{ fontWeight: 400 }}>Learn how to build and promote your brand through an exciting 0 → 100 journey</span>
+
+          {/* Card 3 */}
+          <div className="flex flex-col items-center px-6 py-8 max-w-[320px] lg:max-w-[275px]">
+            <Image
+              src="/CollegeAmbassador/two_hand.svg"
+              alt="zero commision"
+              width={260}
+              height={245}
+              className="w-2/5 h-auto max-w-[190px] md:w-3/5 md:max-w-[220px] lg:w-[260px] lg:h-[245px] object-contain transition-transform duration-300 ease-in-out hover:scale-105"
+            />
+            <h3 className="text-[18px] md:text-[22px] lg:text-[28px] text-[#1B1C57] mt-5 mb-3 text-center font-semibold">
+              Gain practical Experience
+            </h3>
+            <p className="text-[#374151] text-sm md:text-base text-center leading-relaxed" style={{ fontWeight: 400 }}>
+              Learn how to build and promote your brand through an exciting 0 → 100 journey
+            </p>
           </div>
         </div>
-
       </div>
 
-      {/* Section 2 */}
-      <div className="w-full px-[20px] md:px-[40px]">
-        <div className="relative flex flex-col lg:flex-row lg:h-[347px] border border-[#D8D8D8] bg-[#F7F9FC] rounded-xl mx-auto overflow-hidden">
-          <div className="flex flex-col items-center lg:my-[94px] lg:ml-[40px] lg:w-[647px] lg:h-[189px] lg:items-start gap-4">
-            <span
-              className="text-[24px] md:text-[36px] text-[#0B0B0B] text-center lg:text-left"
-              style={{ fontWeight: 800 }}
-            >
-              Why Attirelly
-            </span>
-            <span
-              className={`
-                ${screenSize === 'sm' ? 'w-[340px]' : ''}
-                ${screenSize === 'md' ? 'w-[500px]' : ''}
-                ${screenSize === 'lg' ? 'w-[600px]' : ''}
-                ${screenSize === 'xl' ? 'w-[641px]' : ''}
-                 text-[14px] md:text-[18px] text-[#0B0B0B] text-center lg:text-left`}
-              style={{ fontWeight: 400 }}
-            >
-              Attirelly bridges the gap between 700K+ local boutiques and 500M+ shoppers across India. We curate regional ethnic styles and help fashion lovers discover hidden local gems — all through one powerful hyperlocal fashion platform.
+      {/* Section 2 - Why Attirelly */}
+      <div className="md:px-8 lg:px-0">
+        <div className="w-full max-w-[90vw] lg:max-w-[90vw] mx-auto mt-10 overflow-hidden bg-[#F7F9FC] rounded-4xl">
+          <div className="flex flex-col lg:flex-row lg:items-stretch lg:justify-between h-full">
+            {/* Content Section */}
+            <div className="text-center lg:text-left flex flex-col items-center lg:items-start py-8 px-6 lg:py-12 lg:px-8 xl:py-[60px] xl:pl-[50px] xl:pr-4 flex-1">
+              <h2
+                className="text-[24px] md:text-[28px] lg:text-[36px] text-[#0B0B0B] leading-tight"
+                style={{ fontWeight: 800 }}
+              >
+                Why Attirelly
+              </h2>
+              <p
+                className="text-[14px] md:text-[16px] lg:text-[18px] text-[#0B0B0B] max-w-[500px] lg:max-w-[641px] leading-relaxed mt-4"
+                style={{ fontWeight: 400 }}
+              >
+                Attirelly bridges the gap between 700K+ local boutiques and 500M+ shoppers across India. We curate regional ethnic styles and help fashion lovers discover hidden local gems — all through one powerful hyperlocal fashion platform.
+              </p>
+            </div>
 
-            </span>
-            {/* <button className="bg-black rounded p-2 text-white w-fit mt-2">
-                Start Selling
-              </button> */}
-          </div>
-
-          <div>
-            {/* <Image
-            src="/CollegeAmbassador/ellipse_white.svg"
-            alt="Ellipse White"
-            width={570}
-            height={570}
-            className="absolute right-0 bottom-0"
-            />
-    
-            <Image
-            src="/CollegeAmbassador/star3.svg"
-            alt="star 3"
-            width={45}
-            height={45}
-            className="absolute bottom-30 right-100"
-            />
-
-            <Image
-            src="/CollegeAmbassador/star2.svg"
-            alt="star 2"
-            width={45}
-            height={45}
-            className="absolute right-8 top-16"
-            />
-
-            <Image
-            src="/CollegeAmbassador/Attirelly.svg"
-            alt="lady white image"
-            width={163}
-            height={47}
-            className="absolute top-6 right-5"
-            />
-    
-            <Image
-            src="/CollegeAmbassador/lady_image.svg"
-            alt="lady white image"
-            width={423}
-            height={304}
-            className="absolute bottom-0 right-0"
-            /> */}
-
-            <Image
-              src="/CollegeAmbassador/lady_image.svg"
-              alt="lady white image"
-              width={630}
-              height={630}
-              className="lg:absolute bottom-0 right-0 hidden lg:flex"
-            />
-            <Image
-              src="/CollegeAmbassador/lady_image_mobile.svg"
-              alt="lady white image"
-              width={630}
-              height={630}
-              className="lg:absolute bottom-0 right-0 lg:hidden"
-            />
+            {/* Image Section */}
+            <div className="lg:flex lg:justify-end lg:flex-shrink-0 h-full">
+              {/* --- Desktop Image --- */}
+              <Image
+                src="/CollegeAmbassador/lady_image.svg"
+                alt="lady white image"
+                width={630}
+                height={630}
+                className="hidden lg:block h-full w-auto object-contain"
+              />
+              {/* --- Mobile/Medium Image --- */}
+              <Image
+                src="/CollegeAmbassador/lady_image_mobile.svg"
+                alt="lady white image"
+                width={630}
+                height={630}
+                className="w-full h-auto lg:hidden"
+              />
+            </div>
           </div>
         </div>
-
       </div>
-
     </div>
-
   );
 };
 

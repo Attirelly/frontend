@@ -31,6 +31,7 @@ export interface SelectOption {
   country?: string;
   city?: string;
   type?: string;
+  count?:number
 }
 export interface BrandType {
   id: string;
