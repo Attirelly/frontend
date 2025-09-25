@@ -34,7 +34,7 @@ export default function StoreTypeTabs({
   context,
 }: StoreTypeTabsProps) {
   const filterStore =
-    context === "store" ? useFilterStore() : useProductFilterStore();
+    context === "stores" ? useFilterStore() : useProductFilterStore();
 
   const { storeTypes } = filterStore;
   const { setStoreType, storeType } = useHeaderStore();
