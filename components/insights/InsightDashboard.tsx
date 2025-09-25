@@ -42,6 +42,7 @@ const profileData: Profile[] = [
 // --- MODIFIED: PROFILE CARD COMPONENT ---
 // It now accepts 'activeFilter' to conditionally display metrics.
 const ProfileCard = ({ profile, activeFilter }: { profile: Profile; activeFilter: string }) => {
+
   return (
     <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
       <div className="flex items-center space-x-3 sm:space-x-4">
@@ -68,6 +69,7 @@ const ProfileCard = ({ profile, activeFilter }: { profile: Profile; activeFilter
 
 // --- MAIN PAGE COMPONENT ---
 const InstagramInsightsPage = () => {
+
   // --- STATE MANAGEMENT for filters ---
   const [activeFilter, setActiveFilter] = useState('Reach'); // Default filter is Reach
   const [activePeriod, setActivePeriod] = useState('7d');
@@ -75,6 +77,27 @@ const InstagramInsightsPage = () => {
   // --- CHANGE: Removed 'Followers Growth' ---
   const mainFilters = ['Engagement Rate', 'Reach'];
   const timePeriods = ['7d', '30d', '90d'];
+
+  const handleConnectClick = () => {
+    try {
+            let appId = process.env.NEXT_INSTAGRAM_APP_ID || "548897007892754";
+            // const redirectUri = `${window.location.origin}/auth/callback`;
+            const redirectUri = `https://5e872f4b90c1.ngrok-free.app/auth/callback`;
+
+            // Build state object to pass data through OAuth redirect
+            const stateData = {
+              instagram_url: 'https://instagram.com/taswirein',
+              redirect_uri: redirectUri,
+            };
+
+            const encodedState = encodeURIComponent(JSON.stringify(stateData));
+
+            // Redirect user to Instagram OAuth authorize page
+            window.location.href = `https://www.instagram.com/oauth/authorize?client_id=${appId}&redirect_uri=${redirectUri}&scope=instagram_business_basic,instagram_business_manage_insights&response_type=code&state=${encodedState}`;
+        } catch (error: any) {
+            console.log(error.message);
+        }
+  }
 
   return (
     <main className="bg-white text-gray-800 min-h-screen p-4 md:p-8 font-sans">
@@ -84,7 +107,7 @@ const InstagramInsightsPage = () => {
         <header className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold mb-6">Instagram Insights</h1>
           {/* --- CHANGE: Simplified header, removed filter button --- */}
-          <div className="relative w-full sm:max-w-xs">
+          <div className="relative w-full sm:max-w-xs mb-6">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input 
               type="text" 
@@ -92,6 +115,12 @@ const InstagramInsightsPage = () => {
               className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 transition-shadow" 
             />
           </div>
+          <button 
+          key='Button'
+          className='px-4 py-1.5 rounded-lg text-sm font-medium transition-colors bg-black text-white cursor-pointer'
+          onClick={handleConnectClick}>
+            Connect
+          </button>
         </header>
 
         {/* Filters and Time Period Section */}
