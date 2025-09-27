@@ -12,6 +12,34 @@ type FacetValue = {
   count: number;
   selected: boolean;
 };
+type StoreType = {
+  id: string;
+  store_type: string;
+  count: number;
+};
+
+const HARD_CODED_STORE_TYPES: StoreType[] = [
+  {
+    id: "f923d739-4c06-4472-9bfd-bb848b32594b",
+    store_type: "Retail Store",
+    count: 0,
+  },
+  {
+    id: "9e5bbe6d-f2a4-40f0-89b0-8dac6026bd17",
+    store_type: "Designer Label",
+    count: 0,
+  },
+  {
+    id: "33f514c5-4896-46b7-ae74-139aece3d295",
+    store_type: "Tailor",
+    count: 0,
+  },
+  {
+    id: "7339638e-e60a-4547-9c68-2c46169ea480",
+    store_type: "Stylist",
+    count: 0,
+  },
+];
 
 /**
  * @typedef {object} Facets
@@ -24,6 +52,7 @@ type Facets = Record<string, FacetValue[]>;
  * @description Defines the complete shape of the state and actions for a filter store.
  */
 interface FilterState {
+  storeTypes: StoreType[];
   /**
    * @property {string | null} activeFacet - The name of the facet that the user last interacted with. This is sent to the backend to get more accurate result counts for other facets while keeping the active one stable.
    */
@@ -144,6 +173,7 @@ interface FilterState {
  */
 function createFilterStore() {
   return create<FilterState>((set, get) => ({
+    storeTypes: HARD_CODED_STORE_TYPES,
     activeFacet: null,
     setActiveFacet: (facet: string | null) => set({ activeFacet: facet }),
     results: 0,
@@ -224,7 +254,24 @@ function createFilterStore() {
         updatedFacets[facetName] = updatedFacetValues;
       }
 
-      set({ facets: updatedFacets });
+      const storeTypeApiFacets = updatedFacets.store_types || [];
+      const countMap = new Map(
+        storeTypeApiFacets.map((facet) => [
+          facet.name.toLowerCase(),
+          facet.count,
+        ])
+      );
+      const currentStoreTypes = get().storeTypes;
+      const updatedStoreTypes = currentStoreTypes.map((storeType) => {
+        const lowerCaseName = storeType.store_type.toLowerCase();
+        const newCount = countMap.get(lowerCaseName);
+        return {
+          ...storeType,
+          count: newCount !== undefined ? newCount : 0,
+        };
+      });
+
+      set({ facets: updatedFacets , storeTypes: updatedStoreTypes });
     },
 
     /**
