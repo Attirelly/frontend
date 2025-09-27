@@ -76,6 +76,8 @@ export default function StoreProfilePage() {
     selectedFilters,
     selectedPriceRange,
     setFacetInit,
+    productQuery,     // ✨ ADDED: Get the productQuery state from the store
+    setProductQuery,  // ✨ ADDED: Get the setter function for the search input
   } = useProductFilterStore();
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -98,6 +100,7 @@ export default function StoreProfilePage() {
     const params = new URLSearchParams(searchParams);
     const initialSelectedFilters: Record<string, string[]> = {};
     const search = params.get("search") || "";
+    const productSearch = params.get("product_search") || ""; // ✨ ADDED: Get the store-specific search query from the URL
     const cityName = params.get("city");
     const areaName = params.get("area");
     const storeTypeName = params.get("store_type");
@@ -105,6 +108,7 @@ export default function StoreProfilePage() {
     params.forEach((value, key) => {
       if (
         key !== "search" &&
+        key !== "product_search" && // ✨ ADDED: Exclude our new param from the general filter object
         key !== "sortBy" &&
         key !== "price" &&
         key !== "city" &&
@@ -147,8 +151,9 @@ export default function StoreProfilePage() {
     initializeFilters({
       selectedFilters: initialSelectedFilters,
       priceRange: initialPriceRange,
+      productQuery: productSearch, // ✨ ADDED: Initialize the product query state from the URL
     });
-  }, [searchParams, initializeFilters, setQuery, setStoreType]);
+  }, [searchParams, initializeFilters, setQuery, setStoreType, allCity, allArea, allStoreType, setArea, setCity]); // ✨ MODIFIED: Added missing dependencies for robustness
 
   /**
    * This effect synchronizes the URL's search parameters FROM the application's state.
@@ -165,8 +170,13 @@ export default function StoreProfilePage() {
       newparams.set("categories", oldparams.get("categories") || "");
     }
     // if (sortBy) {
-    //   params.set("sortBy", sortBy);
+    //   params.set("sortBy", sortBy);
     // }
+
+    // ✨ ADDED: If there's a store-specific search query, add it to the URL
+    if (productQuery) {
+      newparams.set("product_search", productQuery);
+    }
 
     Object.entries(selectedFilters).forEach(([key, values]) => {
       if (values && values.length > 0) {
@@ -198,6 +208,9 @@ export default function StoreProfilePage() {
     area,
     storeType,
     router,
+    productQuery, // ✨ ADDED: This effect now runs when the product query changes
+    query,        // ✨ MODIFIED: Added missing dependencies for robustness
+    searchParams  // ✨ MODIFIED: Added missing dependencies for robustness
   ]);
 
   return (
@@ -252,18 +265,36 @@ export default function StoreProfilePage() {
               {/* Product Grid (Mobile & Desktop) */}
               <div className="lg:col-span-3">
                 {/* Mobile 'Filters' button */}
-                <div className="flex  mb-4 lg:hidden">
-                  <button
-                    onClick={() => setIsFilterOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md lg:hidden"
-                  >
-                    <span>Filters</span>
+                <div className="flex flex-col sm:flex-row gap-4 mb-6 items-center"> {/* ✨ MODIFIED: Changed layout for search bar */}
+                  <div className="flex lg:hidden"> {/* ✨ MODIFIED: Wrapped button for layout */}
+                    <button
+                      onClick={() => setIsFilterOpen(true)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md"
+                    >
+                      <span>Filters</span>
+                      <img
+                        src="/ListingPageHeader/FilterIcon.svg"
+                        alt="Filter button"
+                        className={`w-4 h-4 transform transition-transform`}
+                      />
+                    </button>
+                  </div>
+                  
+                  {/* ✨ ADDED: The product search bar JSX is now directly in this file */}
+                  <div className="relative w-full sm:max-w-xs md:max-w-sm">
                     <img
-                      src="/ListingPageHeader/FilterIcon.svg"
-                      alt="Filter button"
-                      className={`w-4 h-4 transform transition-transform`}
+                      src="/ListingPageHeader/search_lens.svg"
+                      alt="Search"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                     />
-                  </button>
+                    <input
+                      type="text"
+                      placeholder="Search products in this store..."
+                      value={productQuery}
+                      onChange={(e) => setProductQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 transition-shadow"
+                    />
+                  </div>
                 </div>
                 {/* ✅ 4. Removed the outdated 'colCount' prop */}
                 <ProductContainer storeId={storeId} />

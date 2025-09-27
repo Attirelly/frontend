@@ -18,6 +18,7 @@ type FacetValue = {
  * @description A record object where each key is a facet name (e.g., "color", "size") and the value is an array of possible `FacetValue` objects. This structure holds the complete state needed to render the filter UI.
  */
 type Facets = Record<string, FacetValue[]>;
+
 /**
  * @interface FilterState
  * @description Defines the complete shape of the state and actions for a filter store.
@@ -82,6 +83,17 @@ interface FilterState {
    */
   selectedFilters: Record<string, string[]>;
   /**
+   * ✨ ADDED JSDoc for new property
+   * @property {string} productQuery - Holds the search text for filtering products within a specific store.
+   */
+  productQuery: string; // ✨ ADDED: Holds the search text for products
+  /**
+   * ✨ ADDED JSDoc for new action
+   * @action setProductQuery - Sets the product-specific search query.
+   * @param {string} query - The search text entered by the user.
+   */
+  setProductQuery: (query: string) => void; // ✨ ADDED: Action to update the query
+  /**
    * @action setFacets - Intelligently merges new facet data from an API response with the existing state, preserving the `selected` status of items.
    * @param {Record<string, Record<string, number>>} apiFacets - The raw facet data from the API.
    * @param {string | null} activeFacet - The name of the facet the user is currently interacting with.
@@ -106,14 +118,17 @@ interface FilterState {
    */
   getSelectedFilters: () => Record<string, string[]>;
   /**
+   * ✨ MODIFIED JSDoc to include productQuery
    * @action initializeFilters - Hydrates the store with an initial state, typically from URL search parameters on page load.
    * @param {object} initialState - The initial state object.
    * @param {Record<string, string[]>} [initialState.selectedFilters] - The initial set of selected filters.
    * @param {[number, number] | null} [initialState.priceRange] - The initial price range.
+   * @param {string} [initialState.productQuery] - The initial search query for products.
    */
   initializeFilters: (initialState: {
     selectedFilters?: Record<string, string[]>;
     priceRange?: [number, number] | null;
+    productQuery?: string; // ✨ MODIFIED: Allow initializing the query from the URL
   }) => void;
 }
 
@@ -144,6 +159,8 @@ function createFilterStore() {
     setFacetInit: (loading: boolean) => set({ facetInit: loading }),
     facets: {},
     selectedFilters: {},
+    productQuery: "", // ✨ ADDED: Initial state for the product query
+    setProductQuery: (query) => set({ productQuery: query }), // ✨ ADDED: The setter function
 
     /**
      * Hydrates the store with an initial state, usually from URL parameters.
@@ -165,9 +182,9 @@ function createFilterStore() {
 
       set({
         selectedFilters: newSelectedFilters,
-        // category: initialState.category || "",
         facets: updatedFacets, // Set the updated facets
         selectedPriceRange: initialState.priceRange || null,
+        productQuery: initialState.productQuery || "", // ✨ ADDED: Initialize the product query
       });
     },
     /**
@@ -219,14 +236,14 @@ function createFilterStore() {
         const updatedFacets = { ...state.facets };
         const updatedSelectedFilters = { ...state.selectedFilters };
 
-         // 1. Update the `selected` boolean in the main `facets` object for the UI.
+        // 1. Update the `selected` boolean in the main `facets` object for the UI.
         updatedFacets[facetName] = updatedFacets[facetName].map((facet) => {
           if (facet.name === value) {
             return { ...facet, selected: !facet.selected };
           }
           return facet;
         });
-         
+
         // 2. Re-create the simplified `selectedFilters` array from the updated `facets` object.
         updatedSelectedFilters[facetName] = updatedFacets[facetName]
           .filter((f) => f.selected)
@@ -261,6 +278,7 @@ function createFilterStore() {
           selectedFilters: resetSelectedFilters,
           selectedPriceRange: null,
           activeFacet: null,
+          productQuery: "", // ✨ ADDED: Also clear the search query on reset
         };
       });
     },
