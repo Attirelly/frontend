@@ -25,7 +25,7 @@ const TOTAL_SEGMENTS = 12;
  *
  * ### Navigation
  * - Upon successful selection of both a type and a segment, the "Next" button becomes enabled.
- * - Clicking "Next" navigates the user to the main curation form (`/admin/curationModule/addStoreProduct`),
+ * - Clicking "Next" navigates the user to the main curation form (`/admin/curationModule/addStoreProduct`) or (`/admin/curationModule/addPriceDiscount`) 
  * passing the selected type and segment number as URL query parameters.
  * - It also uses `router.prefetch` to start loading the next page in the background for a faster transition.
  *
@@ -57,6 +57,7 @@ export default function CreateCurationPage() {
    */
   useEffect(() => {
     router.prefetch("/admin/curationModule/addStoreProduct");
+    router.prefetch("/admin/curationModule/addPriceDiscount");
   }, [router]); // Dependency array includes router to follow React's hook rules.
 
   /**
@@ -104,7 +105,13 @@ export default function CreateCurationPage() {
     const query = `?curation_type=${encodeURIComponent(
       curationType
     )}&curation_number=${encodeURIComponent(curationSegment)}`;
-    router.push(`/admin/curationModule/addStoreProduct${query}`);
+    if(curationType === 'price' || curationType === 'discount'){
+      router.push(`/admin/curationModule/addPriceDiscount${query}`);
+    }
+    else{
+      router.push(`/admin/curationModule/addStoreProduct${query}`);
+    }
+    
   };
 
   if (loading) return <div className="p-6">Loading...</div>;
@@ -129,6 +136,8 @@ export default function CreateCurationPage() {
             <option value="product">product</option>
             <option value="subcat 3">subcat 3</option>
             <option value="subcat 4">subcat 4</option>
+            <option value="price">price</option>
+            <option value="discount">discount</option>
           </select>
         </div>
 
