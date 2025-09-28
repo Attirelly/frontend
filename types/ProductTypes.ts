@@ -43,6 +43,7 @@ export interface FilterOptions{
 
 export interface Product {
   product_id: string;
+  store_id?:string;
   variant_id?: string;
   image: string;
   product_name: string;

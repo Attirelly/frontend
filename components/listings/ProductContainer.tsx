@@ -78,6 +78,81 @@ const REFETCH_THRESHOLD = Math.round(BUFFER_SIZE * 0.2); // Refetch when 80% of 
  * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
  * @see {@link https://axios-http.com/docs/intro | Axios Documentation}
  */
+
+// @/utils/queryParser.ts
+
+/**
+ * @interface ParsedQuery
+ * @description Defines the output shape of the query parser.
+ */
+export interface ParsedQuery {
+  /** The text query with price-related phrases removed. */
+  cleanedQuery: string;
+  /** The filter string (e.g., "price < 20000") derived from the query, or null if none is found. */
+  priceFilter: string | null;
+}
+
+/**
+ * Parses a search query to extract natural language price constraints.
+ *
+ * This function uses regular expressions to find keywords like "under", "over", "above",
+ * "below", and "between" followed by numbers. It separates these constraints from the
+ * main search term.
+ *
+ * @example
+ * parsePriceFromQuery("lehenga under 20000");
+ * // Returns: { cleanedQuery: "lehenga", priceFilter: "price < 20000" }
+ *
+ * @example
+ * parsePriceFromQuery("saree between 5000 and 10000");
+ * // Returns: { cleanedQuery: "saree", priceFilter: "price > 5000 AND price < 10000" }
+ *
+ * @param {string} query - The raw search query from the user.
+ * @returns {ParsedQuery} An object containing the cleaned query and the generated price filter string.
+ */
+export const parsePriceFromQuery = (query: string): ParsedQuery => {
+  if (!query) {
+    return { cleanedQuery: "", priceFilter: null };
+  }
+
+  const lowerCaseQuery = query.toLowerCase();
+
+  // Pattern for "between X and Y"
+  const betweenRegex = /between\s*(\d+)\s*and\s*(\d+)/i;
+  const betweenMatch = lowerCaseQuery.match(betweenRegex);
+
+  if (betweenMatch && betweenMatch[1] && betweenMatch[2]) {
+    const min = parseInt(betweenMatch[1], 10);
+    const max = parseInt(betweenMatch[2], 10);
+    return {
+      cleanedQuery: query.replace(betweenRegex, "").trim(),
+      priceFilter: `price > ${min} AND price < ${max}`,
+    };
+  }
+
+  // Patterns for "under X", "over X", etc.
+  const simplePatterns = [
+    { regex: /(?:under|below|less than)\s*(\d+)/i, operator: "<" },
+    { regex: /(?:over|above|more than)\s*(\d+)/i, operator: ">" },
+    { regex: /<\s*(\d+)/i, operator: "<" }, // Handle "< 20000"
+    { regex: />\s*(\d+)/i, operator: ">" }, // Handle "> 20000"
+  ];
+
+  for (const pattern of simplePatterns) {
+    const match = lowerCaseQuery.match(pattern.regex);
+    if (match && match[1]) {
+      const price = parseInt(match[1], 10);
+      return {
+        cleanedQuery: query.replace(pattern.regex, "").trim(),
+        priceFilter: `price ${pattern.operator} ${price}`,
+      };
+    }
+  }
+
+  // No price constraints found
+  return { cleanedQuery: query, priceFilter: null };
+};
+
 export default function ProductContainer({
   storeId = "",
 }: ProductContainerProps) {
@@ -147,7 +222,9 @@ export default function ProductContainer({
 
   const fetchProducts = async (
     currentPage: number,
-    controller?: AbortController
+    controller?: AbortController,
+    effectiveQuery: string = query,
+    priceFilterOverride: string | null = null,
   ) => {
     const facetFilters = buildFacetFilters(
       selectedFilters,
@@ -160,18 +237,39 @@ export default function ProductContainer({
         filterClauses.push(filters);
       }
 
+      // let priceFilterString = "";
+      // if (selectedPriceRange) {
+      //   const [min, max] = selectedPriceRange;
+      //   if (min > priceBounds[0] || max < priceBounds[1]) {
+      //     priceFilterString = `price > ${min} AND price < ${max}`;
+      //   }
+      // }
+      // filterClauses.push(priceFilterString);
+      // setIsResultsLoading(true);
+
+       // --- MODIFIED PRICE FILTER LOGIC ---
+      // Priority:
+      // 1. Use the filter parsed directly from the query string ("lehenga under 20000").
+      // 2. Fall back to the price range slider if no text-based price filter exists.
       let priceFilterString = "";
-      if (selectedPriceRange) {
-        const [min, max] = selectedPriceRange;
-        if (min > priceBounds[0] || max < priceBounds[1]) {
-          priceFilterString = `price > ${min} AND price < ${max}`;
-        }
+      if (priceFilterOverride) {
+        priceFilterString = priceFilterOverride;
+      } else if (selectedPriceRange) {
+        const [min, max] = selectedPriceRange;
+        if (min > priceBounds[0] || max < priceBounds[1]) {
+          priceFilterString = `price > ${min} AND price < ${max}`;
+        }
+      }
+
+      // Only add the price filter to clauses if it's not an empty string
+      if (priceFilterString) {
+        filterClauses.push(priceFilterString);
       }
-      filterClauses.push(priceFilterString);
-      setIsResultsLoading(true);
+      // --- END MODIFIED PRICE FILTER LOGIC ---
+
 
       const finalFilterString = filterClauses.join(" AND ");
-      let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
+      let searchUrl = `/search/search_product?query=${storeId} ${effectiveQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
 
       // let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}&only_active=true`;
 
@@ -250,12 +348,14 @@ export default function ProductContainer({
 
   useEffect(() => {
     const controller = new AbortController();
+    const { cleanedQuery, priceFilter } = parsePriceFromQuery(query);
     setPage(0);
     setProducts([]);
     setBuffer([]);
     setHasMore(true);
     setApiHasMore(true);
-    fetchProducts(0, controller);
+    // fetchProducts(0, controller);
+    fetchProducts(0,controller,cleanedQuery,priceFilter)
     return () => {
       controller.abort();
     };
@@ -274,7 +374,11 @@ export default function ProductContainer({
     ) {
       const controller = new AbortController();
       setLoading(true);
-      fetchProducts(page, controller);
+
+      const { cleanedQuery, priceFilter } = parsePriceFromQuery(query);
+      fetchProducts(page, controller, cleanedQuery, priceFilter);
+
+      // fetchProducts(page, controller);
       return () => {
         controller.abort();
       };
