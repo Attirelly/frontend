@@ -85,7 +85,13 @@ export default function CurationPage() {
    */
   const handleEdit = (section_id: string, section_name: string, section_url: string, section_type: string, section_number: number) => {
     const query = `?curation_id=${encodeURIComponent(section_id)}&curation_name=${encodeURIComponent(section_name)}&curation_url=${encodeURIComponent(section_url)}&curation_type=${encodeURIComponent(section_type)}&curation_number=${encodeURIComponent(section_number)}`;
-    router.push(`/admin/curationModule/addStoreProduct${query}`);
+    if(section_type === 'price' || section_type === 'discount') {
+      router.push(`/admin/curationModule/addPriceDiscount${query}`);
+    }
+    else{
+      router.push(`/admin/curationModule/addStoreProduct${query}`);
+    }
+    
   };
 
    /**

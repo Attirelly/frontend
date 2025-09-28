@@ -22,7 +22,8 @@ const AmbassadorBenefits: React.FC<Props> = ({ screenSize = 'sm' }) => {
         </div>
 
         {/* Benefits Cards */}
-        <div className="flex flex-col md:flex-row lg:flex-row justify-center items-center lg:items-stretch gap-8 md:gap-10 lg:gap-[40px] px-4 sm:px-6 md:px-8 lg:px-0">
+        <div className="flex flex-col md:flex-row lg:flex-row justify-center items-center lg:items-stretch gap-10 md:gap-12 lg:gap-40 px-6 sm:px-8 md:px-12 lg:px-20">
+
           {/* Card 1 */}
           <div className="flex flex-col items-center px-6 py-8 max-w-[320px] lg:max-w-[275px]">
             <Image
