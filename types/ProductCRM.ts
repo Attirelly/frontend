@@ -1,22 +1,30 @@
-export interface Store {
-  id: string;
+// --- Store Related Types ---
+export interface City {
+  id: number;
   name: string;
-  city: string;
-  storeType: string;
 }
 
+export interface StoreType {
+  id: number;
+  name: string;
+}
+
+export interface Store {
+  id: number;
+  name: string;
+  cityId: number;
+  storeTypeId: number;
+}
+
+// --- Product Related Types ---
 export interface Product {
   id: string;
-  imageUrl: string;
   name: string;
+  imageUrl: string;
   storeTypes: string[];
-  priceRanges: string[];
+  priceRange: [number, number];
   genders: string[];
-  categories: {
-    main: string;
-    subcat1: string;
-    subcat2: string;
-  };
+  categories: string[];
   brand: string;
   price: number;
   mrp: number;
@@ -24,30 +32,41 @@ export interface Product {
   size: string;
   color: string;
   sku: string;
-  fabric: string;
-  occasion: string;
 }
 
-export interface ProductFilters {
+export interface ProductFiltersState {
   categories: string[];
-  subcat1: string[];
-  subcat2: string[];
   skus: string[];
   sizes: string[];
   colors: string[];
-  fabrics: string[];
-  occasions: string[];
-  minPrice: number | '';
-  maxPrice: number | '';
+  minPrice: number | string;
+  maxPrice: number | string;
+  // Add other filter states here (fabric, occasion, etc.)
 }
 
-export interface FilterOptions {
-  categories: string[];
-  subcat1: string[];
-  subcat2: string[];
-  skus: string[];
-  sizes: string[];
-  colors: string[];
-  fabrics: string[];
-  occasions: string[];
+// src/types/product.ts
+export interface AlgoliaHit {
+  id?: string;
+  product_name?: string;
+  title?: string;
+  description?: string;
+  image?: string[];
+  genders?: string[];
+  price?: number;
+}
+
+export interface ProductFacets {
+  genders?: Record<string, number>;
+  primary_category?: Record<string, number>;
+  prices?: Record<string, number>;
+  size?: Record<string, number>;
+  colours?: Record<string, number>;
+}
+
+export interface AlgoliaProductResponse {
+  hits: AlgoliaHit[];
+  facets: ProductFacets;
+  page: number;
+  total_hits: number;
+  total_pages: number;
 }
