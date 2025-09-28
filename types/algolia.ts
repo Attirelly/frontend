@@ -2,6 +2,7 @@
 
 export interface AlgoliaHit {
   id: string;
+  store_id:string,
   product_name: string;
   title: string;
   description?: string;
@@ -26,3 +27,8 @@ export interface AlgoliaProductResponse {
   total_hits: number;
   total_pages: number;
 }
+
+export interface SelectedProduct {
+  productId: string;
+  storeId: string;
+};
