@@ -19,7 +19,7 @@ const STORE_IDS = [
   "da950e55-dddb-4e2f-8cc0-437bf79ea809",
 ];
 interface ProductSearchPageProps {
-  onConfirmSelection: (selectedProducts: SelectedProduct[]) => Promise<void>;
+  onConfirmSelection: (selectedProducts: AlgoliaHit[]) => Promise<void>;
 }
 export default function ProductSearchPage({
   onConfirmSelection,
