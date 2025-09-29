@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from "next/image";
-import { useSellerStore } from '@/store/sellerStore'
+import { useStylist } from '@/store/stylist'
 import { api } from '@/lib/axios'
 import Header from '@/components/Header';
 import axios, { AxiosError } from 'axios';
@@ -11,9 +11,9 @@ import { toast, Toaster } from 'sonner';
 
 
 /**
- * SellerSignup component
+ * Stylist component
  * 
- * The main sign-in page for sellers. This component manages the entire phone number
+ * The main sign-in page for stylists. This component manages the entire phone number
  * and OTP (One-Time Password) verification flow, including checking user status, sending/verifying OTPs,
  * handling rate-limiting, and routing the user upon successful authentication.
  *
@@ -23,10 +23,10 @@ import { toast, Toaster } from 'sonner';
  * - **OTP Input**: A user-friendly 6-digit input with auto-focusing to the next field and proper backspace handling.
  * - **Resend OTP**: A button to resend the OTP that becomes available after a 60-second cooldown timer.
  * - **Rate Limiting**: If OTP verification fails too many times, the form is temporarily blocked, and a message displays when the user can try again.
- * - **Conditional Routing**: After successful verification, the component checks the seller's onboarding status and routes them to either the onboarding page or their dashboard.
+ * - **Conditional Routing**: After successful verification, the component checks the stylist's onboarding status and routes them to either the onboarding page or their dashboard.
  *
  * ## Logic Flow
- * 1.  The page initially displays a form asking for the seller's 10-digit phone number.
+ * 1.  The page initially displays a form asking for the stylist's 10-digit phone number.
  * 2.  Upon submission, the `handleSubmit` function first calls the `GET /users/user` API to check if the phone number is registered.
  * 3.  If the user exists, it calls `GET /stores/get_store_section` to fetch their onboarding progress.
  * 4.  It then calls `POST /otp/send_otp` to send a verification code to the user's phone.
@@ -40,7 +40,7 @@ import { toast, Toaster } from 'sonner';
  * ## Imports
  * - **Core/Libraries**: `useRef`, `useState`, `useEffect` from `react`; `useRouter`, `Link`, `Image` from Next.js; `axios` for error type checking; `toast` from `sonner`.
  * - **State (Zustand Stores)**:
- * - `useSellerStore`: For managing global state related to the seller's session (ID, number, etc.).
+ * - `useStylist`: For managing global state related to the stylist's session (ID, number, etc.).
  * - **Key Components**:
  * - {@link Header}: The reusable header component for the page.
  * - **Utilities**:
@@ -56,20 +56,19 @@ import { toast, Toaster } from 'sonner';
  * ## Props
  * - This is a page component and does not accept any props.
  *
- * @returns {JSX.Element} The rendered seller sign-in page.
+ * @returns {JSX.Element} The rendered stylist sign-in page.
  */
-export default function SellerSignup() {
+export default function StylistSignup() {
     const [phone, setPhone] = useState('');
     const [currSection, setCurrSection] = useState(0);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
     const [sendOTP, setSendOTP] = useState(false);
     const {
-        setSellerId,
-        setSellerNumber,
-        sellerId,
-        setSellerName,
-        setSellerEmail } = useSellerStore()
+        setStylistId,
+        setStylistNumber,
+        setStylistName,
+        setStylistEmail } = useStylist()
 
     const [resendTimer, setResendTimer] = useState(60);
     const [isBlocked, setIsBlocked] = useState(false);
@@ -82,12 +81,12 @@ export default function SellerSignup() {
     /**
      * prefetching necessary routes
      */
-    useEffect(() => {
+    // useEffect(() => {
 
-        router.prefetch('/seller_dashboard');
-        router.prefetch('/seller_signup/sellerOnboarding');
+    //     router.prefetch('/seller_dashboard');
+    //     router.prefetch('/seller_signup/sellerOnboarding');
 
-    }, []);
+    // }, []);
 
     // resend times logic
     useEffect(() => {
@@ -181,7 +180,7 @@ export default function SellerSignup() {
      */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (sendOTP) {  
+        if (sendOTP) {
             const fullOtp = otp.join('');
             if (fullOtp.length !== 6) {
                 alert('Please enter a valid 6-digit OTP');
@@ -251,13 +250,13 @@ export default function SellerSignup() {
                 const curr_section_res = await api.get('/stores/get_store_section', { params: { user_id: user_data.id } })
                 console.log(curr_section_res)
                 setCurrSection(curr_section_res.data);
-                setSellerId(user_data.id);
-                setSellerName(user_data.name);
-                setSellerEmail(user_data.email);
+                setStylistId(user_data.id);
+                setStylistName(user_data.name);
+                setStylistEmail(user_data.email);
                 if (phone === '1111111111') {
                     setSendOTP(true);
                     // alert(`OTP sent to ${phone}`);
-                    setSellerNumber(phone);
+                    setStylistNumber(phone);
                     return;
 
                 }
@@ -265,7 +264,7 @@ export default function SellerSignup() {
                     await api.post('/otp/send_otp', null, { params: { phone_number: phone, otp_template: "UserLoginOTP" } })
                     setSendOTP(true);
                     // alert(`OTP sent to ${phone}`);
-                    setSellerNumber(phone);
+                    setStylistNumber(phone);
                 }
                 catch {
                     toast.error("Failed to send OTP!");
@@ -310,7 +309,7 @@ export default function SellerSignup() {
                     onSubmit={handleSubmit}
                     className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
                 >
-                    <h2 className="text-xl font-semibold mb-4">Sign in as a seller</h2>
+                    <h2 className="text-xl font-semibold mb-4">Sign in as a Stylist</h2>
                     <p className="text-sm text-gray-500 mb-4">
                         Verifying the store's phone number is a great way to make sure your profile reflects your identity and keeps your account safe.
                     </p>
