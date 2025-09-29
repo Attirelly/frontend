@@ -58,7 +58,9 @@ export default function Sidebar({ isOpen } : SidebarProps) {
   const links = [
     { label: "Seller CRM", path: "/admin/sellerCRM" },
     { label: "Customer CRM", path: "/admin/customerCRM" },
+    { label: "Product CRM", path: "/admin/productCRM"},
     { label: "Curation Module", path: "/admin/curationModule" }
+    
   ];
 
   return (
