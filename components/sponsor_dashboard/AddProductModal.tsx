@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import customStyles from "@/utils/selectStyles"; // Assuming these are your custom react-select styles
 import { Product } from "@/types/ProductTypes";
 import ProductSearchPage from "@/app/admin/(protected)/productCRM/page";
+import { SelectedProduct } from "@/types/algolia";
 
 interface AddProductModalProps {
   open: boolean;
@@ -50,6 +51,38 @@ export default function AddProductModal({
   // --- UX IMPROVEMENT: Add loading states ---
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleAddProductsToCampaign = async (
+    selectedProducts: SelectedProduct[]
+  ) => {
+    const toastId = toast.loading("Adding products to campaign...");
+
+    try {
+      // Format the payload as your API expects.
+      // This example assumes a hardcoded bid amount and budget. You can add inputs for these if needed.
+      const payload = selectedProducts.map((product) => ({
+        campaign_id: campaignId,
+        product_id: product.productId,
+        seller_id: product.storeId,
+        bid_amount: 50.0, // Example: Or get from another state/input
+        budget: 10000, // Example
+      }));
+
+      const res = await api.post(`/sponsored/campaign_products/`, payload);
+
+      toast.success("Products added successfully!", { id: toastId });
+
+      // Call the onAdd function from the parent (Campaign Detail Page) to update its UI
+      onAdd(res.data);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Error adding products", {
+        id: toastId,
+      });
+      // We throw the error so the child component knows the operation failed.
+      throw err;
+    }
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -121,7 +154,7 @@ export default function AddProductModal({
   return (
     // --- UI IMPROVEMENT: Centered modal with a backdrop ---
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-60 transition-opacity duration-300"
+      className="h-full w-full flex items-center justify-center bg-opacity-60 transition-opacity duration-300"
       onClick={onClose} // Close modal on backdrop click
     >
       <div
@@ -214,7 +247,7 @@ export default function AddProductModal({
           </div>
         </form> */}
 
-        <ProductSearchPage/>
+        <ProductSearchPage onConfirmSelection={handleAddProductsToCampaign}/>
 
         {/* Footer */}
         <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
