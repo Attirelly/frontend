@@ -13,11 +13,18 @@ import { SelectedProductsSidebar } from "@/components/admin/productCRM/SelectedP
 
 // Define the structure for selected filters
 type SelectedFilters = Record<string, string[]>;
-
-export default function ProductSearchPage() {
+const STORE_IDS = [
+  "52b9fab3-60f5-4b4a-83be-be74e26cc329",
+  "d18c65b0-7fcc-4429-9dfd-a53fae66cb59",
+  "da950e55-dddb-4e2f-8cc0-437bf79ea809",
+];
+interface ProductSearchPageProps {
+  onConfirmSelection: (selectedProducts: SelectedProduct[]) => Promise<void>;
+}
+export default function ProductSearchPage({
+  onConfirmSelection,
+}: ProductSearchPageProps) {
   // const storeIds = STORE_IDS;
-
-
 
   const [products, setProducts] = useState<AlgoliaHit[]>([]);
   const [facets, setFacets] = useState<Partial<ProductFacets>>({});
@@ -30,10 +37,30 @@ export default function ProductSearchPage() {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const storeIds = useMemo(() => selectedStores.map((item) => String(item.id)), [selectedStores]);
+  const storeIds = useMemo(
+    () => selectedStores.map((item) => String(item.id)),
+    [selectedStores]
+  );
 
+  const handleConfirm = async () => {
+    if (selectedProducts.length === 0) return;
 
+    setIsSubmitting(true);
+    try {
+      // Execute the function passed from the parent
+      console.log("selected inside" , selectedProducts)
+      await onConfirmSelection(selectedProducts);
+      // Clear selection on success
+      setSelectedProducts([]);
+    } catch (err) {
+      console.error("Confirmation failed", err);
+      // The parent component should show its own toast error message
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Clear filters and facets when storeIds change
   useEffect(() => {
@@ -47,7 +74,9 @@ export default function ProductSearchPage() {
       setIsLoading(true);
       setError(null);
 
-      const storeFilter = `(${storeIds.map(id => `store_id:"${id}"`).join(" OR ")})`;
+      const storeFilter = `(${storeIds
+        .map((id) => `store_id:"${id}"`)
+        .join(" OR ")})`;
       // Map UI keys to Algolia facet keys
       const facetKeyMap: Record<string, string> = {
         size: "variants.size_name",
@@ -64,7 +93,9 @@ export default function ProductSearchPage() {
           numericFilters.push(`price < ${values[0]}`);
         } else {
           const mappedKey = facetKeyMap[key] || key;
-          facetFiltersArray.push(values.map(value => `${mappedKey}:${value}`));
+          facetFiltersArray.push(
+            values.map((value) => `${mappedKey}:${value}`)
+          );
         }
       });
 
@@ -78,16 +109,20 @@ export default function ProductSearchPage() {
       try {
         const response = await api.get("/search/search_product", {
           params: {
-            filters: storeIds.length !== 0 ?  finalFilterString : "",
+            filters: storeIds.length !== 0 ? finalFilterString : "",
             facetFilters: JSON.stringify(facetFiltersArray),
             limit: 20,
             page: currentPage,
           },
         });
 
-        const { hits, facets: apiFacets, total_pages } = response.data as AlgoliaProductResponse;
+        const {
+          hits,
+          facets: apiFacets,
+          total_pages,
+        } = response.data as AlgoliaProductResponse;
         setProducts(hits);
-        setTotalPages(total_pages)
+        setTotalPages(total_pages);
 
         if (Object.keys(facets).length === 0) {
           setFacets(apiFacets);
@@ -102,9 +137,8 @@ export default function ProductSearchPage() {
     fetchProducts();
   }, [storeIds, selectedFilters, currentPage]);
 
-
   const handleFilterChange = (category: string, value: string) => {
-    setSelectedFilters(prevFilters => {
+    setSelectedFilters((prevFilters) => {
       // Handle price filters as single-value overrides
       if (category === "min_price" || category === "max_price") {
         return { ...prevFilters, [category]: [value] };
@@ -112,7 +146,7 @@ export default function ProductSearchPage() {
 
       const currentValues = prevFilters[category] || [];
       const newValues = currentValues.includes(value)
-        ? currentValues.filter(v => v !== value)
+        ? currentValues.filter((v) => v !== value)
         : [...currentValues, value];
 
       if (newValues.length === 0) {
@@ -124,9 +158,8 @@ export default function ProductSearchPage() {
     });
   };
 
-
   const handleProductSelect = (product: AlgoliaHit) => {
-    setSelectedProducts(prevSelected => {
+    setSelectedProducts((prevSelected) => {
       // Check if the product is already in the array
       const isSelected = prevSelected.some(p => p.id === product.id);
 
@@ -144,7 +177,7 @@ export default function ProductSearchPage() {
     const currentPageProductIds = new Set(products.map(p => p.id));
     const areAllCurrentlySelected = products.every(p => selectedProducts.some(sp => sp.id === p.id));
 
-    setSelectedProducts(prevSelected => {
+    setSelectedProducts((prevSelected) => {
       if (areAllCurrentlySelected) {
         // DESELECT all on the current page by filtering them out of the master list
         return prevSelected.filter(p => !currentPageProductIds.has(p.id));
@@ -186,7 +219,9 @@ export default function ProductSearchPage() {
 
   return (
     <div className="container mx-auto text-black">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Product Management</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">
+        Product Management
+      </h1>
       <div className="mb-3">
         <StoreFilter
           selectedStores={selectedStores}

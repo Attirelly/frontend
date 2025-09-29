@@ -154,7 +154,7 @@ export default function CampaignModal({ open, campaign, onClose }: { open: boole
             {products.map((p) => (
               <tr key={p.product_id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 font-mono text-gray-700">{p.product_id}</td>
-                <td className="px-4 py-3 text-gray-900">₹{p.bid_amount.toFixed(2)}</td>
+                <td className="px-4 py-3 text-gray-900">₹{p.bid_amount}</td>
                 <td className="px-4 py-3">
                   <button onClick={() => handleRemoveProduct(p.product_id)} className="text-red-600 hover:text-red-800 font-medium text-sm flex items-center gap-1">
                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
@@ -172,7 +172,7 @@ export default function CampaignModal({ open, campaign, onClose }: { open: boole
   if (!open || !campaign) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div className="w-full h-full bg-opacity-50 flex flex-col items-center justify-center z-50 p-4" onClick={onClose}>
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         {/* Modal Header */}
         <div className="p-6 border-b border-gray-200">
@@ -214,6 +214,7 @@ export default function CampaignModal({ open, campaign, onClose }: { open: boole
       </div>
 
       {/* Add Product Modal (rendered conditionally but kept in the DOM for state) */}
+      <div className=" w-full max-w-4xl mt-4">
       {campaign && (
         <AddProductModal
           open={openAddProduct}
@@ -222,6 +223,7 @@ export default function CampaignModal({ open, campaign, onClose }: { open: boole
           onAdd={handleProductAdded}
         />
       )}
+      </div>
     </div>
   );
 }
