@@ -8,7 +8,7 @@ interface ProductContainerProps {
     isLoading: boolean;
     error: string | null;
     // ✨ Update the props to match the new structure
-  selectedProducts: { productId: string; storeId: string }[];
+  selectedProducts: AlgoliaHit[];
   onProductSelect: (product: AlgoliaHit) => void;
     onSelectAll: () => void;
     onPageChange: (page: number) => void;
@@ -60,7 +60,7 @@ export function ProductContainer({
     }
 
     // const isAllSelected = products.length > 0 && selectedProductIds.size === products.length;
-    const isAllSelected = products.length > 0 && products.every(p => selectedProducts.some(sp => sp.productId === p.id));
+    const isAllSelected = products.length > 0 && products.every(p => selectedProducts.some(sp => sp.id === p.id));
     const paginationRange = generatePagination(currentPage, totalPages);
 
     return (
@@ -91,12 +91,12 @@ export function ProductContainer({
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {products.map((product) => (
-                            <tr key={product.id} className={`hover:bg-gray-50 ${selectedProducts.some(p => p.productId === product.id) ? 'bg-blue-50' : ''}`}>
+                            <tr key={product.id} className={`hover:bg-gray-50 ${selectedProducts.some(p => p.id === product.id) ? 'bg-blue-50' : ''}`}>
                                 <td className="p-4">
                                      <input
                                         type="checkbox"
                                         className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                        checked={selectedProducts.some(p => p.productId === product.id)}
+                                        checked={selectedProducts.some(p => p.id === product.id)}
                                         onChange={() => onProductSelect(product)}
                                         aria-labelledby={`product-name-${product.id}`}
                                     />
@@ -107,7 +107,7 @@ export function ProductContainer({
                                             <Image
                                                 className="h-12 w-12 rounded-md object-cover"
                                                 src={product.image?.[0] || '/placeholder.png'}
-                                                alt={product.product_name}
+                                                alt={product.product_name || 'product Name' }
                                                 width={48}
                                                 height={48}
                                             />

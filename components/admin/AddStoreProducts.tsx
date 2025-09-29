@@ -275,24 +275,24 @@ export default function AddStoreProduct() {
 
     // (Additional validation logic for each curation type)
     const selectedStoreIds = storeSelections.filter((id) => id);
-    if (curation_type === "product" || curation_type === "store") {
-      if (selectedStoreIds.length === 0) {
-        alert("At least one valid store must be selected.");
-        return;
-      }
-    }
+    // if (curation_type === "product" || curation_type === "store") {
+    //   if (selectedStoreIds.length === 0) {
+    //     alert("At least one valid store must be selected.");
+    //     return;
+    //   }
+    // }
 
     const selectedProductIds = productSelections.filter((id) => id);
-    if (curation_type === "product") {
-      if (selectedProductIds.length === 0) {
-        alert("At least one valid product must be selected.");
-        return;
-      }
-      if (selectedStoreIds.length !== selectedProductIds.length) {
-        alert("Please select a product for each store.");
-        return;
-      }
-    }
+    // if (curation_type === "product") {
+    //   if (selectedProductIds.length === 0) {
+    //     alert("At least one valid product must be selected.");
+    //     return;
+    //   }
+    //   if (selectedStoreIds.length !== selectedProductIds.length) {
+    //     alert("Please select a product for each store.");
+    //     return;
+    //   }
+    // }
 
     if (curation_type === "subcat 3" || curation_type === "subcat 4") {
       const validCategories = categorySelections.filter(
@@ -338,23 +338,23 @@ export default function AddStoreProduct() {
     }
 
     const selectedStoreIds = storeSelections.filter((id) => id);
-    if (curation_type === "product" || curation_type === "store") {
-      if (selectedStoreIds.length === 0) {
-        alert("At least one valid store must be selected.");
-        return;
-      }
-    }
+    // if (curation_type === "product" || curation_type === "store") {
+    //   if (selectedStoreIds.length === 0) {
+    //     alert("At least one valid store must be selected.");
+    //     return;
+    //   }
+    // }
     const selectedProductIds = productSelections.filter((id) => id);
-    if (curation_type === "product") {
-      if (selectedProductIds.length === 0) {
-        alert("At least one valid product must be selected.");
-        return;
-      }
-      if (selectedStoreIds.length !== selectedProductIds.length) {
-        alert("Please select a product for each store.");
-        return;
-      }
-    }
+    // if (curation_type === "product") {
+    //   if (selectedProductIds.length === 0) {
+    //     alert("At least one valid product must be selected.");
+    //     return;
+    //   }
+    //   if (selectedStoreIds.length !== selectedProductIds.length) {
+    //     alert("Please select a product for each store.");
+    //     return;
+    //   }
+    // }
     if (curation_type === "subcat 3" || curation_type === "subcat 4") {
       const validCategories = categorySelections.filter(
         (c) => c.category_id && c.image_url

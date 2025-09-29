@@ -1,624 +1,18 @@
-// "use client"
-
-// import { api } from "@/lib/axios";
-// import React, { useEffect, useMemo, useState } from "react";
-
-// // --- NOTE ---
-// // Use axios (`api` instance) for all network calls. Fallbacks for 405 responses
-// // attempt the alternate HTTP method via the same axios instance so the UI
-// // does not crash with an uncaught `Error: 405`.
-
-// // Types
-// type City = { id: number | string; name: string };
-// type StoreType = { id: number | string; name: string };
-// type Store = { id: number | string; name: string; cityId?: number | string; storeTypeIds: Array<number | string> };
-
-// type Product = {
-//   id: number | string;
-//   name: string;
-//   image?: string;
-//   storeTypes: string[];
-//   priceRanges: string[];
-//   genders: string[];
-//   categories: string[];
-//   brand?: string;
-//   price?: number;
-//   mrp?: number;
-//   discount?: number;
-//   size?: string;
-//   color?: string;
-//   sku?: string;
-// };
-
-// // --- Robust axios helpers ---
-// async function apiGet<T = any>(url: string): Promise<T> {
-//   try {
-//     const r = await api.get(url);
-//     return r.data as T;
-//   } catch (err: any) {
-//     // If server returns 405 for GET, try POST fallback with empty body
-//     const status = err?.response?.status;
-//     if (status === 405) {
-//       console.warn(`GET ${url} returned 405 — trying POST fallback via axios`);
-//       try {
-//         const r2 = await api.post(url, {});
-//         return r2.data as T;
-//       } catch (err2: any) {
-//         throw new Error(`Fallback POST failed: ${err2?.response?.status || err2?.message || err2}`);
-//       }
-//     }
-//     throw err;
-//   }
-// }
-
-// async function apiPost<T = any>(url: string, body: any): Promise<T> {
-//   try {
-//     const r = await api.post(url, body);
-//     return r.data as T;
-//   } catch (err: any) {
-//     // If server returns 405 for POST, try GET fallback with query params
-//     const status = err?.response?.status;
-//     if (status === 405) {
-//       console.warn(`POST ${url} returned 405 — trying GET fallback with params via axios`);
-//       try {
-//         const r2 = await api.get(url, { params: body });
-//         return r2.data as T;
-//       } catch (err2: any) {
-//         throw new Error(`Fallback GET failed: ${err2?.response?.status || err2?.message || err2}`);
-//       }
-//     }
-//     throw err;
-//   }
-// }
-
-// // --- Collapsible wrapper component ---
-// function Collapsible({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
-//   const [open, setOpen] = useState(defaultOpen);
-//   return (
-//     <div className="border rounded-md shadow-sm bg-white mb-4">
-//       <button onClick={() => setOpen((s) => !s)} className="w-full px-4 py-3 flex justify-between items-center text-left">
-//         <span className="font-medium">{title}</span>
-//         <span className="text-sm text-gray-500">{open ? "▾" : "▸"}</span>
-//       </button>
-//       {open && <div className="p-4">{children}</div>}
-//     </div>
-//   );
-// }
-
-// // --- Section 1: StoreFilters ---
-// function StoreFilters({
-//   cities,
-//   storeTypes,
-//   stores,
-//   onShowResults,
-//   selectedStores,
-//   setSelectedStores,
-//   setFilteredProductsCallback,
-// }: {
-//   cities: City[];
-//   storeTypes: StoreType[];
-//   stores: Store[];
-//   selectedStores: Store[];
-//   setSelectedStores: React.Dispatch<React.SetStateAction<Store[]>>;
-//   onShowResults: () => void;
-//   setFilteredProductsCallback: (cb: (p: Product[]) => Product[]) => void;
-// }) {
-//   const [selectedCityIds, setSelectedCityIds] = useState<Array<number | string>>([]);
-//   const [selectedStoreTypeIds, setSelectedStoreTypeIds] = useState<Array<number | string>>([]);
-//   const [storeDropdownQuery, setStoreDropdownQuery] = useState("");
-
-//   // compute stores to show in stores dropdown based on city/storetype selection
-//   const availableStores = useMemo(() => {
-//     return stores.filter((s) => {
-//       if (selectedCityIds.length > 0 && !selectedCityIds.includes(s.cityId ?? "")) return false;
-//       if (selectedStoreTypeIds.length > 0 && !s.storeTypeIds.some((id) => selectedStoreTypeIds.includes(id))) return false;
-//       return true;
-//     });
-//   }, [stores, selectedCityIds, selectedStoreTypeIds]);
-
-//   function toggleArray<T>(arr: T[], v: T) {
-//     return arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
-//   }
-
-//   function toggleCity(id: number | string) {
-//     setSelectedCityIds((p) => toggleArray(p, id));
-//   }
-//   function toggleStoreType(id: number | string) {
-//     setSelectedStoreTypeIds((p) => toggleArray(p, id));
-//   }
-
-//   function addStore(store: Store) {
-//     setSelectedStores((prev) => (prev.find((s) => String(s.id) === String(store.id)) ? prev : [...prev, store]));
-//   }
-
-//   function removeStore(storeId: number | string) {
-//     setSelectedStores((prev) => prev.filter((s) => String(s.id) !== String(storeId)));
-//   }
-
-//   return (
-//     <Collapsible title="Store Filters" defaultOpen>
-//       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//         {/* Cities multiselect */}
-//         <div>
-//           <label className="block text-sm mb-2">Cities</label>
-//           <div className="border rounded p-2 max-h-40 overflow-auto">
-//             {cities.map((c) => (
-//               <label key={String(c.id)} className="flex items-center gap-2 mb-1">
-//                 <input type="checkbox" checked={selectedCityIds.includes(c.id)} onChange={() => toggleCity(c.id)} />
-//                 <span className="text-sm">{c.name}</span>
-//               </label>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* Store types multiselect */}
-//         <div>
-//           <label className="block text-sm mb-2">Store Types</label>
-//           <div className="border rounded p-2 max-h-40 overflow-auto">
-//             {storeTypes.map((t) => (
-//               <label key={String(t.id)} className="flex items-center gap-2 mb-1">
-//                 <input type="checkbox" checked={selectedStoreTypeIds.includes(t.id)} onChange={() => toggleStoreType(t.id)} />
-//                 <span className="text-sm">{t.name}</span>
-//               </label>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* Stores dropdown + add */}
-//         <div>
-//           <label className="block text-sm mb-2">Stores</label>
-//           <input placeholder="search stores..." value={storeDropdownQuery} onChange={(e) => setStoreDropdownQuery(e.target.value)} className="w-full border rounded px-3 py-2 mb-2" />
-//           <div className="border rounded p-2 max-h-40 overflow-auto">
-//             {availableStores
-//               .filter((s) => s.name.toLowerCase().includes(storeDropdownQuery.toLowerCase()))
-//               .map((s) => (
-//                 <div key={String(s.id)} className="flex justify-between items-center py-1">
-//                   <div className="text-sm">{s.name}</div>
-//                   <button onClick={() => addStore(s)} className="text-xs px-2 py-1 rounded bg-blue-600 text-white">
-//                     Add
-//                   </button>
-//                 </div>
-//               ))}
-//             {availableStores.length === 0 && <div className="text-sm text-gray-500">No stores</div>}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Selected stores list */}
-//       <div className="mt-4">
-//         <label className="block text-sm mb-2">Selected Stores</label>
-//         <div className="flex flex-wrap gap-2">
-//           {selectedStores.map((s) => (
-//             <div key={String(s.id)} className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded">
-//               <span className="text-sm">{s.name}</span>
-//               <button className="text-red-500" onClick={() => removeStore(s.id)}>
-//                 ✕
-//               </button>
-//             </div>
-//           ))}
-//           {selectedStores.length === 0 && <div className="text-sm text-gray-500">No stores selected</div>}
-//         </div>
-//       </div>
-
-//       <div className="mt-4 flex gap-2">
-//         <button onClick={() => onShowResults()} className="px-4 py-2 bg-green-600 text-white rounded">
-//           Show Results
-//         </button>
-//         <button onClick={() => setFilteredProductsCallback((p) => p)} className="px-4 py-2 border rounded">
-//           Reset Store-based Product Filter (client)
-//         </button>
-//       </div>
-//     </Collapsible>
-//   );
-// }
-
-// // --- Section 2: ProductFilters ---
-// function ProductFilters({ productFilterOptions, productFilters, setProductFilters }: {
-//   productFilterOptions: Partial<Record<string, string[]>>;
-//   productFilters: Record<string, any>;
-//   setProductFilters: React.Dispatch<React.SetStateAction<Record<string, any>>>;
-// }) {
-//   // helper to toggle simple multiselect
-//   function toggleFilter(name: string, value: string) {
-//     setProductFilters((prev: any) => {
-//       const current = (prev[name] as string[]) || [];
-//       return { ...prev, [name]: current.includes(value) ? current.filter((x) => x !== value) : [...current, value] };
-//     });
-//   }
-
-//   function setPrice(min: number, max: number) {
-//     setProductFilters((prev: any) => ({ ...prev, price: [min, max] }));
-//   }
-
-//   return (
-//     <Collapsible title="Product Filters" defaultOpen>
-//       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//         {[
-//           { key: "categories", label: "Categories" },
-//           { key: "subcat1", label: "Subcategory 1" },
-//           { key: "subcat2", label: "Subcategory 2" },
-//           { key: "skus", label: "SKUs" },
-//           { key: "sizes", label: "Sizes" },
-//           { key: "colors", label: "Colors" },
-//           { key: "fabrics", label: "Fabrics" },
-//           { key: "occasions", label: "Occasions" },
-//         ].map((f) => (
-//           <div key={f.key}>
-//             <label className="block text-sm mb-2">{f.label}</label>
-//             <div className="border rounded p-2 max-h-40 overflow-auto">
-//               {(productFilterOptions[f.key] || []).map((opt) => (
-//                 <label key={opt} className="flex items-center gap-2 mb-1">
-//                   <input type="checkbox" checked={((productFilters[f.key] as string[]) || []).includes(opt)} onChange={() => toggleFilter(f.key, opt)} />
-//                   <span className="text-sm">{opt}</span>
-//                 </label>
-//               ))}
-//             </div>
-//           </div>
-//         ))}
-
-//         {/* Price */}
-//         <div>
-//           <label className="block text-sm mb-2">Price range</label>
-//           <div className="flex gap-2">
-//             <input
-//               type="number"
-//               value={((productFilters.price as [number, number])?.[0]) ?? ""}
-//               onChange={(e) => setPrice(Number(e.target.value || 0), Number((productFilters.price as [number, number])?.[1] || 0))}
-//               className="w-full border rounded px-3 py-2"
-//               placeholder="min"
-//             />
-//             <input
-//               type="number"
-//               value={((productFilters.price as [number, number])?.[1]) ?? ""}
-//               onChange={(e) => setPrice(Number((productFilters.price as [number, number])?.[0] || 0), Number(e.target.value || 0))}
-//               className="w-full border rounded px-3 py-2"
-//               placeholder="max"
-//             />
-//           </div>
-//         </div>
-//       </div>
-//     </Collapsible>
-//   );
-// }
-
-// // --- Section 3: ActionsPanel ---
-// function ActionsPanel({
-//   selectedProducts,
-//   labels,
-//   curations,
-//   campaigns,
-//   selectedLabel,
-//   setSelectedLabel,
-//   selectedCurations,
-//   setSelectedCurations,
-//   selectedCampaigns,
-//   setSelectedCampaigns,
-// }: {
-//   selectedProducts: Array<number | string>;
-//   labels: string[];
-//   curations: string[];
-//   campaigns: string[];
-//   selectedLabel: string | null;
-//   setSelectedLabel: (s: string | null) => void;
-//   selectedCurations: string[];
-//   setSelectedCurations: (s: string[]) => void;
-//   selectedCampaigns: string[];
-//   setSelectedCampaigns: (s: string[]) => void;
-// }) {
-//   const disabled = selectedProducts.length === 0;
-//   function toggleMulti(arr: string[], setFn: (s: string[]) => void, v: string) {
-//     setFn(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
-//   }
-
-//   return (
-//     <Collapsible title="Actions" defaultOpen>
-//       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//         <div>
-//           <label className="block text-sm mb-2">Add to label</label>
-//           <select disabled={disabled} value={selectedLabel ?? ""} onChange={(e) => setSelectedLabel(e.target.value || null)} className="w-full border rounded px-3 py-2">
-//             <option value="">-- choose label --</option>
-//             {labels.map((l) => (
-//               <option key={l} value={l}>
-//                 {l}
-//               </option>
-//             ))}
-//           </select>
-//         </div>
-
-//         <div>
-//           <label className="block text-sm mb-2">Curations</label>
-//           <div className="border rounded p-2 max-h-40 overflow-auto">
-//             {curations.map((c) => (
-//               <label key={c} className={`flex items-center gap-2 mb-1 ${disabled ? "opacity-50" : ""}`}>
-//                 <input type="checkbox" disabled={disabled} checked={selectedCurations.includes(c)} onChange={() => toggleMulti(selectedCurations, setSelectedCurations, c)} />
-//                 <span className="text-sm">{c}</span>
-//               </label>
-//             ))}
-//           </div>
-//         </div>
-
-//         <div>
-//           <label className="block text-sm mb-2">Campaigns</label>
-//           <div className="border rounded p-2 max-h-40 overflow-auto">
-//             {campaigns.map((c) => (
-//               <label key={c} className={`flex items-center gap-2 mb-1 ${disabled ? "opacity-50" : ""}`}>
-//                 <input type="checkbox" disabled={disabled} checked={selectedCampaigns.includes(c)} onChange={() => toggleMulti(selectedCampaigns, setSelectedCampaigns, c)} />
-//                 <span className="text-sm">{c}</span>
-//               </label>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </Collapsible>
-//   );
-// }
-
-// // --- Section 4: ProductsTable ---
-// function ProductsTable({
-//   products,
-//   selectedProductIds,
-//   setSelectedProductIds,
-//   onToggleSelectAll,
-// }: {
-//   products: Product[];
-//   selectedProductIds: string[];
-//   setSelectedProductIds: React.Dispatch<React.SetStateAction<string[]>>;
-//   onToggleSelectAll: (all: boolean) => void;
-// }) {
-//   function toggle(id: number | string) {
-//     const sid = String(id);
-//     setSelectedProductIds((prev: string[]) => (prev.includes(sid) ? prev.filter((x) => x !== sid) : [...prev, sid]));
-//   }
-
-//   const allSelected = products.length > 0 && products.every((p) => selectedProductIds.includes(String(p.id)));
-
-//   return (
-//     <Collapsible title="Products" defaultOpen>
-//       <div className="overflow-auto">
-//         <table className="min-w-full text-sm">
-//           <thead className="bg-gray-50">
-//             <tr>
-//               <th className="px-3 py-2">
-//                 <input type="checkbox" checked={allSelected} onChange={(e) => onToggleSelectAll(e.target.checked)} />
-//               </th>
-//               <th className="px-3 py-2">Image</th>
-//               <th className="px-3 py-2">Name</th>
-//               <th className="px-3 py-2">Store types</th>
-//               <th className="px-3 py-2">Price ranges</th>
-//               <th className="px-3 py-2">Genders</th>
-//               <th className="px-3 py-2">Categories</th>
-//               <th className="px-3 py-2">Brand</th>
-//               <th className="px-3 py-2">Price</th>
-//               <th className="px-3 py-2">MRP</th>
-//               <th className="px-3 py-2">Discount</th>
-//               <th className="px-3 py-2">Size</th>
-//               <th className="px-3 py-2">Color</th>
-//               <th className="px-3 py-2">SKU</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {products.map((p) => (
-//               <tr key={String(p.id)} className="border-b even:bg-white odd:bg-gray-50">
-//                 <td className="px-3 py-2 text-center">
-//                   <input type="checkbox" checked={selectedProductIds.includes(String(p.id))} onChange={() => toggle(p.id)} />
-//                 </td>
-//                 <td className="px-3 py-2">
-//                   <img src={p.image || "/placeholder.png"} alt="img" className="w-12 h-12 object-cover rounded" />
-//                 </td>
-//                 <td className="px-3 py-2">{p.name}</td>
-//                 <td className="px-3 py-2">{(p.storeTypes || []).join(", ")}</td>
-//                 <td className="px-3 py-2">{(p.priceRanges || []).join(", ")}</td>
-//                 <td className="px-3 py-2">{(p.genders || []).join(", ")}</td>
-//                 <td className="px-3 py-2">{(p.categories || []).join(" > ")}</td>
-//                 <td className="px-3 py-2">{p.brand}</td>
-//                 <td className="px-3 py-2">{p.price}</td>
-//                 <td className="px-3 py-2">{p.mrp}</td>
-//                 <td className="px-3 py-2">{p.discount}</td>
-//                 <td className="px-3 py-2">{p.size}</td>
-//                 <td className="px-3 py-2">{p.color}</td>
-//                 <td className="px-3 py-2">{p.sku}</td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </Collapsible>
-//   );
-// }
-
-// // --- PAGE component that wires everything together ---
-// export default function ProductCRMPage() {
-//   // backend-provided lists
-//   const [cities, setCities] = useState<City[]>([]);
-//   const [storeTypes, setStoreTypes] = useState<StoreType[]>([]);
-//   const [stores, setStores] = useState<Store[]>([]);
-
-//   // selected stores (detailed objects)
-//   const [selectedStores, setSelectedStores] = useState<Store[]>([]);
-
-//   // product area
-//   const [productFilterOptions, setProductFilterOptions] = useState<Partial<Record<string, string[]>>>({});
-//   const [productFilters, setProductFilters] = useState<Record<string, any>>({});
-//   const [products, setProducts] = useState<Product[]>([]);
-
-//   // actions & selections
-//   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-//   const [labels] = useState<string[]>(["Label A", "Label B"]);
-//   const [curations] = useState<string[]>(["Curation 1", "Curation 2"]);
-//   const [campaigns] = useState<string[]>(["Summer", "Winter"]);
-//   const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
-//   const [selectedCurations, setSelectedCurations] = useState<string[]>([]);
-//   const [selectedCampaigns, setSelectedCampaigns] = useState<string[]>([]);
-
-//   // product-fetch control
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState<string | null>(null);
-
-//   // fetch initial meta lists on mount (with robust fallbacks inside api helpers)
-//   useEffect(() => {
-//     let mounted = true;
-//     (async () => {
-//       try {
-//         setLoading(true);
-//         const [citiesData, storeTypesData, storesData] = await Promise.all([
-//           apiGet<City[]>('/location/cities'),
-//           apiGet<StoreType[]>('/api/store-types'),
-//           apiGet<Store[]>('/api/stores'),
-//         ]);
-//         if (!mounted) return;
-//         setCities(citiesData || []);
-//         setStoreTypes(storeTypesData || []);
-//         setStores(storesData || []);
-//       } catch (err: any) {
-//         console.error('Failed to load meta lists', err);
-//         setError(String(err?.message || err));
-//       } finally {
-//         if (mounted) setLoading(false);
-//       }
-//     })();
-//     return () => {
-//       mounted = false;
-//     };
-//   }, []);
-
-//   // when user presses Show Results in StoreFilters, we fetch products filtered by selectedStores
-//   async function fetchProductsByStores() {
-//     setLoading(true);
-//     setError(null);
-//     try {
-//       const storeIds = selectedStores.map((s) => s.id);
-//       // Backend should accept storeIds and return products + also aggregated filter options based on returned products
-//       const data = await apiPost<{ products: Product[]; aggregations?: Partial<Record<string, string[]>> }>('/api/products/search', { storeIds });
-//       setProducts((data && data.products) || []);
-//       // set aggregations that will be used to populate product filter dropdowns
-//       if (data && data.aggregations) setProductFilterOptions(data.aggregations);
-//       // reset selected products
-//       setSelectedProductIds([]);
-//     } catch (err: any) {
-//       console.error('Failed to fetch products by stores', err);
-//       setError(String(err?.message || err));
-//       setProducts([]);
-//     } finally {
-//       setLoading(false);
-//     }
-//   }
-
-//   // Debounce behavior: whenever productFilters change, re-query backend (assumes backend accepts filter object)
-//   useEffect(() => {
-//     const t = setTimeout(async () => {
-//       setError(null);
-//       try {
-//         setLoading(true);
-//         const body = { filters: productFilters };
-//         const data = await apiPost<{ products: Product[]; aggregations?: Partial<Record<string, string[]>> }>('/api/products/search', body);
-//         setProducts((data && data.products) || []);
-//         if (data && data.aggregations) setProductFilterOptions((prev) => ({ ...prev, ...data.aggregations }));
-//       } catch (err: any) {
-//         console.error('Failed to fetch products by filters', err);
-//         setError(String(err?.message || err));
-//       } finally {
-//         setLoading(false);
-//       }
-//     }, 350);
-//     return () => clearTimeout(t);
-//   }, [productFilters]);
-
-//   function handleToggleSelectAll(all: boolean) {
-//     if (all) setSelectedProductIds(products.map((p) => String(p.id)));
-//     else setSelectedProductIds([]);
-//   }
-
-//   return (
-//     <div className="p-6 bg-gray-50 min-h-screen">
-//       <h1 className="text-2xl font-bold mb-6">Product CRM</h1>
-
-//       {error && (
-//         <div className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700">
-//           <strong>Error:</strong> {error}
-//         </div>
-//       )}
-
-//       <StoreFilters
-//         cities={cities}
-//         storeTypes={storeTypes}
-//         stores={stores}
-//         selectedStores={selectedStores}
-//         setSelectedStores={setSelectedStores}
-//         onShowResults={fetchProductsByStores}
-//         setFilteredProductsCallback={(cb) => setProducts((prev) => cb(prev))}
-//       />
-
-//       <ProductFilters productFilterOptions={productFilterOptions} productFilters={productFilters} setProductFilters={setProductFilters} />
-
-//       <ActionsPanel
-//         selectedProducts={selectedProductIds}
-//         labels={labels}
-//         curations={curations}
-//         campaigns={campaigns}
-//         selectedLabel={selectedLabel}
-//         setSelectedLabel={setSelectedLabel}
-//         selectedCurations={selectedCurations}
-//         setSelectedCurations={setSelectedCurations}
-//         selectedCampaigns={selectedCampaigns}
-//         setSelectedCampaigns={setSelectedCampaigns}
-//       />
-
-//       <div className="mt-4">
-//         {loading ? (
-//           <div className="py-4">Loading products...</div>
-//         ) : (
-//           <div className="py-2 text-sm text-gray-600">{products.length} products</div>
-//         )}
-//         <ProductsTable products={products} selectedProductIds={selectedProductIds} setSelectedProductIds={setSelectedProductIds} onToggleSelectAll={handleToggleSelectAll} />
-//       </div>
-//     </div>
-//   );
-// }
-
-// "use client";
-// import { useState } from 'react';
-// import { ChevronDown } from 'lucide-react';
-// import { StoreFilter, Store} from '@/components/admin/productCRM/StoreFilters';
-
-// export default function ProductCRMPage() {
-//   // CHANGED: State is now managed here in the parent component
-//   const [selectedStores, setSelectedStores] = useState<Store[]>([]);
-
-//   // For demonstration, log the stores to the console whenever they change
-//   console.log("Stores selected in parent:", selectedStores);
-
-//   return (
-//     <div className="p-8 bg-gray-50 min-h-screen font-sans">
-//       <div>
-//         {/* CHANGED: Pass the state and the updater function as props */}
-//         <StoreFilter
-//           selectedStores={selectedStores}
-//           onStoresChange={setSelectedStores}
-//         />
-
-
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
 import { api } from "@/lib/axios";
-import { AlgoliaHit, ProductFacets, AlgoliaProductResponse, SelectedProduct } from "@/types/algolia";
+import { AlgoliaHit, ProductFacets, AlgoliaProductResponse, SelectedProduct, Curation } from "@/types/algolia";
 
 import { DynamicFilters } from "@/components/admin/productCRM/DynamicFilters";
 import { ProductContainer } from "@/components/admin/productCRM/ProductContainer";
 import { StoreFilter, Store } from "@/components/admin/productCRM/StoreFilters";
+import { AddToCuration } from "@/components/admin/productCRM/AddToCuration";
+import { SelectedProductsSidebar } from "@/components/admin/productCRM/SelectedProductsSidebar";
+
 
 // Define the structure for selected filters
 type SelectedFilters = Record<string, string[]>;
-const STORE_IDS = [
-  "52b9fab3-60f5-4b4a-83be-be74e26cc329",
-  "d18c65b0-7fcc-4429-9dfd-a53fae66cb59",
-  "da950e55-dddb-4e2f-8cc0-437bf79ea809",
-];
 
 export default function ProductSearchPage() {
   // const storeIds = STORE_IDS;
@@ -628,12 +22,14 @@ export default function ProductSearchPage() {
   const [products, setProducts] = useState<AlgoliaHit[]>([]);
   const [facets, setFacets] = useState<Partial<ProductFacets>>({});
   const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({});
-  const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<AlgoliaHit[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedStores, setSelectedStores] = useState<Store[]>([]);
+  const [selectedCurations, setSelectedCurations] = useState<Curation[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const storeIds = useMemo(() => selectedStores.map((item) => String(item.id)), [selectedStores]);
 
@@ -732,31 +128,31 @@ export default function ProductSearchPage() {
   const handleProductSelect = (product: AlgoliaHit) => {
     setSelectedProducts(prevSelected => {
       // Check if the product is already in the array
-      const isSelected = prevSelected.some(p => p.productId === product.id);
+      const isSelected = prevSelected.some(p => p.id === product.id);
 
       if (isSelected) {
         // If it is, filter it out (deselect)
-        return prevSelected.filter(p => p.productId !== product.id);
+        return prevSelected.filter(p => p.id !== product.id);
       } else {
         // If not, add the new object to the array
-        return [...prevSelected, { productId: product.id, storeId: product.store_id }];
+        return [...prevSelected, product];
       }
     });
   };
 
   const handleSelectAll = () => {
     const currentPageProductIds = new Set(products.map(p => p.id));
-    const areAllCurrentlySelected = products.every(p => selectedProducts.some(sp => sp.productId === p.id));
+    const areAllCurrentlySelected = products.every(p => selectedProducts.some(sp => sp.id === p.id));
 
     setSelectedProducts(prevSelected => {
       if (areAllCurrentlySelected) {
         // DESELECT all on the current page by filtering them out of the master list
-        return prevSelected.filter(p => !currentPageProductIds.has(p.productId));
+        return prevSelected.filter(p => !currentPageProductIds.has(p.id));
       } else {
         // SELECT all on the current page
         const newSelections = products
-          .filter(p => !prevSelected.some(sp => sp.productId === p.id)) // Avoid adding duplicates
-          .map(p => ({ productId: p.id, storeId: p.store_id }));
+          .filter(p => !prevSelected.some(sp => sp.id === p.id)) // Avoid adding duplicates
+          // .map(p => ({ id: p.id, store_id: p.store_id }));
         
         return [...prevSelected, ...newSelections];
       }
@@ -770,7 +166,23 @@ export default function ProductSearchPage() {
     // setSelectedProductIds(new Set());
   };
 
-  console.log(selectedProducts);
+  const handleCurationChange = (curations: Curation[]) => {
+    setSelectedCurations(curations);
+  };
+
+  const handleRemoveFromMasterList = (productId: string) => {
+    setSelectedProducts(prev => prev.filter(p => p.id !== productId));
+  };
+ 
+  const handleClearAllSelections = () => {
+    setSelectedProducts([]);
+  };
+
+  const handleSubmit = () => {
+    // You can now access all properties of the selected curations
+    const curationNames = selectedCurations.map(c => c.section_name).join(', ');
+    alert(`Submitting with these curations: ${curationNames}`);
+  };
 
   return (
     <div className="container mx-auto text-black">
@@ -781,7 +193,16 @@ export default function ProductSearchPage() {
           onStoresChange={setSelectedStores}
         />
       </div>
+      {selectedProducts.length > 0 && (
+<div className="mb-3">
+        <AddToCuration
+        onSelectionChange={handleCurationChange}
+        selectedProducts={selectedProducts}
+        />
+      </div>
 
+      )}
+      
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <aside className="lg:col-span-1">
@@ -808,11 +229,28 @@ export default function ProductSearchPage() {
         </main>
       </div>
 
+      {/* NEW: Floating button to open the master list sidebar */}
       {selectedProducts.length > 0 && (
-        <div className="fixed bottom-4 right-4 bg-blue-600 text-white py-3 px-6 rounded-lg shadow-lg">
-          <p className="font-semibold">{selectedProducts.length} product(s) selected</p>
-        </div>
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="fixed bottom-6 right-6 bg-blue-600 text-white py-3 px-5 rounded-full shadow-lg flex items-center space-x-3 hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 z-30"
+        >
+          <span className="font-semibold text-lg">{selectedProducts.length}</span>
+          <span className="hidden sm:inline">View Selections</span>
+           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+           </svg>
+        </button>
       )}
+
+      {/* NEW: Render the sidebar component */}
+      <SelectedProductsSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        selectedProducts={selectedProducts}
+        onRemoveProduct={handleRemoveFromMasterList}
+        onClearAll={handleClearAllSelections}
+      />
     </div>
   );
 }

@@ -3,8 +3,8 @@
 export interface AlgoliaHit {
   id: string;
   store_id:string,
-  product_name: string;
-  title: string;
+  product_name?: string;
+  title?: string;
   description?: string;
   image?: string[];
   genders?: string[];
@@ -32,3 +32,11 @@ export interface SelectedProduct {
   productId: string;
   storeId: string;
 };
+
+export interface Curation{
+  section_id:string;
+  section_name:string;
+  section_number:number;
+  section_type:string;
+  section_url:string;
+}

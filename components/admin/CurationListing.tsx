@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -65,8 +64,7 @@ export default function CurationPage() {
       try {
         setLoading(true);
         setError(null);
-        const response = await api.get('/homepage/section'); // Replace with your backend API URL
-        // 
+        const response = await api.get('/homepage/section'); 
         setCurations(response.data.sort((a : Curation, b : Curation) => a.section_number - b.section_number));
       } catch (err) {
         setError('Failed to load curations.');
