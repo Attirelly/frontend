@@ -5,6 +5,7 @@ import { api } from "@/lib/axios";
 import { toast } from "sonner";
 import customStyles from "@/utils/selectStyles"; // Assuming these are your custom react-select styles
 import { Product } from "@/types/ProductTypes";
+import ProductSearchPage from "@/app/admin/(protected)/productCRM/page";
 
 interface AddProductModalProps {
   open: boolean;
@@ -120,11 +121,11 @@ export default function AddProductModal({
   return (
     // --- UI IMPROVEMENT: Centered modal with a backdrop ---
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60 transition-opacity duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-60 transition-opacity duration-300"
       onClick={onClose} // Close modal on backdrop click
     >
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-lg flex flex-col transform transition-all"
+        className="bg-white rounded-lg shadow-xl w-full  flex flex-col transform transition-all"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
       >
         {/* Header */}
@@ -155,7 +156,7 @@ export default function AddProductModal({
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        {/* <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div>
             <label
               htmlFor="product-select"
@@ -211,7 +212,9 @@ export default function AddProductModal({
               required
             />
           </div>
-        </form>
+        </form> */}
+
+        <ProductSearchPage/>
 
         {/* Footer */}
         <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
