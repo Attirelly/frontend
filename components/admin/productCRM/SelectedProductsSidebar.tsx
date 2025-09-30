@@ -31,7 +31,7 @@ export function SelectedProductsSidebar({
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-full  bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -65,8 +65,8 @@ export function SelectedProductsSidebar({
                     className="w-16 h-16 object-cover rounded-md mr-4"
                   />
                   <div className="flex-grow">
-                    <p className="font-semibold truncate">{product.product_name}</p>
-                    <p className="text-sm text-gray-500">ID: {product.id}</p>
+                    <p className="text-sm font-semibold">{product.title}</p>
+                    <p className="text-xs text-gray-500">Rs. {product.price}</p>
                   </div>
                   <button
                     onClick={() => onRemoveProduct(product.id)}
