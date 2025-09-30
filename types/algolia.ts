@@ -9,6 +9,9 @@ export interface AlgoliaHit {
   image?: string[];
   genders?: string[];
   price?: number;
+  mrp?:number;
+  categories:string[];
+  store_name:string;
   // Add any other fields you expect in a product hit
 }
 
@@ -39,4 +42,12 @@ export interface Curation{
   section_number:number;
   section_type:string;
   section_url:string;
+}
+
+export interface StoreApiResponse {
+    store_id: string;
+    store_name: string;
+    // Add other fields from your API response here if needed in the future
+    // city: { city_id: string, city_name: string };
+    // store_types: { store_type_id: string, store_type_name: string }[];
 }

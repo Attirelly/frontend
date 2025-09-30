@@ -85,7 +85,22 @@ export function ProductContainer({
                                 Price
                             </th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                MRP
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Genders
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Primary Category
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                SubCat 1
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                SubCat 2
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                SubCat 3
                             </th>
                         </tr>
                     </thead>
@@ -119,11 +134,27 @@ export function ProductContainer({
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    {product.price ? `$${product.price.toFixed(2)}` : 'N/A'}
+                                    {product.price ? `Rs. ${product.price.toFixed(2)}` : 'N/A'}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    {product.mrp ? `Rs. ${product.mrp.toFixed(2)}` : 'N/A'}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {product.genders?.join(', ') || 'Unisex'}
                                 </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {product.categories[3]? product.categories[3]   : 'N/A'}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {product.categories[2]? product.categories[2]   : 'N/A'}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {product.categories[1]? product.categories[1]   : 'N/A'}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {product.categories[0]? product.categories[0]   : 'N/A'}
+                                </td>
+                                
                             </tr>
                         ))}
                     </tbody>
