@@ -27,17 +27,12 @@ export interface Store {
 }
 
 // NEW: A type representing the raw store data from the API
-interface StoreApiResponse {
-    store_id: string;
-    store_name: string;
-    // Add other fields from your API response here if needed in the future
-    // city: { city_id: string, city_name: string };
-    // store_types: { store_type_id: string, store_type_name: string }[];
-}
+
 
 
 interface StoreFilterProps {
   selectedStores: Store[];
+  allFetchedStores:Store[];
   onStoresChange: (stores: Store[]) => void;
 }
 
@@ -58,7 +53,7 @@ const mockStoreTypes: StoreType[] = [
 
 
 // --- The Main Component ---
-export const StoreFilter: React.FC<StoreFilterProps> = ({ selectedStores, onStoresChange }) => {
+export const StoreFilter: React.FC<StoreFilterProps> = ({ selectedStores, allFetchedStores, onStoresChange }) => {
   // Master data state
   const [allCities, setAllCities] = useState<City[]>([]);
   const [allStoreTypes, setAllStoreTypes] = useState<StoreType[]>([]);
@@ -71,20 +66,22 @@ export const StoreFilter: React.FC<StoreFilterProps> = ({ selectedStores, onStor
   
   const [isSectionExpanded, setIsSectionExpanded] = useState(true);
 
+  console.log("allfetchedstores", allFetchedStores);
   // CHANGED: useEffect now fetches real data from the API
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
         // Fetch stores from the API
-        const response = await api.get<StoreApiResponse[]>('/stores/'); // Assuming your base URL is set up in the axios instance
+        // const response = await api.get<StoreApiResponse[]>('/stores/'); 
         
-        // Transform API data to match the component's expected 'Store' interface
-        const formattedStores = response.data.map(store => ({
-          id: store.store_id,
-          name: store.store_name,
-        }));
-        setAllStores(formattedStores);
+        // // Transform API data to match the component's expected 'Store' interface
+        // const formattedStores = response.data.map(store => ({
+        //   id: store.store_id,
+        //   name: store.store_name,
+        // }));
+        setAllStores(allFetchedStores);
+
 
         // TODO: Replace with API calls for cities and store types later
         setAllCities(mockCities);
@@ -99,7 +96,9 @@ export const StoreFilter: React.FC<StoreFilterProps> = ({ selectedStores, onStor
     };
 
     fetchData();
-  }, []);
+  }, [allFetchedStores]);
+
+  
   
   // TODO: This logic needs to be updated when City/StoreType data comes from the API.
   // The current filtering is disabled as the new 'Store' object doesn't have cityId/storeTypeId.

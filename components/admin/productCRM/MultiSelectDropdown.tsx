@@ -14,6 +14,7 @@ interface MultiSelectDropdownProps {
   selectedIds: (number | string)[];
   onSelectionChange: (selectedIds: (number | string)[]) => void;
   placeholder: string;
+  disabled?:boolean;
 }
 
 export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
@@ -21,6 +22,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   selectedIds,
   onSelectionChange,
   placeholder,
+  disabled=false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState(''); // State for the search input
@@ -86,6 +88,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full bg-white border border-gray-300 rounded-md shadow-sm px-4 py-3 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        disabled={disabled}
       >
         <div className="flex items-center justify-between">
           <span className="truncate text-gray-700">{getButtonLabel()}</span>
