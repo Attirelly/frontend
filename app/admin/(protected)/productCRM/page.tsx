@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { api } from "@/lib/axios";
-import { AlgoliaHit, ProductFacets, AlgoliaProductResponse, SelectedProduct, Curation } from "@/types/algolia";
+import { AlgoliaHit, ProductFacets, AlgoliaProductResponse, SelectedProduct, Curation, StoreApiResponse } from "@/types/algolia";
 
 import { DynamicFilters } from "@/components/admin/productCRM/DynamicFilters";
 import { ProductContainer } from "@/components/admin/productCRM/ProductContainer";
 import { StoreFilter, Store } from "@/components/admin/productCRM/StoreFilters";
 import { AddToCuration } from "@/components/admin/productCRM/AddToCuration";
 import { SelectedProductsSidebar } from "@/components/admin/productCRM/SelectedProductsSidebar";
+import { toast } from "sonner";
+import { EditCuration } from "@/components/admin/productCRM/EditCuration";
 
 
 // Define the structure for selected filters
@@ -39,10 +41,106 @@ export default function ProductSearchPage({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+
+  // NEW State to manage the loading state for the edit curation feature
+  const [isEditingCuration, setIsEditingCuration] = useState<boolean>(false);
+  // NEW State to hold a master list of all stores for mapping IDs to names
+  const [allStores, setAllStores] = useState<Store[]>([]);
+
   const storeIds = useMemo(
     () => selectedStores.map((item) => String(item.id)),
     [selectedStores]
   );
+
+  // NEW useEffect to fetch the master list of all stores once
+  useEffect(() => {
+    const fetchAllStores = async () => {
+      try {
+        const response = await api.get<StoreApiResponse[]>('/stores/');
+        const formattedStores = response.data.map((store: any) => ({
+          id: store.store_id,
+          name: store.store_name,
+        }));
+        setAllStores(formattedStores);
+      } catch (err) {
+        console.error("Failed to fetch all stores list:", err);
+        toast.error("Could not load the master store list.");
+      }
+    };
+    fetchAllStores();
+  }, []);
+
+   // --- START: NEW LOGIC FOR EDITING CURATION ---
+  
+  /**
+   * Handles the selection of a curation from the EditCuration modal.
+   * This function orchestrates fetching curation data and setting all relevant states.
+   */
+  const handleEditCurationSelect = async (curation: Curation) => {
+    if (curation.section_type !== 'product') {
+      toast.error("This page can only edit 'product' type curations.");
+      return;
+    }
+
+    setIsEditingCuration(true);
+    // Clear previous selections to load the new curation state
+    setSelectedProducts([]);
+    setSelectedStores([]);
+    setSelectedCurations([]);
+    
+    try {
+      // 1. Fetch the store and product IDs for the selected curation
+      const response = await api.get<{ store_id: string; product_id?: string }[]>(
+        `/homepage/stores_and_products_by_section/${curation.section_id}`
+      );
+      const storeProductPairs = response.data;
+
+      if (!storeProductPairs || storeProductPairs.length === 0) {
+        toast.info("This curation is currently empty.");
+        return;
+      }
+
+      // 2. Populate the selected stores filter
+      const storeIdsFromCuration = [...new Set(storeProductPairs.map(p => p.store_id))];
+      const storesToSelect = allStores.filter(store => storeIdsFromCuration.includes(store.id));
+      setSelectedStores(storesToSelect);
+      
+      // 3. Fetch full product details using the new backend endpoint
+      const productIds = storeProductPairs.map(p => p.product_id).filter((id): id is string => !!id);
+      
+      if (productIds.length > 0) {
+        // THIS IS THE KEY STEP using the new endpoint
+
+        const prodFilters = `(${productIds
+        .map((product_id) => `objectID:"${product_id}"`)
+        .join(" OR ")})`;
+
+        const response = await api.get("/search/search_product", {
+          params: {
+            filters: prodFilters,
+            limit: 1000,
+          },
+        });
+
+        // const productsResponse = await api.post<AlgoliaHit[]>('/search/products_by_ids', {
+        //   product_ids: productIds,
+        // });
+        
+        setSelectedProducts(response.data.hits);
+      }
+      
+      // 4. Set the selected curation in the "Add To" dropdown for context
+      setSelectedCurations([curation]);
+      
+      toast.success(`Successfully loaded curation: ${curation.section_name}`);
+
+    } catch (err) {
+      console.error("Failed to load curation details:", err);
+      toast.error("An error occurred while loading the curation.");
+    } finally {
+      setIsEditingCuration(false);
+    }
+  };
 
   const handleConfirm = async () => {
     if (selectedProducts.length === 0) return;
@@ -219,12 +317,17 @@ export default function ProductSearchPage({
 
   return (
     <div className="container mx-auto text-black">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">
-        Product Management
-      </h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Product Management
+        </h1>
+        {/* --- ADD THE NEW EDIT BUTTON HERE --- */}
+        <EditCuration onCurationSelect={handleEditCurationSelect} isProcessing={isEditingCuration} />
+      </div>
       <div className="mb-3">
         <StoreFilter
           selectedStores={selectedStores}
+          allFetchedStores={allStores}
           onStoresChange={setSelectedStores}
         />
       </div>
@@ -233,6 +336,7 @@ export default function ProductSearchPage({
         <AddToCuration
         onSelectionChange={handleCurationChange}
         selectedObjects={selectedProducts}
+        initialSelectedIds={selectedCurations.map(c => c.section_id)}
         />
       </div>
 

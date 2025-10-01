@@ -70,6 +70,19 @@ export function AddToCuration({
     fetchCurations();
   }, []);
 
+
+  useEffect(() => {
+    setSelectedCurationIds(initialSelectedIds);
+
+    if (allCurations.length > 0) {
+      const selectedObjects = allCurations.filter((curation) =>
+        initialSelectedIds.includes(curation.section_id)
+      );
+      setSelectedCurations(selectedObjects);
+    }
+    // We can also remove onSelectionChange from the dependency array now.
+  }, [initialSelectedIds, allCurations]);
+
   /**
    * Transforms the fetched curations data into the format required by the
    * `MultiSelectDropdown` component ({ id, name }).
