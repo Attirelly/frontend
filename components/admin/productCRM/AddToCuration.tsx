@@ -6,7 +6,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { api } from '@/lib/axios'; // Assuming your axios instance is here
 import { MultiSelectDropdown } from './MultiSelectDropdown'; // Assuming the dropdown is in the same folder
 import { ChevronDown, Section } from 'lucide-react';
-import { AlgoliaHit, Curation } from '@/types/algolia';
+import { AlgoliaHit, AlgoliaStorehit, Curation } from '@/types/algolia';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 
@@ -17,7 +17,7 @@ import { AxiosError } from 'axios';
 interface AddToCurationProps {
   // Pass a callback to get the full selected Curation objects
   onSelectionChange: (selectedCurations: Curation[]) => void;
-  selectedProducts?:AlgoliaHit[]
+  selectedObjects?:AlgoliaHit[] | AlgoliaStorehit[];
   // Pre-populate selection using initial IDs
   initialSelectedIds?: (string | number)[];
 }
@@ -39,7 +39,7 @@ interface AddToCurationProps {
  */
 export function AddToCuration({
   onSelectionChange,
-  selectedProducts = [],
+  selectedObjects = [],
   initialSelectedIds = [],
 }: AddToCurationProps) {
   const [isExpanded, setIsExpanded] = useState(true); // Default to expanded
@@ -58,11 +58,6 @@ export function AddToCuration({
         setLoading(true);
         setError(null);
         const response = await api.get('/homepage/section');
-        // We only need the ID and name for the dropdown
-        // setAllCurations(response.data.map(({ section_number, section_name }: CurationOption) => ({
-        //   section_number,
-        //   section_name,
-        // })));
         setAllCurations(response.data);
       } catch (err) {
         setError('Failed to load curations.');
@@ -101,25 +96,54 @@ export function AddToCuration({
   };
 
   const handleAddToCuration = async () => {
-const payload = {
+// const payload = {
+//       section_name: selectedCurations[0].section_name,
+//       section_number: selectedCurations[0].section_number,
+//       section_type: selectedCurations[0].section_type,
+//       section_url: selectedCurations[0].section_url,
+//       store_ids: selectedObjects.map((stores) => stores.store_id),
+//       product_ids: selectedObjects.map((products) => products.id),
+//     };
+//     console.log(payload);
+
+// Base payload with details from the selected curation
+    const payloadBase = {
       section_name: selectedCurations[0].section_name,
       section_number: selectedCurations[0].section_number,
       section_type: selectedCurations[0].section_type,
       section_url: selectedCurations[0].section_url,
-      store_ids: selectedProducts.map((products) => products.store_id),
-      product_ids: selectedProducts.map((products) => products.id),
     };
-    console.log(payload);
+
+    let finalPayload;
+    const firstObject = selectedObjects[0];
+
+    // **Check if the objects are stores by looking for a unique property like `store_name`**
+    if ('store_name' in firstObject) {
+      // Case 1: Payload for STORES (AlgoliaStorehit[])
+      finalPayload = {
+        ...payloadBase,
+        store_ids: selectedObjects.map((store) => store.id),
+        product_ids: [], // Send an empty array as requested
+      };
+    } else {
+      // Case 2: Payload for PRODUCTS (AlgoliaHit[])
+      finalPayload = {
+        ...payloadBase,
+        // Get unique store IDs from the products
+        store_ids: selectedObjects.map((stores) => (stores as AlgoliaHit).store_id),
+        product_ids: selectedObjects.map((product) => product.id),
+      };
+    }
+
+    console.log("Submitting Payload:", finalPayload);
     try {
-      await api.put(`/homepage/section/${selectedCurations[0].section_id}`, payload);
+      await api.put(`/homepage/section/${selectedCurations[0].section_id}`, finalPayload);
       toast.success("Curation submitted successfully!");
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message || "Failed to update section.");
     }
   }
-
-  console.log("selected products", selectedProducts);
 
   return (
     <div className="w-full border border-gray-200 rounded-lg">

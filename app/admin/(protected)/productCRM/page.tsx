@@ -232,7 +232,7 @@ export default function ProductSearchPage({
 <div className="mb-3">
         <AddToCuration
         onSelectionChange={handleCurationChange}
-        selectedProducts={selectedProducts}
+        selectedObjects={selectedProducts}
         />
       </div>
 
