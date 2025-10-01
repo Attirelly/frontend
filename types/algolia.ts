@@ -39,6 +39,20 @@ export interface AlgoliaStorehit {
   followers_count:number;
 }
 
+export interface StoreFacets {
+  genders: Record<string, number>;
+  price_ranges: Record<string, number>;
+  area: Record<string, number>;
+  discount: Record<string, number>;
+  city: Record<string, number>;
+  store_types: Record<string, number>;
+  /**
+   * Marked as optional because it was commented out in the provided Python code,
+   * suggesting it might not always be present.
+   */
+  categories?: Record<string, number>;
+}
+
 export interface ProductFacets {
   genders: Record<string, number>;
   primary_category: Record<string, number>;

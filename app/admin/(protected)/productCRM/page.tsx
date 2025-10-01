@@ -8,10 +8,10 @@ import { DynamicFilters } from "@/components/admin/productCRM/DynamicFilters";
 import { ProductContainer } from "@/components/admin/productCRM/ProductContainer";
 import { StoreFilter, Store } from "@/components/admin/productCRM/StoreFilters";
 import { AddToCuration } from "@/components/admin/productCRM/AddToCuration";
-import { SelectedProductsSidebar } from "@/components/admin/productCRM/SelectedProductsSidebar";
+import { SelectionSidebar } from "@/components/admin/productCRM/SelectionSidebar";
 import { toast } from "sonner";
 import { EditCuration } from "@/components/admin/productCRM/EditCuration";
-
+import Image from "next/image";
 
 // Define the structure for selected filters
 type SelectedFilters = Record<string, string[]>;
@@ -309,12 +309,35 @@ export default function ProductSearchPage({
     setSelectedProducts([]);
   };
 
+
   const handleSubmit = () => {
     // You can now access all properties of the selected curations
     const curationNames = selectedCurations.map(c => c.section_name).join(', ');
     alert(`Submitting with these curations: ${curationNames}`);
   };
 
+  const selectedCurationIds = useMemo(
+  () => selectedCurations.map((c) => c.section_id),
+  [JSON.stringify(selectedCurations.map(c => c.section_id))]
+);
+
+
+// Define a function that describes how to render a product
+const renderProductItem = (product: AlgoliaHit) => (
+  <div className="flex items-center">
+    <Image
+      src={product.image?.[0] || "/placeholder.png"}
+      alt={product.product_name || 'product name'}
+      width={60}
+      height={60}
+      className="w-16 h-16 object-cover rounded-md mr-4"
+    />
+    <div>
+      <p className="text-sm font-semibold">{product.title}</p>
+      <p className="text-xs text-gray-500">Rs. {product.price}</p>
+    </div>
+  </div>
+);
   return (
     <div className="container mx-auto text-black">
       <div className="flex justify-between items-center mb-6">
@@ -336,7 +359,7 @@ export default function ProductSearchPage({
         <AddToCuration
         onSelectionChange={handleCurationChange}
         selectedObjects={selectedProducts}
-        initialSelectedIds={selectedCurations.map(c => c.section_id)}
+        selectedCurations={selectedCurations}
         />
       </div>
 
@@ -383,13 +406,17 @@ export default function ProductSearchPage({
       )}
 
       {/* NEW: Render the sidebar component */}
-      <SelectedProductsSidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        selectedProducts={selectedProducts}
-        onRemoveProduct={handleRemoveFromMasterList}
-        onClearAll={handleClearAllSelections}
-      />
+      <SelectionSidebar
+  isOpen={isSidebarOpen}
+  onClose={() => setIsSidebarOpen(false)}
+  items={selectedProducts}
+  onRemoveItem={handleRemoveFromMasterList} // Your existing function
+  onClearAll={handleClearAllSelections}     // Your existing function
+  title="Selected Products"
+  emptyStateMessage="No products selected yet."
+  getKey={(product) => product.id}
+  renderItem={renderProductItem}
+/>
     </div>
   );
 }
