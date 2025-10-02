@@ -50,6 +50,11 @@ const sections = [
     title: "QR Code",
     iconUrl: "/OnboardingSections/business_details.png",
   },
+  {
+    id: "size_charts",
+    title: "Size Charts",
+    iconUrl: "/OnboardingSections/business_details.png",
+  }
 ];
 
 const sectionGroups = [
@@ -60,6 +65,10 @@ const sectionGroups = [
   {
     heading: "Add Products",
     ids: ["one_product", "bulk_products", "all_products"],
+  },
+  {
+    heading: "Size Charts",
+    ids: ["size_charts"],
   },
   { heading: "QR Code", ids: ["qr_code"] },
 ];

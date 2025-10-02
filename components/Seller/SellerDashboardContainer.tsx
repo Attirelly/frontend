@@ -20,6 +20,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ProductUploadPage from "@/app/product_upload/page";
 import { toast } from "sonner";
 import { City, Area, Pincode } from "@/types/SellerTypes";
+import SizeChartPage from "./Sections/SizeChart";
 
 
 /**
@@ -273,6 +274,8 @@ export default function SellerDashboardContainer() {
         return <BulkUploadPage />;
       case "one_product":
         return <ProductUploadPage />;
+      case "size_charts":
+        return <SizeChartPage />;
       default:
         return null;
     }
