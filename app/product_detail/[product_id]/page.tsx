@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 import {
@@ -87,6 +87,10 @@ export default function ProductDetail() {
   const [startIndex, setStartIndex] = useState(0); //  i
   const [endIndex, setEndIndex] = useState(4); //   j
   const [storeBasicInfo, setStoreBasicInfo] = useState<any>(null);
+  const [productSizeChartUrl, setProductSizeChartUrl] = useState<string | null>(
+    null
+  );
+  const [isSizeChartModalOpen, setIsSizeChartModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
   );
@@ -148,6 +152,23 @@ export default function ProductDetail() {
       setRatio(ratioio);
     }
   };
+
+  useEffect(() => {
+    async function fetchSizeChartForProduct() {
+      if (!product_id) return;
+      try {
+        const response = await api.get(
+          `/size_charts/for_product/${product_id}`
+        );
+        setProductSizeChartUrl(response.data.image_url);
+      } catch (error) {
+        console.log("No size chart found for this product.");
+        setProductSizeChartUrl(null);
+      }
+    }
+
+    fetchSizeChartForProduct();
+  }, [product]);
 
   /**
    * Effect to fetch the main product details when the component mounts or the product ID changes.
@@ -524,9 +545,14 @@ Could you please confirm its availability and share payment link.`;
                       <span className="text-[#7D7D7D]">Size:</span>{" "}
                       <span>{selectedSize?.size_name}</span>
                     </p>
-                    {/* <button className="text-lg text-[#7D7D7D] underline">
-                      View Size Chart
-                    </button> */}
+                    {productSizeChartUrl && (
+                      <button
+                        onClick={() => setIsSizeChartModalOpen(true)}
+                        className="text-sm md:text-base text-gray-600 underline hover:text-black transition-colors"
+                      >
+                        Size Chart
+                      </button>
+                    )}
                   </div>
                   <div className="flex gap-3 flex-wrap mt-2 md::mt-5">
                     {sizes.map((size) => (
@@ -874,6 +900,57 @@ Could you please confirm its availability and share payment link.`;
           }}
         />
       )}
+
+      <SizeChartModal
+        isOpen={isSizeChartModalOpen}
+        onClose={() => setIsSizeChartModalOpen(false)}
+        imageUrl={productSizeChartUrl || ""}
+      />
     </div>
   );
 }
+
+const SizeChartModal: FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  imageUrl: string;
+}> = ({ isOpen, onClose, imageUrl }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      onClick={onClose}
+      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[1000]"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative p-4 bg-white rounded-lg max-w-[90vw] max-h-[90vh] w-auto"
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow-lg z-10"
+        >
+          {/* You can use an icon here if you have one, like FiX */}
+          <svg
+            className="w-6 h-6 text-black"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+        <img
+          src={imageUrl}
+          alt="Size Chart"
+          className="w-full h-full object-contain max-h-[calc(90vh-32px)]"
+        />
+      </div>
+    </div>
+  );
+};
