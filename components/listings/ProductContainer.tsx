@@ -132,7 +132,7 @@ export const parsePriceFromQuery = (query: string): ParsedQuery => {
 
   // Patterns for "under X", "over X", etc.
   const simplePatterns = [
-    { regex: /(?:under|below|less than)\s*(\d+)/i, operator: "<" },
+    { regex: /(?:under|below|less than)\s*(\d+)/i, operator: "<" }, // make it work for in keyword 
     { regex: /(?:over|above|more than)\s*(\d+)/i, operator: ">" },
     { regex: /<\s*(\d+)/i, operator: "<" }, // Handle "< 20000"
     { regex: />\s*(\d+)/i, operator: ">" }, // Handle "> 20000"

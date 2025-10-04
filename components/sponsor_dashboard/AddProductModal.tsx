@@ -262,7 +262,7 @@ export default function AddProductModal({
             type="submit"
             onClick={handleSubmit}
             // --- UX IMPROVEMENT: Disable button when form is invalid or submitting ---
-            disabled={!isFormValid || isSubmitting}
+            // disabled={!isFormValid || isSubmitting}
             className="px-5 py-2 bg-gray-900 text-white rounded-md text-sm font-medium hover:bg-gray-800 transition-colors flex items-center justify-center w-32 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {isSubmitting ? <Spinner /> : "Add Product"}

@@ -154,6 +154,7 @@ export default function ProductDetail() {
   };
 
   useEffect(() => {
+    console.log("Product", product);
     async function fetchSizeChartForProduct() {
       if (!product_id) return;
       try {
@@ -178,6 +179,7 @@ export default function ProductDetail() {
       try {
         const response = await api.get(`/products/${product_id}`);
         const data: Product = response.data;
+        console.log("Fetched product data:", data);
 
         setProduct(data);
         // setStoreId(data.store_id);
@@ -840,43 +842,82 @@ Could you please confirm its availability and share payment link.`;
         </div>
       </div>
       {product && (
-        <div className="px-10 w-full flex flex-col mx-auto">
-          <hr
-            className="border-t border-gray-300 hidden md:block"
-            // style={{
-            //   borderImage:
-            //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
-            //   borderImageSlice: 1,
-            // }}
-          />
+        <div>
+          <div className="px-10 w-full flex flex-col mx-auto">
+            <hr
+              className="border-t border-gray-300 hidden md:block"
+              // style={{
+              //   borderImage:
+              //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
+              //   borderImageSlice: 1,
+              // }}
+            />
 
-          <div
-            className={`${roboto.className} flex mt-4 md:mt-16 justify-between items-center`}
-          >
-            <span
-              className="text-[20px] md:text-[28px] text-[#141414]"
-              style={{ fontWeight: 600 }}
+            <div
+              className={`${roboto.className} flex mt-4 md:mt-16 justify-between items-center`}
             >
-              More from {storeBasicInfo?.store_name}
-            </span>
-            <span
-              className="text-[14px] md:text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
-              style={{ fontWeight: 500 }}
-              onClick={() => {
-                router.push(
-                  `/store_profile/${
-                    product?.store_id
-                  }?defaultButton=${encodeURIComponent("Products")}`
-                );
-              }}
-            >
-              View All
-            </span>
+              <span
+                className="text-[20px] md:text-[28px] text-[#141414]"
+                style={{ fontWeight: 600 }}
+              >
+                More from {storeBasicInfo?.store_name}
+              </span>
+              <span
+                className="text-[14px] md:text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
+                style={{ fontWeight: 500 }}
+                onClick={() => {
+                  router.push(
+                    `/store_profile/${
+                      product?.store_id
+                    }?defaultButton=${encodeURIComponent("Products")}`
+                  );
+                }}
+              >
+                View All
+              </span>
+            </div>
+
+            <div className="relative mt-6 overflow-hidden">
+              <ShowMoreProducts product={product} limit={5} same_store={true} />
+              <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
+            </div>
           </div>
+          <div className="px-10 w-full flex flex-col mx-auto">
+            <hr
+              className="border-t border-gray-300 hidden md:block"
+              // style={{
+              //   borderImage:
+              //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
+              //   borderImageSlice: 1,
+              // }}
+            />
 
-          <div className="relative mt-6 overflow-hidden">
-            <ShowMoreProducts store_id={product?.store_id} limit={5} />
-            <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
+            <div
+              className={`${roboto.className} flex mt-4 md:mt-16 justify-between items-center`}
+            >
+              <span
+                className="text-[20px] md:text-[28px] text-[#141414]"
+                style={{ fontWeight: 600 }}
+              >
+                More from Other Stores
+              </span>
+              <span
+                className="text-[14px] md:text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
+                style={{ fontWeight: 500 }}
+                onClick={() => {
+                  router.push(
+                    `/product_directory?primary_category=${product?.primary_category?.name}`
+                  );
+                }}
+              >
+                View All
+              </span>
+            </div>
+
+            <div className="relative mt-6 overflow-hidden">
+              <ShowMoreProducts product={product} limit={5} same_store={false} price={selectedVariant?.price} />
+              <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
+            </div>
           </div>
         </div>
       )}
