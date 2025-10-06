@@ -107,6 +107,7 @@ interface FilterState {
    * @property {Facets} facets - The main object holding all filter categories and their values, including counts and selection status for rendering the UI.
    */
   facets: Facets;
+  dynamic_facets: Facets;
   /**
    * @property {Record<string, string[]>} selectedFilters - A simplified map of selected filters, where each key is a facet name and the value is an array of selected value names. This is optimized for sending to the backend API.
    */
@@ -129,6 +130,7 @@ interface FilterState {
    */
   setFacets: (
     apiFacets: Record<string, Record<string, number>>,
+    dynamic_facets: Record<string, Record<string, number>>,
     activeFacet: string | null
   ) => void;
   /**
@@ -159,6 +161,8 @@ interface FilterState {
     priceRange?: [number, number] | null;
     productQuery?: string; // ✨ MODIFIED: Allow initializing the query from the URL
   }) => void;
+
+  setSelectedFacetValues: (facetName: string, values: string[]) => void;
 }
 
 /**
@@ -188,71 +192,132 @@ function createFilterStore() {
     facetInit: false,
     setFacetInit: (loading: boolean) => set({ facetInit: loading }),
     facets: {},
+    dynamic_facets: {},
     selectedFilters: {},
     productQuery: "", // ✨ ADDED: Initial state for the product query
     setProductQuery: (query) => set({ productQuery: query }), // ✨ ADDED: The setter function
-
     /**
      * Hydrates the store with an initial state, usually from URL parameters.
      * It syncs both the `selectedFilters` object and the `selected` property within the main `facets` object.
      */
+    // initializeFilters: (initialState) => {
+    //   const newSelectedFilters = initialState.selectedFilters || {};
+    //   const currentFacets = get().facets;
+
+    //   // Update the 'selected' status in the main facets array for UI consistency
+    //   const updatedFacets: Facets = {};
+    //   Object.keys(currentFacets).forEach((facetName) => {
+    //     const selectedValues = newSelectedFilters[facetName] || [];
+    //     updatedFacets[facetName] = currentFacets[facetName].map((value) => ({
+    //       ...value,
+    //       selected: selectedValues.includes(value.name),
+    //     }));
+    //   });
+
+    //   set({
+    //     selectedFilters: newSelectedFilters,
+    //     facets: updatedFacets, // Set the updated facets
+    //     selectedPriceRange: initialState.priceRange || null,
+    //     productQuery: initialState.productQuery || "", // ✨ ADDED: Initialize the product query
+    //   });
+    // },
     initializeFilters: (initialState) => {
       const newSelectedFilters = initialState.selectedFilters || {};
-      const currentFacets = get().facets;
 
-      // Update the 'selected' status in the main facets array for UI consistency
-      const updatedFacets: Facets = {};
-      Object.keys(currentFacets).forEach((facetName) => {
-        const selectedValues = newSelectedFilters[facetName] || [];
-        updatedFacets[facetName] = currentFacets[facetName].map((value) => ({
-          ...value,
-          selected: selectedValues.includes(value.name),
-        }));
-      });
+      const syncSelections = (facetsObject: Facets): Facets => {
+        if (!facetsObject) return {};
+        const newFacets: Facets = {};
+        Object.keys(facetsObject).forEach((facetName) => {
+          const selectedValues = newSelectedFilters[facetName] || [];
+          newFacets[facetName] = facetsObject[facetName].map((value) => ({
+            ...value,
+            selected: selectedValues.includes(value.name),
+          }));
+        });
+        return newFacets;
+      };
 
-      set({
+      set((state) => ({
         selectedFilters: newSelectedFilters,
-        facets: updatedFacets, // Set the updated facets
+        facets: syncSelections(state.facets),
+        dynamicFacets: syncSelections(state.dynamic_facets),
         selectedPriceRange: initialState.priceRange || null,
-        productQuery: initialState.productQuery || "", // ✨ ADDED: Initialize the product query
-      });
+        productQuery: initialState.productQuery || "",
+      }));
     },
     /**
      * Intelligently merges new facet data from an API response into the existing state.
      * It updates counts for all values but preserves the user's existing selections.
      */
-    setFacets: (apiFacets, activeFacet) => {
-      const currentFacets = get().facets;
-
-      const updatedFacets: Facets = { ...currentFacets };
-
-      for (const [facetName, values] of Object.entries(apiFacets)) {
-        if (!values || typeof values !== "object") continue;
-        // This is a key optimization: if a facet is "active" (being interacted with),
-        // we don't update its counts from the API. This prevents the counts from flickering
-        // while the user is selecting items within that facet.
-        if (
-          activeFacet &&
-          facetName.toLowerCase() === activeFacet?.toLowerCase() &&
-          get().selectedFilters[activeFacet]?.length > 0
-        )
-          continue;
-
-        const existing = currentFacets[facetName] || [];
-
-        const updatedFacetValues: FacetValue[] = Object.entries(values).map(
-          ([name, count]) => {
-            const match = existing.find((item) => item.name === name);
-            return {
-              name,
-              count,
-              selected: match?.selected ?? false,
-            };
+    setFacets: (apiFacets, dynamic_facets, activeFacet) => {
+      const _processRawFacets = (
+        rawFacets: Record<string, Record<string, number>>,
+        existingFacets: Facets
+      ): Facets => {
+        if (!rawFacets) return {};
+        const newFacets: Facets = {};
+        for (const [facetName, values] of Object.entries(rawFacets)) {
+          if (
+            !values ||
+            typeof values !== "object" ||
+            facetName === "categories"
+          )
+            continue;
+          if (
+            activeFacet &&
+            facetName.toLowerCase() === activeFacet?.toLowerCase() &&
+            get().selectedFilters[activeFacet]?.length > 0
+          ) {
+            newFacets[facetName] = existingFacets[facetName] || [];
+            continue;
           }
-        );
+          const existingValues = existingFacets[facetName] || [];
+          newFacets[facetName] = Object.entries(values).map(([name, count]) => {
+            const match = existingValues.find((item) => item.name === name);
+            return { name, count, selected: match?.selected ?? false };
+          });
+        }
+        return newFacets;
+      };
 
-        updatedFacets[facetName] = updatedFacetValues;
-      }
+      const currentFacets = get().facets;
+      const currentDynamicFacets = get().dynamic_facets;
+
+      const updatedFacets = _processRawFacets(apiFacets, currentFacets);
+      const updatedDynamicFacets = _processRawFacets(
+        dynamic_facets,
+        currentDynamicFacets
+      );
+
+      // const updatedFacets: Facets = { ...currentFacets };
+
+      // for (const [facetName, values] of Object.entries(apiFacets)) {
+      //   if (!values || typeof values !== "object") continue;
+      //   // This is a key optimization: if a facet is "active" (being interacted with),
+      //   // we don't update its counts from the API. This prevents the counts from flickering
+      //   // while the user is selecting items within that facet.
+      //   if (
+      //     activeFacet &&
+      //     facetName.toLowerCase() === activeFacet?.toLowerCase() &&
+      //     get().selectedFilters[activeFacet]?.length > 0
+      //   )
+      //     continue;
+
+      //   const existing = currentFacets[facetName] || [];
+
+      //   const updatedFacetValues: FacetValue[] = Object.entries(values).map(
+      //     ([name, count]) => {
+      //       const match = existing.find((item) => item.name === name);
+      //       return {
+      //         name,
+      //         count,
+      //         selected: match?.selected ?? false,
+      //       };
+      //     }
+      //   );
+
+      //   updatedFacets[facetName] = updatedFacetValues;
+      // }
 
       const storeTypeApiFacets = updatedFacets.store_types || [];
       const countMap = new Map(
@@ -271,64 +336,131 @@ function createFilterStore() {
         };
       });
 
-      set({ facets: updatedFacets , storeTypes: updatedStoreTypes });
+      set({
+        facets: updatedFacets,
+        storeTypes: updatedStoreTypes,
+        dynamic_facets: updatedDynamicFacets,
+      });
     },
 
     /**
      * Toggles the selection of a single filter option.
      * This action is the primary way users interact with the filters.
      */
-    toggleFilter: (facetName, value) => {
+    setSelectedFacetValues: (facetName, values) => {
       set((state) => {
         const updatedFacets = { ...state.facets };
+        const updatedDynamicFacets = { ...state.dynamic_facets };
+
+        if (facetName in updatedFacets) {
+          updatedFacets[facetName] = updatedFacets[facetName].map((v) => ({
+            ...v,
+            selected: values.includes(v.name),
+          }));
+        } else if (facetName in updatedDynamicFacets) {
+          updatedDynamicFacets[facetName] = updatedDynamicFacets[facetName].map(
+            (v) => ({ ...v, selected: values.includes(v.name) })
+          );
+        }
+
+        console.log("Updated facets after setting values:", updatedFacets);
+        console.log(
+          "Updated dynamic facets after setting values:",
+          updatedDynamicFacets
+        );
         const updatedSelectedFilters = { ...state.selectedFilters };
-
-        // 1. Update the `selected` boolean in the main `facets` object for the UI.
-        updatedFacets[facetName] = updatedFacets[facetName].map((facet) => {
-          if (facet.name === value) {
-            return { ...facet, selected: !facet.selected };
-          }
-          return facet;
-        });
-
-        // 2. Re-create the simplified `selectedFilters` array from the updated `facets` object.
-        updatedSelectedFilters[facetName] = updatedFacets[facetName]
-          .filter((f) => f.selected)
-          .map((f) => f.name);
+        if (values.length > 0) {
+          updatedSelectedFilters[facetName] = values;
+        } else {
+          delete updatedSelectedFilters[facetName];
+        }
 
         return {
-          activeFacet: facetName,
           facets: updatedFacets,
+          dynamicFacets: updatedDynamicFacets,
           selectedFilters: updatedSelectedFilters,
+          activeFacet: facetName,
         };
       });
     },
+    toggleFilter: (facetName, value) => {
+      const currentSelections = get().selectedFilters[facetName] || [];
+      const newSelections = currentSelections.includes(value)
+        ? currentSelections.filter((v) => v !== value)
+        : [...currentSelections, value];
+      get().setSelectedFacetValues(facetName, newSelections);
+    },
+    // toggleFilter: (facetName, value) => {
+    //   set((state) => {
+    //     const updatedFacets = { ...state.facets };
+    //     const updatedSelectedFilters = { ...state.selectedFilters };
+
+    //     // 1. Update the `selected` boolean in the main `facets` object for the UI.
+    //     updatedFacets[facetName] = updatedFacets[facetName].map((facet) => {
+    //       if (facet.name === value) {
+    //         return { ...facet, selected: !facet.selected };
+    //       }
+    //       return facet;
+    //     });
+
+    //     // 2. Re-create the simplified `selectedFilters` array from the updated `facets` object.
+    //     updatedSelectedFilters[facetName] = updatedFacets[facetName]
+    //       .filter((f) => f.selected)
+    //       .map((f) => f.name);
+
+    //     return {
+    //       activeFacet: facetName,
+    //       facets: updatedFacets,
+    //       selectedFilters: updatedSelectedFilters,
+    //     };
+    //   });
+    // },
 
     /**
      * Clears all active filters and resets the price range.
      */
+
     resetFilters: () => {
       set((state) => {
-        const resetFacets: Facets = {};
-        const resetSelectedFilters: Record<string, string[]> = {};
-        // Iterate through all facets and set the `selected` property of each value to false.
-        for (const [facetName, values] of Object.entries(state.facets)) {
-          resetFacets[facetName] = values.map((value) => ({
-            ...value,
-            selected: false,
-          }));
-          resetSelectedFilters[facetName] = [];
-        }
-
+        const resetFacets = (facetsObject: Facets) => {
+          const newFacets: Facets = {};
+          for (const [name, values] of Object.entries(facetsObject)) {
+            newFacets[name] = values.map((v) => ({ ...v, selected: false }));
+          }
+          return newFacets;
+        };
         return {
-          facets: resetFacets,
-          selectedFilters: resetSelectedFilters,
+          facets: resetFacets(state.facets),
+          dynamicFacets: resetFacets(state.dynamic_facets),
+          selectedFilters: {},
           selectedPriceRange: null,
           activeFacet: null,
-          productQuery: "", // ✨ ADDED: Also clear the search query on reset
+          productQuery: "",
         };
       });
     },
+    // resetFilters: () => {
+    //   set((state) => {
+    //     const resetFacets: Facets = {};
+    //     const resetSelectedFilters: Record<string, string[]> = {};
+    //     // Iterate through all facets and set the `selected` property of each value to false.
+    //     for (const [facetName, values] of Object.entries(state.facets)) {
+    //       resetFacets[facetName] = values.map((value) => ({
+    //         ...value,
+    //         selected: false,
+    //       }));
+    //       resetSelectedFilters[facetName] = [];
+    //     }
+
+    //     return {
+    //       facets: resetFacets,
+    //       selectedFilters: resetSelectedFilters,
+    //       selectedPriceRange: null,
+    //       activeFacet: null,
+    //       productQuery: "", // ✨ ADDED: Also clear the search query on reset
+    //     };
+    //   });
+    // },
 
     /**
      * A simple getter to retrieve the simplified `selectedFilters` object.

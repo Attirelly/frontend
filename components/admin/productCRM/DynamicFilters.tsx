@@ -13,7 +13,7 @@ const facetTitles: Record<string, string> = {
     genders: "Gender",
     primary_category: "Category",
     prices: "Price Range",
-    size: "Size",
+    "variants.size_name": "Size",
     colours: "Color",
 };
 

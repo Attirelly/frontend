@@ -285,6 +285,7 @@ export default function ProductContainer({
       );
 
       const data = res.data;
+      console.log("Fetched products data:", data);
       if (data.total_hits === 0 && currentPage == 0) {
         setNoResultFound(true);
         setApiHasMore(false);
@@ -299,7 +300,7 @@ export default function ProductContainer({
         setNoResultFound(false);
       }
       setResults(data.total_hits);
-      setFacets(data.facets, activeFacet);
+      setFacets(data.facets,data.dynamic_facets,  activeFacet);
 
       const formattedProducts: ProductCardType[] = data.hits.map(
         (item: any) => {

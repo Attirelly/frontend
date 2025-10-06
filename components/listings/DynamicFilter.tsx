@@ -3,7 +3,7 @@
 import { useFilterStore, useProductFilterStore } from "@/store/filterStore";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { playfair_display, manrope } from "@/font";
+import { manrope } from "@/font";
 import DynamicFilterSkeleton from "./skeleton/DynamicFilterSkeleton";
 import { Range } from "react-range";
 import { useHeaderStore } from "@/store/listing_header_store";
@@ -80,6 +80,7 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
     context === "store" ? useFilterStore() : useProductFilterStore();
   const {
     facets,
+    dynamic_facets: dynamicFacets,
     selectedFilters,
     toggleFilter,
     resetFilters,
@@ -90,6 +91,8 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
   } = filterStore;
   const { storeType } = useHeaderStore();
 
+  const combinedFacets = { ...facets, ...dynamicFacets };
+
   const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
   const [openFacets, setOpenFacets] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(false);
@@ -97,7 +100,9 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
     selectedPriceRange || priceBounds
   );
 
-
+  useEffect(() => {
+    console.log("Facets updated:", facets);
+  }, [facets]);
   useEffect(() => {
     if (context === "product" && priceBounds) {
       setLocalPriceRange(priceBounds);
@@ -195,7 +200,7 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
     <div className="sticky top-1 flex flex-col h-full max-h-[100vh] bg-white">
       {onClose && (
         <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-2"> 
+          <div className="flex items-center gap-2">
             <h1
               className={`${manrope.className} text-lg font-bold text-[#1F2937]`}
             >
@@ -222,14 +227,16 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
         <div className="flex flex-col">
           {!onClose && (
             <div className="flex items-center justify-between mb-3">
-               <div className="flex items-center gap-2"> {/* Use Flexbox for alignment */}
-              <h1 className="text-[#1F2937]">FILTERS</h1>
-              {selectedFilterCount > 0 && (
-                <span className="flex items-center justify-center bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">
-                  {selectedFilterCount}
-                </span>
-              )}
-            </div>
+              <div className="flex items-center gap-2">
+                {" "}
+                {/* Use Flexbox for alignment */}
+                <h1 className="text-[#1F2937]">FILTERS</h1>
+                {selectedFilterCount > 0 && (
+                  <span className="flex items-center justify-center bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                    {selectedFilterCount}
+                  </span>
+                )}
+              </div>
 
               <button
                 onClick={() => handleResetFilters()}
@@ -265,13 +272,12 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
         </div>
 
         <div className="flex flex-col gap-5">
-          {Object.entries(facets).map(([facetName, values]) => {
+          {Object.entries(combinedFacets).map(([facetName, values]) => {
             const fName = formatFacetName(facetName);
-            if(fName==="Store Types"){
+            if (fName === "Store Types") {
               return null;
-            }
-            else if(fName === "Discount"){
-              return null ; 
+            } else if (fName === "Discount") {
+              return null;
             }
 
             const isOpen = openFacets[facetName];
