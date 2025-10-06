@@ -24,6 +24,7 @@ import Link from "next/link";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 import { useSwipeable } from "react-swipeable";
 import { hex } from "framer-motion";
+import { sendConversionEvent } from "@/lib/algoliaInsights";
 
 /**
  * A comprehensive client-side component for displaying the details of a single product.
@@ -74,9 +75,9 @@ export default function ProductDetail() {
   const { user } = useAuthStore();
   const params = useParams();
   const product_id = params?.product_id as string;
+  const queryId = params?.queryId as string | null | undefined;
   const router = useRouter();
 
-  // const { setStoreId } = useSellerStore();
   const [signIn, setSignIn] = useState(false);
   const [pendingWhatsApp, setPendingWhatsApp] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
@@ -234,6 +235,8 @@ export default function ProductDetail() {
    * Initiates the "Buy on WhatsApp" flow, checking for authentication first.
    */
   const handleSendToWhatsAppClick = () => {
+    if (!product) return;
+    sendConversionEvent([product.product_id], queryId, "products");
     setPendingWhatsApp(true); // Set the intent flag.
     if (!isCustomerAuthenticated()) {
       setSignIn(true); // If not logged in, show the sign-in modal.

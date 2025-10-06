@@ -1,3 +1,4 @@
+import { sendFilterClickEvent } from "@/lib/algoliaInsights";
 import { create } from "zustand";
 
 /**
@@ -138,7 +139,7 @@ interface FilterState {
    * @param {string} facetName - The name of the facet to modify (e.g., "color").
    * @param {string} value - The name of the value to toggle (e.g., "Red").
    */
-  toggleFilter: (facetName: string, value: string) => void;
+  toggleFilter: (facetName: string, value: string, index?: string) => void;
   /**
    * @action resetFilters - Clears all selected filters and resets the price range to its default state.
    */
@@ -383,8 +384,14 @@ function createFilterStore() {
         };
       });
     },
-    toggleFilter: (facetName, value) => {
+    toggleFilter: (facetName, value, index) => {
       const currentSelections = get().selectedFilters[facetName] || [];
+      const isAddingFilter = !currentSelections.includes(value);
+
+      if (isAddingFilter && index) {
+        sendFilterClickEvent(facetName, value, index);
+      }
+
       const newSelections = currentSelections.includes(value)
         ? currentSelections.filter((v) => v !== value)
         : [...currentSelections, value];

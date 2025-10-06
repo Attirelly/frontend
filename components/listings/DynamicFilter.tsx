@@ -260,7 +260,11 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
                     {value}
                   </span>
                   <button
-                    onClick={() => toggleFilter(key, value)}
+                    onClick={() => {
+                      context === "store"
+                        ? toggleFilter(key, value, "stores")
+                        : toggleFilter(key, value, "products");
+                    }}
                     className="text-gray-500 hover:text-red-500"
                   >
                     ×
@@ -431,7 +435,17 @@ const DynamicFilter = ({ context, onClose }: DynamicFilterProps) => {
                                           selectedFilters[facetName] || []
                                         ).includes(facet.name)}
                                         onChange={() =>
-                                          toggleFilter(facetName, facet.name)
+                                          context === "store"
+                                            ? toggleFilter(
+                                                facetName,
+                                                facet.name,
+                                                "stores"
+                                              )
+                                            : toggleFilter(
+                                                facetName,
+                                                facet.name,
+                                                "products"
+                                              )
                                         }
                                         // className="h-4 w-4 accent-black rounded border-gray-300 dark:bg-white"
                                         // className="h-4 w-4 rounded border-gray-300 dark:border-black dark:bg-white accent-white dark:accent-white"

@@ -32,7 +32,7 @@ export default function TopDynamicFilterBar() {
   };
 
   const handleCheckboxChange = (facetName: string, value: string) => {
-    toggleFilter(facetName, value);
+    toggleFilter(facetName, value , "products");
     setOpenFilter(null);
   };
 

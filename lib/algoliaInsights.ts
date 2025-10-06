@@ -4,32 +4,50 @@ import { v4 as uuidv4 } from "uuid";
 // Initialize Algolia Insights
 aa("init", {
   appId: process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
-  apiKey: process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY!, // Search-only key
+  apiKey: process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY!,
 });
 
 // Manage persistent userToken
 function getUserToken(): string {
   let token = localStorage.getItem("algolia_user_token");
   if (!token) {
-    token = uuidv4(); // anonymous unique ID
+    token = uuidv4();
     localStorage.setItem("algolia_user_token", token);
   }
   return token;
 }
 
-export function sendSearchEvent(query: string, index: string) {
-  aa("viewedFilters", {
+/**
+ * ✨ Search Results Viewed Event
+ * Call this when search results are successfully fetched and displayed.
+ */
+export function sendViewEvent(objectIDs: string[]  ,index: string) {
+  aa("viewedObjectIDs", {
     index,
-    eventName: "Search Performed",
+    eventName: "Search Results Viewed",
     userToken: getUserToken(),
-    filters: [`query:${query}`],
+    objectIDs,
   });
 }
 
 /**
- * 👆 Product click event
+ * 🎨 Generic Filter Click Event
+ * Call this when a user clicks any filter or facet.
  */
-export function sendClickEvent(objectID: string, queryID: string, index: string , position: number) {
+export function sendFilterClickEvent(filterName: string, filterValue: string, index: string) {
+  aa("clickedFilters", {
+    index,
+    eventName: "Filter Applied",
+    userToken: getUserToken(),
+    filters: [`${filterName}:${filterValue}`],
+  });
+}
+
+/**
+ * 👆 Product Click Event
+ * Call this when a user clicks a product from a search results page.
+ */
+export function sendClickEvent(objectID: string, queryID: string, index: string, position: number) {
   aa("clickedObjectIDsAfterSearch", {
     index,
     eventName: "Product Clicked",
@@ -41,29 +59,18 @@ export function sendClickEvent(objectID: string, queryID: string, index: string 
 }
 
 /**
- * 🏬 Store click event
- */
-export function sendStoreClickEvent(storeID: string, index: string) {
-  aa("clickedFilters", {
-    index,
-    eventName: "Store Clicked",
-    userToken: getUserToken(),
-    filters: [`store:${storeID}`],
-  });
-}
-
-/**
- * 💳 Purchase / Conversion event
+ * 💳 Purchase / Conversion Event
+ * Call this after a user completes a purchase.
  */
 export function sendConversionEvent(objectIDs: string[], queryID: string | null, index: string) {
-  const event: any = {
+  const eventPayload: any = {
     index,
     eventName: "Product Purchased",
     userToken: getUserToken(),
     objectIDs,
   };
-  if (queryID !== null) {
-    event.queryID = queryID;
+  if (queryID) {
+    eventPayload.queryID = queryID;
   }
-  aa("convertedObjectIDsAfterSearch", event);
+  aa("convertedObjectIDsAfterSearch", eventPayload);
 }
