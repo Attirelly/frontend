@@ -1,4 +1,4 @@
-import aa from "search-insights";
+import aa, { InsightsEvent, InsightsEventType } from "search-insights";
 import { v4 as uuidv4 } from "uuid";
 
 // Initialize Algolia Insights
@@ -18,16 +18,32 @@ function getUserToken(): string {
 }
 
 /**
- * ✨ Search Results Viewed Event
- * Call this when search results are successfully fetched and displayed.
+ * ✨ Search Results Viewed Event (With Automatic Batching)
+ * Handles large lists of objectIDs by splitting them into chunks of 20.
  */
-export function sendViewEvent(objectIDs: string[]  ,index: string) {
-  aa("viewedObjectIDs", {
-    index,
-    eventName: "Search Results Viewed",
-    userToken: getUserToken(),
-    objectIDs,
-  });
+export function sendViewEvent(objectIDs: string[], index: string) {
+  const CHUNK_SIZE = 20;
+  const allEvents: InsightsEvent[] = [];
+
+  // Loop through the objectIDs and create an event for each chunk
+  for (let i = 0; i < objectIDs.length; i += CHUNK_SIZE) {
+    const chunk = objectIDs.slice(i, i + CHUNK_SIZE);
+
+    const event = {
+      eventType: 'view' as InsightsEventType,
+      eventName: 'Search Results Viewed',
+      index: index,
+      userToken: getUserToken(),
+      objectIDs: chunk,
+      timestamp: Date.now(), // Timestamp is recommended for batched events
+    };
+    allEvents.push(event);
+  }
+
+  // Send all the generated events in a single batch
+  if (allEvents.length > 0) {
+    aa('sendEvents', allEvents);
+  }
 }
 
 /**
