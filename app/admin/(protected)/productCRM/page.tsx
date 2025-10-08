@@ -385,7 +385,7 @@ export default function ProductSearchPage({
           />
         </div>
       )}
-      
+
       {selectedProducts.length > 0 && addToCuration && (
         <div className="mb-3">
           <AddToCuration
@@ -418,8 +418,14 @@ export default function ProductSearchPage({
             onSelectAll={handleSelectAll}
             onPageChange={handlePageChange}
           />
+          <button className="px-4 py-2 bg-gray-700 text-white cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-500 rounded-xl ml-auto mt-5"
+            disabled={selectedProducts.length === 0}
+            onClick={handleConfirm}>
+            Confirm
+          </button>
         </main>
       </div>
+
 
       {/* NEW: Floating button to open the master list sidebar */}
       {selectedProducts.length > 0 && (

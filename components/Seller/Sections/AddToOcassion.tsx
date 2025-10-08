@@ -7,6 +7,7 @@ import { api } from "@/lib/axios";
 import ProductSearchPage from "@/app/admin/(protected)/productCRM/page";
 import { toast } from "sonner";
 import { AlgoliaHit } from "@/types/algolia";
+import axios from "axios";
 
 // 1. Updated interface to match the Pydantic 'OccasionResponse' schema
 interface Occasion {
@@ -21,31 +22,6 @@ type SelectOption = {
   label: string;
 };
 
-// 1. Create the hardcoded list of occasions
-// This data is static and defined outside the component.
-const hardcodedOccasions: Occasion[] = [
-  {
-    occasion_id: "occ_wed_001",
-    name: "Wedding Guest",
-    description: "Elegant and formal attire for attending a wedding.",
-  },
-  {
-    occasion_id: "occ_bday_002",
-    name: "Birthday Party",
-    description: "Fun, festive, and celebratory outfits.",
-  },
-  {
-    occasion_id: "occ_biz_003",
-    name: "Business Casual",
-    description: "Smart and professional attire for the modern workplace.",
-  },
-  {
-    occasion_id: "occ_vac_004",
-    name: "Beach Vacation",
-    // This item intentionally omits the optional 'description' field.
-  },
-];
-
 const OcassionPage: FC = () => {
   // 3. Update the type for the selected occasion's ID to be string or null
   const { storeId } = useSellerStore();
@@ -55,6 +31,7 @@ const OcassionPage: FC = () => {
     null
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -63,7 +40,7 @@ const OcassionPage: FC = () => {
       setError(null);
       try {
         const response = await api.get<Occasion[]>(
-          "https://backend.prod.attirelly.com/occasions/"
+          "/occasions/"
         );
         setOccasions(response.data);
       } catch (err) {
@@ -79,7 +56,7 @@ const OcassionPage: FC = () => {
   // 4. Update the mapping to use the new 'occasion_id' field
   const occasionOptions: SelectOption[] = useMemo(
     () =>
-      hardcodedOccasions.map(
+      occasions.map(
         (occasion): SelectOption => ({
           value: occasion.occasion_id, // Use 'occasion_id' for the value
           label: occasion.name,
@@ -105,35 +82,49 @@ const OcassionPage: FC = () => {
   const handleUpdateOcassionProduct = async (
     selectedProducts: AlgoliaHit[]
   ) => {
+    setIsUpdating(true);
     try {
-      toast.info(`Update Products in ${selectedOption?.label}`);
-      console.log(selectedProducts);
-    } catch (error) {}
+      const productIds = selectedProducts.map((item) => item.id);
+      const payload = {
+        product_ids: productIds,
+      };
+      const url = `/occasions/${selectedOccasion}/products/bulk`;
+      toast.info(`Adding ${productIds.length} products to ${selectedOption?.label}...`);
+      const response = await api.post<{ status: string }>(url, payload);
+      toast.success(response.data.status || "Products added successfully!");
+    } catch (error) {
+    // 5. Handle errors gracefully
+    console.error("Failed to add products to occasion:", error);
+    if (axios.isAxiosError(error) && error.response) {
+      // Use the specific error message from the backend if available
+      toast.error(`Error: ${error.response.data.detail || 'The server returned an error.'}`);
+    } else {
+      toast.error("An unexpected error occurred. Please try again.");
+    }
+  } finally {
+    // 6. Reset the updating state regardless of outcome
+    setIsUpdating(false);
+  }
   };
 
-  // if (error) {
-  //     return <div style={{ color: 'red' }}>Error: {error}</div>;
-  // }
+  if (error) {
+    return <div style={{ color: 'red' }}>Error: {error}</div>;
+  }
 
   return (
-    <div style={{ padding: "20px", fontFamily: "sans-serif", width: "350px" }}>
-      <h2>Select an Occasion</h2>
-      <Select<SelectOption>
-        options={occasionOptions}
-        value={currentValue}
-        onChange={handleOccasionChange}
-        isClearable
-        isSearchable
-        isLoading={isLoading}
-        placeholder="Search or select an occasion..."
-      />
-
-      {/* <div style={{ marginTop: '20px' }}>
-                {selectedOccasion !== null ?
-                    <p><strong>Selected Occasion ID:</strong> {selectedOccasion}</p> :
-                    <p>No occasion selected.</p>
-                }
-            </div> */}
+    <div className="flex flex-col gap-5">
+      <div className="text-black" style={{ padding: "20px", fontFamily: "sans-serif", width: "350px" }}>
+        <h2>Select an Occasion</h2>
+        <Select<SelectOption>
+          options={occasionOptions}
+          value={currentValue}
+          onChange={handleOccasionChange}
+          isClearable
+          isSearchable
+          isLoading={isLoading}
+          placeholder="Search or select an occasion..."
+        />
+      </div>
       {selectedOccasion != null ? (
         <div>
           <ProductSearchPage
@@ -148,6 +139,7 @@ const OcassionPage: FC = () => {
         <div></div>
       )}
     </div>
+
   );
 };
 
