@@ -17,6 +17,10 @@ type StoreType = {
   store_type: string;
   count: number;
 };
+// type for a single discount tag fetched from the API
+interface DiscountTag {
+  title: string;
+}
 
 const HARD_CODED_STORE_TYPES: StoreType[] = [
   {
@@ -153,12 +157,22 @@ interface FilterState {
    * @param {Record<string, string[]>} [initialState.selectedFilters] - The initial set of selected filters.
    * @param {[number, number] | null} [initialState.priceRange] - The initial price range.
    * @param {string} [initialState.productQuery] - The initial search query for products.
+   * @param {string | null} [initialState.selectedDiscount] - The initial selected discount.
    */
   initializeFilters: (initialState: {
     selectedFilters?: Record<string, string[]>;
     priceRange?: [number, number] | null;
     productQuery?: string; // ✨ MODIFIED: Allow initializing the query from the URL
+    selectedDiscount?: string | null;
   }) => void;
+
+  discountTags: DiscountTag[];
+  fetchDiscountTags: () => Promise<void>;
+  isFetchingTags: boolean;
+
+  // ✅ ADDED state and action for discount tags
+  selectedDiscount: string | null;
+  setDiscountFilter: (discountTitle: string | null) => void;
 }
 
 /**
@@ -191,6 +205,37 @@ function createFilterStore() {
     selectedFilters: {},
     productQuery: "", // ✨ ADDED: Initial state for the product query
     setProductQuery: (query) => set({ productQuery: query }), // ✨ ADDED: The setter function
+    // ✨ ADDED: The Discount tag function
+    isFetchingTags: false,
+    discountTags: [],
+
+    // ✅ ADDED: Initial state and setter for selected discount
+    selectedDiscount: null,
+    setDiscountFilter: (discountTitle) => set({ selectedDiscount: discountTitle }),
+
+    fetchDiscountTags: async () => {
+      // Prevent multiple fetches if already loading
+      if (get().isFetchingTags) return;
+
+      set({ isFetchingTags: true });
+      try {
+        // NOTE: In a larger application, you might use a shared API client
+        // or move the base URL to an environment variable.
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discounts/tags`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch discount tags: ${response.statusText}`);
+        }
+
+        const data: DiscountTag[] = await response.json();
+        set({ discountTags: data });
+      } catch (error) {
+        console.error("Error fetching discount tags:", error);
+        set({ discountTags: [] }); // Reset to empty on error
+      } finally {
+        set({ isFetchingTags: false });
+      }
+    },
 
     /**
      * Hydrates the store with an initial state, usually from URL parameters.
@@ -215,6 +260,7 @@ function createFilterStore() {
         facets: updatedFacets, // Set the updated facets
         selectedPriceRange: initialState.priceRange || null,
         productQuery: initialState.productQuery || "", // ✨ ADDED: Initialize the product query
+        selectedDiscount: initialState.selectedDiscount || null, // ✅ ADDED: Initialize the discount
       });
     },
     /**
@@ -326,6 +372,7 @@ function createFilterStore() {
           selectedPriceRange: null,
           activeFacet: null,
           productQuery: "", // ✨ ADDED: Also clear the search query on reset
+          selectedDiscount: null, // ✅ ADDED: Also clear the discount on reset
         };
       });
     },
@@ -343,3 +390,4 @@ function createFilterStore() {
 export const useFilterStore = createFilterStore();
 // Create and export a separate, independent instance for the product page.
 export const useProductFilterStore = createFilterStore();
+

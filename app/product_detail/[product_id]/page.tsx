@@ -25,6 +25,12 @@ import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader"
 import { useSwipeable } from "react-swipeable";
 import { hex } from "framer-motion";
 
+// breadcrumbs 
+import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
+import { getProductBreadcrumbs } from '@/lib/breadcrumbService';
+import { BreadcrumbItem } from "@/types/breadcrumb"; // Import the type
+
+
 /**
  * A comprehensive client-side component for displaying the details of a single product.
  *
@@ -139,6 +145,10 @@ export default function ProductDetail() {
    * Calculates the aspect ratio of the loaded image to correct the zoom magnifier.
    * This is crucial for preventing non-square images from appearing distorted in the zoom preview.
    */
+
+  // 1. ADD BREADCRUMB STATE VARIABLE
+  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
+
   const handleImageLoad = () => {
     if (imageRef.current) {
       const naturalWidth = imageRef.current.naturalWidth;
@@ -155,7 +165,12 @@ export default function ProductDetail() {
   useEffect(() => {
     async function fetchProductDetails() {
       try {
-        const response = await api.get(`/products/${product_id}`);
+        // const response = await api.get(`/products/${product_id}`);
+        // Fetch both product and breadcrumbs in parallel for better performance
+        const [response, breadcrumbData] = await Promise.all([
+          api.get(`/products/${product_id}`),
+          getProductBreadcrumbs(product_id)
+        ]);
         const data: Product = response.data;
 
         setProduct(data);
@@ -165,6 +180,8 @@ export default function ProductDetail() {
         setSelectedColor(defaultVariant.color);
         setSelectedSize(defaultVariant.size);
         setActiveIndex(0);
+        // 2. SET THE BREADCRUMB STATE
+        setBreadcrumbs(breadcrumbData);
       } catch (error) {
         console.error("Failed to fetch product details", error);
       }
@@ -357,6 +374,10 @@ Could you please confirm its availability and share payment link.`;
     <div className="w-full h-full bg-white">
       <ListingMobileHeader className="block lg:hidden" />
       <ListingPageHeader className="hidden lg:block" />
+      {/* Place the Breadcrumbs component here, passing the state variable */}
+      <div className="mx-auto lg:w-[1300px] px-4 pt-4">
+        <Breadcrumbs trail={breadcrumbs} />
+      </div>
       <div className="mx-auto lg:w-[1300px] flex flex-col gap-2">
         <div className="w-full flex flex-col mt-1 md:mt-10 mb-10">
           <div className="flex flex-col gap-4 lg:flex-row lg:gap-20">
@@ -564,16 +585,16 @@ Could you please confirm its availability and share payment link.`;
                       const swatchStyle = {};
                       const hexCode = color.hex_code;
                       console.log("hexcode", hexCode);
-                      if (hexCode && hexCode.includes(",")) {
+                      // if (hexCode && hexCode.includes(",")) {
                         // It's a gradient!
-                        const gradientColors = hexCode.split(",");
-                        swatchStyle.backgroundImage = `linear-gradient(to right, ${gradientColors.join(
-                          ", "
-                        )})`;
-                      } else {
+                        // const gradientColors = hexCode.split(",");
+                        // swatchStyle.backgroundImage = `linear-gradient(to right, ${gradientColors.join(
+                          // ", "
+                        // )})`;
+                      // } else {
                         // It's a single, solid color.
-                        swatchStyle.backgroundColor = hexCode || "#ccc"; // Fallback for null/empty codes
-                      }
+                        // swatchStyle.backgroundColor = hexCode || "#ccc"; // Fallback for null/empty codes
+                      // }
                       return (
                         <div
                           key={color.color_id}

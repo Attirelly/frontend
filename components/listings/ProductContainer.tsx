@@ -80,6 +80,7 @@ const REFETCH_THRESHOLD = Math.round(BUFFER_SIZE * 0.2); // Refetch when 80% of 
  */
 export default function ProductContainer({
   storeId = "",
+  colCount, // Original prop is kept
 }: ProductContainerProps) {
   // --- State from Zustand Stores ---
   const {
@@ -90,9 +91,11 @@ export default function ProductContainer({
     selectedPriceRange,
     priceBounds,
     setIsResultsLoading,
+    productQuery, // ✨ ADDED: Get the new store-specific search query from the filter store
   } = useProductFilterStore();
 
-  const { query, city, area, storeType, sortBy } = useHeaderStore();
+  // ✨ MODIFIED: We no longer need the global `query` for this component's logic
+  const { query,city, area, storeType, sortBy } = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [buffer, setBuffer] = useState<ProductCardType[]>([]); // New buffer state
   const [page, setPage] = useState(0);
@@ -171,9 +174,9 @@ export default function ProductContainer({
       setIsResultsLoading(true);
 
       const finalFilterString = filterClauses.join(" AND ");
-      let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
 
-      // let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}&only_active=true`;
+      // ✨ MODIFIED: The global `query` is replaced with the store-specific `productQuery`.
+      let searchUrl = `/search/search_product?query=${storeId} ${query} ${productQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
 
       if (area) {
         searchUrl += `&area=${area.name}`;
@@ -259,7 +262,8 @@ export default function ProductContainer({
     return () => {
       controller.abort();
     };
-  }, [selectedFilters, filters, query, storeType, sortBy, city, area]);
+    // ✨ MODIFIED: The dependency array now listens for changes to `productQuery` instead of the global `query`.
+  }, [selectedFilters, filters, query, productQuery, storeType, sortBy, city, area]);
 
   /**
    * Fetch more products when the user scrolls down

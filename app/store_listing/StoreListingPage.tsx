@@ -2,6 +2,7 @@
 import DynamicFilter from "@/components/listings/DynamicFilter";
 import ListingPageHeader from "@/components/listings/ListingPageHeader";
 import TwoOptionToggle from "@/components/listings/OnlineOffline";
+import DiscountTags from "@/components/tags/DiscountTags";
 
 import StoreContainerPage from "@/components/listings/StoreContainer";
 import StoreTypeTabs from "@/components/listings/StoreTypes";
@@ -61,7 +62,7 @@ export default function StoreListingPage() {
     allArea,
     allCity,
   } = useHeaderStore();
-  const { initializeFilters, selectedFilters } = useFilterStore();
+  const { initializeFilters, selectedFilters, selectedDiscount } = useFilterStore();
 
   const [isReadyFlag, setIsReadyFlag] = useState<boolean>(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -93,6 +94,7 @@ export default function StoreListingPage() {
     const cityName = params.get("city");
     const areaName = params.get("area");
     const storeTypeName = params.get("store_type");
+    const discountParam = params.get("discount");  // discount tags
 
     // Iterate over all URL parameters to build the initial filter state object.
     params.forEach((value, key) => {
@@ -103,6 +105,8 @@ export default function StoreListingPage() {
         key !== "city" &&
         key !== "area" &&
         key !== "store_type"
+        &&
+        key !== "discount"  //discount tags
       ) {
         if (key === "selectedCity") {
           initialSelectedFilters["city"] = value.split(",");
@@ -137,6 +141,7 @@ export default function StoreListingPage() {
     }
     initializeFilters({
       selectedFilters: initialSelectedFilters,
+      selectedDiscount: discountParam,
     });
     setIsReadyFlag(true);
   }, [
@@ -165,6 +170,11 @@ export default function StoreListingPage() {
       newparams.set("search", query);
     }
 
+    // Discount Tag
+    if (selectedDiscount) {
+      console.log("useeffect:", selectedDiscount);
+      newparams.set("discount", selectedDiscount);
+    }
     Object.entries(selectedFilters).forEach(([key, values]) => {
       if (values && values.length > 0) {
         // Handle special key names for selected cities/areas from the filter panel.
@@ -197,6 +207,7 @@ export default function StoreListingPage() {
     storeType,
     pathname,
     router,
+    selectedDiscount,
   ]);
   /**
    * Dynamically generates the main page heading based on the current filter and search state.
@@ -246,6 +257,9 @@ export default function StoreListingPage() {
 
           {/* Store Content Column */}
           <div className="lg:col-span-3 flex flex-col gap-5">
+            <div className="my-4">  {/* Add some margin for spacing */}
+              <DiscountTags />
+            </div>
             <div className="flex justify-between items-center">
               <div className="hidden md:block">
                 <TwoOptionToggle

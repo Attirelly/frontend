@@ -292,7 +292,7 @@ export default function StoreProfilePage() {
                       placeholder="Search products in this store..."
                       value={productQuery}
                       onChange={(e) => setProductQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 transition-shadow"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 transition-shadow text-[#0F0F0F]"
                     />
                   </div>
                 </div>
