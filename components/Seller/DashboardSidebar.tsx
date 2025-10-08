@@ -54,6 +54,11 @@ const sections = [
     id: "size_charts",
     title: "Size Charts",
     iconUrl: "/OnboardingSections/business_details.png",
+  },
+  {
+    id: "add_to_ocassion",
+    title: "Add to Ocassion",
+    iconUrl: "/OnboardingSections/store_photos.png",
   }
 ];
 
@@ -64,7 +69,7 @@ const sectionGroups = [
   },
   {
     heading: "Add Products",
-    ids: ["one_product", "bulk_products", "all_products"],
+    ids: ["one_product", "bulk_products", "all_products", "add_to_ocassion"],
   },
   {
     heading: "Size Charts",
