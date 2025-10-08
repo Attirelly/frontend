@@ -181,7 +181,7 @@ export default function SellerSignup() {
      */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (sendOTP) {
+        if (sendOTP) {  
             const fullOtp = otp.join('');
             if (fullOtp.length !== 6) {
                 alert('Please enter a valid 6-digit OTP');

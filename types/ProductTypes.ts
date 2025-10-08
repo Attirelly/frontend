@@ -43,6 +43,7 @@ export interface FilterOptions{
 
 export interface Product {
   product_id: string;
+  store_id?:string;
   variant_id?: string;
   image: string;
   product_name: string;
@@ -60,6 +61,7 @@ export interface Product {
   status: boolean;
   // city: string;
   // subLocation: string;
+  primary_category?:CategoryType;
   imageUploadStatus: "Pending" | "Completed";
   source: "Self" | "Shopify";
 }

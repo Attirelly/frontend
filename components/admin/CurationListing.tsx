@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { api } from '@/lib/axios';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -65,8 +64,7 @@ export default function CurationPage() {
       try {
         setLoading(true);
         setError(null);
-        const response = await api.get('/homepage/section'); // Replace with your backend API URL
-        // 
+        const response = await api.get('/homepage/section'); 
         setCurations(response.data.sort((a : Curation, b : Curation) => a.section_number - b.section_number));
       } catch (err) {
         setError('Failed to load curations.');
@@ -85,7 +83,13 @@ export default function CurationPage() {
    */
   const handleEdit = (section_id: string, section_name: string, section_url: string, section_type: string, section_number: number) => {
     const query = `?curation_id=${encodeURIComponent(section_id)}&curation_name=${encodeURIComponent(section_name)}&curation_url=${encodeURIComponent(section_url)}&curation_type=${encodeURIComponent(section_type)}&curation_number=${encodeURIComponent(section_number)}`;
-    router.push(`/admin/curationModule/addStoreProduct${query}`);
+    if(section_type === 'price' || section_type === 'discount') {
+      router.push(`/admin/curationModule/addPriceDiscount${query}`);
+    }
+    else{
+      router.push(`/admin/curationModule/addStoreProduct${query}`);
+    }
+    
   };
 
    /**

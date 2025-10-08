@@ -60,6 +60,7 @@ export interface Product {
   product_name: string;
   brands: Brand;
   primary_category_id: string | null;
+  primary_category?: Category;
   description: string;
   title: string;
   rent: boolean;

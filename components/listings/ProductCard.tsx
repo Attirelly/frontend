@@ -5,45 +5,15 @@ import { useEffect, useState } from 'react';
 import { ProductCardType } from '@/types/ProductTypes';
 import { manrope } from '@/font';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { sendClickEvent } from '@/lib/algoliaInsights';
 
-/**
- * A responsive card component to display individual product information.
- *
- * This component renders a visual representation of a product, including its name, price,
- * and an image.Hover-activated image carousel with preloading capabilities. The entire card acts as a
- * single link to the product's detail page.
- *
- * ### Interactive Image Carousel
- * When a product has multiple images, a carousel is available. The navigation controls
- * for the carousel are hidden by default and appear when the user hovers over the image.
- *
- * ### Performance Optimizations
- * Several strategies are used to ensure fast load times and a smooth experience:
- * 1.  **Image Preloading**: A `useEffect` hook proactively preloads the next and previous images
- * in the carousel as soon as the user hovers over the card. This makes image transitions
- * feel instantaneous when the user clicks the navigation buttons.
- * 
- * 2.  **Responsive Images (`sizes` prop)**: The `next/image` component is configured with a `sizes`
- * prop, which instructs the browser to download the most appropriately sized image based on the
- * user's viewport. This prevents serving large desktop-sized images to mobile devices.
- * 
- * 3.  **Strategic Loading (`loading` prop)**: The first image of the card is loaded eagerly (`eager`)
- * to improve the Largest Contentful Paint (LCP) metric. Subsequent images in the carousel are
- * loaded lazily (`lazy`) to avoid unnecessary initial network requests.
- *
- * @param {ProductCardType} props - The product data to be displayed on the card.
- * @param {string} props.id - The unique identifier for the product, used for the link URL.
- * @param {string[]} props.imageUrl - An array of image URLs for the product.
- * @param {string} props.title - The main title or name of the product.
- * @param {string} props.description - A short description of the product.
- * @param {number} props.price - The current selling price of the product.
- * @param {number} props.originalPrice - The original price, used to show a discount.
- * @param {string} props.discountPercentage - The calculated discount percentage to display.
- * @returns {JSX.Element} A fully interactive and responsive product card.
- * @see {@link https://nextjs.org/docs/pages/api-reference/components/image | Next.js Image Component}
- * @see {@link https://react.dev/reference/react/useEffect | React useEffect Hook}
- * @see {@link https://lucide.dev/ | Lucide React Icons}
- */
+
+// 2. Update the props to accept queryID and position
+interface ProductCardProps extends ProductCardType {
+  queryID?: string | null;
+  position?: number;
+}
+
 export default function ProductCard({
   id,
   imageUrl,
@@ -52,15 +22,12 @@ export default function ProductCard({
   price,
   originalPrice,
   discountPercentage,
-}: ProductCardType) {
+  queryID, // <-- New prop
+  position, // <-- New prop
+}: ProductCardProps) {
   const [imageIndex, setImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-   /**
-   * This effect preloads the next and previous images in the carousel to ensure smooth transitions.
-   * It runs when the user hovers over the image, creating a seamless experience by fetching
-   * the images before they are requested by a click.
-   */
   useEffect(() => {
     if (!isHovered || !imageUrl || imageUrl.length <= 1) return;
 
@@ -85,11 +52,25 @@ export default function ProductCard({
     );
   };
 
+  // 3. Create the main click handler function
+  const handleClick = () => {
+    // Send the Algolia event if a queryID exists
+    if (queryID) {
+      sendClickEvent(
+        id,
+        queryID,
+        "products", 
+        position??0
+      );
+    }
+    // Handle navigation (opens in a new tab)
+    window.open(`/product_detail/${id}?queryId=${queryID}`, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <a
-      href={`/product_detail/${id}`}
-      target="_blank"
-      rel="noopener noreferrer"
+    // 4. Replace <a> tag with a div and attach the handleClick function
+    <div
+      onClick={handleClick}
       className="block w-full"
     >
       {/* Card container with responsive padding */}
@@ -114,10 +95,9 @@ export default function ProductCard({
               <span className="text-gray-500 text-sm">No Image</span>
             </div>
           )}
-           {/* Render carousel controls only if there is more than one image. */}
           {imageUrl && imageUrl.length > 1 && (
             <>
-              {/* Prev Button with responsive padding and icon size */}
+              {/* Prev Button */}
               <button
                 onClick={(e) => {
                   e.preventDefault();
@@ -128,7 +108,7 @@ export default function ProductCard({
               >
                 <ChevronLeft className="h-3 w-3 md:h-4 md:w-4 lg:h-5 lg:w-5" />
               </button>
-              {/* Next Button with responsive padding and icon size */}
+              {/* Next Button */}
               <button
                 onClick={(e) => {
                   e.preventDefault();
@@ -143,7 +123,7 @@ export default function ProductCard({
           )}
         </div>
 
-        {/* Product Info with responsive text and margins */}
+        {/* Product Info */}
         <div className={`${manrope.className} pt-2 md:pt-3`} style={{ fontWeight: 500 }}>
           <h3 className="text-sm md:text-base lg:text-lg text-black mb-1 truncate">
             {title}
@@ -173,6 +153,6 @@ export default function ProductCard({
           </div>
         </div>
       </div>
-    </a>
+    </div>
   );
 }

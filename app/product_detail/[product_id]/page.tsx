@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 import {
@@ -24,6 +24,7 @@ import Link from "next/link";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
 import { useSwipeable } from "react-swipeable";
 import { hex } from "framer-motion";
+import { sendConversionEvent } from "@/lib/algoliaInsights";
 
 // breadcrumbs 
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs'
@@ -80,9 +81,9 @@ export default function ProductDetail() {
   const { user } = useAuthStore();
   const params = useParams();
   const product_id = params?.product_id as string;
+  const queryId = params?.queryId as string | null | undefined;
   const router = useRouter();
 
-  // const { setStoreId } = useSellerStore();
   const [signIn, setSignIn] = useState(false);
   const [pendingWhatsApp, setPendingWhatsApp] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
@@ -93,6 +94,10 @@ export default function ProductDetail() {
   const [startIndex, setStartIndex] = useState(0); //  i
   const [endIndex, setEndIndex] = useState(4); //   j
   const [storeBasicInfo, setStoreBasicInfo] = useState<any>(null);
+  const [productSizeChartUrl, setProductSizeChartUrl] = useState<string | null>(
+    null
+  );
+  const [isSizeChartModalOpen, setIsSizeChartModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
   );
@@ -159,6 +164,24 @@ export default function ProductDetail() {
     }
   };
 
+  useEffect(() => {
+    console.log("Product", product);
+    async function fetchSizeChartForProduct() {
+      if (!product_id) return;
+      try {
+        const response = await api.get(
+          `/size_charts/for_product/${product_id}`
+        );
+        setProductSizeChartUrl(response.data.image_url);
+      } catch (error) {
+        console.log("No size chart found for this product.");
+        setProductSizeChartUrl(null);
+      }
+    }
+
+    fetchSizeChartForProduct();
+  }, [product]);
+
   /**
    * Effect to fetch the main product details when the component mounts or the product ID changes.
    */
@@ -172,6 +195,7 @@ export default function ProductDetail() {
           getProductBreadcrumbs(product_id)
         ]);
         const data: Product = response.data;
+        console.log("Fetched product data:", data);
 
         setProduct(data);
         // setStoreId(data.store_id);
@@ -228,6 +252,8 @@ export default function ProductDetail() {
    * Initiates the "Buy on WhatsApp" flow, checking for authentication first.
    */
   const handleSendToWhatsAppClick = () => {
+    if (!product) return;
+    sendConversionEvent([product.product_id], queryId, "products");
     setPendingWhatsApp(true); // Set the intent flag.
     if (!isCustomerAuthenticated()) {
       setSignIn(true); // If not logged in, show the sign-in modal.
@@ -545,9 +571,14 @@ Could you please confirm its availability and share payment link.`;
                       <span className="text-[#7D7D7D]">Size:</span>{" "}
                       <span>{selectedSize?.size_name}</span>
                     </p>
-                    {/* <button className="text-lg text-[#7D7D7D] underline">
-                      View Size Chart
-                    </button> */}
+                    {productSizeChartUrl && (
+                      <button
+                        onClick={() => setIsSizeChartModalOpen(true)}
+                        className="text-sm md:text-base text-gray-600 underline hover:text-black transition-colors"
+                      >
+                        Size Chart
+                      </button>
+                    )}
                   </div>
                   <div className="flex gap-3 flex-wrap mt-2 md::mt-5">
                     {sizes.map((size) => (
@@ -835,43 +866,82 @@ Could you please confirm its availability and share payment link.`;
         </div>
       </div>
       {product && (
-        <div className="px-10 w-full flex flex-col mx-auto">
-          <hr
-            className="border-t border-gray-300 hidden md:block"
-            // style={{
-            //   borderImage:
-            //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
-            //   borderImageSlice: 1,
-            // }}
-          />
+        <div>
+          <div className="px-10 w-full flex flex-col mx-auto">
+            <hr
+              className="border-t border-gray-300 hidden md:block"
+              // style={{
+              //   borderImage:
+              //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
+              //   borderImageSlice: 1,
+              // }}
+            />
 
-          <div
-            className={`${roboto.className} flex mt-4 md:mt-16 justify-between items-center`}
-          >
-            <span
-              className="text-[20px] md:text-[28px] text-[#141414]"
-              style={{ fontWeight: 600 }}
+            <div
+              className={`${roboto.className} flex mt-4 md:mt-16 justify-between items-center`}
             >
-              More from {storeBasicInfo?.store_name}
-            </span>
-            <span
-              className="text-[14px] md:text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
-              style={{ fontWeight: 500 }}
-              onClick={() => {
-                router.push(
-                  `/store_profile/${
-                    product?.store_id
-                  }?defaultButton=${encodeURIComponent("Products")}`
-                );
-              }}
-            >
-              View All
-            </span>
+              <span
+                className="text-[20px] md:text-[28px] text-[#141414]"
+                style={{ fontWeight: 600 }}
+              >
+                More from {storeBasicInfo?.store_name}
+              </span>
+              <span
+                className="text-[14px] md:text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
+                style={{ fontWeight: 500 }}
+                onClick={() => {
+                  router.push(
+                    `/store_profile/${
+                      product?.store_id
+                    }?defaultButton=${encodeURIComponent("Products")}`
+                  );
+                }}
+              >
+                View All
+              </span>
+            </div>
+
+            <div className="relative mt-6 overflow-hidden">
+              <ShowMoreProducts product={product} limit={5} same_store={true} />
+              <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
+            </div>
           </div>
+          <div className="px-10 w-full flex flex-col mx-auto">
+            <hr
+              className="border-t border-gray-300 hidden md:block"
+              // style={{
+              //   borderImage:
+              //     "repeating-linear-gradient(to right, gray 0, gray 5px, transparent 5px, transparent 10px)",
+              //   borderImageSlice: 1,
+              // }}
+            />
 
-          <div className="relative mt-6 overflow-hidden">
-            <ShowMoreProducts store_id={product?.store_id} limit={5} />
-            <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
+            <div
+              className={`${roboto.className} flex mt-4 md:mt-16 justify-between items-center`}
+            >
+              <span
+                className="text-[20px] md:text-[28px] text-[#141414]"
+                style={{ fontWeight: 600 }}
+              >
+                More from Other Stores
+              </span>
+              <span
+                className="text-[14px] md:text-base text-[#525252] underline cursor-pointer transition hover:text-gray-700"
+                style={{ fontWeight: 500 }}
+                onClick={() => {
+                  router.push(
+                    `/product_directory?primary_category=${product?.primary_category?.name}`
+                  );
+                }}
+              >
+                View All
+              </span>
+            </div>
+
+            <div className="relative mt-6 overflow-hidden">
+              <ShowMoreProducts product={product} limit={5} same_store={false} price={selectedVariant?.price} />
+              <div className="pointer-events-none absolute top-0 right-0 h-full w-25 bg-gradient-to-l from-white to-transparent" />
+            </div>
           </div>
         </div>
       )}
@@ -895,6 +965,57 @@ Could you please confirm its availability and share payment link.`;
           }}
         />
       )}
+
+      <SizeChartModal
+        isOpen={isSizeChartModalOpen}
+        onClose={() => setIsSizeChartModalOpen(false)}
+        imageUrl={productSizeChartUrl || ""}
+      />
     </div>
   );
 }
+
+const SizeChartModal: FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  imageUrl: string;
+}> = ({ isOpen, onClose, imageUrl }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      onClick={onClose}
+      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[1000]"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative p-4 bg-white rounded-lg max-w-[90vw] max-h-[90vh] w-auto"
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow-lg z-10"
+        >
+          {/* You can use an icon here if you have one, like FiX */}
+          <svg
+            className="w-6 h-6 text-black"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+        <img
+          src={imageUrl}
+          alt="Size Chart"
+          className="w-full h-full object-contain max-h-[calc(90vh-32px)]"
+        />
+      </div>
+    </div>
+  );
+};

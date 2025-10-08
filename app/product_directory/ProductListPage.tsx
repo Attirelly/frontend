@@ -13,6 +13,8 @@ import Fuse from "fuse.js";
 import StoreTypeTabs from "@/components/listings/StoreTypes";
 import { BrandType } from "@/types/SellerTypes";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
+import TopDynamicFilterBar from "@/components/listings/TopDynamicFilter";
+
 
 //breadcrumbs
 // --- BREADCRUMB IMPORTS ---
@@ -402,6 +404,7 @@ export default function ProductListPage() {
                     </div>
                     <SortByDropdown />
                   </div>
+                  <TopDynamicFilterBar />
                   <ProductContainer />
                 </div>
               </div>

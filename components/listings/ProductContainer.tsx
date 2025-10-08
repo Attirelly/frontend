@@ -7,6 +7,8 @@ import { ProductCardType } from "@/types/ProductTypes";
 import { useHeaderStore } from "@/store/listing_header_store";
 import ProductGridSkeleton from "./skeleton/catalogue/ProductGridSkeleton";
 import NoResultFound from "./NoResultFound";
+import { send } from "process";
+import { sendViewEvent } from "@/lib/algoliaInsights";
 
 /**
  * @interface ProductContainerProps
@@ -78,6 +80,81 @@ const REFETCH_THRESHOLD = Math.round(BUFFER_SIZE * 0.2); // Refetch when 80% of 
  * @see {@link https://docs.pmnd.rs/zustand/getting-started/introduction | Zustand Documentation}
  * @see {@link https://axios-http.com/docs/intro | Axios Documentation}
  */
+
+// @/utils/queryParser.ts
+
+/**
+ * @interface ParsedQuery
+ * @description Defines the output shape of the query parser.
+ */
+export interface ParsedQuery {
+  /** The text query with price-related phrases removed. */
+  cleanedQuery: string;
+  /** The filter string (e.g., "price < 20000") derived from the query, or null if none is found. */
+  priceFilter: string | null;
+}
+
+/**
+ * Parses a search query to extract natural language price constraints.
+ *
+ * This function uses regular expressions to find keywords like "under", "over", "above",
+ * "below", and "between" followed by numbers. It separates these constraints from the
+ * main search term.
+ *
+ * @example
+ * parsePriceFromQuery("lehenga under 20000");
+ * // Returns: { cleanedQuery: "lehenga", priceFilter: "price < 20000" }
+ *
+ * @example
+ * parsePriceFromQuery("saree between 5000 and 10000");
+ * // Returns: { cleanedQuery: "saree", priceFilter: "price > 5000 AND price < 10000" }
+ *
+ * @param {string} query - The raw search query from the user.
+ * @returns {ParsedQuery} An object containing the cleaned query and the generated price filter string.
+ */
+export const parsePriceFromQuery = (query: string): ParsedQuery => {
+  if (!query) {
+    return { cleanedQuery: "", priceFilter: null };
+  }
+
+  const lowerCaseQuery = query.toLowerCase();
+
+  // Pattern for "between X and Y"
+  const betweenRegex = /between\s*(\d+)\s*and\s*(\d+)/i;
+  const betweenMatch = lowerCaseQuery.match(betweenRegex);
+
+  if (betweenMatch && betweenMatch[1] && betweenMatch[2]) {
+    const min = parseInt(betweenMatch[1], 10);
+    const max = parseInt(betweenMatch[2], 10);
+    return {
+      cleanedQuery: query.replace(betweenRegex, "").trim(),
+      priceFilter: `price > ${min} AND price < ${max}`,
+    };
+  }
+
+  // Patterns for "under X", "over X", etc.
+  const simplePatterns = [
+    { regex: /(?:under|below|less than)\s*(\d+)/i, operator: "<" }, // make it work for in keyword 
+    { regex: /(?:over|above|more than)\s*(\d+)/i, operator: ">" },
+    { regex: /<\s*(\d+)/i, operator: "<" }, // Handle "< 20000"
+    { regex: />\s*(\d+)/i, operator: ">" }, // Handle "> 20000"
+  ];
+
+  for (const pattern of simplePatterns) {
+    const match = lowerCaseQuery.match(pattern.regex);
+    if (match && match[1]) {
+      const price = parseInt(match[1], 10);
+      return {
+        cleanedQuery: query.replace(pattern.regex, "").trim(),
+        priceFilter: `price ${pattern.operator} ${price}`,
+      };
+    }
+  }
+
+  // No price constraints found
+  return { cleanedQuery: query, priceFilter: null };
+};
+
 export default function ProductContainer({
   storeId = "",
   colCount, // Original prop is kept
@@ -106,6 +183,7 @@ export default function ProductContainer({
   const [skipFilters, setSkipFilters] = useState(false);
   const [noResultFound, setNoResultFound] = useState(false);
   const [apiHasMore, setApiHasMore] = useState(true);
+  const [queryID, setQueryID] = useState<string | null>(null);
 
   /**
    * A helper function to build the facet filter string required by the backend API.
@@ -150,7 +228,9 @@ export default function ProductContainer({
 
   const fetchProducts = async (
     currentPage: number,
-    controller?: AbortController
+    controller?: AbortController,
+    effectiveQuery: string = query,
+    priceFilterOverride: string | null = null,
   ) => {
     const facetFilters = buildFacetFilters(
       selectedFilters,
@@ -164,19 +244,26 @@ export default function ProductContainer({
       }
 
       let priceFilterString = "";
-      if (selectedPriceRange) {
-        const [min, max] = selectedPriceRange;
-        if (min > priceBounds[0] || max < priceBounds[1]) {
-          priceFilterString = `price > ${min} AND price < ${max}`;
-        }
+      if (priceFilterOverride) {
+        priceFilterString = priceFilterOverride;
+      } else if (selectedPriceRange) {
+        const [min, max] = selectedPriceRange;
+        if (min > priceBounds[0] || max < priceBounds[1]) {
+          priceFilterString = `price > ${min} AND price < ${max}`;
+        }
+      }
+
+      // Only add the price filter to clauses if it's not an empty string
+      if (priceFilterString) {
+        filterClauses.push(priceFilterString);
       }
-      filterClauses.push(priceFilterString);
-      setIsResultsLoading(true);
+      // --- END MODIFIED PRICE FILTER LOGIC ---
+
 
       const finalFilterString = filterClauses.join(" AND ");
 
       // ✨ MODIFIED: The global `query` is replaced with the store-specific `productQuery`.
-      let searchUrl = `/search/search_product?query=${storeId} ${query} ${productQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
+      let searchUrl = `/search/search_product?query=${storeId} ${query} ${productQuery} ${effectiveQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
 
       if (area) {
         searchUrl += `&area=${area.name}`;
@@ -190,6 +277,7 @@ export default function ProductContainer({
       );
 
       const data = res.data;
+      console.log("Fetched products data:", data);
       if (data.total_hits === 0 && currentPage == 0) {
         setNoResultFound(true);
         setApiHasMore(false);
@@ -204,7 +292,18 @@ export default function ProductContainer({
         setNoResultFound(false);
       }
       setResults(data.total_hits);
-      setFacets(data.facets, activeFacet);
+      setFacets(data.facets,data.dynamic_facets,  activeFacet);
+      const objectIDs: string[] = []; 
+      if(data.hits && data.hits.length > 0){
+        objectIDs.push(...data.hits.map((item: any) => item.id));
+      }
+
+      sendViewEvent(objectIDs,  "products");
+      if (data.queryID) {
+        setQueryID(data.queryID);
+      } else {
+        setQueryID(null); // Clear previous queryID if none in response
+      }
 
       const formattedProducts: ProductCardType[] = data.hits.map(
         (item: any) => {
@@ -253,12 +352,14 @@ export default function ProductContainer({
 
   useEffect(() => {
     const controller = new AbortController();
+    const { cleanedQuery, priceFilter } = parsePriceFromQuery(query);
     setPage(0);
     setProducts([]);
     setBuffer([]);
     setHasMore(true);
     setApiHasMore(true);
-    fetchProducts(0, controller);
+    // fetchProducts(0, controller);
+    fetchProducts(0,controller,cleanedQuery,priceFilter)
     return () => {
       controller.abort();
     };
@@ -278,7 +379,11 @@ export default function ProductContainer({
     ) {
       const controller = new AbortController();
       setLoading(true);
-      fetchProducts(page, controller);
+
+      const { cleanedQuery, priceFilter } = parsePriceFromQuery(query);
+      fetchProducts(page, controller, cleanedQuery, priceFilter);
+
+      // fetchProducts(page, controller);
       return () => {
         controller.abort();
       };
@@ -329,7 +434,7 @@ export default function ProductContainer({
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
           {products.map((product, index) => (
-            <ProductCard key={`${product.id}`} {...product} />
+            <ProductCard key={`${product.id}`} {...product} queryID={queryID}  position={(page)*ITEMS_PER_PAGE + index + 1}/>
           ))}
         </div>
       )}

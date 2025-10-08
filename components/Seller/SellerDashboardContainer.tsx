@@ -22,6 +22,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ProductUploadPage from "@/app/product_upload/page";
 import { toast } from "sonner";
 import { City, Area, Pincode } from "@/types/SellerTypes";
+import SizeChartPage from "./Sections/SizeChart";
+import OcassionPage from "./Sections/AddToOcassion";
 
 export default function SellerDashboardContainer() {
   const router = useRouter();
@@ -213,6 +215,10 @@ export default function SellerDashboardContainer() {
         return <BulkUploadPage />;
       case "one_product":
         return <ProductUploadPage />;
+      case "size_charts":
+        return <SizeChartPage />;
+      case "add_to_ocassion":
+        return <OcassionPage/>;
       default:
         return null;
     }
