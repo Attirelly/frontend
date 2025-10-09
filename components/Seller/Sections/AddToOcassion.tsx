@@ -33,6 +33,8 @@ const OcassionPage: FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [occasionChecked, setOccasionChecked] = useState(false);
+  const [defaultProducts, setDefaultProducts] = useState<string[]>([]); 
 
   useEffect(() => {
     const fetchOccasions = async () => {
@@ -53,6 +55,25 @@ const OcassionPage: FC = () => {
     fetchOccasions();
   }, []);
 
+  useEffect(() => {
+    if(!selectedOccasion){
+        setDefaultProducts([]);
+        return;
+    }
+    const fetchOccasionProducts = async () => {
+      try{
+        const response = await api.get(`/occasions/${selectedOccasion}/products`)
+        const productIds = response.data.map((item) => item.product_id);
+        setDefaultProducts(productIds);
+        setOccasionChecked(true);
+      }catch(error){
+         console.error("No products corresponding to selected occasion");
+      }
+    }
+    fetchOccasionProducts();
+  },[selectedOccasion])
+  console.log(defaultProducts);
+
   // 4. Update the mapping to use the new 'occasion_id' field
   const occasionOptions: SelectOption[] = useMemo(
     () =>
@@ -67,6 +88,7 @@ const OcassionPage: FC = () => {
 
   const handleOccasionChange = (selectedOption: SingleValue<SelectOption>) => {
     if (selectedOption) {
+      setOccasionChecked(false);
       setSelectedOccasion(selectedOption.value);
       setSelectedOption(selectedOption);
     } else {
@@ -125,7 +147,7 @@ const OcassionPage: FC = () => {
           placeholder="Search or select an occasion..."
         />
       </div>
-      {selectedOccasion != null ? (
+      {selectedOccasion != null && occasionChecked ? (
         <div>
           <ProductSearchPage
             onConfirmSelection={handleUpdateOcassionProduct}
@@ -133,6 +155,7 @@ const OcassionPage: FC = () => {
             addToCuration={false}
             editCuration={false}
             storeId={storeId}
+            defaultProducts={defaultProducts}
           />
         </div>
       ) : (

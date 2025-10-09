@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { City, Area, Pincode } from "@/types/SellerTypes";
 import SizeChartPage from "./Sections/SizeChart";
 import OcassionPage from "./Sections/AddToOcassion";
+import ViewOccasionPage from "./Sections/ViewOcassion";
 
 export default function SellerDashboardContainer() {
   const router = useRouter();
@@ -219,6 +220,8 @@ export default function SellerDashboardContainer() {
         return <SizeChartPage />;
       case "add_to_ocassion":
         return <OcassionPage/>;
+      case "view_ocassion":
+        return <ViewOccasionPage/>;
       default:
         return null;
     }
