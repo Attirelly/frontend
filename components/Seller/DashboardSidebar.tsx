@@ -65,7 +65,12 @@ const sections = [
     id: "add_to_ocassion",
     title: "Add to Ocassion",
     iconUrl: "/OnboardingSections/store_photos.png",
-  }
+  },
+  {
+    id: "view_ocassion",
+    title: "View Ocassion",
+    iconUrl: "/OnboardingSections/where_to_sell.png",
+  },
 ];
 
 const sectionGroups = [
@@ -76,7 +81,11 @@ const sectionGroups = [
   },
   {
     heading: "Add Products",
-    ids: ["one_product", "bulk_products", "all_products", "add_to_ocassion"],
+    ids: ["one_product", "bulk_products", "all_products"],
+  },
+  {
+   heading: "Ocassion",
+   ids: ["add_to_ocassion", "view_ocassion"],
   },
   {
     heading: "Size Charts",

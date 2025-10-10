@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 import { Check } from 'lucide-react';
 
 // Define the props passed from the parent page
 interface ComponentProps {
   onNext: () => void;
+  isLastStep?: boolean;
 }
 
 // Define the possible label options for type safety
@@ -39,11 +40,20 @@ const PriceInput = ({
   </div>
 );
 
-export default function Price({ onNext }: ComponentProps) {
+// export default function Price({ onNext }: ComponentProps) {
   // State for the form fields
+const Price = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {  
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [selectedLabel, setSelectedLabel] = useState<LabelOption | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      average_price_min: minPrice,
+      average_price_max: maxPrice,
+      price_labels: selectedLabel ? [selectedLabel] : [],
+    }),
+  }));
 
   // Validation function to be called on button click
   const handleNext = () => {
@@ -55,7 +65,7 @@ export default function Price({ onNext }: ComponentProps) {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in">
+    <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
       <h2 className="text-2xl font-semibold mb-2">Price filters</h2>
       <p className="text-gray-500 mb-8">
         Provide details about charges per service
@@ -117,4 +127,6 @@ export default function Price({ onNext }: ComponentProps) {
       </div>
     </div>
   );
-}
+});
+
+export default Price;

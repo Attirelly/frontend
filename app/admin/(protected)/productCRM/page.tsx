@@ -32,6 +32,7 @@ interface ProductSearchPageProps {
   storeFilters?: boolean;
   editCuration?: boolean;
   addToCuration?: boolean;
+  defaultProducts?: string[];
   storeId?: string | null;
 }
 export default function ProductSearchPage({
@@ -39,6 +40,7 @@ export default function ProductSearchPage({
   storeFilters = true,
   editCuration = true,
   addToCuration = true,
+  defaultProducts = [],
   storeId,
 }: ProductSearchPageProps) {
   // const storeIds = STORE_IDS;
@@ -69,6 +71,33 @@ export default function ProductSearchPage({
     // Otherwise, derive the storeIds from the user's selection.
     return selectedStores.map((item) => String(item.id));
   }, [selectedStores, storeId]);
+
+  useEffect(() => {
+const defaultSelectedProducts = async () => {
+    if(defaultProducts.length === 0) return;
+    setSelectedProducts([]);
+    try{
+       const prodFilters = `(${defaultProducts
+          .map((product_id) => `objectID:"${product_id}"`)
+          .join(" OR ")})`;
+       
+        const response = await api.get("/search/search_product", {
+          params: {
+            filters: prodFilters,
+            limit: 1000,
+          },
+        });
+        setSelectedProducts(response.data.hits);
+        toast.success("Products loaded successfully");
+        
+    }catch(error){
+console.error("Failed to load Products:", error);
+      toast.error("An error occurred while loading the products.");
+    }
+
+  }
+  defaultSelectedProducts();
+  }, [defaultProducts])
 
   // NEW useEffect to fetch the master list of all stores once
   useEffect(() => {

@@ -1,51 +1,44 @@
 'use client';
 
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import { useState } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 
 interface ComponentProps {
   onNext: () => void;
-  isLastStep?: boolean;
 }
 
-const Photos = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {
-  const [photoFiles, setPhotoFiles] = useState<(File | null)[]>([null, null, null]);
-
-  useImperativeHandle(ref, () => ({
-    getData: () => ({
-      profile_photo: photoFiles[0],
-      additional_photo_1: photoFiles[1],
-      additional_photo_2: photoFiles[2],
-    }),
-  }));
+export default function InfluencerPhotos({ onNext }: ComponentProps) {
+  // State to track whether a file has been uploaded for each field
+  const [uploadedPhotos, setUploadedPhotos] = useState<boolean[]>([false, false, false]);
 
   const uploadFields = [
-    { id: 'profilePhoto1', label: 'Upload your profile image' },
-    { id: 'profilePhoto2', label: 'Upload an additional image' },
-    { id: 'profilePhoto3', label: 'Upload another image' },
+    { id: 'profilePhoto1', label: 'Upload your profile photo' },
+    { id: 'profilePhoto2', label: 'Upload a full-length photo' },
+    { id: 'profilePhoto3', label: 'Upload a portfolio shot' },
   ];
 
   const handleFileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const newPhotoFiles = [...photoFiles];
-      newPhotoFiles[index] = e.target.files[0];
-      setPhotoFiles(newPhotoFiles);
+      const newUploadedPhotos = [...uploadedPhotos];
+      newUploadedPhotos[index] = true;
+      setUploadedPhotos(newUploadedPhotos);
     }
   };
 
   const handleNext = () => {
-    if (photoFiles.some(file => file === null)) {
+    // Check if all fields have an uploaded file
+    if (uploadedPhotos.every(isUploaded => isUploaded)) {
+      onNext();
+    } else {
       alert('All three image fields are mandatory. Please upload a file for each.');
-      return;
     }
-    onNext();
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
-      <h2 className="text-2xl font-semibold mb-2">Profile Photo</h2>
+    <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in">
+      <h2 className="text-2xl font-semibold mb-2">Profile Photos</h2>
       <p className="text-sm text-gray-500 mb-8">
-        Upload a square profile photo for your store
+        Upload high-quality images for your profile
       </p>
 
       <div className="space-y-6">
@@ -60,34 +53,29 @@ const Photos = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {
               type="file"
               className="hidden"
               accept="image/*"
-              // ==========================================================
-              // >> THIS IS THE CORRECTED LINE <<
-              // It is now 'handleFileChange' (camelCase)
-              // ==========================================================
               onChange={(e) => handleFileChange(index, e)}
             />
             <h3 className="font-semibold text-gray-900 mb-2">
               {field.label}
               <span className="text-red-500">*</span>
             </h3>
-            <ImageIcon className={`h-12 w-12 mb-2 ${photoFiles[index] ? 'text-black' : 'text-gray-400'}`} />
+            <ImageIcon className={`h-12 w-12 mb-2 ${uploadedPhotos[index] ? 'text-black' : 'text-gray-400'}`} />
             <p className="text-gray-600 text-sm">
-              {photoFiles[index] ? photoFiles[index].name : 'Profile Preview'}
+              {uploadedPhotos[index] ? 'File Uploaded' : 'Click to upload'}
             </p>
           </div>
         ))}
       </div>
 
+      {/* Navigation Button */}
       <div className="flex justify-end mt-12 pt-6 border-t">
         <button
           onClick={handleNext}
           className="px-8 py-3 bg-black text-white rounded-md font-semibold hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
         >
-          {isLastStep ? 'Submit' : 'Next →'}
+          Next →
         </button>
       </div>
     </div>
   );
-});
-
-export default Photos;
+}
