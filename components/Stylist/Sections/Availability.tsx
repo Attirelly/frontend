@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { ShoppingBag, Smartphone, Store } from 'lucide-react';
 
 // Define the props passed from the parent page
 interface ComponentProps {
   onNext: () => void;
+  isLastStep?: boolean;
 }
 
 // Define the type for our selling options for better type safety
@@ -39,9 +40,16 @@ const options: {
   },
 ];
 
-export default function Availability({ onNext }: ComponentProps) {
+// export default function Availability({ onNext }: ComponentProps) {
   // State to track the selected selling option, initialized to 'null'
+const Availability = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {
   const [selectedOption, setSelectedOption] = useState<SellingOption | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      mode_of_service: selectedOption,
+    }),
+  }));
 
   const handleNext = () => {
     if (!selectedOption) {
@@ -52,7 +60,7 @@ export default function Availability({ onNext }: ComponentProps) {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in">
+    <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
       <h2 className="text-2xl font-semibold mb-8">
         Select your mode of service <span className="text-red-500">*</span>
       </h2>
@@ -100,4 +108,6 @@ export default function Availability({ onNext }: ComponentProps) {
       </div>
     </div>
   );
-}
+});
+
+export default Availability;

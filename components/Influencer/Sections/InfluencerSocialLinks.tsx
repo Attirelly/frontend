@@ -1,27 +1,17 @@
 'use client';
 
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import { useState } from 'react';
 import { Instagram } from 'lucide-react';
 
 interface ComponentProps {
   onNext: () => void;
-  isLastStep?: boolean;
 }
 
-// export default function SocialLinks({ onNext }: ComponentProps) {
-  // State for the three mandatory fields
-const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {  
+export default function InfluencerSocialLinks({ onNext }: ComponentProps) {
+  // State for the social media link fields
   const [instagramUsername, setInstagramUsername] = useState('');
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [facebookUrl, setFacebookUrl] = useState('');
-
-  useImperativeHandle(ref, () => ({
-    getData: () => ({
-      instagram_url: `https://instagram.com/${instagramUsername}`,
-      website_url: websiteUrl,
-      facebook_url: facebookUrl,
-    }),
-  }));
 
   // Validation function
   const handleNext = () => {
@@ -36,8 +26,8 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
     <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
       {/* Social Links Section */}
       <h2 className="text-2xl font-semibold mb-2">Social Links</h2>
-      <p className="text-sm text-gray-500 mb-8">
-        Customers will see these details on Attirelly
+      <p className="text-sm text-black-500 mb-8">
+        Customers will see these details on Attirelly.
       </p>
 
       <div className="space-y-6">
@@ -62,7 +52,7 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
               value={instagramUsername}
               onChange={(e) => setInstagramUsername(e.target.value)}
               className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-300 px-3 py-2 focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              placeholder="picture_pft"
+              placeholder="influencer_name"
             />
           </div>
         </div>
@@ -124,7 +114,7 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
             Integrate with Instagram
           </h3>
           <p className="text-gray-600 text-sm">
-            Connect your Instagram, so Attirelly can engage
+            Connect your Instagram, so Attirelly can engage with you.
           </p>
           <button className="mt-4 px-6 py-2 bg-black text-white rounded-md font-semibold hover:bg-gray-800">
             Disconnect
@@ -146,6 +136,4 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
       </div>
     </div>
   );
-});
-
-export default SocialLinks;
+}
