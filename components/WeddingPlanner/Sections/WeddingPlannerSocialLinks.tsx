@@ -1,30 +1,21 @@
 'use client';
 
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import { useState } from 'react';
 import { Instagram } from 'lucide-react';
 
 interface ComponentProps {
   onNext: () => void;
-  isLastStep?: boolean;
 }
 
-// export default function SocialLinks({ onNext }: ComponentProps) {
-  // State for the three mandatory fields
-const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {  
+export default function WeddingPlannerSocialLinks({ onNext }: ComponentProps) {
+  // State for the social media link fields
   const [instagramUsername, setInstagramUsername] = useState('');
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [facebookUrl, setFacebookUrl] = useState('');
 
-  useImperativeHandle(ref, () => ({
-    getData: () => ({
-      instagram_url: `https://instagram.com/${instagramUsername}`,
-      website_url: websiteUrl,
-      facebook_url: facebookUrl,
-    }),
-  }));
-
   // Validation function
   const handleNext = () => {
+    // Making all fields mandatory as per previous component logic
     if (!instagramUsername || !websiteUrl || !facebookUrl) {
       alert('All social link fields are mandatory. Please fill them to continue.');
       return;
@@ -37,7 +28,7 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
       {/* Social Links Section */}
       <h2 className="text-2xl font-semibold mb-2">Social Links</h2>
       <p className="text-sm text-gray-500 mb-8">
-        Customers will see these details on Attirelly
+        Customers will see these details on your Wedding Planner profile.
       </p>
 
       <div className="space-y-6">
@@ -61,8 +52,8 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
               autoComplete="off"
               value={instagramUsername}
               onChange={(e) => setInstagramUsername(e.target.value)}
-              className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-300 px-3 py-2 focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              placeholder="picture_pft"
+              className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-300 px-3 py-2 focus:border-black focus:ring-black sm:text-sm"
+              placeholder="planner_name"
             />
           </div>
         </div>
@@ -83,8 +74,8 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
               autoComplete="off"
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              placeholder="https://yourwebsite.com"
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
+              placeholder="https://youragencywebsite.com"
             />
           </div>
         </div>
@@ -105,8 +96,8 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
               autoComplete="off"
               value={facebookUrl}
               onChange={(e) => setFacebookUrl(e.target.value)}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              placeholder="https://facebook.com/yourpage"
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
+              placeholder="https://facebook.com/youragency"
             />
           </div>
         </div>
@@ -114,17 +105,17 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
 
       <hr className="my-10" />
 
-      {/* Integrate Section */}
+      {/* Integrate Section (Retained for consistency, though platform-specific wording is used) */}
       <h2 className="text-2xl font-semibold mb-8">Integrate</h2>
 
       {/* Integration Card */}
-      <div className="flex w-full items-center justify-between p-6 border rounded-lg text-left transition-all duration-200">
+      <div className="flex w-full items-center justify-between p-6 border rounded-lg text-left shadow-sm transition-all duration-200">
         <div className="flex-grow">
           <h3 className="font-semibold text-gray-900">
             Integrate with Instagram
           </h3>
           <p className="text-gray-600 text-sm">
-            Connect your Instagram, so Attirelly can engage
+            Connect your Instagram to showcase your recent wedding work.
           </p>
           <button className="mt-4 px-6 py-2 bg-black text-white rounded-md font-semibold hover:bg-gray-800">
             Disconnect
@@ -146,6 +137,4 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
       </div>
     </div>
   );
-});
-
-export default SocialLinks;
+}

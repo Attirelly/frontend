@@ -76,7 +76,7 @@ export default function StylistSignup() {
 
     const isPhoneValid = /^\d{10}$/.test(phone);
     const router = useRouter();
-    const testing_phone = '7015241757'
+    const testing_phone = '9310670741'
 
     /**
      * prefetching necessary routes

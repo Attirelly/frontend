@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 import { X } from 'lucide-react';
 
 interface ComponentProps {
   onNext: () => void;
+  isLastStep?: boolean;
 }
 
 // A simple styled component for the multi-select tags
@@ -17,8 +18,9 @@ const Tag = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
   </span>
 );
 
-export default function Details({ onNext }: ComponentProps) {
+// export default function Details({ onNext }: ComponentProps) {
   // State for all form fields, including all mandatory ones
+const Details = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => { 
   const [personalNumber, setPersonalNumber] = useState('');
   const [email, setEmail] = useState('');
   const [stylistName, setStylistName] = useState('');
@@ -30,6 +32,21 @@ export default function Details({ onNext }: ComponentProps) {
   const [area, setArea] = useState('');
   const [pincode, setPincode] = useState('');
   const [mapLink, setMapLink] = useState('');
+
+  useImperativeHandle(ref, () => ({
+    getData: () => ({
+      personal_phone: personalNumber,
+      email,
+      stylist_name: stylistName,
+      whatsapp_phone: whatsappNumber,
+      expertises: expertise,
+      genders_catered: genders,
+      city,
+      area,
+      pincode,
+      google_maps_link: mapLink,
+    }),
+  }));
 
   // Handle next button click with validation
   const handleNext = () => {
@@ -89,10 +106,10 @@ export default function Details({ onNext }: ComponentProps) {
   return (
     <div className="space-y-12">
       {/* Section 1: Stylist Personal Details */}
-      <div className="bg-white p-8 rounded-lg shadow-sm border">
+      <div className="bg-white p-8 rounded-lg shadow-sm border text-black">
         <h2 className="text-2xl font-semibold mb-2">Stylist Personal Details</h2>
-        <p className="text-gray-500 mb-8">
-          This is for internal data; customers won't see this.
+        <p className="text-black-500 mb-8">
+          This is for internal data, customers won't see this.
         </p>
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -142,7 +159,7 @@ export default function Details({ onNext }: ComponentProps) {
       </div>
 
       {/* Section 2: Stylist Details (Visible to Customers) */}
-      <div className="bg-white p-8 rounded-lg shadow-sm border">
+      <div className="bg-white p-8 rounded-lg shadow-sm border text-black">
         <h2 className="text-2xl font-semibold mb-2">Stylist details</h2>
         <p className="text-gray-500 mb-8">
           Customers will see these details on Attirelly.
@@ -224,7 +241,7 @@ export default function Details({ onNext }: ComponentProps) {
       </div>
 
       {/* Section 3: Stylist Location */}
-      <div className="bg-white p-8 rounded-lg shadow-sm border">
+      <div className="bg-white p-8 rounded-lg shadow-sm border text-black">
         <h2 className="text-2xl font-semibold mb-2">Stylist location</h2>
         <p className="text-gray-500 mb-8">
           Customers will see these details on Attirelly.
@@ -290,4 +307,6 @@ export default function Details({ onNext }: ComponentProps) {
       </div>
     </div>
   );
-}
+});
+
+export default Details;
