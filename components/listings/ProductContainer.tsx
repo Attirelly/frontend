@@ -7,6 +7,8 @@ import { ProductCardType } from "@/types/ProductTypes";
 import { useHeaderStore } from "@/store/listing_header_store";
 import ProductGridSkeleton from "./skeleton/catalogue/ProductGridSkeleton";
 import NoResultFound from "./NoResultFound";
+import { send } from "process";
+import { sendViewEvent } from "@/lib/algoliaInsights";
 
 /**
  * @interface ProductContainerProps
@@ -132,7 +134,7 @@ export const parsePriceFromQuery = (query: string): ParsedQuery => {
 
   // Patterns for "under X", "over X", etc.
   const simplePatterns = [
-    { regex: /(?:under|below|less than)\s*(\d+)/i, operator: "<" },
+    { regex: /(?:under|below|less than)\s*(\d+)/i, operator: "<" }, // make it work for in keyword 
     { regex: /(?:over|above|more than)\s*(\d+)/i, operator: ">" },
     { regex: /<\s*(\d+)/i, operator: "<" }, // Handle "< 20000"
     { regex: />\s*(\d+)/i, operator: ">" }, // Handle "> 20000"
@@ -155,6 +157,7 @@ export const parsePriceFromQuery = (query: string): ParsedQuery => {
 
 export default function ProductContainer({
   storeId = "",
+  colCount, // Original prop is kept
 }: ProductContainerProps) {
   // --- State from Zustand Stores ---
   const {
@@ -165,9 +168,11 @@ export default function ProductContainer({
     selectedPriceRange,
     priceBounds,
     setIsResultsLoading,
+    productQuery, // ✨ ADDED: Get the new store-specific search query from the filter store
   } = useProductFilterStore();
 
-  const { query, city, area, storeType, sortBy } = useHeaderStore();
+  // ✨ MODIFIED: We no longer need the global `query` for this component's logic
+  const { query,city, area, storeType, sortBy } = useHeaderStore();
   const [products, setProducts] = useState<ProductCardType[]>([]);
   const [buffer, setBuffer] = useState<ProductCardType[]>([]); // New buffer state
   const [page, setPage] = useState(0);
@@ -178,6 +183,7 @@ export default function ProductContainer({
   const [skipFilters, setSkipFilters] = useState(false);
   const [noResultFound, setNoResultFound] = useState(false);
   const [apiHasMore, setApiHasMore] = useState(true);
+  const [queryID, setQueryID] = useState<string | null>(null);
 
   /**
    * A helper function to build the facet filter string required by the backend API.
@@ -237,20 +243,6 @@ export default function ProductContainer({
         filterClauses.push(filters);
       }
 
-      // let priceFilterString = "";
-      // if (selectedPriceRange) {
-      //   const [min, max] = selectedPriceRange;
-      //   if (min > priceBounds[0] || max < priceBounds[1]) {
-      //     priceFilterString = `price > ${min} AND price < ${max}`;
-      //   }
-      // }
-      // filterClauses.push(priceFilterString);
-      // setIsResultsLoading(true);
-
-       // --- MODIFIED PRICE FILTER LOGIC ---
-      // Priority:
-      // 1. Use the filter parsed directly from the query string ("lehenga under 20000").
-      // 2. Fall back to the price range slider if no text-based price filter exists.
       let priceFilterString = "";
       if (priceFilterOverride) {
         priceFilterString = priceFilterOverride;
@@ -269,9 +261,9 @@ export default function ProductContainer({
 
 
       const finalFilterString = filterClauses.join(" AND ");
-      let searchUrl = `/search/search_product?query=${storeId} ${effectiveQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
 
-      // let searchUrl = `/search/search_product?query=${storeId} ${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}&only_active=true`;
+      // ✨ MODIFIED: The global `query` is replaced with the store-specific `productQuery`.
+      let searchUrl = `/search/search_product?query=${storeId} ${query} ${productQuery} ${effectiveQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
 
       if (area) {
         searchUrl += `&area=${area.name}`;
@@ -285,6 +277,7 @@ export default function ProductContainer({
       );
 
       const data = res.data;
+      console.log("Fetched products data:", data);
       if (data.total_hits === 0 && currentPage == 0) {
         setNoResultFound(true);
         setApiHasMore(false);
@@ -299,7 +292,18 @@ export default function ProductContainer({
         setNoResultFound(false);
       }
       setResults(data.total_hits);
-      setFacets(data.facets, activeFacet);
+      setFacets(data.facets,data.dynamic_facets,  activeFacet);
+      const objectIDs: string[] = []; 
+      if(data.hits && data.hits.length > 0){
+        objectIDs.push(...data.hits.map((item: any) => item.id));
+      }
+
+      sendViewEvent(objectIDs,  "products");
+      if (data.queryID) {
+        setQueryID(data.queryID);
+      } else {
+        setQueryID(null); // Clear previous queryID if none in response
+      }
 
       const formattedProducts: ProductCardType[] = data.hits.map(
         (item: any) => {
@@ -359,7 +363,8 @@ export default function ProductContainer({
     return () => {
       controller.abort();
     };
-  }, [selectedFilters, filters, query, storeType, sortBy, city, area]);
+    // ✨ MODIFIED: The dependency array now listens for changes to `productQuery` instead of the global `query`.
+  }, [selectedFilters, filters, query, productQuery, storeType, sortBy, city, area]);
 
   /**
    * Fetch more products when the user scrolls down
@@ -429,7 +434,7 @@ export default function ProductContainer({
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
           {products.map((product, index) => (
-            <ProductCard key={`${product.id}`} {...product} />
+            <ProductCard key={`${product.id}`} {...product} queryID={queryID}  position={(page)*ITEMS_PER_PAGE + index + 1}/>
           ))}
         </div>
       )}

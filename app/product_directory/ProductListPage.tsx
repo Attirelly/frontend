@@ -8,11 +8,20 @@ import { manrope } from "@/font";
 import { useProductFilterStore } from "@/store/filterStore";
 import { useHeaderStore } from "@/store/listing_header_store";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Fuse from "fuse.js";
 import StoreTypeTabs from "@/components/listings/StoreTypes";
 import { BrandType } from "@/types/SellerTypes";
 import ListingMobileHeader from "@/components/mobileListing/ListingMobileHeader";
+import TopDynamicFilterBar from "@/components/listings/TopDynamicFilter";
+
+
+//breadcrumbs
+// --- BREADCRUMB IMPORTS ---
+import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs';
+import { getCategoryBreadcrumbs, getCategoryByName, getCategoryBySname} from '@/lib/breadcrumbService';
+import { BreadcrumbItem } from "@/types/breadcrumb";
+import { CloseOutlined } from "@ant-design/icons";
 
 const STORE_TYPE_OPTIONS: BrandType[] = [
   { id: "f923d739-4c06-4472-9bfd-bb848b32594b", store_type: "Retail Store" },
@@ -59,6 +68,21 @@ export default function ProductListPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const categoryNameFromUrl = useMemo(() => {
+    // This will get the first category name (e.g., "Classic Sarees") or return null if it's not in the URL.
+    return searchParams.get("categories")?.split(",")[0] || null;
+  }, [searchParams]);
+
+
+  // **NEW**: Memoize search query from URL
+  const searchQueryFromUrl = useMemo(() => {
+    return searchParams.get("search") || null;
+  }, [searchParams]);
+
+  // --- ADD BREADCRUMB STATE ---
+  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([]);
+
 
   const {
     setQuery,
@@ -243,11 +267,82 @@ export default function ProductListPage() {
     console.log("results changed", results);
   }, [results]);
 
+  /**
+  * Effect to fetch the breadcrumb trail when the category changes.
+  */
+  useEffect(() => {
+    const fetchBreadcrumbData = async () => {
+      // Priority 1: A category is explicitly in the URL
+      if (categoryNameFromUrl) {
+        try {
+          const category = await getCategoryByName(categoryNameFromUrl);
+          if (category?.category_id) {
+            const trail = await getCategoryBreadcrumbs(category.category_id);
+            setBreadcrumbs(trail);
+          } else {
+            setBreadcrumbs([]);
+          }
+        } catch (error) {
+          console.error("Error fetching category breadcrumb trail:", error);
+          setBreadcrumbs([]);
+        }
+        return; // Stop further execution
+      }
+
+      // Priority 2: A search query is in the URL
+      if (searchQueryFromUrl) {
+        // Create a list of terms to search for, from most specific to least
+        const searchTerm = searchQueryFromUrl.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+        const searchTerms = [
+          searchTerm, // "red shirt"
+          ...searchTerm.split(' ').filter(term => term.length > 2) // ["red", "shirt"]
+        ];
+
+        let trailFound = false;
+
+          for (const term of searchTerms) {
+            try {
+              const category = await getCategoryBySname(term);
+              if (category?.category_id) {
+                let trail = await getCategoryBreadcrumbs(category.category_id);
+                setBreadcrumbs(trail);
+                trailFound = true;
+                break; // Exit the loop once a trail is found
+              }
+            } catch (error) {
+              // This is expected if a category isn't found. Continue to the next term.
+              console.log(`No category found for term: "${term}"`);
+            }
+          }
+        // Fallback: If no category matched any term, create a simple search trail
+        if (!trailFound) {
+          setBreadcrumbs([
+            { name: "Home", url: "/" },
+            { name: searchTerm, url: "#" } // URL is '#' as it's not a real page
+          ]);
+        }
+        if (trailFound){
+          setBreadcrumbs( breadcrumbs => [...breadcrumbs, { name : searchTerm, url : "#" }] )
+        }
+        return; // Stop further execution
+      }
+
+      // If neither category nor search query is present, clear breadcrumbs
+      setBreadcrumbs([]);
+    };
+
+    fetchBreadcrumbData();
+  }, [categoryNameFromUrl, searchQueryFromUrl]); // Depend on both URL params
+
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
       <ListingMobileHeader className="block lg:hidden" />
       <ListingPageHeader className="hidden lg:block" />
       <div className="flex flex-col px-4 pb-24 md:pb-0 lg:px-20">
+        {/* --- RENDER THE BREADCRUMBS COMPONENT --- */}
+        <div className="mt-4">
+          <Breadcrumbs trail={breadcrumbs} />
+        </div>
         <span
           className={`${manrope.className} text-[#101010] mt-4 text-2xl lg:text-[32px]`}
           style={{ fontWeight: 500 }}
@@ -267,8 +362,8 @@ export default function ProductListPage() {
                 ? query
                   ? `Showing Results for "${query}"`
                   : displayCategory
-                  ? `Showing Results for "${displayCategory}"`
-                  : ""
+                    ? `Showing Results for "${displayCategory}"`
+                    : ""
                 : "Sorry, no result found for your search"}
             </span>
           )}
@@ -309,6 +404,7 @@ export default function ProductListPage() {
                     </div>
                     <SortByDropdown />
                   </div>
+                  <TopDynamicFilterBar />
                   <ProductContainer />
                 </div>
               </div>

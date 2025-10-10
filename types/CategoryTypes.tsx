@@ -46,3 +46,7 @@ export interface Category {
   parent_id?: string | null;
   children: SubCat1[];
 }
+
+export interface categoryname {
+  name : string ;
+}

@@ -53,7 +53,7 @@ const REFETCH_THRESHOLD = Math.round(BUFFER_SIZE * 0.2); // Refetch when 80% of 
  */
 
 export default function StoreContainerPage() {
-  const { facets, setFacets, selectedFilters, activeFacet } = useFilterStore();
+  const { facets, setFacets, selectedFilters, activeFacet, selectedDiscount  } = useFilterStore();
   const { city, area, query, storeType, deliveryType } = useHeaderStore();
 
   const [stores, setStores] = useState<StoreCardType[]>([]);
@@ -156,6 +156,11 @@ export default function StoreContainerPage() {
       searchUrl += `&city=${city.name}`;
     }
 
+    // ✅ 2. ADD the new `selectedDiscount` parameter to the API request URL.
+    if (selectedDiscount) {
+      searchUrl += `&discount=${encodeURIComponent(selectedDiscount)}`;
+    }
+
     try {
       const res = await api.get(
         searchUrl,
@@ -253,7 +258,7 @@ export default function StoreContainerPage() {
     return () => {
       controller.abort();
     };
-  }, [query, storeType, selectedFilters, city, area, filters]);
+  }, [query, storeType, selectedFilters, city, area, selectedDiscount, filters]);
   /**
    * Effect to handle changes from the "Online" / "In Store" toggle.
    * It translates the user-friendly selection into the filter string the API expects.

@@ -59,7 +59,8 @@ export default function Sidebar({ isOpen } : SidebarProps) {
     { label: "Seller CRM", path: "/admin/sellerCRM" },
     { label: "Customer CRM", path: "/admin/customerCRM" },
     { label: "Product CRM", path: "/admin/productCRM"},
-    { label: "Curation Module", path: "/admin/curationModule" }
+    { label: "Curation Module", path: "/admin/curationModule" },
+    { label: "Store CRM/Ranking", path: "/admin/storeRanking"}
     
   ];
 

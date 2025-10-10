@@ -30,6 +30,12 @@ const sections = [
     title: "Store Photos",
     iconUrl: "/OnboardingSections/store_photos.png",
   },
+  // ✅ ADDED: New section for discounts
+  {
+    id: "discounts",
+    title: "Discounts",
+    iconUrl: "/OnboardingSections/discount_icon.png", // NOTE: Replace with a real icon path
+  },
   {
     id: "one_product",
     title: "Add Single",
@@ -54,17 +60,32 @@ const sections = [
     id: "size_charts",
     title: "Size Charts",
     iconUrl: "/OnboardingSections/business_details.png",
-  }
+  },
+  {
+    id: "add_to_ocassion",
+    title: "Add to Ocassion",
+    iconUrl: "/OnboardingSections/store_photos.png",
+  },
+  {
+    id: "view_ocassion",
+    title: "View Ocassion",
+    iconUrl: "/OnboardingSections/where_to_sell.png",
+  },
 ];
 
 const sectionGroups = [
   {
     heading: "Store Profile",
-    ids: ["brand", "price", "market", "social", "photos"],
+    // ✅ ADDED: "discounts" id to this group
+    ids: ["brand", "price", "market", "social", "photos", "discounts"],
   },
   {
     heading: "Add Products",
     ids: ["one_product", "bulk_products", "all_products"],
+  },
+  {
+   heading: "Ocassion",
+   ids: ["add_to_ocassion", "view_ocassion"],
   },
   {
     heading: "Size Charts",
@@ -76,14 +97,12 @@ const sectionGroups = [
 // --- Extracted MobileSidebar Component ---
 const MobileSidebar = ({ selected, onSelect }) => {
   const scrollContainerRef = useRef(null);
-  const scrollPositionRef = useRef(0); // Ref to store the scrollLeft value
+  const scrollPositionRef = useRef(0); 
 
-  // This effect preserves the scroll position across re-renders
   useLayoutEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (!scrollContainer) return;
 
-    // Restore scroll position after a re-render
     scrollContainer.scrollLeft = scrollPositionRef.current;
 
     const handleScroll = () => {
@@ -92,7 +111,7 @@ const MobileSidebar = ({ selected, onSelect }) => {
 
     scrollContainer.addEventListener("scroll", handleScroll);
     return () => scrollContainer.removeEventListener("scroll", handleScroll);
-  }, []); // Empty dependency array means this runs only once on mount
+  }, []); 
 
   return (
     <nav className="w-full p-2 rounded-lg text-black bg-white">
@@ -174,54 +193,9 @@ const DesktopSidebar = ({ selected, onSelect, openGroups, toggleGroup }) => {
   );
 };
 
-/**
- * DashboardSidebar component
- * 
- * The primary navigation component for the Seller Dashboard. It provides a responsive UI
- * that adapts from a horizontal scrolling bar on mobile to a collapsible, grouped sidebar on desktop.
- *
- * ## Features
- * - **Responsive Design**: Renders two distinct layouts for mobile vs. desktop screens using CSS.
- * - **Mobile View**: A compact, horizontally scrollable bar of icons and titles that is touch-friendly.
- * - **Desktop View**: A taller, vertical sidebar with collapsible sections (e.g., "Store Profile", "Add Products") for better organization.
- * - **Stateful Navigation**: Highlights the currently `selected` section passed in via props.
- * - **Interactive**: Clicking on a section triggers the `onSelect` callback to notify the parent component of a navigation change.
- * - **Scroll Preservation**: The mobile sidebar remembers its horizontal scroll position across re-renders for a seamless user experience.
- *
- * ## Logic Flow
- * 1.  The main `DashboardSidebar` component acts as a responsive switcher, rendering either a `MobileSidebar` or a `DesktopSidebar` based on screen size.
- * 2.  It manages the state for the collapsible desktop groups (`openGroups`) and provides a function (`toggleGroup`) to handle their open/closed state.
- * 3.  **DesktopSidebar Logic**:
- *        - It maps over the `sectionGroups` constant to create the collapsible sections.
- *        - The visibility of each section's content is controlled by the `openGroups` state passed down from the parent.
- *        - It then maps over the `ids` within each group to render the individual navigation items.
- * 4.  **MobileSidebar Logic**:
- *        - It renders a horizontally scrollable `div` containing all navigation items from the `sections` array.
- *        - A `useLayoutEffect` hook is used to remember and restore the `scrollLeft` position, preventing the scrollbar from resetting on parent component updates.
- * 5.  In both views, the `selected` prop is used to apply active styles, and the `onSelect` callback is fired on click.
- *
- * ## Imports
- * - **Core/Libraries**: `useRef`, `useState`, `useEffect`, `useLayoutEffect` from `react`.
- * - **State (Zustand Stores)**:
- *    - `useSellerStore`: (Imported but not directly used in this snippet) To access global seller state.
- *
- * ## Key Data Structures
- * - **sections**: A local constant array of objects, where each object defines a navigation item with an `id`, `title`, and `iconUrl`.
- * - **sectionGroups**: A local constant array of objects that defines the structure for the desktop sidebar, grouping `section` IDs under a `heading`.
- *
- * ## API Calls
- * - This component does not make any API calls.
- *
- * ## Props
- * @param {object} props - The props for the component.
- * @param {string} props.selected - The ID of the currently active section, used for highlighting.
- * @param {(id: string) => void} props.onSelect - A callback function that is called with the section ID when a user clicks a navigation item.
- *
- * @returns {JSX.Element} The rendered responsive sidebar.
- */
+
 export default function DashboardSidebar({ selected, onSelect }) {
   const {
-    // ... your useSellerStore hooks remain unchanged
   } = useSellerStore();
 
   const [openGroups, setOpenGroups] = useState(
@@ -248,3 +222,4 @@ export default function DashboardSidebar({ selected, onSelect }) {
     </>
   );
 }
+

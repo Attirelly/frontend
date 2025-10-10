@@ -61,6 +61,7 @@ export interface Product {
   status: boolean;
   // city: string;
   // subLocation: string;
+  primary_category?:CategoryType;
   imageUploadStatus: "Pending" | "Completed";
   source: "Self" | "Shopify";
 }
