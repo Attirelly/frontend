@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import customStyles from "@/utils/selectStyles"; // Assuming these are your custom react-select styles
 import { Product } from "@/types/ProductTypes";
 import ProductSearchPage from "@/app/admin/(protected)/productCRM/page";
-import { SelectedProduct } from "@/types/algolia";
+import { AlgoliaHit, SelectedProduct } from "@/types/algolia";
 
 interface AddProductModalProps {
   open: boolean;
@@ -53,7 +53,7 @@ export default function AddProductModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddProductsToCampaign = async (
-    selectedProducts: SelectedProduct[]
+    selectedProducts: AlgoliaHit[]
   ) => {
     const toastId = toast.loading("Adding products to campaign...");
 
@@ -62,8 +62,8 @@ export default function AddProductModal({
       // This example assumes a hardcoded bid amount and budget. You can add inputs for these if needed.
       const payload = selectedProducts.map((product) => ({
         campaign_id: campaignId,
-        product_id: product.productId,
-        seller_id: product.storeId,
+        product_id: product.id,
+        seller_id: product.store_id,
         bid_amount: 50.0, // Example: Or get from another state/input
         budget: 10000, // Example
       }));
