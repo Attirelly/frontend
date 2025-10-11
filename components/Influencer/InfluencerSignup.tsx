@@ -3,91 +3,36 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useSellerStore } from "@/store/sellerStore";
 import { api } from "@/lib/axios";
 import axios from "axios";
 import Header from "@/components/Header";
 import { toast } from "sonner";
-import { useStylist } from "@/store/stylist";
+import { useInfluencerStore } from "@/store/influencerStore";
 
-/**
- * SellerSignup component
- * 
- * The main registration page for new sellers. This component manages a two-step sign-up process
- * using phone number and OTP verification. It handles user validation, OTP logic, rate-limiting,
- * account creation, and final redirection to the onboarding flow.
- *
- * ## Features
- * - A two-step form: phone number input followed by OTP verification.
- * - **Phone Number Validation**: Checks for a valid 10-digit number and ensures the user agrees to terms before proceeding.
- * - **Pre-registration Check**: Verifies that the phone number is not already registered before sending an OTP.
- * - **OTP Input**: A user-friendly 6-digit input with auto-focusing and proper backspace handling.
- * - **Resend OTP**: A button to resend the OTP that becomes available after a 60-second cooldown.
- * - **Rate Limiting**: If OTP verification fails too many times, the form is temporarily blocked, and a message displays when the user can try again.
- * - **Account Creation & Redirection**: Upon successful verification, it registers the new user, logs them in, and routes them to the seller onboarding page.
- *
- * ## Logic Flow
- * 1.  On mount, the `useSellerStore` is reset to ensure a clean state for the new user.
- * 2.  The page initially displays a form for the user's phone number and a terms & conditions checkbox.
- * 3.  On submit, it first calls `GET /users/new_user_auth` to check if the phone number is available.
- * 4.  If the number is already registered (403 error), an error toast is shown.
- * 5.  If available, it calls `POST /otp/send_otp` to send a verification code.
- * 6.  The UI then switches to the 6-digit OTP input view, and a 60-second resend timer starts.
- * 7.  The user enters the OTP and submits again.
- * 8.  The `POST /otp/verify_otp` API is called. If verification fails with a 403 error (too many attempts), the component enters a blocked state.
- * 9.  If OTP verification is successful, it proceeds to call `POST /users/register_user` to create the account.
- * 10. Immediately after registration, it calls `POST /users/login` to create a session.
- * 11. Finally, it redirects the new seller to the onboarding flow at `/seller_signup/sellerOnboarding`.
- *
- * ## Imports
- * - **Core/Libraries**:
- * - `useEffect`, `useRef`, `useState` from `react`: For managing component lifecycle, state, and references.
- * - `useRouter`, `Link`, `Image` from `next/navigation`: For routing and optimized images.
- * - `axios`: For error type checking (e.g., `isAxiosError`).
- * - `toast` from `sonner`: For displaying user-friendly notifications.
- * - **State (Zustand Stores)**:
- * - `useSellerStore`: For managing global state related to the new seller's session (e.g., setting the seller ID).
- * - **Key Components**:
- * - {@link Header}: The reusable header component for the page.
- * - **Utilities**:
- * - `api` from `@/lib/axios`: The configured Axios instance for API calls.
- *
- * ## API Calls
- * - GET `/users/new_user_auth`: Checks if a phone number is available for registration before sending an OTP.
- * - POST `/otp/send_otp`: Sends the initial OTP and handles resend requests.
- * - POST `/otp/verify_otp`: Verifies the OTP entered by the user.
- * - POST `/users/register_user`: Creates a new user account after successful OTP verification.
- * - POST `/users/login`: Logs the newly registered user in to create a session.
- *
- * ## Props
- * - This is a page component and does not accept any props.
- *
- * @returns {JSX.Element} The rendered influencer sign-up page.
- */
 export default function InfluencerSignup() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const [agreed, setAgreed] = useState(false);
   const [sendOTP, setSendOTP] = useState(false);
-  const { setInfluencerId, setInfluencerNumber } = useInfluencerStore();
+  const { setInfluencerId, setInfluencerNumber, resetStore } =
+    useInfluencerStore();
 
   const [resendTimer, setResendTimer] = useState(60);
   const [isBlocked, setIsBlocked] = useState(false);
   const [blockedUntil, setBlockedUntil] = useState<Date | null>(null);
 
-  const resetSellerStore = useSellerStore((state) => state.resetSellerStore);
   const isPhoneValid = /^\d{10}$/.test(phone);
 
   const router = useRouter();
   const testing_phone = "7015241757";
 
   /**
-     * prefetching necessary routes
-     */
+   * prefetching necessary routes
+   */
   useEffect(() => {
-    resetInfluencerStore();
-    router.prefetch("/influencer/influencerOnboarding");
+    resetStore();
+    router.prefetch("/influencer/influencer_onboarding");
   }, []);
 
   // resend times logic
@@ -99,7 +44,7 @@ export default function InfluencerSignup() {
     return () => clearTimeout(timer);
   }, [resendTimer, sendOTP]);
 
-  // time for user is blocked to request for another otp 
+  // time for user is blocked to request for another otp
   useEffect(() => {
     if (isBlocked && blockedUntil) {
       const now = new Date();
@@ -118,9 +63,9 @@ export default function InfluencerSignup() {
   }, [isBlocked, blockedUntil]);
 
   /**
-     * when user enters some input on first box, automatically upadate the otp and
-     * move to next box
-     */
+   * when user enters some input on first box, automatically upadate the otp and
+   * move to next box
+   */
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return; // allow only digits
     const newOtp = [...otp];
@@ -149,7 +94,7 @@ export default function InfluencerSignup() {
 
     try {
       await api.post("/otp/send_otp", null, {
-        params: { phone_number: testing_phone, otp_template: "UserLoginOTP" },
+        params: { phone_number: phone, otp_template: "UserLoginOTP" },
       });
       toast.success("OTP resent successfully");
       setResendTimer(60); // Restart resend timer
@@ -159,21 +104,22 @@ export default function InfluencerSignup() {
   };
 
   /**
-     * Form submit logic
-     * If form is submitted with mobile number i.e sendOtp is false
-     *  - throws alert if phone number is not valid or user did not accept T&C
-     *  - checks if user is already registered, if yes shows error
-     *  - trigger api to send otp
-     *  - set sendOtp to true
-     * If form is submitted with OTP i.e. sendOtp is true
-     *  - check if otp length is valid, if not return error
-     *  - trigger api to verify otp
-     *  - if successfully verified, send api to create/register user
-     *  - route to seller onboarding
-     */
+   * Form submit logic
+   * If form is submitted with mobile number i.e sendOtp is false
+   *  - throws alert if phone number is not valid or user did not accept T&C
+   *  - checks if user is already registered, if yes shows error
+   *  - trigger api to send otp
+   *  - set sendOtp to true
+   * If form is submitted with OTP i.e. sendOtp is true
+   *  - check if otp length is valid, if not return error
+   *  - trigger api to verify otp
+   *  - if successfully verified, send api to create/register user
+   *  - route to seller onboarding
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (sendOTP) {
+      // when sendOtp is true, verify otp
       const fullOtp = otp.join("");
       if (fullOtp.length !== 6) {
         alert("Please enter a valid 6-digit OTP");
@@ -181,22 +127,20 @@ export default function InfluencerSignup() {
       }
       try {
         await api.post("/otp/verify_otp", null, {
-          params: { phone_number: testing_phone, otp: fullOtp },
+          params: { phone_number: phone, otp: fullOtp },
         });
         try {
-          const payload = {
-            contact_number: phone.toString(),
-            role: "admin",
-          };
-          const response = await api.post("/users/register_user", payload);
+          const response = await api.post("/influencers/create_with_mobile", null , {
+            params: { phone_number: phone.toString() },
+          });
 
-          console.log(response);
           const newInfluencerId = response.data.id;
-          console.log(newInfluencerId);
           setInfluencerId(newInfluencerId);
-          await api.post("/users/login", { contact_number: phone });
+          await api.get("/influencers/login", {
+            params: { phone_number: phone.toString() },
+          }); 
 
-          router.push("/influencer/influencerOnboarding");
+          router.push("/influencer/influencer_onboarding");
         } catch (error) {
           console.error("Error fetching stores by section:", error);
           toast.error("Failed to sign up!");
@@ -232,41 +176,37 @@ export default function InfluencerSignup() {
       }
       if (!agreed) {
         alert("You must accept the SMS authorization terms.");
-        return;
-      }
-      try {
-        const response = await api.get("/users/new_user_auth", {
-          params: { contact_number: phone },
-        });
-        console.log(response.data);
-      } catch (error: any) {
-        if (axios.isAxiosError(error)) {
-          if (error.response?.status === 403) {
-            // Mobile number already exists
-            // alert("Mobile number already exists");
-            toast.error("Mobile number already exists");
-            console.error("Mobile number already exists");
-            return false;
-          } else {
-            console.error("Unexpected error:", error.message);
-          }
-        } else {
-          console.error("Unknown error:", error);
-        }
-
         return false;
       }
-      const confirmed = window.confirm("Please confirm you phone number");
-      if (!confirmed) return;
       try {
-        await api.post("/otp/send_otp", null, {
-          params: { phone_number: testing_phone, otp_template: "UserLoginOTP" },
+        const response = await api.get("/influencers/by-phone", {
+          params: { phone_number: phone.toString() },
         });
-        setSendOTP(true);
-        // alert(`OTP sent to ${phone}`);
-        setInfluencerNumber(phone);
-      } catch {
-        toast.error("Failed to send OTP!");
+
+        if (response.data.exists) {
+          // alert("Mobile number already exists");
+          toast.error("Mobile number already exists");
+          console.error("Mobile number already exists");
+          return false;
+        }
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          const confirmed = window.confirm("Please confirm you phone number");
+          if (!confirmed) return;
+          try {
+            await api.post("/otp/send_otp", null, {
+              params: { phone_number: phone, otp_template: "UserLoginOTP" },
+            });
+            setSendOTP(true);
+            setInfluencerNumber(phone);
+          } catch {
+            toast.error("Failed to send OTP!");
+          }
+        }
+        else{
+          console.error("Error checking phone number:", error);
+          return false 
+        }
       }
     }
   };
@@ -277,11 +217,7 @@ export default function InfluencerSignup() {
       <Header
         title="Attirelly"
         actions={
-          <button
-            onClick={() => router.push(`/seller_signin`)}
-          >
-            Sign In
-          </button>
+          <button onClick={() => router.push(`/seller_signin`)}>Sign In</button>
         }
       />
 
@@ -291,10 +227,12 @@ export default function InfluencerSignup() {
           onSubmit={handleSubmit}
           className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
         >
-          <h2 className="text-xl font-semibold mb-4">Register as an influencer</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Register as an influencer
+          </h2>
           <p className="text-sm text-gray-500 mb-4">
-            Verifying the influencer's phone number is a great way to make sure your
-            profile reflects your identity and keeps your account safe.
+            Verifying the influencer's phone number is a great way to make sure
+            your profile reflects your identity and keeps your account safe.
           </p>
 
           {/* 📱 Phone Image Section */}
@@ -337,7 +275,21 @@ export default function InfluencerSignup() {
               />
               <label htmlFor="agree" className="text-sm text-gray-600">
                 {/* By accepting, you agree to receive SMS for account authorization */}
-                By accepting, you agree to <Link href="/term_and_condition" className="hover:underline text-blue-600 ">Terms and Condition</Link> and <Link href="privacy_policy" className="hover:underline text-blue-600 ">Privacy Policy</Link> of Attirelly.
+                By accepting, you agree to{" "}
+                <Link
+                  href="/term_and_condition"
+                  className="hover:underline text-blue-600 "
+                >
+                  Terms and Condition
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="privacy_policy"
+                  className="hover:underline text-blue-600 "
+                >
+                  Privacy Policy
+                </Link>{" "}
+                of Attirelly.
               </label>
             </div>
             {/* Submit button */}

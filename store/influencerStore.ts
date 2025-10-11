@@ -1,21 +1,27 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-// types/InfluencerTypes.ts
+// ================== TYPES ===================
 
 // Section 1: Basic Information
 export type BasicInformation = {
-  fullName: string;
+  name: string;
   email: string;
-  internalPhoneNumber: string;
-  publicPhoneNumber: string;
-  gender: 'Male' | 'Female' | 'Other' | null;
-  ageGroup: '<18' | '18-24' | '25-29' | '30-34' | '35-44' | '45+' | null;
-  languages: string[]; // e.g., ['English', 'Hindi']
+  phoneInternal: string;
+  phonePublic: string;
+  genderValue: "Male" | "Female" | "Other" | null;
+  ageGroup: "<18" | "18-24" | "25-29" | "30-34" | "35-44" | "45+" | null;
+  languages: string[];
 };
 
 // Section 2: Social Presence
 export type SocialPresence = {
-  primaryPlatform: 'Instagram' | 'YouTube' | 'Facebook' | 'Snapchat' | 'Other' | null;
+  primaryPlatform:
+    | "Instagram"
+    | "YouTube"
+    | "Facebook"
+    | "Snapchat"
+    | "Other"
+    | null;
   socialLinks: {
     instagram: string;
     youtube: string;
@@ -31,7 +37,7 @@ export type SocialPresence = {
 
 // Section 3: Audience Insights
 export type AudienceInsights = {
-  followerCounts: {
+  followers: {
     instagram: number | null;
     youtube: number | null;
     facebook: number | null;
@@ -40,36 +46,45 @@ export type AudienceInsights = {
     avgLikesPerReel: number | null;
     avgCommentsPerReel: number | null;
     avgViewsPerReel: number | null;
-    engagementRate: number | null; // Percentage
+    engagementRate: number | null;
   };
   audienceGenderSplit: {
-    malePercent: number | null;
-    femalePercent: number | null;
-    otherPercent: number | null;
+    male: number | null;
+    female: number | null;
+    other: number | null;
   };
   topAgeGroups: string[];
-  topLocations: string[]; // Cities or States
-  audienceType: 'Urban' | 'Semi-Urban' | 'Rural' | null;
+  topLocations: string[];
+  audienceType: "Urban" | "Semi-Urban" | "Rural" | null;
 };
 
 // Section 4: Collaboration Preferences
 export type CollaborationPreferences = {
-  preferredTypes: ('Reels' | 'Stories' | 'Posts' | 'UGC' | 'Try-ons' | 'Live Sessions')[];
-  openToBarter: 'Yes' | 'No' | 'Depends';
+  preferredCollabTypes: (
+    | "Reels"
+    | "Stories"
+    | "Posts"
+    | "UGC"
+    | "Try-ons"
+    | "Live Sessions"
+  )[];
+  openToBarter: "Yes" | "No" | "Depends";
   maxCampaignsPerMonth: number;
 };
 
 // Section 5: Pricing Structure
 export type PricingStructure = {
-  singleReelPrice: number | null;
-  storyPrice: number | null;
-  postPrice: number | null;
-  campaignPriceMin: number | null;
-  campaignPriceMax: number | null;
-  minBarterValue: number | null;
+  pricing: {
+    reel: number | null;
+    story: number | null;
+    post: number | null;
+    campaign_min: number | null;
+    campaign_max: number | null;
+  };
+  barterValueMin: number | null;
 };
 
-// Section 6: Past Work & Credibility
+// Section 6: Past Work
 export type PastWork = {
   brandsWorkedWith: string[];
   bestCampaignLinks: string[];
@@ -78,34 +93,37 @@ export type PastWork = {
 
 // Section 7: Location & Availability
 export type LocationAndAvailability = {
+  state: string;
   city: string;
   area: string;
   pincode: string;
-  travelReadiness: 'Local Only' | 'State-wide' | 'Pan-India';
-  availableForEvents: boolean;
+  travelReadiness: "Local Only" | "State-wide" | "Pan-India";
+  attendEvents: boolean;
 };
 
-// Section 8: Media Kit & Profile
+// Section 8: Media Kit
 export type MediaKit = {
-  profilePhotoUrl: string | null;
-  portfolioUrl: string | null; // Link to a PDF/ZIP
+  profilePhoto: string | null;
+  portfolioFile: string | null;
   shortBio: string;
+  published: boolean;
 };
 
-// Key to identify each section
-export type InfluencerSectionKey = 
-  | 'basicInformation' 
-  | 'socialPresence' 
-  | 'audienceInsights' 
-  | 'collaborationPreferences' 
-  | 'pricingStructure' 
-  | 'pastWork' 
-  | 'locationAndAvailability' 
-  | 'mediaKit';
+// --- Section Key Type ---
+export type InfluencerSectionKey =
+  | "basicInformation"
+  | "socialPresence"
+  | "audienceInsights"
+  | "collaborationPreferences"
+  | "pricingStructure"
+  | "pastWork"
+  | "locationAndAvailability"
+  | "mediaKit";
 
-// The complete state and actions for the store
+// --- Zustand Store Type ---
 export type InfluencerOnboardingState = {
-  // Data for each section
+  influencerId: string;
+  influencerNumber: string;
   basicInformation: BasicInformation;
   socialPresence: SocialPresence;
   audienceInsights: AudienceInsights;
@@ -115,64 +133,100 @@ export type InfluencerOnboardingState = {
   locationAndAvailability: LocationAndAvailability;
   mediaKit: MediaKit;
 
-  // Form flow management
   activeSection: InfluencerSectionKey;
   isSubmitting: boolean;
-  
-  // Actions to update the store
+
+  // --- Actions ---
   setActiveSection: (section: InfluencerSectionKey) => void;
   setIsSubmitting: (submitting: boolean) => void;
+  setInfluencerId: (id: string) => void;
+  setInfluencerNumber: (number: string) => void;
+
   updateBasicInformation: (data: Partial<BasicInformation>) => void;
   updateSocialPresence: (data: Partial<SocialPresence>) => void;
   updateAudienceInsights: (data: Partial<AudienceInsights>) => void;
-  updateCollaborationPreferences: (data: Partial<CollaborationPreferences>) => void;
+  updateCollaborationPreferences: (
+    data: Partial<CollaborationPreferences>
+  ) => void;
   updatePricingStructure: (data: Partial<PricingStructure>) => void;
   updatePastWork: (data: Partial<PastWork>) => void;
-  updateLocationAndAvailability: (data: Partial<LocationAndAvailability>) => void;
+  updateLocationAndAvailability: (
+    data: Partial<LocationAndAvailability>
+  ) => void;
   updateMediaKit: (data: Partial<MediaKit>) => void;
 
   resetStore: () => void;
 };
 
-// stores/useInfluencerOnboardingStore.ts
-]
-// Define the initial state to easily reset the form
-const initialState = {
+// ================== INITIAL STATE ===================
+const initialState: Omit<
+  InfluencerOnboardingState,
+  | "setInfluencerId"
+  | "setInfluencerNumber"
+  | "setActiveSection"
+  | "setIsSubmitting"
+  | "updateBasicInformation"
+  | "updateSocialPresence"
+  | "updateAudienceInsights"
+  | "updateCollaborationPreferences"
+  | "updatePricingStructure"
+  | "updatePastWork"
+  | "updateLocationAndAvailability"
+  | "updateMediaKit"
+  | "resetStore"
+> = {
+  influencerId: "",
+  influencerNumber: "",
   basicInformation: {
-    fullName: '',
-    email: '',
-    internalPhoneNumber: '',
-    publicPhoneNumber: '',
-    gender: null,
+    name: "",
+    email: "",
+    phoneInternal: "",
+    phonePublic: "",
+    genderValue: null,
     ageGroup: null,
     languages: [],
   },
   socialPresence: {
     primaryPlatform: null,
-    socialLinks: { instagram: '', youtube: '', facebook: '', snapchat: '', wishlink: '', hypd: '', website: '' },
+    socialLinks: {
+      instagram: "",
+      youtube: "",
+      facebook: "",
+      snapchat: "",
+      wishlink: "",
+      hypd: "",
+      website: "",
+    },
     categoryNiche: [],
     contentStyle: [],
   },
   audienceInsights: {
-    followerCounts: { instagram: null, youtube: null, facebook: null },
-    engagementMetrics: { avgLikesPerReel: null, avgCommentsPerReel: null, avgViewsPerReel: null, engagementRate: null },
-    audienceGenderSplit: { malePercent: null, femalePercent: null, otherPercent: null },
+    followers: { instagram: null, youtube: null, facebook: null },
+    engagementMetrics: {
+      avgLikesPerReel: null,
+      avgCommentsPerReel: null,
+      avgViewsPerReel: null,
+      engagementRate: null,
+    },
+    audienceGenderSplit: { male: null, female: null, other: null },
     topAgeGroups: [],
     topLocations: [],
     audienceType: null,
   },
   collaborationPreferences: {
-    preferredTypes: [],
-    openToBarter: 'Depends',
+    preferredCollabTypes: [],
+    openToBarter: "Depends",
     maxCampaignsPerMonth: 2,
   },
   pricingStructure: {
-    singleReelPrice: null,
-    storyPrice: null,
-    postPrice: null,
-    campaignPriceMin: null,
-    campaignPriceMax: null,
-    minBarterValue: null,
+    pricing: {
+      reel: null,
+      story: null,
+      post: null,
+      campaign_min: null,
+      campaign_max: null,
+    },
+    barterValueMin: null,
   },
   pastWork: {
     brandsWorkedWith: [],
@@ -180,66 +234,58 @@ const initialState = {
     achievements: [],
   },
   locationAndAvailability: {
-    city: '',
-    area: '',
-    pincode: '',
-    travelReadiness: 'Local Only',
-    availableForEvents: false,
+    state: "",
+    city: "",
+    area: "",
+    pincode: "",
+    travelReadiness: "Local Only",
+    attendEvents: false,
   },
   mediaKit: {
-    profilePhotoUrl: null,
-    portfolioUrl: null,
-    shortBio: '',
+    profilePhoto: null,
+    portfolioFile: null,
+    shortBio: "",
+    published: false,
   },
-  activeSection: 'basicInformation' as const,
+  activeSection: "basicInformation",
   isSubmitting: false,
 };
 
-export const useInfluencerOnboardingStore = create<InfluencerOnboardingState>((set) => ({
+// ================== STORE ===================
+export const useInfluencerStore = create<InfluencerOnboardingState>((set) => ({
   ...initialState,
+  setInfluencerId: (id) => set({ influencerId: id }),
+  setInfluencerNumber: (number) => set({ influencerNumber: number }),
 
-  // --- ACTIONS ---
-
-  // Set the currently active form section
   setActiveSection: (section) => set({ activeSection: section }),
-
-  // Set the submission status (e.g., for showing loaders)
   setIsSubmitting: (submitting) => set({ isSubmitting: submitting }),
 
-  // Update actions for each section.
-  // Using Partial<T> allows updating only specific fields without overwriting the whole object.
-  updateBasicInformation: (data) => set((state) => ({
-    basicInformation: { ...state.basicInformation, ...data },
-  })),
-  
-  updateSocialPresence: (data) => set((state) => ({
-    socialPresence: { ...state.socialPresence, ...data },
-  })),
+  updateBasicInformation: (data) =>
+    set((state) => ({
+      basicInformation: { ...state.basicInformation, ...data },
+    })),
+  updateSocialPresence: (data) =>
+    set((state) => ({ socialPresence: { ...state.socialPresence, ...data } })),
+  updateAudienceInsights: (data) =>
+    set((state) => ({
+      audienceInsights: { ...state.audienceInsights, ...data },
+    })),
+  updateCollaborationPreferences: (data) =>
+    set((state) => ({
+      collaborationPreferences: { ...state.collaborationPreferences, ...data },
+    })),
+  updatePricingStructure: (data) =>
+    set((state) => ({
+      pricingStructure: { ...state.pricingStructure, ...data },
+    })),
+  updatePastWork: (data) =>
+    set((state) => ({ pastWork: { ...state.pastWork, ...data } })),
+  updateLocationAndAvailability: (data) =>
+    set((state) => ({
+      locationAndAvailability: { ...state.locationAndAvailability, ...data },
+    })),
+  updateMediaKit: (data) =>
+    set((state) => ({ mediaKit: { ...state.mediaKit, ...data } })),
 
-  updateAudienceInsights: (data) => set((state) => ({
-    audienceInsights: { ...state.audienceInsights, ...data },
-  })),
-
-  updateCollaborationPreferences: (data) => set((state) => ({
-    collaborationPreferences: { ...state.collaborationPreferences, ...data },
-  })),
-
-  updatePricingStructure: (data) => set((state) => ({
-    pricingStructure: { ...state.pricingStructure, ...data },
-  })),
-
-  updatePastWork: (data) => set((state) => ({
-    pastWork: { ...state.pastWork, ...data },
-  })),
-
-  updateLocationAndAvailability: (data) => set((state) => ({
-    locationAndAvailability: { ...state.locationAndAvailability, ...data },
-  })),
-
-  updateMediaKit: (data) => set((state) => ({
-    mediaKit: { ...state.mediaKit, ...data },
-  })),
-
-  // Reset the entire store to its initial state
   resetStore: () => set(initialState),
 }));
