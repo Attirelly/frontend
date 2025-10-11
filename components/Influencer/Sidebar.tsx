@@ -15,10 +15,10 @@ interface InfluencerSidebarProps {
 const sections = [
   { id: 'basic-information', title: 'Basic Information', desc: 'Your personal and contact details.', iconUrl: '/OnboardingSections/business_details.png' },
   { id: 'social-preference', title: 'Social Preference', desc: 'Your platforms, niche, and style.', iconUrl: '/OnboardingSections/social_links.png' },
-  { id: 'audience-insights', title: 'Audience Insights', desc: 'Demographics and engagement data.', iconUrl: '/OnboardingSections/analytics.png' },
-  { id: 'collaboration-preferences', title: 'Collaboration Preferences', desc: 'The types of collabs you prefer.', iconUrl: '/OnboardingSections/collab.png' },
+  { id: 'audience-insights', title: 'Audience Insights', desc: 'Demographics and engagement data.', iconUrl: '/OnboardingSections/instagram.svg' },
+  { id: 'collaboration-preferences', title: 'Collaboration Preferences', desc: 'The types of collabs you prefer.', iconUrl: '/OnboardingSections/instagram.svg' },
   { id: 'pricing-structure', title: 'Pricing Structure', desc: 'Your rates for different content.', iconUrl: '/OnboardingSections/price_filters.png' },
-  { id: 'past-work', title: 'Past Work', desc: 'Showcase your experience.', iconUrl: '/OnboardingSections/portfolio.png' },
+  { id: 'past-work', title: 'Past Work', desc: 'Showcase your experience.', iconUrl: '/OnboardingSections/instagram.svg' },
   { id: 'location-availability', title: 'Location & Availability', desc: 'Where you are and your availability.', iconUrl: '/OnboardingSections/where_to_sell.png' },
   { id: 'influencer-photos', title: 'Photos', desc: 'Upload your profile photos.', iconUrl: '/OnboardingSections/store_photos.png' },
 ];

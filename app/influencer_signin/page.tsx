@@ -9,6 +9,7 @@ import Header from '@/components/Header';
 import axios, { AxiosError } from 'axios';
 import { toast, Toaster } from 'sonner';
 import { useInfluencerStore } from '@/store/influencerStore';
+import { set } from 'date-fns';
 
 export default function InfluencerSignin() {
     const [phone, setPhone] = useState('');
@@ -144,8 +145,20 @@ export default function InfluencerSignin() {
                 }
                 try {
                     // here we will create jwt tokens
-                    await api.get("/influencers/login", { params: { phone_number: phone } });
-                    if (currSection < 5) {
+                    const user_resp =  await api.post("/users/login", { contact_number: phone });
+                    console.log("User response is ", user_resp);
+                    const userId = user_resp.data.user_id;
+
+                    // fetch the influencer details to get the onboarding step
+                    console.log("User id is ", userId);
+                    const infl_resp = await api.get('/influencers/by-user', { params: { user_id: userId } });
+                    const curr_section_res = infl_resp.data.onboarding_step;   
+
+                    setCurrSection(curr_section_res);
+                    setInfluencerId(infl_resp.data.id);
+                    setInfluencerNumber(phone);
+
+                    if (curr_section_res < 5) {
                         toast.error("Please complete onboarding first!")
                         try {
                             router.push('/influencer_signup/influencer_onboarding')
@@ -159,6 +172,7 @@ export default function InfluencerSignin() {
                     }
                 }
                 catch (error) {
+                    console.log("Error fetching user details:", error);
                     console.error('Error fetching stores by section:', error);
                 }
             }

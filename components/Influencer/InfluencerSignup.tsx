@@ -130,17 +130,31 @@ export default function InfluencerSignup() {
           params: { phone_number: phone, otp: fullOtp },
         });
         try {
-          const response = await api.post("/influencers/create_with_mobile", null , {
-            params: { phone_number: phone.toString() },
-          });
+          // first create the user in users table
+          const payload = {
+            contact_number: phone.toString(),
+            role: "admin",
+          };
 
-          const newInfluencerId = response.data.id;
+          const user_resp = await api.post("/users/register_user", payload);
+          const newUserId = user_resp.data.id;
+          
+          // create the influencer
+          const payload2 = {
+            "userId": newUserId,
+            "phone_internal": phone.toString(),
+          }
+          const infl_resp = await api.post(
+            "/influencers/create_with_mobile", payload2
+          );
+
+          const newInfluencerId = infl_resp.data.id;
           setInfluencerId(newInfluencerId);
-          await api.get("/influencers/login", {
-            params: { phone_number: phone.toString() },
-          }); 
+          await api.post("/users/login", { contact_number: phone });
 
           router.push("/influencer/influencer_onboarding");
+
+
         } catch (error) {
           console.error("Error fetching stores by section:", error);
           toast.error("Failed to sign up!");
@@ -202,10 +216,9 @@ export default function InfluencerSignup() {
           } catch {
             toast.error("Failed to send OTP!");
           }
-        }
-        else{
+        } else {
           console.error("Error checking phone number:", error);
-          return false 
+          return false;
         }
       }
     }

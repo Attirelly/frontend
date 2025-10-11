@@ -189,7 +189,6 @@ export default function SellerSignup() {
           };
           const response = await api.post("/users/register_user", payload);
 
-          console.log(response);
           const newSellerId = response.data.id;
           console.log(newSellerId);
           setSellerId(newSellerId);
