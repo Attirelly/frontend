@@ -106,14 +106,23 @@ const OcassionPage: FC = () => {
   ) => {
     setIsUpdating(true);
     try {
-      const productIds = selectedProducts.map((item) => item.id);
+      // 1. Map the selected products to the new required format.
+      // Each item in the array is now an object with product_id and store_id.
+      const productStorePairs = selectedProducts.map((item) => ({
+      product_id: item.id,
+      store_id: item.store_id, // IMPORTANT: Ensure 'store_id' exists on your AlgoliaHit object.
+      }));
       const payload = {
-        product_ids: productIds,
-      };
+      products: productStorePairs,
+    };
       const url = `/occasions/${selectedOccasion}/products/bulk`;
-      toast.info(`Adding ${productIds.length} products to ${selectedOption?.label}...`);
-      const response = await api.post<{ status: string }>(url, payload);
-      toast.success(response.data.status || "Products added successfully!");
+      toast.info(`Updating ${selectedProducts.length} products for ${selectedOption?.label}...`);
+      const response = await api.post<{ 
+        status: string;
+        added?: number;
+        removed?: number;
+      }>(url, payload);
+      toast.success(response.data.status || "Products updated successfully!");
     } catch (error) {
     // 5. Handle errors gracefully
     console.error("Failed to add products to occasion:", error);
