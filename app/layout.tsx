@@ -28,10 +28,26 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Attirelly",
-  description: "Discover the best Designer and Ethnic Wear",
+  description: "Explore designer and ethnic wear from top boutiques in Jaipur, Delhi, and more. Attirelly — your hyperlocal fashion marketplace for men and women.",
+  openGraph: {
+    title: "Attirelly | Designer & Ethnic Wear Marketplace",
+    description: "Your hyperlocal fashion marketplace for premium designer and ethnic wear.",
+    url: "https://attirelly.com",
+    siteName: "Attirelly",
+    images: [
+      {
+        url: "https://attirellydev.s3.ap-south-1.amazonaws.com/uploads/favicon.png",
+        width: 1200,
+        height: 630,
+        alt: "Attirelly – Designer & Ethnic Wear Marketplace",
+      },
+    ],
+    locale: "en_IN",
+    type: "website",
+  },
   icons: {
     // icon: [{ url: '/favicon.png', sizes: "196x196", type: "image/png" }],
-    icon:'/favicon.png',
+    icon: '/favicon.png',
     apple: [{ url: "/icons/apple-icon-180.png" }],
   },
   appleTouchIcon: "/icons/apple-icon-180.png",
@@ -265,8 +281,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en"
-    className="overscroll-contain scroll-smooth"
-     suppressHydrationWarning>
+      className="overscroll-contain scroll-smooth"
+      suppressHydrationWarning>
       <head>
         {/* Google Analytics 4 */}
         {process.env.NEXT_PUBLIC_GA_ID && (
@@ -302,3 +318,31 @@ export default function RootLayout({
     </html>
   );
 }
+
+
+// export const metadata = {
+//   title: "Attirely | Curated Fashion Marketplace",
+//   description: "Shop exclusive boutiques and designer labels in one place.",
+//   openGraph: {
+//     title: "Attirely | Curated Fashion Marketplace",
+//     description: "Shop exclusive boutiques and designer labels in one place.",
+//     url: "https://attirely.com",
+//     siteName: "Attirely",
+//     images: [
+//       {
+//         url: "https://attirely.com/og-image.jpg",
+//         width: 1200,
+//         height: 630,
+//         alt: "Attirely Fashion Marketplace",
+//       },
+//     ],
+//     locale: "en_US",
+//     type: "website",
+//   },
+//   twitter: {
+//     card: "summary_large_image",
+//     title: "Attirely | Curated Fashion Marketplace",
+//     description: "Shop exclusive boutiques and designer labels in one place.",
+//     images: ["https://attirely.com/og-image.jpg"],
+//   },
+// };
