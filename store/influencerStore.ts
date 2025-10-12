@@ -8,8 +8,8 @@ export type BasicInformation = {
   email: string;
   phoneInternal: string;
   phonePublic: string;
-  genderValue: "Male" | "Female" | "Other" | null;
-  ageGroup: "<18" | "18-24" | "25-29" | "30-34" | "35-44" | "45+" | null;
+  genderId:  string | null;
+  ageGroupId: string | null;
   languages: string[];
 };
 
@@ -182,8 +182,8 @@ const initialState: Omit<
     email: "",
     phoneInternal: "",
     phonePublic: "",
-    genderValue: null,
-    ageGroup: null,
+    genderId: null,
+    ageGroupId: null,
     languages: [],
   },
   socialPresence: {
