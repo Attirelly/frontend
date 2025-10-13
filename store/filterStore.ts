@@ -202,7 +202,7 @@ function createFilterStore() {
       set({ isResultsLoading: loading }),
     selectedPriceRange: null,
     setPriceRange: (range) => set({ selectedPriceRange: range }),
-    priceBounds: [0, 100000],
+    priceBounds: [1, 100000],
     setPriceBounds: (bounds: [number, number]) => set({ priceBounds: bounds }),
     facetInit: false,
     setFacetInit: (loading: boolean) => set({ facetInit: loading }),

@@ -128,7 +128,7 @@ export const parsePriceFromQuery = (query: string): ParsedQuery => {
     const max = parseInt(betweenMatch[2], 10);
     return {
       cleanedQuery: query.replace(betweenRegex, "").trim(),
-      priceFilter: `price > ${min} AND price < ${max}`,
+      priceFilter: `price > 1 AND price > ${min} AND price < ${max}`,
     };
   }
 
@@ -146,7 +146,7 @@ export const parsePriceFromQuery = (query: string): ParsedQuery => {
       const price = parseInt(match[1], 10);
       return {
         cleanedQuery: query.replace(pattern.regex, "").trim(),
-        priceFilter: `price ${pattern.operator} ${price}`,
+        priceFilter: `price > 1 AND price ${pattern.operator} ${price}`,
       };
     }
   }
@@ -168,7 +168,7 @@ export default function ProductContainer({
     selectedPriceRange,
     priceBounds,
     setIsResultsLoading,
-    productQuery, // ✨ ADDED: Get the new store-specific search query from the filter store
+    productQuery, 
   } = useProductFilterStore();
 
   // ✨ MODIFIED: We no longer need the global `query` for this component's logic
@@ -232,16 +232,20 @@ export default function ProductContainer({
     effectiveQuery: string = query,
     priceFilterOverride: string | null = null,
   ) => {
+
+    // step 1 fetch the facets
     const facetFilters = buildFacetFilters(
       selectedFilters,
       storeType?.store_type
     );
 
+    // step 2 build the filters 
     try {
       let filterClauses: string[] = [];
       if (filters && !skipFilters) {
         filterClauses.push(filters);
       }
+    // step 3 add price in filters 
 
       let priceFilterString = "";
       if (priceFilterOverride) {
@@ -263,7 +267,7 @@ export default function ProductContainer({
       const finalFilterString = filterClauses.join(" AND ");
 
       // ✨ MODIFIED: The global `query` is replaced with the store-specific `productQuery`.
-      let searchUrl = `/search/search_product?query=${storeId} ${query} ${productQuery} ${effectiveQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
+      let searchUrl = `/search/search_product?query=${storeId} ${productQuery} ${effectiveQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
 
       if (area) {
         searchUrl += `&area=${area.name}`;
