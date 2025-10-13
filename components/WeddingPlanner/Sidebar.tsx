@@ -8,45 +8,18 @@ interface WeddingPlannerSidebarProps {
   onSectionClick: (id: string) => void;
 }
 
-// Define the sections for the Wedding Planner onboarding flow
+// Updated sections array with the 'Photos' section removed
 const sections = [
-  {
-    id: 'planner-details',
-    title: 'Business Details',
-    desc: 'Enter your company name, contact, and location.',
-    iconUrl: '/OnboardingSections/business_details.png', 
-  },
-  {
-    id: 'planner-pricing',
-    title: 'Pricing & Packages',
-    desc: 'Set your minimum price and package tiers.',
-    iconUrl: '/OnboardingSections/price_filters.png', 
-  },
-  // --- FIX: UNCOMMENTED/RE-ADDED SERVICES SECTION HERE ---
-  {
-    id: 'planner-services',
-    title: 'Services Offered',
-    desc: 'Define the types of planning services you provide.',
-    iconUrl: '/OnboardingSections/where_to_sell.png', // Reusing an appropriate icon
-  },
-  // -----------------------------------------------------
-  {
-    id: 'planner-social-links',
-    title: 'Social Links',
-    desc: 'Connect your Instagram and WhatsApp accounts.',
-    iconUrl: '/OnboardingSections/social_links.png', // Using the appropriate icon
-  },
-  {
-    id: 'planner-photos',
-    title: 'Portfolio Photos',
-    desc: 'Upload high-quality images of your work.',
-    iconUrl: '/OnboardingSections/store_photos.png', 
-  },
+    { id: 'basic-information', title: 'Basic Information', desc: 'Your business and contact details.', iconUrl: '/OnboardingSections/business_details.png' },
+    { id: 'business-profile', title: 'Business Profile & Scale', desc: 'Your clientele, style, and scale.', iconUrl: '/OnboardingSections/analytics.png' },
+    { id: 'influence-network', title: 'Influence & Network', desc: 'Your professional network.', iconUrl: '/OnboardingSections/collab.png' },
+    { id: 'collaboration-preferences', title: 'Collaboration Preferences', desc: 'Define how you like to collaborate.', iconUrl: '/OnboardingSections/collab.png' },
+    { id: 'social-links', title: 'Social Links', desc: 'Connect your social media.', iconUrl: '/OnboardingSections/social_links.png' },
+    { id: 'insta-insights', title: 'Insta Insights', desc: 'Your key Instagram metrics.', iconUrl: '/OnboardingSections/analytics.png' },
 ];
 
-// --- Sub-component for Mobile View (Code remains the same) ---
+// --- Sub-component for Mobile View ---
 const MobileView = ({ activeSectionId, onSectionClick }: WeddingPlannerSidebarProps) => {
-// ... (rest of the MobileView component code)
   return (
     <nav className="w-full p-2 rounded-lg text-black bg-white">
       <div className="flex flex-row items-stretch space-x-2 overflow-x-auto whitespace-nowrap scrollbar-none">
@@ -65,8 +38,7 @@ const MobileView = ({ activeSectionId, onSectionClick }: WeddingPlannerSidebarPr
                 alt={section.title}
                 width={28}
                 height={28}
-                // Removed the rounded-full object-cover class to keep the icon look clean
-                className="w-7 h-7 mb-1" 
+                className="w-7 h-7 mb-1 rounded-full object-cover"
               />
               <span className="text-xs font-[400] text-center whitespace-normal">
                 {section.title}
@@ -79,9 +51,8 @@ const MobileView = ({ activeSectionId, onSectionClick }: WeddingPlannerSidebarPr
   );
 };
 
-// --- Sub-component for Desktop View (Code remains the same) ---
+// --- Sub-component for Desktop View ---
 const DesktopView = ({ activeSectionId, onSectionClick }: WeddingPlannerSidebarProps) => {
-// ... (rest of the DesktopView component code)
   return (
     <div className="bg-white p-4 rounded-2xl w-full max-w-sm self-start text-black">
       <h2 className="text-lg font-bold mb-4">Complete your profile</h2>
@@ -121,11 +92,9 @@ const DesktopView = ({ activeSectionId, onSectionClick }: WeddingPlannerSidebarP
 export default function WeddingPlannerSidebar({ activeSectionId, onSectionClick }: WeddingPlannerSidebarProps) {
   return (
     <>
-      {/* Mobile view */}
       <div className="block md:hidden">
         <MobileView activeSectionId={activeSectionId} onSectionClick={onSectionClick} />
       </div>
-      {/* Desktop view */}
       <div className="hidden md:block">
         <DesktopView activeSectionId={activeSectionId} onSectionClick={onSectionClick} />
       </div>
