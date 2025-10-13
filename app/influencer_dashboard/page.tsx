@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "@/lib/axios";
@@ -65,8 +65,6 @@ export default function InfluencerOnboardingPage() {
 
   const { user } = useAuthStore();
 
-  const [ currentIndex , setCurrentIndex ] = useState<number>(0) ; 
-
   // ========== FETCH INFLUENCER DETAILS ==========
   useEffect(() => {
     const fetchInfluencerDetails = async () => {
@@ -89,7 +87,6 @@ export default function InfluencerOnboardingPage() {
 
         // --- Update store sections ---
         setInfluencerId(data.id);
-        setCurrentIndex(data.onboarding_step)
         updateBasicInformation({
           name: data.name || "",
           email: data.email || "",
@@ -224,7 +221,6 @@ export default function InfluencerOnboardingPage() {
 
       <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <InfluencerSidebar
-          currentIndex = {currentIndex}
           activeSectionId={activeSection}
           onSectionClick={setActiveSection}
         />

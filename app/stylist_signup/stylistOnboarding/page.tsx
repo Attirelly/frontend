@@ -1,7 +1,6 @@
 // 'use client';
 
 // import { useState } from 'react';
-// import { Building2, Filter, MapPin, Share2, Image as ImageIcon, LucideIcon } from 'lucide-react';
 
 // // Import Components
 // import Sidebar from '@/components/Stylist/Sidebar';
@@ -73,7 +72,6 @@
 // 'use client';
 
 // import { useState } from 'react';
-// import { Building2, Filter, MapPin, Share2, Image as ImageIcon, LucideIcon } from 'lucide-react';
 
 // // Import Components
 // import Header from '@/components/Header';

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { useInfluencerStore } from "@/store/influencerStore";
+import { AgeGroupOption, GenderOption } from "@/types/utilityTypes";
 
 
 
@@ -33,7 +34,7 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
         // Fetch both sets of options concurrently for better performance
         const [gendersResponse, ageGroupsResponse] = await Promise.all([
           api.get("/genders"),
-          api.get("/age_groups")
+          api.get("/age-groups")
         ]);
 
         setGenderOptions(gendersResponse.data);
@@ -59,8 +60,8 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
       !basicInformation.name ||
       !basicInformation.email ||
       !basicInformation.phoneInternal ||
-      !basicInformation.genderId || // Changed from genderValue
-      !basicInformation.ageGroupId || // Changed from ageGroup
+      !basicInformation.gender_id || // Changed from genderValue
+      !basicInformation.age_group_id || // Changed from ageGroup
       basicInformation.languages.length === 0
     ) {
       alert(
@@ -71,7 +72,7 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
     onNext();
   };
 
-  if (isLoading) {
+  if (isLoading || !basicInformation ||  genderOptions.length === 0 || ageGroupOptions.length === 0 ) {
     return (
         <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-center">
             <h2 className="text-xl font-semibold text-gray-700">Loading Details...</h2>
@@ -168,10 +169,10 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
                 type="button"
                 key={option.id}
                 // --- Update store with the ID ---
-                onClick={() => updateBasicInformation({ genderId: option.id })}
+                onClick={() => updateBasicInformation({ gender_id: option.id })}
                 className={`flex-1 p-3 border rounded-lg text-center transition-all duration-200 ${
                   // --- Check active state against the ID in the store ---
-                  basicInformation.genderId === option.id
+                  basicInformation.gender_id === option.id
                     ? "border-black bg-gray-50 font-semibold"
                     : "border-gray-200 bg-white hover:border-gray-300"
                 }`}
@@ -193,9 +194,9 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
             <select
               id="age-range"
               // --- Bind value to the ID in the store ---
-              value={basicInformation.ageGroupId || ""}
+              value={basicInformation.age_group_id || ""}
               // --- Update store with the ID ---
-              onChange={(e) => updateBasicInformation({ ageGroupId: e.target.value })}
+              onChange={(e) => updateBasicInformation({ age_group_id: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
             >
               <option value="" disabled>Select an age range</option>

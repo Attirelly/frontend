@@ -150,7 +150,6 @@ export default function InfluencerSignin() {
           const userId = user_resp.data.user_id;
 
           // fetch the influencer details to get the onboarding step
-          console.log("User id is ", userId);
           const infl_resp = await api.get("/influencers/by-user", {
             params: { user_id: userId },
           });

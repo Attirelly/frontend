@@ -1,3 +1,5 @@
+import { City } from "@/types/SellerTypes";
+import { Area, Pincode, State } from "@/types/utilityTypes";
 import { create } from "zustand";
 
 // ================== TYPES ===================
@@ -8,8 +10,8 @@ export type BasicInformation = {
   email: string;
   phoneInternal: string;
   phonePublic: string;
-  genderId:  string | null;
-  ageGroupId: string | null;
+  gender_id: string | null;
+  age_group_id: string | null;
   languages: string[];
 };
 
@@ -93,10 +95,10 @@ export type PastWork = {
 
 // Section 7: Location & Availability
 export type LocationAndAvailability = {
-  state: string;
-  city: string;
-  area: string;
-  pincode: string;
+  state: State | null;
+  city: City | null;
+  area: Area | null;
+  pincode: Pincode | null;
   travelReadiness: "Local Only" | "State-wide" | "Pan-India";
   attendEvents: boolean;
 };
@@ -182,8 +184,8 @@ const initialState: Omit<
     email: "",
     phoneInternal: "",
     phonePublic: "",
-    genderId: null,
-    ageGroupId: null,
+    gender_id: null,
+    age_group_id: null,
     languages: [],
   },
   socialPresence: {
