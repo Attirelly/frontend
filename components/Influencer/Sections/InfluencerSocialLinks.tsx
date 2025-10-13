@@ -1,21 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
+import { useInfluencerStore } from '@/store/influencerStore'; // 👈 Correct path
 import { Instagram } from 'lucide-react';
 
 interface ComponentProps {
   onNext: () => void;
+  isLastStep?: boolean;
 }
 
-export default function InfluencerSocialLinks({ onNext }: ComponentProps) {
-  // State for the social media link fields
-  const [instagramUsername, setInstagramUsername] = useState('');
-  const [websiteUrl, setWebsiteUrl] = useState('');
-  const [facebookUrl, setFacebookUrl] = useState('');
+export default function InfluencerSocialLinks({ onNext, isLastStep }: ComponentProps) {
+  // ✨ Get state and actions directly from the Zustand store
+  const { socialPresence, updateSocialPresence } = useInfluencerStore();
 
-  // Validation function
-  const handleNext = () => {
-    if (!instagramUsername || !websiteUrl || !facebookUrl) {
+  // ✨ A helper to handle input changes for the nested socialLinks object
+  const handleLinkChange = (field: 'instagram' | 'website' | 'facebook', value: string) => {
+    updateSocialPresence({
+      socialLinks: {
+        // Keep other links in the object intact
+        ...socialPresence.socialLinks,
+        [field]: value,
+      },
+    });
+  };
+
+  // ✨ Validation now checks the store's state
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    const { instagram, website, facebook } = socialPresence.socialLinks;
+    if (!instagram || !website || !facebook) {
       alert('All social link fields are mandatory. Please fill them to continue.');
       return;
     }
@@ -23,22 +36,18 @@ export default function InfluencerSocialLinks({ onNext }: ComponentProps) {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
+    <form onSubmit={handleNext} className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
       {/* Social Links Section */}
       <h2 className="text-2xl font-semibold mb-2">Social Links</h2>
-      <p className="text-sm text-black-500 mb-8">
+      <p className="text-sm text-gray-500 mb-8">
         Customers will see these details on Attirelly.
       </p>
 
       <div className="space-y-6">
         {/* Instagram Username Field */}
         <div>
-          <label
-            htmlFor="instagramUsername"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Instagram username
-            <span className="text-red-500">*</span>
+          <label htmlFor="instagramUsername" className="block text-sm font-medium text-gray-700">
+            Instagram username <span className="text-red-500">*</span>
           </label>
           <div className="mt-1 flex rounded-md shadow-sm">
             <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
@@ -46,11 +55,12 @@ export default function InfluencerSocialLinks({ onNext }: ComponentProps) {
             </span>
             <input
               type="text"
-              name="instagramUsername"
               id="instagramUsername"
               autoComplete="off"
-              value={instagramUsername}
-              onChange={(e) => setInstagramUsername(e.target.value)}
+              // ✨ Read value from the store
+              value={socialPresence.socialLinks.instagram}
+              // ✨ On change, call the store's update action
+              onChange={(e) => handleLinkChange('instagram', e.target.value)}
               className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border border-gray-300 px-3 py-2 focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
               placeholder="influencer_name"
             />
@@ -59,20 +69,16 @@ export default function InfluencerSocialLinks({ onNext }: ComponentProps) {
 
         {/* Website URL Field */}
         <div>
-          <label
-            htmlFor="websiteUrl"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-700">
             Website URL <span className="text-red-500">*</span>
           </label>
           <div className="mt-1">
             <input
               type="url"
-              name="websiteUrl"
               id="websiteUrl"
               autoComplete="off"
-              value={websiteUrl}
-              onChange={(e) => setWebsiteUrl(e.target.value)}
+              value={socialPresence.socialLinks.website}
+              onChange={(e) => handleLinkChange('website', e.target.value)}
               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
               placeholder="https://yourwebsite.com"
             />
@@ -81,20 +87,16 @@ export default function InfluencerSocialLinks({ onNext }: ComponentProps) {
 
         {/* Facebook URL Field */}
         <div>
-          <label
-            htmlFor="facebookUrl"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="facebookUrl" className="block text-sm font-medium text-gray-700">
             Facebook URL <span className="text-red-500">*</span>
           </label>
           <div className="mt-1">
             <input
               type="url"
-              name="facebookUrl"
               id="facebookUrl"
               autoComplete="off"
-              value={facebookUrl}
-              onChange={(e) => setFacebookUrl(e.target.value)}
+              value={socialPresence.socialLinks.facebook}
+              onChange={(e) => handleLinkChange('facebook', e.target.value)}
               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
               placeholder="https://facebook.com/yourpage"
             />
@@ -116,7 +118,7 @@ export default function InfluencerSocialLinks({ onNext }: ComponentProps) {
           <p className="text-gray-600 text-sm">
             Connect your Instagram, so Attirelly can engage with you.
           </p>
-          <button className="mt-4 px-6 py-2 bg-black text-white rounded-md font-semibold hover:bg-gray-800">
+          <button type="button" className="mt-4 px-6 py-2 bg-black text-white rounded-md font-semibold hover:bg-gray-800">
             Disconnect
           </button>
         </div>
@@ -128,12 +130,12 @@ export default function InfluencerSocialLinks({ onNext }: ComponentProps) {
       {/* Navigation Button */}
       <div className="flex justify-end mt-12 pt-6 border-t">
         <button
-          onClick={handleNext}
+          type="submit"
           className="px-8 py-3 bg-black text-white rounded-md font-semibold hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
         >
-          Next →
+          {isLastStep ? 'Submit' : 'Next →'}
         </button>
       </div>
-    </div>
+    </form>
   );
 }

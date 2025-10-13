@@ -1,13 +1,15 @@
+
 'use client';
 
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import React from 'react';
+import { useInfluencerStore } from '@/store/influencerStore'; // 👈 Correct path
 
 interface ComponentProps {
   onNext: () => void;
   isLastStep?: boolean;
 }
 
-// A reusable sub-component for price inputs to maintain consistent styling
+// Reusable sub-component remains the same
 const PriceInput = ({
   label,
   value,
@@ -17,7 +19,7 @@ const PriceInput = ({
   subLabel,
 }: {
   label: string;
-  value: string;
+  value: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   isMandatory?: boolean;
@@ -43,48 +45,51 @@ const PriceInput = ({
   </div>
 );
 
+const PricingStructure: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
+  // ✨ Get state and actions from the Zustand store
+  const { pricingStructure, updatePricingStructure } = useInfluencerStore();
 
-const PricingStructure = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {
-  // State for all form fields
-  const [reelPrice, setReelPrice] = useState('');
-  const [storyPrice, setStoryPrice] = useState('');
-  const [postPrice, setPostPrice] = useState('');
-  const [campaignMin, setCampaignMin] = useState('');
-  const [campaignMax, setCampaignMax] = useState('');
-  const [barterValue, setBarterValue] = useState('');
+  // ✨ A helper to handle input changes for both nested and top-level properties
+  const handlePriceChange = (
+    field: keyof typeof pricingStructure.pricing | 'barterValueMin',
+    value: string
+  ) => {
+    const numericValue = value === '' ? null : Number(value);
 
-  // Expose data to the parent component
-  useImperativeHandle(ref, () => ({
-    getData: () => ({
-      price_per_reel: reelPrice,
-      price_per_story: storyPrice,
-      price_per_post: postPrice,
-      campaign_price_min: campaignMin,
-      campaign_price_max: campaignMax,
-      barter_value: barterValue,
-    }),
-  }));
-
-  // Validation logic for mandatory fields
-  const handleNext = () => {
-    if (!reelPrice || !storyPrice || !postPrice || !campaignMin || !campaignMax) {
-      alert('Please fill out all mandatory fields marked with an asterisk (*).');
+    if (field === 'barterValueMin') {
+      updatePricingStructure({ barterValueMin: numericValue });
+    } else {
+      updatePricingStructure({
+        pricing: {
+          ...pricingStructure.pricing,
+          [field]: numericValue,
+        },
+      });
+    }
+  };
+  
+  // ✨ Validation now checks the store's state
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    const { reel, story, post, campaign_min, campaign_max } = pricingStructure.pricing;
+    if (reel === null || story === null || post === null || campaign_min === null || campaign_max === null) {
+      alert('Please fill out all mandatory pricing fields marked with an asterisk (*).');
       return;
     }
     onNext();
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
+    <form onSubmit={handleNext} className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
       <h2 className="text-2xl font-semibold mb-2">Pricing Structure</h2>
       <p className="text-gray-500 mb-8">Define your charges for different types of content.</p>
 
       <div className="space-y-6">
         {/* Single Deliverable Prices */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <PriceInput label="Single Reel Price" value={reelPrice} onChange={(e) => setReelPrice(e.target.value)} />
-          <PriceInput label="Story Price" value={storyPrice} onChange={(e) => setStoryPrice(e.target.value)} />
-          <PriceInput label="Post Price" value={postPrice} onChange={(e) => setPostPrice(e.target.value)} />
+          <PriceInput label="Single Reel Price" value={pricingStructure.pricing.reel ?? ''} onChange={(e) => handlePriceChange('reel', e.target.value)} />
+          <PriceInput label="Story Price" value={pricingStructure.pricing.story ?? ''} onChange={(e) => handlePriceChange('story', e.target.value)} />
+          <PriceInput label="Post Price" value={pricingStructure.pricing.post ?? ''} onChange={(e) => handlePriceChange('post', e.target.value)} />
         </div>
 
         {/* Full Campaign Price Range */}
@@ -93,17 +98,17 @@ const PricingStructure = forwardRef(({ onNext, isLastStep }: ComponentProps, ref
             Full Campaign Price (3+ deliverables) <span className="text-red-500">*</span>
           </label>
           <div className="mt-1 grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-            <PriceInput label="" value={campaignMin} onChange={(e) => setCampaignMin(e.target.value)} placeholder="Min Price" isMandatory={false} />
+            <PriceInput label="" value={pricingStructure.pricing.campaign_min ?? ''} onChange={(e) => handlePriceChange('campaign_min', e.target.value)} placeholder="Min Price" isMandatory={false} />
             <span className="text-gray-500 font-bold text-center hidden md:block">-</span>
-            <PriceInput label="" value={campaignMax} onChange={(e) => setCampaignMax(e.target.value)} placeholder="Max Price" isMandatory={false} />
+            <PriceInput label="" value={pricingStructure.pricing.campaign_max ?? ''} onChange={(e) => handlePriceChange('campaign_max', e.target.value)} placeholder="Max Price" isMandatory={false} />
           </div>
         </div>
 
         {/* Barter Collaboration Value */}
         <PriceInput 
             label="Barter Collaboration Value (Optional)" 
-            value={barterValue} 
-            onChange={(e) => setBarterValue(e.target.value)}
+            value={pricingStructure.barterValueMin ?? ''} 
+            onChange={(e) => handlePriceChange('barterValueMin', e.target.value)}
             isMandatory={false}
             subLabel="Minimum product value acceptable in exchange for barter — e.g., Rs 3,000+"
         />
@@ -112,14 +117,14 @@ const PricingStructure = forwardRef(({ onNext, isLastStep }: ComponentProps, ref
       {/* Navigation Button */}
       <div className="flex justify-end mt-12 pt-6 border-t">
         <button
-          onClick={handleNext}
+          type="submit"
           className="px-8 py-3 bg-black text-white rounded-md font-semibold"
         >
           {isLastStep ? 'Submit' : 'Next →'}
         </button>
       </div>
-    </div>
+    </form>
   );
-});
+};
 
 export default PricingStructure;

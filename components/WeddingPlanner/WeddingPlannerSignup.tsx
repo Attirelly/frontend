@@ -8,6 +8,7 @@ import { api } from "@/lib/axios";
 import axios from "axios";
 import Header from "@/components/Header";
 import { toast } from "sonner";
+import { useStylist } from "@/store/stylist";
 
 /**
  * SellerSignup component
@@ -61,15 +62,15 @@ import { toast } from "sonner";
  * ## Props
  * - This is a page component and does not accept any props.
  *
- * @returns {JSX.Element} The rendered seller sign-up page.
+ * @returns {JSX.Element} The rendered wedding planner sign-up page.
  */
-export default function SellerSignup() {
+export default function WeddingPlannerSignup() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const [agreed, setAgreed] = useState(false);
   const [sendOTP, setSendOTP] = useState(false);
-  const { setSellerId, setSellerNumber } = useSellerStore();
+  const { setStylistId, setStylistNumber } = useStylist();
 
   const [resendTimer, setResendTimer] = useState(60);
   const [isBlocked, setIsBlocked] = useState(false);
@@ -85,8 +86,8 @@ export default function SellerSignup() {
      * prefetching necessary routes
      */
   useEffect(() => {
-    resetSellerStore();
-    router.prefetch("/seller_signup/sellerOnboarding");
+    resetWeddingPlannerStore();
+    router.prefetch("/wedding_planner/weddingPlannerOnboarding");
   }, []);
 
   // resend times logic
@@ -189,12 +190,13 @@ export default function SellerSignup() {
           };
           const response = await api.post("/users/register_user", payload);
 
-          const newSellerId = response.data.id;
-          console.log(newSellerId);
-          setSellerId(newSellerId);
+          console.log(response);
+          const newWeddingPlannerId = response.data.id;
+          console.log(newWeddingPlannerId);
+          setWeddingPlannerId(newWeddingPlannerId);
           await api.post("/users/login", { contact_number: phone });
 
-          router.push("/seller_signup/sellerOnboarding");
+          router.push("/wedding_planner/weddingPlannerOnboarding");
         } catch (error) {
           console.error("Error fetching stores by section:", error);
           toast.error("Failed to sign up!");
@@ -262,7 +264,7 @@ export default function SellerSignup() {
         });
         setSendOTP(true);
         // alert(`OTP sent to ${phone}`);
-        setSellerNumber(phone);
+        setWeddingPlannerNumber(phone);
       } catch {
         toast.error("Failed to send OTP!");
       }
@@ -289,9 +291,9 @@ export default function SellerSignup() {
           onSubmit={handleSubmit}
           className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
         >
-          <h2 className="text-xl font-semibold mb-4">Register as a seller</h2>
+          <h2 className="text-xl font-semibold mb-4">Register as a wedding planner</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Verifying the store's phone number is a great way to make sure your
+            Verifying the wedding planner's phone number is a great way to make sure your
             profile reflects your identity and keeps your account safe.
           </p>
 

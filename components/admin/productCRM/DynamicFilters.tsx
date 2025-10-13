@@ -85,7 +85,7 @@ export function DynamicFilters({ facets, selectedFilters, onFilterChange }: Dyna
           return (
             <div key={facetKey}>
               <h3 className="font-semibold text-gray-600 mb-2">{facetTitles[facetKey] || facetKey}</h3>
-              <div className="max-h-60 overflow-y-auto pr-2 space-y-1">
+              <div className="max-h-60 overflow-y-auto scrollbar-thin pr-2 space-y-1">
                 {Object.entries(facetValues).map(([value, count]) => (
                   <label key={value} className="flex items-center p-2 rounded-md hover:bg-gray-50 cursor-pointer">
                     <input

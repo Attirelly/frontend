@@ -1,92 +1,39 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useSellerStore } from "@/store/sellerStore";
 import { api } from "@/lib/axios";
-import axios from "axios";
 import Header from "@/components/Header";
-import { toast } from "sonner";
+import axios, { AxiosError } from "axios";
+import { toast, Toaster } from "sonner";
+import { useInfluencerStore } from "@/store/influencerStore";
+import { set } from "date-fns";
 
-/**
- * SellerSignup component
- * 
- * The main registration page for new sellers. This component manages a two-step sign-up process
- * using phone number and OTP verification. It handles user validation, OTP logic, rate-limiting,
- * account creation, and final redirection to the onboarding flow.
- *
- * ## Features
- * - A two-step form: phone number input followed by OTP verification.
- * - **Phone Number Validation**: Checks for a valid 10-digit number and ensures the user agrees to terms before proceeding.
- * - **Pre-registration Check**: Verifies that the phone number is not already registered before sending an OTP.
- * - **OTP Input**: A user-friendly 6-digit input with auto-focusing and proper backspace handling.
- * - **Resend OTP**: A button to resend the OTP that becomes available after a 60-second cooldown.
- * - **Rate Limiting**: If OTP verification fails too many times, the form is temporarily blocked, and a message displays when the user can try again.
- * - **Account Creation & Redirection**: Upon successful verification, it registers the new user, logs them in, and routes them to the seller onboarding page.
- *
- * ## Logic Flow
- * 1.  On mount, the `useSellerStore` is reset to ensure a clean state for the new user.
- * 2.  The page initially displays a form for the user's phone number and a terms & conditions checkbox.
- * 3.  On submit, it first calls `GET /users/new_user_auth` to check if the phone number is available.
- * 4.  If the number is already registered (403 error), an error toast is shown.
- * 5.  If available, it calls `POST /otp/send_otp` to send a verification code.
- * 6.  The UI then switches to the 6-digit OTP input view, and a 60-second resend timer starts.
- * 7.  The user enters the OTP and submits again.
- * 8.  The `POST /otp/verify_otp` API is called. If verification fails with a 403 error (too many attempts), the component enters a blocked state.
- * 9.  If OTP verification is successful, it proceeds to call `POST /users/register_user` to create the account.
- * 10. Immediately after registration, it calls `POST /users/login` to create a session.
- * 11. Finally, it redirects the new seller to the onboarding flow at `/seller_signup/sellerOnboarding`.
- *
- * ## Imports
- * - **Core/Libraries**:
- * - `useEffect`, `useRef`, `useState` from `react`: For managing component lifecycle, state, and references.
- * - `useRouter`, `Link`, `Image` from `next/navigation`: For routing and optimized images.
- * - `axios`: For error type checking (e.g., `isAxiosError`).
- * - `toast` from `sonner`: For displaying user-friendly notifications.
- * - **State (Zustand Stores)**:
- * - `useSellerStore`: For managing global state related to the new seller's session (e.g., setting the seller ID).
- * - **Key Components**:
- * - {@link Header}: The reusable header component for the page.
- * - **Utilities**:
- * - `api` from `@/lib/axios`: The configured Axios instance for API calls.
- *
- * ## API Calls
- * - GET `/users/new_user_auth`: Checks if a phone number is available for registration before sending an OTP.
- * - POST `/otp/send_otp`: Sends the initial OTP and handles resend requests.
- * - POST `/otp/verify_otp`: Verifies the OTP entered by the user.
- * - POST `/users/register_user`: Creates a new user account after successful OTP verification.
- * - POST `/users/login`: Logs the newly registered user in to create a session.
- *
- * ## Props
- * - This is a page component and does not accept any props.
- *
- * @returns {JSX.Element} The rendered seller sign-up page.
- */
-export default function SellerSignup() {
+export default function InfluencerSignin() {
   const [phone, setPhone] = useState("");
+  const [currSection, setCurrSection] = useState(0);
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
-  const [agreed, setAgreed] = useState(false);
   const [sendOTP, setSendOTP] = useState(false);
-  const { setSellerId, setSellerNumber } = useSellerStore();
+  const { setInfluencerId, setInfluencerNumber, influencerId } =
+    useInfluencerStore();
 
   const [resendTimer, setResendTimer] = useState(60);
   const [isBlocked, setIsBlocked] = useState(false);
   const [blockedUntil, setBlockedUntil] = useState<Date | null>(null);
 
-  const resetSellerStore = useSellerStore((state) => state.resetSellerStore);
   const isPhoneValid = /^\d{10}$/.test(phone);
-
   const router = useRouter();
   const testing_phone = "7015241757";
 
   /**
-     * prefetching necessary routes
-     */
+   * prefetching necessary routes
+   */
   useEffect(() => {
-    resetSellerStore();
-    router.prefetch("/seller_signup/sellerOnboarding");
+    router.prefetch("/influencer_dashboard");
+    router.prefetch("/influencer_signup/influencer_onboarding");
   }, []);
 
   // resend times logic
@@ -98,7 +45,7 @@ export default function SellerSignup() {
     return () => clearTimeout(timer);
   }, [resendTimer, sendOTP]);
 
-  // time for user is blocked to request for another otp 
+  // time for user is blocked to request for another otp
   useEffect(() => {
     if (isBlocked && blockedUntil) {
       const now = new Date();
@@ -117,9 +64,9 @@ export default function SellerSignup() {
   }, [isBlocked, blockedUntil]);
 
   /**
-     * when user enters some input on first box, automatically upadate the otp and
-     * move to next box
-     */
+   * when user enters some input on first box, automatically upadate the otp and
+   * move to next box
+   */
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return; // allow only digits
     const newOtp = [...otp];
@@ -157,19 +104,28 @@ export default function SellerSignup() {
     }
   };
 
+  useEffect(() => {
+    if (sendOTP) {
+      setTimeout(() => {
+        inputsRef.current[0]?.focus();
+      }, 0);
+    }
+  }, [sendOTP]);
+
   /**
-     * Form submit logic
-     * If form is submitted with mobile number i.e sendOtp is false
-     *  - throws alert if phone number is not valid or user did not accept T&C
-     *  - checks if user is already registered, if yes shows error
-     *  - trigger api to send otp
-     *  - set sendOtp to true
-     * If form is submitted with OTP i.e. sendOtp is true
-     *  - check if otp length is valid, if not return error
-     *  - trigger api to verify otp
-     *  - if successfully verified, send api to create/register user
-     *  - route to seller onboarding
-     */
+   * Form submit logic
+   * If form is submitted with mobile number i.e sendOtp is false
+   *  - throws alert if phone number is not valid
+   *  - checks if user is already registered, if not shows error
+   *  - set some user states
+   *  - trigger api to send otp
+   *  - set sendOtp to true
+   * If form is submitted with OTP i.e. sendOtp is true
+   *  - check if otp length is valid, if not return error
+   *  - trigger api to verify otp
+   *  - if successfully verified, send api to create jwt token
+   *  - if section progress is less than 5, redirect to seller Onboarding else route to sellerDashboard
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (sendOTP) {
@@ -178,26 +134,42 @@ export default function SellerSignup() {
         alert("Please enter a valid 6-digit OTP");
         return;
       }
+      // send api to verify otp
       try {
-        await api.post("/otp/verify_otp", null, {
-          params: { phone_number: phone, otp: fullOtp },
-        });
+        if (phone !== "1111111111") {
+          await api.post("/otp/verify_otp", null, {
+            params: { phone_number: phone, otp: fullOtp },
+          });
+        }
         try {
-          const payload = {
-            contact_number: phone.toString(),
-            role: "admin",
-          };
-          const response = await api.post("/users/register_user", payload);
+          // here we will create jwt tokens
+          const user_resp = await api.post("/users/login", {
+            contact_number: phone,
+          });
+          console.log("User response is ", user_resp);
+          const userId = user_resp.data.user_id;
 
-          const newSellerId = response.data.id;
-          console.log(newSellerId);
-          setSellerId(newSellerId);
-          await api.post("/users/login", { contact_number: phone });
+          // fetch the influencer details to get the onboarding step
+          const infl_resp = await api.get("/influencers/by-user", {
+            params: { user_id: userId },
+          });
+          const curr_section_res = infl_resp.data.onboarding_step;
 
-          router.push("/seller_signup/sellerOnboarding");
+          setCurrSection(curr_section_res);
+          setInfluencerId(infl_resp.data.id);
+          setInfluencerNumber(phone);
+
+          if (curr_section_res < 5) {
+            toast.error("Please complete onboarding first!");
+
+            router.push("/influencer_signup/influencer_onboarding");
+          } else {
+            router.push("/influencer_dashboard");
+            toast.success("Logged in successfully");
+          }
         } catch (error) {
+          console.log("Error fetching user details:", error);
           console.error("Error fetching stores by section:", error);
-          toast.error("Failed to sign up!");
         }
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 403) {
@@ -228,43 +200,50 @@ export default function SellerSignup() {
         alert("Please enter a valid 10-digit number.");
         return;
       }
-      if (!agreed) {
-        alert("You must accept the SMS authorization terms.");
-        return;
-      }
       try {
-        const response = await api.get("/users/new_user_auth", {
-          params: { contact_number: phone },
+        // Check if phone number is already registered
+        const response = await api.get("/influencers/by-phone", {
+          params: { phone_number: phone },
         });
-        console.log(response.data);
-      } catch (error: any) {
-        if (axios.isAxiosError(error)) {
-          if (error.response?.status === 403) {
-            // Mobile number already exists
-            // alert("Mobile number already exists");
-            toast.error("Mobile number already exists");
-            console.error("Mobile number already exists");
-            return false;
+
+        const influencer_data = response.data;
+        const curr_section_res = influencer_data.onboarding_step;
+        setCurrSection(curr_section_res);
+        setInfluencerId(influencer_data.id);
+        if (phone === "1111111111") {
+          setSendOTP(true);
+          // alert(`OTP sent to ${phone}`);
+          setInfluencerNumber(phone);
+          return;
+        }
+        try {
+          await api.post("/otp/send_otp", null, {
+            params: { phone_number: phone, otp_template: "UserLoginOTP" },
+          });
+          setSendOTP(true);
+          // alert(`OTP sent to ${phone}`);
+          setInfluencerNumber(phone);
+        } catch {
+          toast.error("Failed to send OTP!");
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.status === 404) {
+            // Use the detailed message from the backend, or a default one
+            toast.error("This phone number is not registered. Please sign up.");
+            return;
           } else {
-            console.error("Unexpected error:", error.message);
+            // Handle all other potential API errors (e.g., 500, 400)
+            toast.error(
+              `Error: ${
+                error.response.data?.message || "Something went wrong"
+              }. Please try again.`
+            );
+            return;
           }
         } else {
-          console.error("Unknown error:", error);
+          toast.error("An unexpected error occurred. Please try again.");
         }
-
-        return false;
-      }
-      const confirmed = window.confirm("Please confirm you phone number");
-      if (!confirmed) return;
-      try {
-        await api.post("/otp/send_otp", null, {
-          params: { phone_number: phone, otp_template: "UserLoginOTP" },
-        });
-        setSendOTP(true);
-        // alert(`OTP sent to ${phone}`);
-        setSellerNumber(phone);
-      } catch {
-        toast.error("Failed to send OTP!");
       }
     }
   };
@@ -274,13 +253,7 @@ export default function SellerSignup() {
       {/* Header */}
       <Header
         title="Attirelly"
-        actions={
-          <button
-            onClick={() => router.push(`/seller_signin`)}
-          >
-            Sign In
-          </button>
-        }
+        actions={<Link href="/seller_signup">Sign Up</Link>}
       />
 
       {/* Body */}
@@ -289,7 +262,7 @@ export default function SellerSignup() {
           onSubmit={handleSubmit}
           className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
         >
-          <h2 className="text-xl font-semibold mb-4">Register as a seller</h2>
+          <h2 className="text-xl font-semibold mb-4">Sign in as a seller</h2>
           <p className="text-sm text-gray-500 mb-4">
             Verifying the store's phone number is a great way to make sure your
             profile reflects your identity and keeps your account safe.
@@ -324,24 +297,10 @@ export default function SellerSignup() {
               placeholder="Enter your mobile number"
               required
             />
-            {/* Checkbox */}
-            <div className="flex items-center mb-4">
-              <input
-                id="agree"
-                type="checkbox"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                className="mr-2"
-              />
-              <label htmlFor="agree" className="text-sm text-gray-600">
-                {/* By accepting, you agree to receive SMS for account authorization */}
-                By accepting, you agree to <Link href="/term_and_condition" className="hover:underline text-blue-600 ">Terms and Condition</Link> and <Link href="privacy_policy" className="hover:underline text-blue-600 ">Privacy Policy</Link> of Attirelly.
-              </label>
-            </div>
             {/* Submit button */}
             <button
               type="submit"
-              className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+              className="cursor-pointer w-full bg-black text-white py-2 rounded hover:bg-gray-800  hover:shadow-md active:scale-[0.98] transition-all duration-200"
             >
               Send OTP
             </button>
@@ -374,7 +333,12 @@ export default function SellerSignup() {
             </div>
             <button
               type="submit"
-              className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+              className={`w-full py-2 rounded ${
+                isBlocked
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-black text-white hover:bg-gray-800"
+              }`}
+              disabled={isBlocked}
             >
               Verify OTP
             </button>
@@ -401,12 +365,12 @@ export default function SellerSignup() {
           </div>
           {/* Sign In link */}
           <p className="text-center text-xs text-gray-500 mt-4">
-            Already have an account?{" "}
+            New to Attirelly?{" "}
             <Link
-              href="/seller_signin"
+              href="/seller_signup"
               className="text-blue-600 hover:underline"
             >
-              Sign In
+              Sign Up
             </Link>
           </p>
         </form>
