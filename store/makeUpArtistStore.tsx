@@ -1,241 +1,287 @@
-import { State, City, Area, Pincode } from "@/types/utilityTypes";
-import { create } from "zustand";
+  import { create } from "zustand";
+  import { State, City, Area, Pincode } from "@/types/utilityTypes";
 
-// ================== TYPES ===================
+  // ================== TYPES ===================
 
-// Section 1: Basic Information
-export type BasicInformation = {
-  name: string;
-  email: string;
-  phoneInternal: string;
-  phonePublic: string;
-  gender_id: string | null;
-  experienceYears: number | null;
-  languages: string[];
-  shortBio: string;
-};
-
-// Section 2: Professional Details
-export type ProfessionalDetails = {
-  servicesOffered: (
-    | "Bridal Makeup"
-    | "Party Makeup"
-    | "HD Makeup"
-    | "Airbrush Makeup"
-    | "Editorial Makeup"
-    | "Hair Styling"
-    | "Groom Makeup"
-  )[];
-  stylesSpecializedIn: string[];
-  brandsUsed: string[];
-  certifications: string[];
-};
-
-// Section 3: Pricing & Packages
-export type PricingPackages = {
-  basePrice: number | null;
-  bridalPackage: number | null;
-  partyPackage: number | null;
-  travelCharges: number | null;
-  pricingNotes: string;
-};
-
-// Section 4: Work Portfolio
-export type WorkPortfolio = {
-  portfolioImages: string[];
-  pastClients: string[];
-  bestWorkLinks: string[];
-  achievements: string[];
-};
-
-// Section 5: Location & Availability
-export type LocationAndAvailability = {
-  state: State | null;
-  city: City | null;
-  area: Area | null;
-  pincode: Pincode | null;
-  travelAvailable: boolean;
-  travelReadiness: "Local Only" | "State-wide" | "Pan-India";
-  availableForDestination: boolean;
-};
-
-// Section 6: Social Presence
-export type SocialPresence = {
-  instagram: string;
-  youtube: string;
-  facebook: string;
-  website: string;
-  followers: {
-    instagram: number | null;
-    youtube: number | null;
+  // ✅ Section 1: Basic Information
+  export type BasicInformation = {
+    fullName: string;
+    brandName: string;
+    email: string;
+    whatsappNumber: string;
+    yearsExperience: string;
+    teamSize: string;
+    artistType: string;
   };
-  rating: number | null;
-  totalBookings: number | null;
-};
 
-// Section 7: Media Kit
-export type MediaKit = {
-  profilePhoto: string | null;
-  portfolioFile: string | null;
-  published: boolean;
-};
+  // ✅ Section 2: Client & Service Profile
+  export type ClientServiceProfile = {
+    clientTypes: string[];
+    occasionFocus: string[];
+    avgBookingsPerMonth: string;
+    avgPriceRange: string;
+    readyToTravel: boolean;
+  };
 
-// --- Section Key Type ---
-export type MakeupArtistSectionKey =
-  | "basicInformation"
-  | "professionalDetails"
-  | "pricingPackages"
-  | "workPortfolio"
-  | "locationAndAvailability"
-  | "socialPresence"
-  | "mediaKit";
+  // ✅ Section 3: Fashion & Outfit Influence
+  export type FashionOutfitInfluence = {
+    recommendsBoutiques: boolean;
+    guidanceTypes: string[];
+    guidesOnTrends: string[];
+    helpsWithOutfitCoordination: boolean;
+    designersOrLabels: string[];
+  };
 
-// --- Zustand Store Type ---
-export type MakeupArtistOnboardingState = {
-  artistId: string;
-  artistNumber: string;
-  basicInformation: BasicInformation;
-  professionalDetails: ProfessionalDetails;
-  pricingPackages: PricingPackages;
-  workPortfolio: WorkPortfolio;
-  locationAndAvailability: LocationAndAvailability;
-  socialPresence: SocialPresence;
-  mediaKit: MediaKit;
+  // ✅ Section 4: Social Media Collaborations (with Others)
+  export type SocialCollabs = {
+    collabsWithOthers: boolean;
+    collabTypes: string[];
+    collabFrequency: string;
+    collabNature: string;
+    collabReadyToTravel: boolean;
+    collabTopBrands: string[];
+    collabAvgReach: string;
+  };
 
-  activeSection: MakeupArtistSectionKey;
-  isSubmitting: boolean;
+  // ✅ Section 5: Social Media Collaborations (with Attirelly)
+  export type AttirellyCollab = {
+    attirellyCollabTypes: string[];
+    attirellyCollabModel: string;
+    attirellyCollabFrequency: string;
+    attirellyReadyToTravel: boolean;
+    referralPotential: string;
+  };
 
-  // Actions
-  setArtistId: (id: string) => void;
-  setArtistNumber: (num: string) => void;
-  setActiveSection: (section: MakeupArtistSectionKey) => void;
-  setIsSubmitting: (submitting: boolean) => void;
+  // ✅ Section 6: Commission / Partnership Program
+  export type CommissionProgram = {
+    commissionOptIn: boolean;
+    avgMonthlyReferrals: string;
+  };
 
-  updateBasicInformation: (data: Partial<BasicInformation>) => void;
-  updateProfessionalDetails: (data: Partial<ProfessionalDetails>) => void;
-  updatePricingPackages: (data: Partial<PricingPackages>) => void;
-  updateWorkPortfolio: (data: Partial<WorkPortfolio>) => void;
-  updateLocationAndAvailability: (
-    data: Partial<LocationAndAvailability>
-  ) => void;
-  updateSocialPresence: (data: Partial<SocialPresence>) => void;
-  updateMediaKit: (data: Partial<MediaKit>) => void;
+  // ✅ Section 7: Social Links
+  export type SocialLinks = {
+    socialLinks: Record<string, string>;
+    featuredOn: string[];
+  };
 
-  resetStore: () => void;
-};
+  // ✅ Section 8: Instagram Insights
+  export type InstagramInsights = {
+    instagramHandle: string;
+    totalFollowers: number | null;
+    totalPosts: number | null;
+    engagementRate: number | null;
+    audienceGenderSplit: Record<string, number> | null;
+    topAudienceLocations: string[];
+    contentNiche: string[];
+    avgStoryViews: number | null;
+    avgReelViews: number | null;
+    bestPerformingContentType: string;
+    audienceInsightSummary: string[];
+  };
 
-// ================== INITIAL STATE ===================
-const initialState: Omit<
-  MakeupArtistOnboardingState,
-  | "setArtistId"
-  | "setArtistNumber"
-  | "setActiveSection"
-  | "setIsSubmitting"
-  | "updateBasicInformation"
-  | "updateProfessionalDetails"
-  | "updatePricingPackages"
-  | "updateWorkPortfolio"
-  | "updateLocationAndAvailability"
-  | "updateSocialPresence"
-  | "updateMediaKit"
-  | "resetStore"
-> = {
-  artistId: "",
-  artistNumber: "",
-  basicInformation: {
-    name: "",
-    email: "",
+  // ✅ Section 9: Location
+  export type ArtistLocation = {
+    state: State | null;
+    city: City | null;
+    area: Area | null;
+    pincode: Pincode | null;
+  };
+
+  // ✅ Section 10: Media & Bio
+  export type MediaBio = {
+    profilePhoto: string | null;
+    portfolioFile: string | null;
+    shortBio: string;
+    published: boolean;
+  };
+
+  // ================== MAIN STORE TYPE ===================
+
+  export type MakeupArtistSectionKey =
+    | "basicInformation"
+    | "clientServiceProfile"
+    | "fashionOutfitInfluence"
+    | "socialCollabs"
+    | "attirellyCollab"
+    | "commissionProgram"
+    | "socialLinks"
+    | "instagramInsights"
+    | "artistLocation"
+    | "mediaBio";
+
+  export type MakeupArtistState = {
+    artistId: string;
+    phoneInternal: string;
+    onboardingStep: number;
+
+    // Sections
+    basicInformation: BasicInformation;
+    clientServiceProfile: ClientServiceProfile;
+    fashionOutfitInfluence: FashionOutfitInfluence;
+    socialCollabs: SocialCollabs;
+    attirellyCollab: AttirellyCollab;
+    commissionProgram: CommissionProgram;
+    socialLinks: SocialLinks;
+    instagramInsights: InstagramInsights;
+    artistLocation: ArtistLocation;
+    mediaBio: MediaBio;
+
+    // Meta
+    activeSection: MakeupArtistSectionKey;
+    isSubmitting: boolean;
+
+    // Actions
+    setArtistId: (id: string) => void;
+    setPhoneInternal: (num: string) => void;
+    setActiveSection: (section: MakeupArtistSectionKey) => void;
+    setIsSubmitting: (submitting: boolean) => void;
+    setOnboardingStep: (step: number) => void;
+
+    updateBasicInformation: (data: Partial<BasicInformation>) => void;
+    updateClientServiceProfile: (data: Partial<ClientServiceProfile>) => void;
+    updateFashionOutfitInfluence: (data: Partial<FashionOutfitInfluence>) => void;
+    updateSocialCollabs: (data: Partial<SocialCollabs>) => void;
+    updateAttirellyCollab: (data: Partial<AttirellyCollab>) => void;
+    updateCommissionProgram: (data: Partial<CommissionProgram>) => void;
+    updateSocialLinks: (data: Partial<SocialLinks>) => void;
+    updateInstagramInsights: (data: Partial<InstagramInsights>) => void;
+    updateArtistLocation: (data: Partial<ArtistLocation>) => void;
+    updateMediaBio: (data: Partial<MediaBio>) => void;
+
+    resetStore: () => void;
+  };
+
+  // ================== INITIAL STATE ===================
+  const initialState: Omit<
+    MakeupArtistState,
+    | "setArtistId"
+    | "setPhoneInternal"
+    | "setActiveSection"
+    | "setIsSubmitting"
+    | "setOnboardingStep"
+    | "updateBasicInformation"
+    | "updateClientServiceProfile"
+    | "updateFashionOutfitInfluence"
+    | "updateSocialCollabs"
+    | "updateAttirellyCollab"
+    | "updateCommissionProgram"
+    | "updateSocialLinks"
+    | "updateInstagramInsights"
+    | "updateArtistLocation"
+    | "updateMediaBio"
+    | "resetStore"
+  > = {
+    artistId: "",
     phoneInternal: "",
-    phonePublic: "",
-    gender_id: null,
-    experienceYears: null,
-    languages: [],
-    shortBio: "",
-  },
-  professionalDetails: {
-    servicesOffered: [],
-    stylesSpecializedIn: [],
-    brandsUsed: [],
-    certifications: [],
-  },
-  pricingPackages: {
-    basePrice: null,
-    bridalPackage: null,
-    partyPackage: null,
-    travelCharges: null,
-    pricingNotes: "",
-  },
-  workPortfolio: {
-    portfolioImages: [],
-    pastClients: [],
-    bestWorkLinks: [],
-    achievements: [],
-  },
-  locationAndAvailability: {
-    state: null,
-    city: null,
-    area: null,
-    pincode: null,
-    travelAvailable: false,
-    travelReadiness: "Local Only",
-    availableForDestination: false,
-  },
-  socialPresence: {
-    instagram: "",
-    youtube: "",
-    facebook: "",
-    website: "",
-    followers: { instagram: null, youtube: null },
-    rating: null,
-    totalBookings: null,
-  },
-  mediaKit: {
-    profilePhoto: null,
-    portfolioFile: null,
-    published: false,
-  },
-  activeSection: "basicInformation",
-  isSubmitting: false,
-};
+    onboardingStep: 1,
 
-// ================== STORE ===================
-export const useMakeupArtistStore = create<MakeupArtistOnboardingState>((set) => ({
-  ...initialState,
+    basicInformation: {
+      fullName: "",
+      brandName: "",
+      email: "",
+      whatsappNumber: "",
+      yearsExperience: "",
+      teamSize: "",
+      artistType: "",
+    },
+    clientServiceProfile: {
+      clientTypes: [],
+      occasionFocus: [],
+      avgBookingsPerMonth: "",
+      avgPriceRange: "",
+      readyToTravel: true,
+    },
+    fashionOutfitInfluence: {
+      recommendsBoutiques: true,
+      guidanceTypes: [],
+      guidesOnTrends: [],
+      helpsWithOutfitCoordination: true,
+      designersOrLabels: [],
+    },
+    socialCollabs: {
+      collabsWithOthers: false,
+      collabTypes: [],
+      collabFrequency: "",
+      collabNature: "",
+      collabReadyToTravel: true,
+      collabTopBrands: [],
+      collabAvgReach: "",
+    },
+    attirellyCollab: {
+      attirellyCollabTypes: [],
+      attirellyCollabModel: "",
+      attirellyCollabFrequency: "",
+      attirellyReadyToTravel: true,
+      referralPotential: "",
+    },
+    commissionProgram: {
+      commissionOptIn: true,
+      avgMonthlyReferrals: "",
+    },
+    socialLinks: {
+      socialLinks: {},
+      featuredOn: [],
+    },
+    instagramInsights: {
+      instagramHandle: "",
+      totalFollowers: null,
+      totalPosts: null,
+      engagementRate: null,
+      audienceGenderSplit: null,
+      topAudienceLocations: [],
+      contentNiche: [],
+      avgStoryViews: null,
+      avgReelViews: null,
+      bestPerformingContentType: "",
+      audienceInsightSummary: [],
+    },
+    artistLocation: {
+      state: null,
+      city: null,
+      area: null,
+      pincode: null,
+    },
+    mediaBio: {
+      profilePhoto: null,
+      portfolioFile: null,
+      shortBio: "",
+      published: false,
+    },
 
-  setArtistId: (id) => set({ artistId: id }),
-  setArtistNumber: (num) => set({ artistNumber: num }),
-  setActiveSection: (section) => set({ activeSection: section }),
-  setIsSubmitting: (submitting) => set({ isSubmitting: submitting }),
+    activeSection: "basicInformation",
+    isSubmitting: false,
+  };
 
-  updateBasicInformation: (data) =>
-    set((state) => ({
-      basicInformation: { ...state.basicInformation, ...data },
-    })),
-  updateProfessionalDetails: (data) =>
-    set((state) => ({
-      professionalDetails: { ...state.professionalDetails, ...data },
-    })),
-  updatePricingPackages: (data) =>
-    set((state) => ({
-      pricingPackages: { ...state.pricingPackages, ...data },
-    })),
-  updateWorkPortfolio: (data) =>
-    set((state) => ({
-      workPortfolio: { ...state.workPortfolio, ...data },
-    })),
-  updateLocationAndAvailability: (data) =>
-    set((state) => ({
-      locationAndAvailability: {
-        ...state.locationAndAvailability,
-        ...data,
-      },
-    })),
-  updateSocialPresence: (data) =>
-    set((state) => ({
-      socialPresence: { ...state.socialPresence, ...data },
-    })),
-  updateMediaKit: (data) =>
-    set((state) => ({ mediaKit: { ...state.mediaKit, ...data } })),
+  // ================== STORE ===================
+  export const useMakeupArtistStore = create<MakeupArtistState>((set) => ({
+    ...initialState,
 
-  resetStore: () => set(initialState),
-}));
+    setArtistId: (id) => set({ artistId: id }),
+    setPhoneInternal: (num) => set({ phoneInternal: num }),
+    setActiveSection: (section) => set({ activeSection: section }),
+    setIsSubmitting: (submitting) => set({ isSubmitting: submitting }),
+    setOnboardingStep: (step) => set({ onboardingStep: step }),
+
+    updateBasicInformation: (data) =>
+      set((state) => ({ basicInformation: { ...state.basicInformation, ...data } })),
+    updateClientServiceProfile: (data) =>
+      set((state) => ({ clientServiceProfile: { ...state.clientServiceProfile, ...data } })),
+    updateFashionOutfitInfluence: (data) =>
+      set((state) => ({ fashionOutfitInfluence: { ...state.fashionOutfitInfluence, ...data } })),
+    updateSocialCollabs: (data) =>
+      set((state) => ({ socialCollabs: { ...state.socialCollabs, ...data } })),
+    updateAttirellyCollab: (data) =>
+      set((state) => ({ attirellyCollab: { ...state.attirellyCollab, ...data } })),
+    updateCommissionProgram: (data) =>
+      set((state) => ({ commissionProgram: { ...state.commissionProgram, ...data } })),
+    updateSocialLinks: (data) =>
+      set((state) => ({ socialLinks: { ...state.socialLinks, ...data } })),
+    updateInstagramInsights: (data) =>
+      set((state) => ({ instagramInsights: { ...state.instagramInsights, ...data } })),
+    updateArtistLocation: (data) =>
+      set((state) => ({ artistLocation: { ...state.artistLocation, ...data } })),
+    updateMediaBio: (data) =>
+      set((state) => ({ mediaBio: { ...state.mediaBio, ...data } })),
+
+    resetStore: () => set(initialState),
+  }));

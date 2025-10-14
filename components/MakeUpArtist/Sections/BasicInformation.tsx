@@ -1,15 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { api } from "@/lib/axios";
-import { useMakeupArtistStore } from "@/store/makeUpArtistStore"; // <-- UPDATED STORE
-import { GenderOption } from "@/types/utilityTypes";
-
-// Static language options
-const languageOptions = [
-  "English", "Hindi", "Punjabi", "Tamil", "Telugu", "Kannada", "Malayalam",
-  "Bengali", "Marathi", "Gujarati", "Odia", "Assamese", "Urdu", "Bhojpuri", "Haryanvi",
-];
+import React, { useState } from "react";
+import { useMakeupArtistStore } from "@/store/makeUpArtistStore";
 
 interface ComponentProps {
   onNext: () => void;
@@ -18,55 +10,45 @@ interface ComponentProps {
 
 const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
   const { basicInformation, updateBasicInformation } = useMakeupArtistStore();
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // --- State to hold dynamic options from the API ---
-  const [genderOptions, setGenderOptions] = useState<GenderOption[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Artist Type Options
+  const artistTypes = [
+    "Bridal MUA",
+    "Party MUA",
+    "Editorial MUA",
+    "Freelance MUA",
+    "Salon Artist",
+  ];
 
-  // --- Fetch data on component mount ---
-  useEffect(() => {
-    const fetchOptions = async () => {
-      setIsLoading(true);
-      try {
-        const gendersResponse = await api.get("/genders");
-        setGenderOptions(gendersResponse.data);
-      } catch (error) {
-        console.error("Failed to fetch gender options:", error);
-        alert("There was an error loading essential data. Please try refreshing the page.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Team size options
+  const teamSizes = ["Solo", "2–5", "6–10", "10+"];
 
-    fetchOptions();
-  }, []); // Runs only once on mount
+  // Validation
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
 
-  const handleNext = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (!basicInformation.fullName)
+      newErrors.fullName = "Full Name is required.";
+    if (!basicInformation.email)
+      newErrors.email = "Email is required.";
+    if (!basicInformation.whatsappNumber)
+      newErrors.whatsappNumber = "WhatsApp number is required.";
+    if (!basicInformation.yearsExperience)
+      newErrors.yearsExperience = "Experience is required.";
+    if (!basicInformation.teamSize)
+      newErrors.teamSize = "Team size is required.";
+    if (!basicInformation.artistType)
+      newErrors.artistType = "Artist type is required.";
 
-    // --- Validation for Makeup Artist fields ---
-    if (
-      !basicInformation.name ||
-      !basicInformation.email ||
-      !basicInformation.phoneInternal ||
-      !basicInformation.gender_id ||
-      basicInformation.experienceYears === null || // Check for null
-      basicInformation.languages.length === 0
-    ) {
-      alert("Please fill out all mandatory fields marked with an asterisk (*).");
-      return;
-    }
-    onNext();
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  if (isLoading || !basicInformation || genderOptions.length === 0) {
-    return (
-      <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-center">
-        <h2 className="text-xl font-semibold text-gray-700">Loading Details...</h2>
-        <p className="text-gray-500 mt-2">Preparing the form for you.</p>
-      </div>
-    );
-  }
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) onNext();
+  };
 
   return (
     <form
@@ -75,159 +57,140 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
     >
       <h2 className="text-2xl font-semibold mb-2">Basic Information</h2>
       <p className="text-gray-500 mb-8">
-        Enter your personal and contact details to get started.
+        Provide your basic details to create your professional profile.
       </p>
 
       <div className="space-y-6">
         {/* Full Name */}
         <div>
-          <label htmlFor="full-name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
             Full Name <span className="text-red-500">*</span>
           </label>
-          <p className="text-xs text-gray-500 mb-1">
-            This name will be displayed on your public profile.
-          </p>
           <input
+            id="fullName"
             type="text"
-            id="full-name"
-            value={basicInformation.name}
-            onChange={(e) => updateBasicInformation({ name: e.target.value })}
+            value={basicInformation.fullName}
+            onChange={(e) => updateBasicInformation({ fullName: e.target.value })}
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="e.g., Priya Sharma"
+          />
+          {errors.fullName && <p className="text-sm text-red-500 mt-1">{errors.fullName}</p>}
+        </div>
+
+        {/* Brand Name */}
+        <div>
+          <label htmlFor="brandName" className="block text-sm font-medium text-gray-700">
+            Brand / Business Name
+          </label>
+          <input
+            id="brandName"
+            type="text"
+            value={basicInformation.brandName}
+            onChange={(e) => updateBasicInformation({ brandName: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="e.g., Glam by Priya"
           />
         </div>
 
-        {/* Email & Internal Phone */}
+        {/* Email & WhatsApp */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email Address <span className="text-red-500">*</span>
             </label>
-            <p className="text-xs text-gray-500 mb-1">
-              Primary email for client and platform communication.
-            </p>
             <input
-              type="email"
               id="email"
+              type="email"
               value={basicInformation.email}
               onChange={(e) => updateBasicInformation({ email: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="e.g., priya.mua@gmail.com"
             />
+            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
           </div>
+
           <div>
-            <label htmlFor="internal-phone" className="block text-sm font-medium text-gray-700">
-              Phone Number (Internal) <span className="text-red-500">*</span>
+            <label htmlFor="whatsappNumber" className="block text-sm font-medium text-gray-700">
+              WhatsApp Number <span className="text-red-500">*</span>
             </label>
-            <p className="text-xs text-gray-500 mb-1">
-              For our team's use only. Not visible to clients.
-            </p>
             <input
+              id="whatsappNumber"
               type="tel"
-              id="internal-phone"
-              value={basicInformation.phoneInternal}
-              onChange={(e) => updateBasicInformation({ phoneInternal: e.target.value })}
+              value={basicInformation.whatsappNumber}
+              onChange={(e) => updateBasicInformation({ whatsappNumber: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="e.g., +91 9876543210"
             />
+            {errors.whatsappNumber && (
+              <p className="text-sm text-red-500 mt-1">{errors.whatsappNumber}</p>
+            )}
           </div>
         </div>
 
-        {/* Public Phone (Optional) */}
-        <div>
-          <label htmlFor="public-phone" className="block text-sm font-medium text-gray-700">
-            Public Phone Number (Optional)
-          </label>
-          <p className="text-xs text-gray-500 mb-1">
-            A number you are comfortable sharing with potential clients.
-          </p>
-          <input
-            type="tel"
-            id="public-phone"
-            value={basicInformation.phonePublic}
-            onChange={(e) => updateBasicInformation({ phonePublic: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-          />
-        </div>
-
-        {/* Gender */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Gender <span className="text-red-500">*</span>
-          </label>
-          <div className="flex flex-wrap gap-4">
-            {genderOptions.map((option) => (
-              <button
-                type="button"
-                key={option.id}
-                onClick={() => updateBasicInformation({ gender_id: option.id })}
-                className={`flex-1 p-3 border rounded-lg text-center transition-all duration-200 ${
-                  basicInformation.gender_id === option.id
-                    ? "border-black bg-gray-50 font-semibold"
-                    : "border-gray-200 bg-white hover:border-gray-300"
-                }`}
-              >
-                {option.gender_value}
-              </button>
-            ))}
-          </div>
-        </div>
-        
-        {/* Years of Experience & Language Spoken */}
+        {/* Years Experience & Team Size */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* NEW: Years of Experience */}
           <div>
-            <label htmlFor="experience-years" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="yearsExperience" className="block text-sm font-medium text-gray-700">
               Years of Experience <span className="text-red-500">*</span>
             </label>
             <input
-              type="number"
-              id="experience-years"
-              placeholder="e.g., 5"
-              value={basicInformation.experienceYears ?? ''}
-              onChange={(e) =>
-                updateBasicInformation({
-                  experienceYears: e.target.value === '' ? null : Number(e.target.value),
-                })
-              }
+              id="yearsExperience"
+              type="text"
+              value={basicInformation.yearsExperience}
+              onChange={(e) => updateBasicInformation({ yearsExperience: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              placeholder="e.g., 3–5 years"
             />
+            {errors.yearsExperience && (
+              <p className="text-sm text-red-500 mt-1">{errors.yearsExperience}</p>
+            )}
           </div>
 
-          {/* Language Spoken */}
           <div>
-            <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-1">
-              Primary Language Spoken <span className="text-red-500">*</span>
+            <label htmlFor="teamSize" className="block text-sm font-medium text-gray-700">
+              Team Size <span className="text-red-500">*</span>
             </label>
             <select
-              id="language"
-              value={basicInformation.languages[0] || ""}
-              onChange={(e) => updateBasicInformation({ languages: [e.target.value] })}
+              id="teamSize"
+              value={basicInformation.teamSize}
+              onChange={(e) => updateBasicInformation({ teamSize: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
             >
-              <option value="" disabled>Select a language</option>
-              {languageOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
+              <option value="">Select Team Size</option>
+              {teamSizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
               ))}
             </select>
+            {errors.teamSize && (
+              <p className="text-sm text-red-500 mt-1">{errors.teamSize}</p>
+            )}
           </div>
         </div>
 
-        {/* NEW: Short Bio */}
+        {/* Artist Type */}
         <div>
-            <label htmlFor="short-bio" className="block text-sm font-medium text-gray-700">
-                Short Bio
-            </label>
-            <p className="text-xs text-gray-500 mb-1">
-                A brief introduction about yourself and your passion for makeup (200-300 characters recommended).
-            </p>
-            <textarea
-                id="short-bio"
-                rows={4}
-                value={basicInformation.shortBio}
-                onChange={(e) => updateBasicInformation({ shortBio: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                placeholder="e.g., Passionate makeup artist with a flair for creating timeless bridal looks..."
-            />
+          <label htmlFor="artistType" className="block text-sm font-medium text-gray-700">
+            Artist Type <span className="text-red-500">*</span>
+          </label>
+          <select
+            id="artistType"
+            value={basicInformation.artistType}
+            onChange={(e) => updateBasicInformation({ artistType: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          >
+            <option value="">Select Artist Type</option>
+            {artistTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+          {errors.artistType && (
+            <p className="text-sm text-red-500 mt-1">{errors.artistType}</p>
+          )}
         </div>
-
       </div>
 
       {/* Navigation Button */}
