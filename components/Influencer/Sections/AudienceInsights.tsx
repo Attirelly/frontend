@@ -60,13 +60,15 @@ const AudienceInsights: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
     // ✨ Validation now checks the store's state
+    console.log('Current Audience Insights:', audienceInsights);
     if (
       !audienceInsights.followers.instagram ||
       !audienceInsights.engagementMetrics.engagementRate ||
       !audienceInsights.engagementMetrics.avgLikesPerReel ||
       !audienceInsights.engagementMetrics.avgCommentsPerReel ||
-      audienceInsights.topAgeGroups.length === 0 ||
-      audienceInsights.topLocations.length === 0
+      audienceInsights.topAgeGroups.length === 0 
+      // ||
+      // audienceInsights.topLocations.length === 0
       // !audienceInsights.audienceInterests || audienceInsights.audienceInterests.length === 0
     ) {
       alert('Please fill out all mandatory fields marked with an asterisk (*).');
@@ -159,7 +161,7 @@ const AudienceInsights: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
         </div>
 
         {/* Top Locations */}
-        <div>
+        {/* <div>
           <label htmlFor="top-locations" className="block text-sm font-medium text-gray-700 mb-1">Top Locations <span className="text-red-500">*</span></label>
           <div className="w-full flex flex-wrap items-center p-2 border border-gray-300 rounded-md">
             {audienceInsights.topLocations.map(location => <Tag key={location} label={location} onRemove={() => removeLocation(location)} />)}
@@ -172,25 +174,23 @@ const AudienceInsights: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
               placeholder="Type a city and press Enter..."
             />
           </div>
-        </div>
+        </div> */}
 
-        {/* Audience Interests */}
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Audience Interests <span className="text-red-500">*</span></label>
           <div className="flex flex-wrap">
-            {/* ⚠️ This maps to a new 'audienceInterests' field you should add to your store */}
             
-            {/* {audienceInterestOptions.map(option => (
+            {audienceInterestOptions.map(option => (
               <button type="button" key={option} onClick={() => handleToggle(option, 'audienceInterests')}
                 className={`m-1 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                   (audienceInsights.audienceInterests || []).includes(option) ? 'bg-black text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                 }`}>
                 {option}
               </button>
-            ))} */}
+            ))}
            
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Navigation Button */}

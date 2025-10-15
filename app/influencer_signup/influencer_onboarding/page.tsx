@@ -117,20 +117,20 @@ export default function InfluencerOnboardingPage() {
 
         updateAudienceInsights({
           followers: {
-            instagram: data.followers_instagram || null,
-            youtube: data.followers_youtube || null,
-            facebook: data.followers_facebook || null,
+            instagram: data.followers_instagram || 0,
+            youtube: data.followers_youtube || 0,
+            facebook: data.followers_facebook || 0,
           },
           engagementMetrics: {
-            avgLikesPerReel: data.avg_likes_per_reel || null,
-            avgCommentsPerReel: data.avg_comments_per_reel || null,
-            avgViewsPerReel: data.avg_views_per_reel || null,
-            engagementRate: data.engagement_rate || null,
+            avgLikesPerReel: data.avg_likes_per_reel || 0,
+            avgCommentsPerReel: data.avg_comments_per_reel || 0,
+            avgViewsPerReel: data.avg_views_per_reel || 0,
+            engagementRate: data.engagement_rate || 0,
           },
           audienceGenderSplit: {
-            male: data.audience_male || null,
-            female: data.audience_female || null,
-            other: data.audience_other || null,
+            male: data.audience_male || 0,
+            female: data.audience_female || 0,
+            other: data.audience_other || 0,
           },
           topAgeGroups: data.top_age_groups || [],
           topLocations: data.top_locations || [],
