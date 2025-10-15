@@ -179,16 +179,16 @@ const AudienceInsights: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">Audience Interests <span className="text-red-500">*</span></label>
           <div className="flex flex-wrap">
             {/* ⚠️ This maps to a new 'audienceInterests' field you should add to your store */}
-            {/*
-            {audienceInterestOptions.map(option => (
+            
+            {/* {audienceInterestOptions.map(option => (
               <button type="button" key={option} onClick={() => handleToggle(option, 'audienceInterests')}
                 className={`m-1 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                   (audienceInsights.audienceInterests || []).includes(option) ? 'bg-black text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                 }`}>
                 {option}
               </button>
-            ))}
-            */}
+            ))} */}
+           
           </div>
         </div>
       </div>

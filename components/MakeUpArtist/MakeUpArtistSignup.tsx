@@ -22,7 +22,7 @@ export default function MakeupArtistSignup() {
   const router = useRouter();
   const isPhoneValid = /^\d{10}$/.test(phone);
 
-  const { setArtistId, setArtistNumber, resetStore } = useMakeupArtistStore();
+  const { setArtistId, setPhoneInternal, resetStore } = useMakeupArtistStore();
 
   // Prefetch routes
   useEffect(() => {
@@ -120,7 +120,7 @@ export default function MakeupArtistSignup() {
 
         const artistId = artistResp.data.id;
         setArtistId(artistId);
-        setArtistNumber(phone);
+        setPhoneInternal(phone);
 
         await api.post("/users/login", { contact_number: phone });
 
@@ -155,7 +155,7 @@ export default function MakeupArtistSignup() {
               params: { phone_number: phone, otp_template: "UserLoginOTP" },
             });
             setSendOTP(true);
-            setArtistNumber(phone);
+            setPhoneInternal(phone);
           } catch {
             toast.error("Failed to send OTP");
           }
