@@ -45,7 +45,7 @@ const onboardingSectionIds = Object.keys(
 ) as MakeupArtistSectionKey[];
 
 // ================== MAIN COMPONENT ===================
-export default function MakeUpArtistDashboardPage() {
+export default function MakeUpArtistOnboardingPage() {
   const router = useRouter();
   const { user } = useAuthStore();
 
