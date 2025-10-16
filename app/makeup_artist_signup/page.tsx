@@ -193,7 +193,7 @@ export default function MakeUpArtistSignup() {
         return false;
       }
       try {
-        const response = await api.get("/makeup_artist/by-phone", {
+        const response = await api.get("/makeup_artists/by-phone", {
           params: { phone_number: phone.toString() },
         });
 
