@@ -76,11 +76,15 @@ const PricingStructure: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
       alert('Please fill out all mandatory pricing fields marked with an asterisk (*).');
       return;
     }
+    if(reel < 0 || story < 0 || post < 0 || campaign_min < 0 || campaign_max < 0) {
+      alert('Prices cannot be negative. Please enter valid amounts.');
+      return;
+    }
     onNext();
   };
 
   return (
-    <form onSubmit={handleNext} className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
+    <form onSubmit={handleNext} className="bg-white p-8 rounded-lg shadow-sm animate-fade-in text-black">
       <h2 className="text-2xl font-semibold mb-2">Pricing Structure</h2>
       <p className="text-gray-500 mb-8">Define your charges for different types of content.</p>
 
@@ -115,14 +119,14 @@ const PricingStructure: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
       </div>
 
       {/* Navigation Button */}
-      <div className="flex justify-end mt-12 pt-6 border-t">
+      {/* <div className="flex justify-end mt-12 pt-6">
         <button
           type="submit"
           className="px-8 py-3 bg-black text-white rounded-md font-semibold"
         >
           {isLastStep ? 'Submit' : 'Next →'}
         </button>
-      </div>
+      </div> */}
     </form>
   );
 };

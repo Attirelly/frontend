@@ -26,6 +26,7 @@ import { Area, City, Pincode, State } from "@/types/utilityTypes";
 import useAuthStore from "@/store/auth";
 import { mapInfluencerDataToBackend } from "@/utils/convertInfluencer";
 import InfluencerPhotos from "@/components/Influencer/Sections/InfluencerPhotos";
+import { handleInfluencerValidations } from "@/utils/handleInfluencerValidations";
 
 // ================== SECTION MAP ===================
 const sectionComponents: Record<InfluencerSectionKey, React.FC<any>> = {
@@ -45,6 +46,7 @@ const onboardingSectionIds = Object.keys(
 // ================== MAIN COMPONENT ===================
 export default function InfluencerOnboardingPage() {
   const store = useInfluencerStore();
+  const {handleValidations} = handleInfluencerValidations();
   const router = useRouter();
 
   const {
@@ -65,7 +67,7 @@ export default function InfluencerOnboardingPage() {
 
   const { user } = useAuthStore();
 
-  const [ currentIndex , setCurrentIndex ] = useState<number>(0) ; 
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   // ========== FETCH INFLUENCER DETAILS ==========
   useEffect(() => {
@@ -89,7 +91,7 @@ export default function InfluencerOnboardingPage() {
 
         // --- Update store sections ---
         setInfluencerId(data.id);
-        setCurrentIndex(data.onboarding_step)
+        setCurrentIndex(data.onboarding_step);
         updateBasicInformation({
           name: data.name || "",
           email: data.email || "",
@@ -103,13 +105,13 @@ export default function InfluencerOnboardingPage() {
         updateSocialPresence({
           primaryPlatform: data.primary_platform || null,
           socialLinks: {
-            instagram: data.instagram_link || "",
-            youtube: data.youtube_link || "",
-            facebook: data.facebook_link || "",
-            snapchat: data.snapchat_link || "",
-            wishlink: data.wishlink_link || "",
-            hypd: data.hypd_link || "",
-            website: data.website || "",
+            instagram: data.social_links.instagram || "",
+            youtube: data.social_links.youtube || "",
+            facebook: data.social_links.facebook || "",
+            snapchat: data.social_links.snapchat || "",
+            wishlink: data.social_links.wishlink || "",
+            hypd: data.social_links.hypd || "",
+            website: data.social_links.website || "",
           },
           categoryNiche: data.category_niche || [],
           contentStyle: data.content_style || [],
@@ -117,20 +119,20 @@ export default function InfluencerOnboardingPage() {
 
         updateAudienceInsights({
           followers: {
-            instagram: data.followers_instagram || 0,
-            youtube: data.followers_youtube || 0,
-            facebook: data.followers_facebook || 0,
+            instagram: data.followers.instagram || 0,
+            youtube: data.followers.youtube || 0,
+            facebook: data.followers.facebook || 0,
           },
           engagementMetrics: {
-            avgLikesPerReel: data.avg_likes_per_reel || 0,
-            avgCommentsPerReel: data.avg_comments_per_reel || 0,
-            avgViewsPerReel: data.avg_views_per_reel || 0,
-            engagementRate: data.engagement_rate || 0,
+            avgLikesPerReel: data.engagement_metrics.avgLikesPerReel || 0,
+            avgCommentsPerReel: data.engagement_metrics.avgCommentsPerReel || 0,
+            avgViewsPerReel: data.engagement_metrics.avgViewsPerReel || 0,
+            engagementRate: data.engagement_metrics.engagementRate || 0,
           },
           audienceGenderSplit: {
-            male: data.audience_male || 0,
-            female: data.audience_female || 0,
-            other: data.audience_other || 0,
+            male: data.audience_gender_split.male || 0,
+            female: data.audience_gender_split.female || 0,
+            other: data.audience_gender_split.other || 0,
           },
           topAgeGroups: data.top_age_groups || [],
           topLocations: data.top_locations || [],
@@ -140,16 +142,16 @@ export default function InfluencerOnboardingPage() {
         updateCollaborationPreferences({
           preferredCollabTypes: data.preferred_collab_types || [],
           openToBarter: data.open_to_barter || "Depends",
-          maxCampaignsPerMonth: data.max_campaigns_per_month || 2,
+          // maxCampaignsPerMonth: data.max_campaigns_per_month || 2,
         });
 
         updatePricingStructure({
           pricing: {
-            reel: data.reel_price || null,
-            story: data.story_price || null,
-            post: data.post_price || null,
-            campaign_min: data.campaign_min || null,
-            campaign_max: data.campaign_max || null,
+            reel: data.pricing.reel || null,
+            story: data.pricing.story || null,
+            post: data.pricing.post || null,
+            campaign_min: data.pricing.campaign_min || null,
+            campaign_max: data.pricing.campaign_max || null,
           },
           barterValueMin: data.barter_value_min || null,
         });
@@ -186,6 +188,8 @@ export default function InfluencerOnboardingPage() {
 
   // ========== SAVE AND NEXT ==========
   const handleSaveAndNext = async () => {
+    const isValid = handleValidations();
+    if (isValid === false) return;
     const currentData = store[activeSection];
     const currentIndex = onboardingSectionIds.indexOf(activeSection);
 
@@ -203,9 +207,10 @@ export default function InfluencerOnboardingPage() {
 
       if (currentIndex < onboardingSectionIds.length - 1) {
         setActiveSection(onboardingSectionIds[currentIndex + 1]);
+        setCurrentIndex(currentIndex + 1);
       } else {
         toast.success("🎉 Onboarding complete!");
-        router.push("/influencer/dashboard");
+        router.push("/influencer_dashboard");
       }
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to save data.", {
@@ -217,6 +222,8 @@ export default function InfluencerOnboardingPage() {
     }
   };
 
+  console.log("Current Active Section:", activeSection);
+
   // ========== RENDER ==========
   return (
     <div className="min-h-screen bg-gray-100">
@@ -224,12 +231,12 @@ export default function InfluencerOnboardingPage() {
 
       <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <InfluencerSidebar
-          currentIndex = {currentIndex}
+          currentIndex={currentIndex}
           activeSectionId={activeSection}
           onSectionClick={setActiveSection}
         />
 
-        <div className="rounded-md bg-gray-100 w-full md:w-3/4">
+        <div className="flex flex-col gap-3 rounded-md bg-gray-100 w-full md:w-3/4">
           {onboardingSectionIds.map((id) => {
             const Component = sectionComponents[id];
             const isActive = id === activeSection;
@@ -242,6 +249,12 @@ export default function InfluencerOnboardingPage() {
               </div>
             );
           })}
+          <button
+            className="bg-black text-white px-6 py-3 rounded-lg ml-auto cursor-pointer"
+            onClick={handleSaveAndNext}
+          >
+            {activeSection === "mediaKit" ? "Submit" : "Next"}
+          </button>
         </div>
       </div>
     </div>
