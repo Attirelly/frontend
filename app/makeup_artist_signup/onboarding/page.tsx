@@ -130,8 +130,8 @@ export default function MakeUpArtistOnboardingPage() {
           collabFrequency: data.collab_frequency || "",
           collabNature: data.collab_nature || "",
           collabReadyToTravel: !!data.collab_ready_to_travel,
-          collabTopBrands: data.collab_top_brands || [],
-          collabAvgReach: data.collab_avg_reach || "",
+          // collabTopBrands: data.collab_top_brands || [],
+          // collabAvgReach: data.collab_avg_reach || "",
         });
 
         updateAttirellyCollab({
@@ -199,13 +199,14 @@ export default function MakeUpArtistOnboardingPage() {
     try {
       const mappedData = mapMakeupArtistDataToBackend(activeSection, currentData);
       const payload = { ...mappedData, next_step: currentSectionIndex + 1 };
-
+      console.log(`Payload for ${activeSection}:`, payload);
       await api.put(`/makeup_artists/update/${artistId}`, payload);
 
       toast.success("Saved successfully!", { id: toastId });
 
       if (currentSectionIndex < onboardingSectionIds.length - 1) {
         setActiveSection(onboardingSectionIds[currentSectionIndex + 1]);
+        setCurrentIndex(currentIndex + 1);
       } else {
         toast.success("🎉 Onboarding complete!");
         router.push("/makeup-artist/dashboard");
@@ -219,6 +220,8 @@ export default function MakeUpArtistOnboardingPage() {
       setIsSubmitting(false);
     }
   };
+
+  console.log("Current Active Section:", activeSection);
 
   // ========== RENDER ==========
   return (

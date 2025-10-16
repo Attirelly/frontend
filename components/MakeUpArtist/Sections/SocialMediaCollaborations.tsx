@@ -9,7 +9,7 @@ interface ComponentProps {
 }
 
 const SocialMediaCollaboration: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
-  const { attirellyCollab, updateAttirellyCollab } = useMakeupArtistStore();
+  const { socialCollabs, updateSocialCollabs } = useMakeupArtistStore();
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const collabTypes = [
@@ -45,36 +45,37 @@ const SocialMediaCollaboration: React.FC<ComponentProps> = ({ onNext, isLastStep
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!attirellyCollab.attirellyCollabTypes.length)
-      newErrors.attirellyCollabTypes = "Select at least one collaboration type.";
-    if (!attirellyCollab.attirellyCollabModel)
-      newErrors.attirellyCollabModel = "Please select a collaboration model.";
-    if (!attirellyCollab.attirellyCollabFrequency)
-      newErrors.attirellyCollabFrequency = "Please choose a frequency.";
-    if (!attirellyCollab.referralPotential)
-      newErrors.referralPotential = "Please indicate your referral potential.";
+    if (!socialCollabs.collabTypes.length)
+      newErrors.collabTypes = "Select at least one collaboration type.";
+    if (!socialCollabs.collabNature)
+      newErrors.collabNature = "Please select a collaboration nature.";
+    if (!socialCollabs.collabFrequency)
+      newErrors.collabFrequency = "Please choose a frequency.";
+    // if (!socialCollabs.referralPotential)
+    //   newErrors.referralPotential = "Please indicate your referral potential.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleMultiSelect = (key: "attirellyCollabTypes", value: string) => {
-    const current = attirellyCollab[key];
+  const handleMultiSelect = (key: "collabTypes", value: string) => {
+    const current = socialCollabs[key];
     if (current.includes(value)) {
-      updateAttirellyCollab({ [key]: current.filter((v) => v !== value) });
+      updateSocialCollabs({ [key]: current.filter((v: string) => v !== value) });
     } else {
-      updateAttirellyCollab({ [key]: [...current, value] });
+      updateSocialCollabs({ [key]: [...current, value] });
     }
   };
 
-  const handleChange = (key: keyof typeof attirellyCollab, value: any) => {
-    updateAttirellyCollab({ [key]: value });
+  const handleChange = (key: keyof typeof socialCollabs, value: any) => {
+    updateSocialCollabs({ [key]: value });
   };
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Social Collab Data:", socialCollabs);
     if (validateForm()) onNext();
   };
-
+  
   return (
     <form
       onSubmit={handleNext}
@@ -96,8 +97,8 @@ const SocialMediaCollaboration: React.FC<ComponentProps> = ({ onNext, isLastStep
               <label key={type} className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
-                  checked={attirellyCollab.attirellyCollabTypes.includes(type)}
-                  onChange={() => handleMultiSelect("attirellyCollabTypes", type)}
+                  checked={socialCollabs.collabTypes.includes(type)}
+                  onChange={() => handleMultiSelect("collabTypes", type)}
                   className="w-4 h-4"
                 />
                 {type}
@@ -115,8 +116,8 @@ const SocialMediaCollaboration: React.FC<ComponentProps> = ({ onNext, isLastStep
             Collaboration Model <span className="text-red-500">*</span>
           </label>
           <select
-            value={attirellyCollab.attirellyCollabModel}
-            onChange={(e) => handleChange("attirellyCollabModel", e.target.value)}
+            value={socialCollabs.collabNature}
+            onChange={(e) => handleChange("collabNature", e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
           >
             <option value="">Select Model</option>
@@ -137,8 +138,8 @@ const SocialMediaCollaboration: React.FC<ComponentProps> = ({ onNext, isLastStep
             Collaboration Frequency <span className="text-red-500">*</span>
           </label>
           <select
-            value={attirellyCollab.attirellyCollabFrequency}
-            onChange={(e) => handleChange("attirellyCollabFrequency", e.target.value)}
+            value={socialCollabs.collabFrequency}
+            onChange={(e) => handleChange("collabFrequency", e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
           >
             <option value="">Select Frequency</option>
@@ -157,8 +158,8 @@ const SocialMediaCollaboration: React.FC<ComponentProps> = ({ onNext, isLastStep
         <div className="flex items-center gap-3">
           <input
             type="checkbox"
-            checked={attirellyCollab.attirellyReadyToTravel}
-            onChange={(e) => handleChange("attirellyReadyToTravel", e.target.checked)}
+            checked={socialCollabs.collabReadyToTravel}
+            onChange={(e) => handleChange("collabReadyToTravel", e.target.checked)}
             className="w-4 h-4"
           />
           <label className="text-sm font-medium text-gray-700">
@@ -167,12 +168,12 @@ const SocialMediaCollaboration: React.FC<ComponentProps> = ({ onNext, isLastStep
         </div>
 
         {/* Referral Potential */}
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Referral Potential <span className="text-red-500">*</span>
           </label>
           <select
-            value={attirellyCollab.referralPotential}
+            value={socialCollabs.referralPotential}
             onChange={(e) => handleChange("referralPotential", e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
           >
@@ -186,7 +187,7 @@ const SocialMediaCollaboration: React.FC<ComponentProps> = ({ onNext, isLastStep
           {errors.referralPotential && (
             <p className="text-sm text-red-500 mt-1">{errors.referralPotential}</p>
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* Navigation Button */}

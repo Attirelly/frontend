@@ -39,8 +39,8 @@
     collabFrequency: string;
     collabNature: string;
     collabReadyToTravel: boolean;
-    collabTopBrands: string[];
-    collabAvgReach: string;
+    // collabTopBrands: string[];
+    // collabAvgReach: string;
   };
 
   // ✅ Section 5: Social Media Collaborations (with Attirelly)
@@ -204,8 +204,8 @@
       collabFrequency: "",
       collabNature: "",
       collabReadyToTravel: true,
-      collabTopBrands: [],
-      collabAvgReach: "",
+      // collabTopBrands: [],
+      // collabAvgReach: "",
     },
     attirellyCollab: {
       attirellyCollabTypes: [],

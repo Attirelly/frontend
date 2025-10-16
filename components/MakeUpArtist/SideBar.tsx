@@ -5,12 +5,17 @@ import React from "react";
 
 export type MakeupArtistSectionKey =
   | "basicInformation"
-  | "servicesOffered"
-  | "pricingStructure"
+  | "clientServiceProfile"
+  | "fashionOutfitInfluence"
+  | "socialCollabs"
+  | "attirellyCollab"
+  | "commissionProgram"
   | "portfolioAndReviews"
-  | "availabilityAndLocation"
-  | "collaborationPreferences"
-  | "mediaKit";
+  | "socialLinks"
+  | "artistLocation"
+  | "mediaKit"
+  | "instagramInsights"
+  | "mediaBio";
 
 interface MakeupArtistSidebarProps {
   currentIndex: number;
@@ -32,38 +37,56 @@ const sections: {
     iconUrl: "/OnboardingSections/business_details.png",
   },
   {
-    id: "servicesOffered",
+    id: "clientServiceProfile",
     title: "Services Offered",
     desc: "Specify the makeup services you provide.",
     iconUrl: "/OnboardingSections/services.png",
   },
   {
-    id: "pricingStructure",
-    title: "Pricing Structure",
-    desc: "Define your pricing and packages.",
+    id: "fashionOutfitInfluence",
+    title: "Fashion & Outfit Influence",
+    desc: "Specify your fashion and outfit influence.",
+    iconUrl: "/OnboardingSections/business_details.png",
+  },
+  {
+    id: "socialCollabs",
+    title: "Social Media Collaborations",
+    desc: "Specify your social media collaboration preferences.",
+    iconUrl: "/OnboardingSections/business_details.png",
+  },
+  {
+    id: "attirellyCollab",
+    title: "Attirelly Collaborations",
+    desc: "Specify your Attirelly collaboration preferences.",
+    iconUrl: "/OnboardingSections/business_details.png",
+  },
+  {
+    id: "commissionProgram",
+    title: "Commission Program",
+    desc: "Define your commission structure.",
     iconUrl: "/OnboardingSections/price_filters.png",
   },
   {
-    id: "portfolioAndReviews",
-    title: "Portfolio & Reviews",
-    desc: "Upload your best work and client reviews.",
+    id: "socialLinks",
+    title: "Social Links",
+    desc: "Add links to your social media profiles.",
     iconUrl: "/OnboardingSections/store_photos.png",
   },
   {
-    id: "availabilityAndLocation",
+    id: "instagramInsights",
+    title: "Instagram Insights",
+    desc: "View your Instagram performance metrics.",
+    iconUrl: "/OnboardingSections/instagram.svg",
+  },
+  {
+    id: "artistLocation",
     title: "Availability & Location",
     desc: "Where you’re based and travel readiness.",
     iconUrl: "/OnboardingSections/where_to_sell.png",
   },
   {
-    id: "collaborationPreferences",
-    title: "Collaboration Preferences",
-    desc: "Preferred event types and brand work.",
-    iconUrl: "/OnboardingSections/instagram.svg",
-  },
-  {
-    id: "mediaKit",
-    title: "Media Kit",
+    id: "mediaBio",
+    title: "Media Bio",
     desc: "Your profile picture and portfolio file.",
     iconUrl: "/OnboardingSections/social_links.png",
   },
@@ -116,30 +139,31 @@ const DesktopView = ({
   onSectionClick,
   currentIndex,
 }: MakeupArtistSidebarProps) => (
-  <div className="bg-white p-4 rounded-2xl w-full max-w-sm self-start text-black">
+  <div className="bg-white p-4 rounded-2xl w-full max-w-sm self-start text-black shadow-md">
     <h2 className="text-lg font-bold mb-4">Complete your profile</h2>
     <nav>
       <ul className="space-y-4">
         {sections.map((section, index) => {
           const isCurrent = section.id === activeSectionId;
           const disabled = index > currentIndex;
+          console.log("disabled: ", disabled, "current index: ", currentIndex);
           return (
             <li key={section.id}>
               <button
                 onClick={() => {
                   if (!disabled) onSectionClick(section.id);
                 }}
-                className={`flex items-start text-left w-full p-4 border rounded-lg transition-all duration-200 focus:outline-none
-                  ${
-                    isCurrent
-                      ? "border-black bg-gray-50"
-                      : "border-gray-200 bg-white hover:border-gray-300"
-                  }
-                  ${
-                    disabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-gray-50"
-                  }`}
+                className={`flex items-start text-left w-full p-4 rounded-lg
+                    ${
+                      isCurrent
+                        ? "border border-black border-2 bg-gray-50 focus:outline-none"
+                        : "border-gray-200 bg-white shadow-sm hover:border-gray-300"
+                    }
+                    ${
+                      disabled
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-gray-50 cursor-pointer"
+                    }`}
               >
                 <Image
                   src={section.iconUrl}
