@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { Check } from 'lucide-react';
+import { useWeddingPlannerStore } from '@/store/weddingPlannerStore';
 
 interface ComponentProps {
   onNext: () => void;
 }
 
 export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
+
+  const {basicInformation, updateBasicInformation} = useWeddingPlannerStore();
   // --- 1. Personal Details State ---
   const [personalNumber, setPersonalNumber] = useState('');
   const [email, setEmail] = useState('');
@@ -18,11 +21,6 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [sameAsPersonal, setSameAsPersonal] = useState(false);
   const [barterAccepted, setBarterAccepted] = useState<boolean | null>(null);
-
-  // --- 3. Location State ---
-  const [city, setCity] = useState('');
-  const [area, setArea] = useState('');
-  const [pincode, setPincode] = useState('');
 
   // useEffect to handle the "Same as personal number" checkbox logic
   useEffect(() => {
@@ -44,16 +42,11 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
       !name ||
       !agencyName ||
       !whatsappNumber ||
-      barterAccepted === null ||
-      !city ||
-      !area ||
-      !pincode
+      barterAccepted === null
     ) {
       alert('All fields marked with an asterisk are mandatory. Please fill them out to continue.');
       return;
     }
-    
-    // Add more specific validation (e.g., number format, email format) here if needed
 
     onNext();
   };
@@ -77,8 +70,8 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
               <input
                 type="tel"
                 id="personal-number"
-                value={personalNumber}
-                onChange={(e) => setPersonalNumber(e.target.value)}
+                value={basicInformation.internalPhone}
+                onChange={(e) => updateBasicInformation({ internalPhone: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
@@ -89,8 +82,8 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
               <input
                 type="email"
                 id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={basicInformation.email}
+                onChange={(e) => updateBasicInformation({ email: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
@@ -102,8 +95,8 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
             <input
               type="text"
               id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={basicInformation.fullName}
+              onChange={(e) => updateBasicInformation({ fullName: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
             />
           </div>
@@ -125,8 +118,8 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
             <input
               type="text"
               id="agencyName"
-              value={agencyName}
-              onChange={(e) => setAgencyName(e.target.value)}
+              value={basicInformation.businessName}
+              onChange={(e) => updateBasicInformation({ businessName: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
             />
           </div>
@@ -138,9 +131,9 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
             <input
               type="tel"
               id="whatsappNumber"
-              value={whatsappNumber}
+              value={basicInformation.whatsappPhone}
               onChange={(e) => {
-                setWhatsappNumber(e.target.value);
+                updateBasicInformation({ whatsappPhone: e.target.value });
                 setSameAsPersonal(false); // Uncheck if user manually types
               }}
               disabled={sameAsPersonal} // Disable if checkbox is checked
@@ -188,68 +181,6 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
           </div>
 
         </div>
-      </div>
-
-      {/* Section 3: Location */}
-      <div className="bg-white p-8 rounded-lg shadow-sm border text-black">
-        <h2 className="text-2xl font-semibold mb-2">Location</h2>
-        <p className="text-gray-500 mb-8">
-          This helps us connect you with local clients.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
-              City <span className="text-red-500">*</span>
-            </label>
-            <select
-              id="city"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="" disabled hidden>Select a city</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Mumbai">Mumbai</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-1">
-              Area <span className="text-red-500">*</span>
-            </label>
-            <select
-              id="area"
-              value={area}
-              onChange={(e) => setArea(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="" disabled hidden>Select an area</option>
-              <option value="South Delhi">South Delhi</option>
-              <option value="Bandra">Bandra</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="pincode" className="block text-sm font-medium text-gray-700 mb-1">
-              Pincode <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="pincode"
-              value={pincode}
-              onChange={(e) => setPincode(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Button */}
-      <div className="flex justify-end pt-4">
-        <button
-          onClick={handleNext}
-          className="px-8 py-3 bg-black text-white rounded-md font-semibold hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-        >
-          Next →
-        </button>
       </div>
     </div>
   );

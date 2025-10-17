@@ -1,37 +1,56 @@
 'use client';
 
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import { forwardRef, useImperativeHandle } from 'react';
 import { Instagram } from 'lucide-react';
+import { useWeddingPlannerStore } from '@/store/weddingPlannerStore'; // Import your store
 
 interface ComponentProps {
   onNext: () => void;
   isLastStep?: boolean;
 }
 
-const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {
-  // State for the form fields
-  const [instagramHandle, setInstagramHandle] = useState('');
-  const [youtubeLink, setYoutubeLink] = useState('');
-  const [websiteUrl, setWebsiteUrl] = useState('');
-  const [facebookLink, setFacebookLink] = useState('');
+/**
+ * Extracts the Instagram handle from various possible inputs (full URL, handle, etc.)
+ */
+const getHandleFromInput = (input: string): string => {
+  if (!input) return '';
+  return input
+    .replace(/^(https?:\/\/)?(www\.)?instagram\.com\//, '') // Remove domain
+    .replace(/\/$/, '') // Remove trailing slash
+    .split('?')[0]; // Remove query params
+};
 
-  // Expose data to the parent component
+
+const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {
+  // Get state and updater from Zustand
+  const { socialLinks, updateSocialLinks } = useWeddingPlannerStore();
+
+  // Expose data to the parent component (reads directly from Zustand)
   useImperativeHandle(ref, () => ({
     getData: () => ({
-      instagram_url: `https://instagram.com/${instagramHandle}`,
-      youtube_link: youtubeLink,
-      website_url: websiteUrl,
-      facebook_link: facebookLink,
+      instagram_url: socialLinks.instagramUrl,
+      youtube_link: socialLinks.youtubeLink,
+      website_url: socialLinks.websiteUrl,
+      facebook_link: socialLinks.facebookLink,
     }),
   }));
 
-  // Validation for mandatory fields
+  // Validation for mandatory fields (reads from Zustand)
   const handleNext = () => {
-    if (!instagramHandle) {
+    if (!socialLinks.instagramUrl) {
       alert('Please enter your Instagram handle.');
       return;
     }
     onNext();
+  };
+
+  /**
+   * Special handler for Instagram.
+   * Cleans the input to get just the handle, then saves the full URL to the store.
+   */
+  const handleInstagramChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handle = getHandleFromInput(e.target.value);
+    updateSocialLinks({ instagramUrl: handle ? `https://instagram.com/${handle}` : '' });
   };
 
   return (
@@ -46,15 +65,15 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
             Instagram Handle <span className="text-red-500">*</span>
           </label>
           <div className="mt-1 flex rounded-md shadow-sm">
-            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
+            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-100 px-3 text-gray-500 sm:text-sm">
               instagram.com/
             </span>
             <input
               type="text"
               id="instagram-handle"
-              value={instagramHandle}
-              onChange={(e) => setInstagramHandle(e.target.value)}
-              className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-gray-300 px-3 py-2 focus:border-black focus:ring-black sm:text-sm"
+              value={getHandleFromInput(socialLinks.instagramUrl)} // Display only the handle
+              onChange={handleInstagramChange} // Use special handler
+              className="w-full min-w-0 flex-1 rounded-r-md border border-gray-300 px-3 py-2 bg-gray-50 focus:border-black focus:ring-black sm:text-sm"
               placeholder="yourhandle"
             />
           </div>
@@ -64,23 +83,38 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label htmlFor="youtube-link" className="block text-sm font-medium text-gray-700">YouTube Link (Optional)</label>
-                <input type="url" id="youtube-link" value={youtubeLink} onChange={(e) => setYoutubeLink(e.target.value)} className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md" placeholder="https://youtube.com/yourchannel"/>
+                <input 
+                  type="url" 
+                  id="youtube-link" 
+                  value={socialLinks.youtubeLink} 
+                  onChange={(e) => updateSocialLinks({ youtubeLink: e.target.value })} 
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md" 
+                  placeholder="https://youtube.com/yourchannel"/>
             </div>
             <div>
                 <label htmlFor="facebook-link" className="block text-sm font-medium text-gray-700">Facebook Link (Optional)</label>
-                <input type="url" id="facebook-link" value={facebookLink} onChange={(e) => setFacebookLink(e.target.value)} className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md" placeholder="https://facebook.com/yourpage"/>
+                <input 
+                  type="url" 
+                  id="facebook-link" 
+                  value={socialLinks.facebookLink} 
+                  onChange={(e) => updateSocialLinks({ facebookLink: e.target.value })} 
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md" 
+                  placeholder="https://facebook.com/yourpage"/>
             </div>
         </div>
         <div>
             <label htmlFor="website-url" className="block text-sm font-medium text-gray-700">Website URL (Optional)</label>
-            <input type="url" id="website-url" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md" placeholder="https://yourwebsite.com"/>
+            <input 
+              type="url" 
+              id="website-url" 
+              value={socialLinks.websiteUrl} 
+              onChange={(e) => updateSocialLinks({ websiteUrl: e.target.value })} 
+              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md" 
+              placeholder="https://yourwebsite.com"/>
         </div>
 
-        {/* Divider */}
-        <hr className="my-4" />
-
-        {/* Instagram Integration UI */}
-        <div>
+        {/* Instagram Integration UI (No state changes, left as-is) */}
+        {/* <div>
             <h2 className="text-xl font-semibold mb-4">Integrate</h2>
             <div className="flex w-full items-center justify-between p-6 border rounded-lg">
                 <div className="flex-grow">
@@ -94,13 +128,7 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
                     <Instagram className="h-10 w-10 text-pink-500" />
                 </div>
             </div>
-        </div>
-      </div>
-
-      <div className="flex justify-end mt-12 pt-6 border-t">
-        <button onClick={handleNext} className="px-8 py-3 bg-black text-white rounded-md font-semibold">
-          {isLastStep ? 'Submit' : 'Next →'}
-        </button>
+        </div> */}
       </div>
     </div>
   );

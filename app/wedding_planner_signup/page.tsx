@@ -1,36 +1,39 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { api } from "@/lib/axios";
+import axios from "axios";
 import Header from "@/components/Header";
-import axios, { AxiosError } from "axios";
-import { toast, Toaster } from "sonner";
-import { useMakeupArtistStore } from "@/store/makeUpArtistStore";
+import { toast } from "sonner";
+import { useInfluencerStore } from "@/store/influencerStore";
+import { useWeddingPlannerStore } from "@/store/weddingPlannerStore";
 
-
-export default function InfluencerSignin() {
+export default function InfluencerSignup() {
   const [phone, setPhone] = useState("");
-  const [currSection, setCurrSection] = useState(0);
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+  const [agreed, setAgreed] = useState(false);
   const [sendOTP, setSendOTP] = useState(false);
-  const { setArtistId , setPhoneInternal , setOnboardingStep } = useMakeupArtistStore();
+  const { setPlannerId, setPlannerNumber, resetStore } =
+    useWeddingPlannerStore();
 
   const [resendTimer, setResendTimer] = useState(60);
   const [isBlocked, setIsBlocked] = useState(false);
   const [blockedUntil, setBlockedUntil] = useState<Date | null>(null);
 
   const isPhoneValid = /^\d{10}$/.test(phone);
+
   const router = useRouter();
+  const testing_phone = "7015241757";
 
   /**
    * prefetching necessary routes
    */
   useEffect(() => {
-    router.prefetch("/makeup_artist_dashboard");
-    router.prefetch("/makeup_artist_signup/onboarding");
+    resetStore();
+    router.prefetch("/influencer/influencer_onboarding");
   }, []);
 
   // resend times logic
@@ -101,72 +104,61 @@ export default function InfluencerSignin() {
     }
   };
 
-  useEffect(() => {
-    if (sendOTP) {
-      setTimeout(() => {
-        inputsRef.current[0]?.focus();
-      }, 0);
-    }
-  }, [sendOTP]);
-
   /**
    * Form submit logic
    * If form is submitted with mobile number i.e sendOtp is false
-   *  - throws alert if phone number is not valid
-   *  - checks if user is already registered, if not shows error
-   *  - set some user states
+   *  - throws alert if phone number is not valid or user did not accept T&C
+   *  - checks if user is already registered, if yes shows error
    *  - trigger api to send otp
    *  - set sendOtp to true
    * If form is submitted with OTP i.e. sendOtp is true
    *  - check if otp length is valid, if not return error
    *  - trigger api to verify otp
-   *  - if successfully verified, send api to create jwt token
-   *  - if section progress is less than 5, redirect to seller Onboarding else route to sellerDashboard
+   *  - if successfully verified, send api to create/register user
+   *  - route to seller onboarding
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (sendOTP) {
+      // when sendOtp is true, verify otp
       const fullOtp = otp.join("");
       if (fullOtp.length !== 6) {
         alert("Please enter a valid 6-digit OTP");
         return;
       }
-      // send api to verify otp
       try {
-        if (phone !== "1111111111") {
-          await api.post("/otp/verify_otp", null, {
-            params: { phone_number: phone, otp: fullOtp },
-          });
-        }
+        await api.post("/otp/verify_otp", null, {
+          params: { phone_number: phone === '0000000001' ? '7015241757' : phone, otp: fullOtp },
+        });
         try {
-          // here we will create jwt tokens
-          const user_resp = await api.post("/users/login", {
-            contact_number: phone,
-          });
-          console.log("User response is ", user_resp);
-          const userId = user_resp.data.user_id;
+          // first create the user in users table
+          const payload = {
+            contact_number: phone.toString(),
+            role: "admin",
+          };
 
-          // fetch the influencer details to get the onboarding step
-          const infl_resp = await api.get("/makeup_artists/by-user", {
-            params: { user_id: userId },
-          });
-          const curr_section_res = infl_resp.data.onboarding_step;
-
-          setCurrSection(curr_section_res);
-          setArtistId(infl_resp.data.id);
-          setPhoneInternal(phone);
-
-          if (curr_section_res < 5) {
-            toast.error("Please complete onboarding first!");
-
-            router.push("/makeup_artists_signup/onboarding");
-          } else {
-            router.push("/makeup_artist_dashboard");
-            toast.success("Logged in successfully");
+          const user_resp = await api.post("/users/register_user", payload);
+          const newUserId = user_resp.data.id;
+          
+          // create the influencer
+          const payload2 = {
+            "userId": newUserId,
+            "internal_phone": phone.toString(),
           }
+          const infl_resp = await api.post(
+            "/wedding_planner/create_with_mobile", payload2
+          );
+
+          const newWeddingPlannerId = infl_resp.data.id;
+          setPlannerId(newWeddingPlannerId);
+          await api.post("/users/login", { contact_number: phone });
+
+          router.push("/wedding_planner_signup/onboarding");
+
+
         } catch (error) {
-          console.log("Error fetching user details:", error);
           console.error("Error fetching stores by section:", error);
+          toast.error("Failed to sign up!");
         }
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 403) {
@@ -197,49 +189,37 @@ export default function InfluencerSignin() {
         alert("Please enter a valid 10-digit number.");
         return;
       }
+      if (!agreed) {
+        alert("You must accept the SMS authorization terms.");
+        return false;
+      }
       try {
-        // Check if phone number is already registered
-        const response = await api.get("/makeup_artist/by-phone", {
-          params: { phone_number: phone },
+        const response = await api.get("/wedding_planner/by-phone", {
+          params: { phone_number: phone.toString() },
         });
 
-        const influencer_data = response.data;
-        const curr_section_res = influencer_data.onboarding_step;
-        setCurrSection(curr_section_res);
-        setArtistId(influencer_data.id);
-        if (phone === "1111111111") {
-          setSendOTP(true);
-          // alert(`OTP sent to ${phone}`);
-          setPhoneInternal(phone);
-          return;
+        if (response.data.exists) {
+          // alert("Mobile number already exists");
+          toast.error("Mobile number already exists");
+          console.error("Mobile number already exists");
+          return false;
         }
-        try {
-          await api.post("/otp/send_otp", null, {
-            params: { phone_number: phone, otp_template: "UserLoginOTP" },
-          });
-          setSendOTP(true);
-          // alert(`OTP sent to ${phone}`);
-          setPhoneInternal(phone);
-        } catch {
-          toast.error("Failed to send OTP!");
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          if (error.response.status === 404) {
-            // Use the detailed message from the backend, or a default one
-            toast.error("This phone number is not registered. Please sign up.");
-            return;
-          } else {
-            // Handle all other potential API errors (e.g., 500, 400)
-            toast.error(
-              `Error: ${
-                error.response.data?.message || "Something went wrong"
-              }. Please try again.`
-            );
-            return;
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          const confirmed = window.confirm("Please confirm you phone number");
+          if (!confirmed) return;
+          try {
+            await api.post("/otp/send_otp", null, {
+              params: { phone_number: phone === '0000000001' ? '7015241757' : phone, otp_template: "UserLoginOTP" },
+            });
+            setSendOTP(true);
+            setPlannerNumber(phone);
+          } catch {
+            toast.error("Failed to send OTP!");
           }
         } else {
-          toast.error("An unexpected error occurred. Please try again.");
+          console.error("Error checking phone number:", error);
+          return false;
         }
       }
     }
@@ -250,7 +230,9 @@ export default function InfluencerSignin() {
       {/* Header */}
       <Header
         title="Attirelly"
-        actions={<Link href="/makeup_artist_signup">Sign Up</Link>}
+        actions={
+          <button onClick={() => router.push(`/seller_signin`)}>Sign In</button>
+        }
       />
 
       {/* Body */}
@@ -259,10 +241,12 @@ export default function InfluencerSignin() {
           onSubmit={handleSubmit}
           className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
         >
-          <h2 className="text-xl font-semibold mb-4">Sign in as a seller</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Register as a Wedding Planner
+          </h2>
           <p className="text-sm text-gray-500 mb-4">
-            Verifying the store's phone number is a great way to make sure your
-            profile reflects your identity and keeps your account safe.
+            Verifying the phone number is a great way to make sure
+            your profile reflects your identity and keeps your account safe.
           </p>
 
           {/* 📱 Phone Image Section */}
@@ -294,10 +278,38 @@ export default function InfluencerSignin() {
               placeholder="Enter your mobile number"
               required
             />
+            {/* Checkbox */}
+            <div className="flex items-center mb-4">
+              <input
+                id="agree"
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mr-2"
+              />
+              <label htmlFor="agree" className="text-sm text-gray-600">
+                {/* By accepting, you agree to receive SMS for account authorization */}
+                By accepting, you agree to{" "}
+                <Link
+                  href="/term_and_condition"
+                  className="hover:underline text-blue-600 "
+                >
+                  Terms and Condition
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="privacy_policy"
+                  className="hover:underline text-blue-600 "
+                >
+                  Privacy Policy
+                </Link>{" "}
+                of Attirelly.
+              </label>
+            </div>
             {/* Submit button */}
             <button
               type="submit"
-              className="cursor-pointer w-full bg-black text-white py-2 rounded hover:bg-gray-800  hover:shadow-md active:scale-[0.98] transition-all duration-200"
+              className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
             >
               Send OTP
             </button>
@@ -330,12 +342,7 @@ export default function InfluencerSignin() {
             </div>
             <button
               type="submit"
-              className={`w-full py-2 rounded ${
-                isBlocked
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-black text-white hover:bg-gray-800"
-              }`}
-              disabled={isBlocked}
+              className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
             >
               Verify OTP
             </button>
@@ -362,12 +369,12 @@ export default function InfluencerSignin() {
           </div>
           {/* Sign In link */}
           <p className="text-center text-xs text-gray-500 mt-4">
-            New to Attirelly?{" "}
+            Already have an account?{" "}
             <Link
-              href="/makeup_artist_signup"
+              href="/wedding_planner_signin"
               className="text-blue-600 hover:underline"
             >
-              Sign Up
+              Sign In
             </Link>
           </p>
         </form>
