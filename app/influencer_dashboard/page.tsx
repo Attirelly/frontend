@@ -195,7 +195,7 @@ export default function InfluencerOnboardingPage() {
     try {
       const mappedData = mapInfluencerDataToBackend(activeSection, currentData);
 
-      const payload = { ...mappedData, next_step: currentIndex + 1 };
+      const payload = { ...mappedData, next_step: 8 };
       console.log("update payload", payload);
       console.log("update payload", payload);
       await api.put(`/influencers/update/${influencerId}`, payload);
