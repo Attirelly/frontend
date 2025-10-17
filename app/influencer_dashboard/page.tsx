@@ -27,6 +27,7 @@ import useAuthStore from "@/store/auth";
 import { mapInfluencerDataToBackend } from "@/utils/convertInfluencer";
 import InfluencerPhotos from "@/components/Influencer/Sections/InfluencerPhotos";
 import { handleInfluencerValidations } from "@/utils/handleInfluencerValidations";
+import { logout } from "@/utils/logout";
 
 // ================== SECTION MAP ===================
 const sectionComponents: Record<InfluencerSectionKey, React.FC<any>> = {
@@ -221,7 +222,7 @@ export default function InfluencerOnboardingPage() {
   // ========== RENDER ==========
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header title="Attirelly" actions={<div>...</div>} />
+      <Header title="Attirelly" actions={<button onClick={() => logout("/influencer_signin")}>Log Out</button>} />
 
       <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <InfluencerSidebar

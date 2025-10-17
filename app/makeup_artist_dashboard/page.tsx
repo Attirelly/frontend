@@ -26,6 +26,7 @@ import MakeupArtistSidebar from "@/components/MakeUpArtist/SideBar";
 import { mapMakeupArtistDataToBackend } from "@/utils/convertMakeUpArtist";
 import { Area, City, Pincode, State } from "@/types/utilityTypes";
 import { handleMuaValidations } from "@/utils/handleMuaValidations";
+import { logout } from "@/utils/logout";
 
 // ================== SECTION MAP ===================
 const sectionComponents: Record<MakeupArtistSectionKey, React.FC<any>> = {
@@ -227,7 +228,7 @@ export default function MakeUpArtistDashboardPage() {
   // ========== RENDER ==========
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header title="Attirelly Makeup Artist Onboarding" />
+      <Header title="Attirelly Makeup Artist Onboarding" actions={<button onClick={() => logout("/makeup_artist_signin")}>Log Out</button>} />
 
       <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <MakeupArtistSidebar
