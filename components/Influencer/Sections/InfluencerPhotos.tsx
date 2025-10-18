@@ -265,9 +265,9 @@ export default function InfluencerPhotos({ onNext, isLastStep }: ComponentProps)
       {/* --- Upload Form --- */}
       <form
         onSubmit={handleNext}
-        className="bg-white p-8 rounded-2xl shadow-sm border space-y-6"
+        className="bg-white p-8 rounded-2xl shadow-sm space-y-6 text-black"
       >
-        <h2 className="text-xl font-semibold">Profile Photos</h2>
+        <h2 className="text-xl font-semibold text-black">Profile Photos</h2>
         <p className="text-gray-500 text-sm">
           Upload clear, high-quality images (minimum 800×800 pixels).
         </p>
@@ -338,7 +338,7 @@ export default function InfluencerPhotos({ onNext, isLastStep }: ComponentProps)
           );
         })}
 
-        <div className="pt-6 border-t flex justify-end">
+        {/* <div className="pt-6 flex justify-end">
           <button
             type="submit"
             className="px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 disabled:bg-gray-400"
@@ -346,7 +346,7 @@ export default function InfluencerPhotos({ onNext, isLastStep }: ComponentProps)
           >
             {isLastStep ? "Submit" : "Next →"}
           </button>
-        </div>
+        </div> */}
       </form>
     </>
   );

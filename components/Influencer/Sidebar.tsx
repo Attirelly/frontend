@@ -119,13 +119,14 @@ const DesktopView = ({
   currentIndex,
 }: InfluencerSidebarProps) => {
   return (
-    <div className="bg-white p-4 rounded-2xl w-full max-w-sm self-start text-black">
+    <div className="bg-white p-4 rounded-2xl w-full max-w-sm self-start text-black shadow-md">
       <h2 className="text-lg font-bold mb-4">Complete your profile</h2>
       <nav>
         <ul className="space-y-4">
           {sections.map((section, index) => {
             const isCurrent = section.id === activeSectionId;
             const disabled = index > currentIndex;
+            console.log("disabled: ", disabled, "current index: ", currentIndex);
             const isActive = section.id === activeSectionId;
 
             return (
@@ -134,16 +135,16 @@ const DesktopView = ({
                   onClick={() => {
                     if (!disabled) onSectionClick(section.id);
                   }}
-                  className={`flex items-start text-left w-full p-4 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black
+                  className={`flex items-start text-left w-full p-4 rounded-lg
                     ${
                       isCurrent
-                        ? "border-black bg-gray-50"
-                        : "border-gray-200 bg-white hover:border-gray-300"
+                        ? "border border-black border-2 bg-gray-50 focus:outline-none"
+                        : "border-gray-200 bg-white shadow-sm hover:border-gray-300"
                     }
                     ${
                       disabled
                         ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-50"
+                        : "hover:bg-gray-50 cursor-pointer"
                     }`}
                 >
                   <Image

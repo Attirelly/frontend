@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import { forwardRef, useImperativeHandle } from 'react';
+import { useWeddingPlannerStore, InstagramInsights as InstagramInsightsType } from '@/store/weddingPlannerStore'; // Import store and type
 
 interface ComponentProps {
   onNext: () => void;
@@ -8,32 +9,43 @@ interface ComponentProps {
 }
 
 const InstaInsights = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => {
-  // State for all the form fields
-  const [totalFollowers, setTotalFollowers] = useState('');
-  const [totalPosts, setTotalPosts] = useState('');
-  const [engagementRate, setEngagementRate] = useState('');
-  const [avgStoryViews, setAvgStoryViews] = useState('');
-  const [avgReelViews, setAvgReelViews] = useState('');
+  // Get state and updater from Zustand
+  const { instaInsights, updateInstaInsights } = useWeddingPlannerStore();
 
-  // Expose data to the parent component
+  // --- LOCAL STATE REMOVED ---
+
+  // Expose data to the parent component (reads from Zustand)
   useImperativeHandle(ref, () => ({
     getData: () => ({
-      total_followers: totalFollowers,
-      total_posts: totalPosts,
-      engagement_rate: engagementRate,
-      average_story_views: avgStoryViews,
-      average_reel_views: avgReelViews,
+      total_followers: instaInsights.totalFollowers,
+      total_posts: instaInsights.totalPosts,
+      engagement_rate: instaInsights.engagementRate,
+      average_story_views: instaInsights.averageStoryViews,
+      average_reel_views: instaInsights.averageReelViews,
     }),
   }));
 
-  // Validation for mandatory fields
+  // Validation for mandatory fields (reads from Zustand)
   const handleNext = () => {
-    if (!totalFollowers || !totalPosts || !engagementRate || !avgStoryViews || !avgReelViews) {
+    const { totalFollowers, totalPosts, engagementRate, averageStoryViews, averageReelViews } = instaInsights;
+    
+    // Check if any value is null or undefined (0 is valid)
+    if (
+      totalFollowers === null || totalFollowers === undefined ||
+      totalPosts === null || totalPosts === undefined ||
+      engagementRate === null || engagementRate === undefined ||
+      averageStoryViews === null || averageStoryViews === undefined ||
+      averageReelViews === null || averageReelViews === undefined
+    ) {
       alert('Please fill out all mandatory fields.');
       return;
     }
     onNext();
   };
+
+  /**
+   * Handles changes for all numeric inputs, converting string to number or null
+   */
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
@@ -47,13 +59,25 @@ const InstaInsights = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) =
             <label htmlFor="total-followers" className="block text-sm font-medium text-gray-700 mb-1">
               Total Followers <span className="text-red-500">*</span>
             </label>
-            <input type="number" id="total-followers" value={totalFollowers} onChange={(e) => setTotalFollowers(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="e.g., 25000" />
+            <input 
+              type="text" 
+              id="total-followers" 
+              value={instaInsights.totalFollowers ?? ''} 
+              onChange={(e) => updateInstaInsights({ totalFollowers: e.target.value })} 
+              className="w-full px-4 py-2 border border-gray-300 rounded-md" 
+              placeholder="e.g., 25000" />
           </div>
           <div>
             <label htmlFor="total-posts" className="block text-sm font-medium text-gray-700 mb-1">
               Total Posts <span className="text-red-500">*</span>
             </label>
-            <input type="number" id="total-posts" value={totalPosts} onChange={(e) => setTotalPosts(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="e.g., 500" />
+            <input 
+              type="text" 
+              id="total-posts" 
+              value={instaInsights.totalPosts ?? ''} 
+              onChange={(e) => updateInstaInsights({ totalPosts: e.target.value })} 
+              className="w-full px-4 py-2 border border-gray-300 rounded-md" 
+              placeholder="e.g., 500" />
           </div>
         </div>
 
@@ -63,7 +87,15 @@ const InstaInsights = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) =
             Engagement Rate (%) <span className="text-red-500">*</span>
           </label>
           <div className="relative">
-             <input type="number" id="engagement-rate" value={engagementRate} onChange={(e) => setEngagementRate(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md pr-8" placeholder="e.g., 2.5" />
+             <input 
+              type="text" 
+              id="engagement-rate" 
+              value={instaInsights.engagementRate ?? ''} 
+              onChange={(e) => updateInstaInsights({ engagementRate: e.target.value })} 
+              className="w-full px-4 py-2 border border-gray-300 rounded-md pr-8" 
+              placeholder="e.g., 2.5" 
+              step="0.1"
+             />
              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">%</span>
           </div>
         </div>
@@ -74,22 +106,31 @@ const InstaInsights = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) =
             <label htmlFor="avg-story-views" className="block text-sm font-medium text-gray-700 mb-1">
               Average Story Views <span className="text-red-500">*</span>
             </label>
-            <input type="number" id="avg-story-views" value={avgStoryViews} onChange={(e) => setAvgStoryViews(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="e.g., 1500" />
+            <input 
+              type="text" 
+              id="avg-story-views" 
+              value={instaInsights.averageStoryViews ?? ''} 
+              onChange={(e) => updateInstaInsights({ averageStoryViews: e.target.value })} 
+              className="w-full px-4 py-2 border border-gray-300 rounded-md" 
+              placeholder="e.g., 1500" />
           </div>
           <div>
             <label htmlFor="avg-reel-views" className="block text-sm font-medium text-gray-700 mb-1">
               Average Reel Views <span className="text-red-500">*</span>
             </label>
-            <input type="number" id="avg-reel-views" value={avgReelViews} onChange={(e) => setAvgReelViews(e.text-sm.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="e.g., 30000" />
+            <input 
+              type="text" 
+              id="avg-reel-views" 
+              value={instaInsights.averageReelViews ?? ''} 
+              onChange={(e) => updateInstaInsights({ averageReelViews: e.target.value })} 
+              className="w-full px-4 py-2 border border-gray-300 rounded-md" 
+              placeholder="e.g., 30000" />
           </div>
         </div>
       </div>
 
-      <div className="flex justify-end mt-12 pt-6 border-t">
-        <button onClick={handleNext} className="px-8 py-3 bg-black text-white rounded-md font-semibold">
-          {isLastStep ? 'Submit' : 'Next →'}
-        </button>
-      </div>
+      {/* Navigation button is in the parent component, so handleNext is passed */}
+      {/* This component no longer needs to render its own button */}
     </div>
   );
 });

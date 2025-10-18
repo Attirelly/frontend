@@ -2,28 +2,26 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
-import { useInfluencerStore } from "@/store/influencerStore";
-import { City, Area, Pincode, State } from "@/types/utilityTypes";
+import { useMakeupArtistStore } from "@/store/makeUpArtistStore";
+import { State, City, Area, Pincode } from "@/types/utilityTypes";
 
 interface ComponentProps {
   onNext: () => void;
   isLastStep?: boolean;
 }
 
-const travelOptions = ["Local Only", "State-wide", "Pan-India"] as const;
-
-const LocationAvailability: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
-  const { locationAndAvailability, updateLocationAndAvailability } = useInfluencerStore();
+const ArtistLocation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
+  const { artistLocation, updateArtistLocation } = useMakeupArtistStore();
 
   const [states, setStates] = useState<State[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
   const [pincodes, setPincodes] = useState<Pincode[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // === Fetch all location data ===
+  // Fetch all location data
   useEffect(() => {
     const fetchLocationData = async () => {
-      console.log(1)
       try {
         const [stateRes, cityRes, areaRes, pincodeRes] = await Promise.all([
           api.get("/location/states/"),
@@ -31,7 +29,7 @@ const LocationAvailability: React.FC<ComponentProps> = ({ onNext, isLastStep }) 
           api.get("/location/areas/"),
           api.get("/location/pincodes/"),
         ]);
-        
+
         setStates(stateRes.data);
         setCities(cityRes.data);
         setAreas(areaRes.data);
@@ -40,35 +38,35 @@ const LocationAvailability: React.FC<ComponentProps> = ({ onNext, isLastStep }) 
         console.error("Error fetching location data:", error);
       }
     };
- 
+
     fetchLocationData();
   }, []);
 
-  // === Derived filtered data ===
+  // Filter cities / areas / pincodes based on selection
   const filteredCities = cities.filter(
-    (city) => city.state_id === locationAndAvailability.state?.id
+    (city) => city.state_id === artistLocation.state?.id
   );
 
   const filteredAreas = areas.filter(
-    (area) => area.city_id === locationAndAvailability.city?.id
+    (area) => area.city_id === artistLocation.city?.id
   );
 
   const filteredPincodes = pincodes.filter(
-    (pin) => pin.city_id === locationAndAvailability.city?.id
+    (pin) => pin.city_id === artistLocation.city?.id
   );
 
-  // === Form handling ===
+  // Validation
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!artistLocation.state) newErrors.state = "State is required.";
+    if (!artistLocation.city) newErrors.city = "City is required.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !locationAndAvailability.state ||
-      !locationAndAvailability.city ||
-      !locationAndAvailability.travelReadiness
-    ) {
-      alert("Please fill out all mandatory fields marked with *");
-      return;
-    }
-    onNext();
+    if (validateForm()) onNext();
   };
 
   return (
@@ -76,22 +74,22 @@ const LocationAvailability: React.FC<ComponentProps> = ({ onNext, isLastStep }) 
       onSubmit={handleNext}
       className="bg-white p-8 rounded-lg shadow-sm animate-fade-in text-black"
     >
-      <h2 className="text-2xl font-semibold mb-2">Location & Availability</h2>
+      <h2 className="text-2xl font-semibold mb-2">Artist Location</h2>
       <p className="text-gray-500 mb-8">
-        Let brands know where you are based and your availability.
+        Provide your location so clients can find you easily.
       </p>
 
       <div className="space-y-6">
-        {/* --- State --- */}
+        {/* State */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             State <span className="text-red-500">*</span>
           </label>
           <select
-            value={locationAndAvailability.state?.id || ""}
+            value={artistLocation.state?.id || ""}
             onChange={(e) => {
               const state = states.find((s) => s.id === e.target.value) || null;
-              updateLocationAndAvailability({
+              updateArtistLocation({
                 state,
                 city: null,
                 area: null,
@@ -107,18 +105,19 @@ const LocationAvailability: React.FC<ComponentProps> = ({ onNext, isLastStep }) 
               </option>
             ))}
           </select>
+          {errors.state && <p className="text-sm text-red-500 mt-1">{errors.state}</p>}
         </div>
 
-        {/* --- City --- */}
+        {/* City */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             City <span className="text-red-500">*</span>
           </label>
           <select
-            value={locationAndAvailability.city?.id || ""}
+            value={artistLocation.city?.id || ""}
             onChange={(e) => {
               const city = cities.find((c) => c.id === e.target.value) || null;
-              updateLocationAndAvailability({
+              updateArtistLocation({
                 city,
                 area: null,
                 pincode: null,
@@ -133,18 +132,19 @@ const LocationAvailability: React.FC<ComponentProps> = ({ onNext, isLastStep }) 
               </option>
             ))}
           </select>
+          {errors.city && <p className="text-sm text-red-500 mt-1">{errors.city}</p>}
         </div>
 
-        {/* --- Area --- */}
+        {/* Area */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Area (Optional)
           </label>
           <select
-            value={locationAndAvailability.area?.id || ""}
+            value={artistLocation.area?.id || ""}
             onChange={(e) => {
               const area = areas.find((a) => a.id === e.target.value) || null;
-              updateLocationAndAvailability({ area });
+              updateArtistLocation({ area });
             }}
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
           >
@@ -157,16 +157,16 @@ const LocationAvailability: React.FC<ComponentProps> = ({ onNext, isLastStep }) 
           </select>
         </div>
 
-        {/* --- Pincode --- */}
+        {/* Pincode */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Pincode (Optional)
           </label>
           <select
-            value={locationAndAvailability.pincode?.id || ""}
+            value={artistLocation.pincode?.id || ""}
             onChange={(e) => {
               const pin = pincodes.find((p) => p.id === e.target.value) || null;
-              updateLocationAndAvailability({ pincode: pin });
+              updateArtistLocation({ pincode: pin });
             }}
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
           >
@@ -178,71 +178,10 @@ const LocationAvailability: React.FC<ComponentProps> = ({ onNext, isLastStep }) 
             ))}
           </select>
         </div>
-
-        {/* --- Travel Readiness --- */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Travel Readiness <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {travelOptions.map((option) => (
-              <button
-                type="button"
-                key={option}
-                onClick={() =>
-                  updateLocationAndAvailability({ travelReadiness: option })
-                }
-                className={`p-3 border rounded-lg text-center transition-all duration-200 ${
-                  locationAndAvailability.travelReadiness === option
-                    ? "border-black bg-gray-50 font-semibold"
-                    : "border-gray-200 bg-white hover:border-gray-300"
-                }`}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* --- Attend Events --- */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Willingness to attend events / shoots{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() =>
-                updateLocationAndAvailability({ attendEvents: true })
-              }
-              className={`flex-1 p-3 border rounded-lg text-center transition-all duration-200 ${
-                locationAndAvailability.attendEvents
-                  ? "border-black bg-gray-50 font-semibold"
-                  : "border-gray-200 bg-white hover:border-gray-300"
-              }`}
-            >
-              Yes
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                updateLocationAndAvailability({ attendEvents: false })
-              }
-              className={`flex-1 p-3 border rounded-lg text-center transition-all duration-200 ${
-                !locationAndAvailability.attendEvents
-                  ? "border-black bg-gray-50 font-semibold"
-                  : "border-gray-200 bg-white hover:border-gray-300"
-              }`}
-            >
-              No
-            </button>
-          </div>
-        </div>
       </div>
 
-      {/* --- Navigation Button --- */}
-      {/* <div className="flex justify-end mt-12 pt-6">
+      {/* Navigation Button */}
+      {/* <div className="flex justify-end mt-12 pt-6 border-t">
         <button
           type="submit"
           className="px-8 py-3 bg-black text-white rounded-md font-semibold"
@@ -254,4 +193,4 @@ const LocationAvailability: React.FC<ComponentProps> = ({ onNext, isLastStep }) 
   );
 };
 
-export default LocationAvailability;
+export default ArtistLocation;

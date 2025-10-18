@@ -84,7 +84,7 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
   return (
     <form
       onSubmit={handleNext}
-      className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black"
+      className="bg-white p-8 rounded-lg shadow-md animate-fade-in text-black"
     >
       <h2 className="text-2xl font-semibold mb-2">Basic Information</h2>
       <p className="text-gray-500 mb-8">
@@ -230,14 +230,14 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
       </div>
 
       {/* Navigation Button */}
-      <div className="flex justify-end mt-12 pt-6 border-t">
+      {/* <div className="flex justify-end mt-12 pt-6">
         <button
           type="submit"
           className="px-8 py-3 bg-black text-white rounded-md font-semibold"
         >
           {isLastStep ? "Submit" : "Next →"}
         </button>
-      </div>
+      </div> */}
     </form>
   );
 };

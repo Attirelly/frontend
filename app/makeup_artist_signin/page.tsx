@@ -3,13 +3,12 @@ import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useSellerStore } from "@/store/sellerStore";
 import { api } from "@/lib/axios";
 import Header from "@/components/Header";
 import axios, { AxiosError } from "axios";
 import { toast, Toaster } from "sonner";
-import { useInfluencerStore } from "@/store/influencerStore";
-import { set } from "date-fns";
+import { useMakeupArtistStore } from "@/store/makeUpArtistStore";
+
 
 export default function InfluencerSignin() {
   const [phone, setPhone] = useState("");
@@ -17,8 +16,7 @@ export default function InfluencerSignin() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const [sendOTP, setSendOTP] = useState(false);
-  const { setInfluencerId, setInfluencerNumber, influencerId } =
-    useInfluencerStore();
+  const { setArtistId , setPhoneInternal , setOnboardingStep } = useMakeupArtistStore();
 
   const [resendTimer, setResendTimer] = useState(60);
   const [isBlocked, setIsBlocked] = useState(false);
@@ -26,14 +24,13 @@ export default function InfluencerSignin() {
 
   const isPhoneValid = /^\d{10}$/.test(phone);
   const router = useRouter();
-  const testing_phone = "7015241757";
 
   /**
    * prefetching necessary routes
    */
   useEffect(() => {
-    router.prefetch("/influencer_dashboard");
-    router.prefetch("/influencer_signup/influencer_onboarding");
+    router.prefetch("/makeup_artist_dashboard");
+    router.prefetch("/makeup_artist_signup/onboarding");
   }, []);
 
   // resend times logic
@@ -150,21 +147,21 @@ export default function InfluencerSignin() {
           const userId = user_resp.data.user_id;
 
           // fetch the influencer details to get the onboarding step
-          const infl_resp = await api.get("/influencers/by-user", {
+          const infl_resp = await api.get("/makeup_artists/by-user", {
             params: { user_id: userId },
           });
           const curr_section_res = infl_resp.data.onboarding_step;
 
           setCurrSection(curr_section_res);
-          setInfluencerId(infl_resp.data.id);
-          setInfluencerNumber(phone);
+          setArtistId(infl_resp.data.id);
+          setPhoneInternal(phone);
 
           if (curr_section_res < 5) {
             toast.error("Please complete onboarding first!");
 
-            router.push("/influencer_signup/influencer_onboarding");
+            router.push("/makeup_artists_signup/onboarding");
           } else {
-            router.push("/influencer_dashboard");
+            router.push("/makeup_artist_dashboard");
             toast.success("Logged in successfully");
           }
         } catch (error) {
@@ -202,18 +199,18 @@ export default function InfluencerSignin() {
       }
       try {
         // Check if phone number is already registered
-        const response = await api.get("/influencers/by-phone", {
+        const response = await api.get("/makeup_artist/by-phone", {
           params: { phone_number: phone },
         });
 
         const influencer_data = response.data;
         const curr_section_res = influencer_data.onboarding_step;
         setCurrSection(curr_section_res);
-        setInfluencerId(influencer_data.id);
+        setArtistId(influencer_data.id);
         if (phone === "1111111111") {
           setSendOTP(true);
           // alert(`OTP sent to ${phone}`);
-          setInfluencerNumber(phone);
+          setPhoneInternal(phone);
           return;
         }
         try {
@@ -222,7 +219,7 @@ export default function InfluencerSignin() {
           });
           setSendOTP(true);
           // alert(`OTP sent to ${phone}`);
-          setInfluencerNumber(phone);
+          setPhoneInternal(phone);
         } catch {
           toast.error("Failed to send OTP!");
         }
@@ -253,7 +250,7 @@ export default function InfluencerSignin() {
       {/* Header */}
       <Header
         title="Attirelly"
-        actions={<Link href="/influencer_signup">Sign Up</Link>}
+        actions={<Link href="/makeup_artist_signup">Sign Up</Link>}
       />
 
       {/* Body */}
@@ -262,9 +259,9 @@ export default function InfluencerSignin() {
           onSubmit={handleSubmit}
           className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
         >
-          <h2 className="text-xl font-semibold mb-4">Sign in as a Influencer</h2>
+          <h2 className="text-xl font-semibold mb-4">Sign in as a seller</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Verifying the phone number is a great way to make sure your
+            Verifying the store's phone number is a great way to make sure your
             profile reflects your identity and keeps your account safe.
           </p>
 
@@ -367,7 +364,7 @@ export default function InfluencerSignin() {
           <p className="text-center text-xs text-gray-500 mt-4">
             New to Attirelly?{" "}
             <Link
-              href="/influencer_signup"
+              href="/makeup_artist_signup"
               className="text-blue-600 hover:underline"
             >
               Sign Up

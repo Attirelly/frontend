@@ -10,12 +10,12 @@ interface WeddingPlannerSidebarProps {
 
 // Updated sections array with the 'Photos' section removed
 const sections = [
-    { id: 'basic-information', title: 'Basic Information', desc: 'Your business and contact details.', iconUrl: '/OnboardingSections/business_details.png' },
-    { id: 'business-profile', title: 'Business Profile & Scale', desc: 'Your clientele, style, and scale.', iconUrl: '/OnboardingSections/analytics.png' },
-    { id: 'influence-network', title: 'Influence & Network', desc: 'Your professional network.', iconUrl: '/OnboardingSections/collab.png' },
-    { id: 'collaboration-preferences', title: 'Collaboration Preferences', desc: 'Define how you like to collaborate.', iconUrl: '/OnboardingSections/collab.png' },
-    { id: 'social-links', title: 'Social Links', desc: 'Connect your social media.', iconUrl: '/OnboardingSections/social_links.png' },
-    { id: 'insta-insights', title: 'Insta Insights', desc: 'Your key Instagram metrics.', iconUrl: '/OnboardingSections/analytics.png' },
+    { id: 'basicInformation', title: 'Basic Information', desc: 'Your business and contact details.', iconUrl: '/OnboardingSections/business_details.png' },
+    { id: 'businessProfile', title: 'Business Profile & Scale', desc: 'Your clientele, style, and scale.', iconUrl: '/OnboardingSections/analytics.png' },
+    { id: 'influenceNetwork', title: 'Influence & Network', desc: 'Your professional network.', iconUrl: '/OnboardingSections/collab.png' },
+    { id: 'collaborationPreferences', title: 'Collaboration Preferences', desc: 'Define how you like to collaborate.', iconUrl: '/OnboardingSections/collab.png' },
+    { id: 'socialLinks', title: 'Social Links', desc: 'Connect your social media.', iconUrl: '/OnboardingSections/social_links.png' },
+    { id: 'instaInsights', title: 'Insta Insights', desc: 'Your key Instagram metrics.', iconUrl: '/OnboardingSections/analytics.png' },
 ];
 
 // --- Sub-component for Mobile View ---
