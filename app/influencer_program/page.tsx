@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Header from '@/components/Header';
+import Header from '@/components/LandingPage/reusable_components/Header';
 import { Button } from '@/components/LandingPage/reusable_components/Button';
 
 // Import all the NEW influencer section components
@@ -28,7 +28,7 @@ export default function InfluencerLandingPage() {
     <div className="bg-white text-black">
       <Header
         title="Attirelly"
-        // navLinks={influencerNavLinks}
+        navLinks={influencerNavLinks}
         actions={<Button>Join Attirelly</Button>}
       />
       <main>
