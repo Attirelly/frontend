@@ -54,7 +54,7 @@ const SocialLinks = forwardRef(({ onNext, isLastStep }: ComponentProps, ref) => 
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-black">
+    <div className="bg-white p-8 rounded-lg shadow-sm animate-fade-in text-black">
       <h2 className="text-2xl font-semibold mb-2">Social Links</h2>
       <p className="text-gray-500 mb-8">Connect your social media and professional websites.</p>
 

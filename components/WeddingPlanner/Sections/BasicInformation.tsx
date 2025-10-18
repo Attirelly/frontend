@@ -56,7 +56,7 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
     <div className="space-y-12">
       
       {/* Section 1: Wedding Planner Personal Details */}
-      <div className="bg-white p-8 rounded-lg shadow-sm border text-black">
+      <div className="bg-white p-8 rounded-lg shadow-sm text-black">
         <h2 className="text-2xl font-semibold mb-2">Wedding Planner Personal Details</h2>
         <p className="text-gray-500 mb-8">
           This is for internal data, customers won't see this.
@@ -104,7 +104,7 @@ export default function WeddingPlannerDetails({ onNext }: ComponentProps) {
       </div>
 
       {/* Section 2: Wedding Planner Business Details */}
-      <div className="bg-white p-8 rounded-lg shadow-sm border text-black">
+      <div className="bg-white p-8 rounded-lg shadow-sm text-black">
         <h2 className="text-2xl font-semibold mb-2">Wedding Planner Business Details</h2>
         <p className="text-gray-500 mb-8">
           Customers will see these details on Attirelly.

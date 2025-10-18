@@ -37,22 +37,22 @@ export default function WeddingPlannerOnboardingPage() {
     //   const [activeSectionId, setActiveSectionId] = useState(onboardingSectionIds[0]);
     const router = useRouter();
     const store = useWeddingPlannerStore();
-    const { handleValidations } = handleWeddingPlannerValidations();
+    const {handleValidations} = handleWeddingPlannerValidations();
     const { user } = useAuthStore(); // Get authenticated user
-    const {
-        activeSection,
-        setActiveSection,
-        setIsSubmitting,
-        plannerId,
-        setPlannerId,
-        updateBasicInformation,
-        updateBusinessProfile,
-        updateInfluenceNetwork,
-        updateCollaborationPreferences,
-        updateSocialLinks,
-        updateInstaInsights
+    const { 
+      activeSection, 
+      setActiveSection, 
+      setIsSubmitting, 
+      plannerId,
+      setPlannerId,
+      updateBasicInformation,
+      updateBusinessProfile,
+      updateInfluenceNetwork,
+      updateCollaborationPreferences,
+      updateSocialLinks,
+      updateInstaInsights
     } = store;
-    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    // const [currentIndex, setCurrentIndex] = useState<number>(0);
 
     // Create a ref for every section (Photos removed)
     const sectionRefs = {
@@ -66,107 +66,107 @@ export default function WeddingPlannerOnboardingPage() {
 
     useEffect(() => {
         const fetchWeddingPlannerDetails = async () => {
-            if (!user?.id) return; // Don't fetch if user is not loaded
-
-            try {
-                let response;
-                if (plannerId) {
-                    // If ID is already in store, fetch by ID
-                    response = await api.get(`/wedding_planner/${plannerId}`);
-                } else {
-                    // Otherwise, fetch by the authenticated user's ID
-                    response = await api.get("/wedding_planner/by-user", {
-                        params: { user_id: user.id },
-                    });
-                }
-
-                const data = response.data;
-                if (!data) throw new Error("Planner not found");
-
-                console.log("Fetched Planner Data:", data);
-
-                // --- Update store sections ---
-                setPlannerId(data.id);
-                setCurrentIndex(data.onboarding_step || 0);
-
-                // Section 1: Basic Information
-                updateBasicInformation({
-                    fullName: data.full_name || "",
-                    businessName: data.business_name || "",
-                    email: data.email || "",
-                    internalPhone: data.internal_phone || "",
-                    whatsappPhone: data.whatsapp_phone || "",
-                    publicPhone: data.public_phone || "",
-                });
-
-                // Section 2: Business Profile
-                updateBusinessProfile({
-                    clientPersona: data.client_persona || null,
-                    weddingAestheticStyles: data.wedding_aesthetic_styles || [],
-                    baseLocation: data.base_location || "",
-                    primaryCities: data.primary_cities || [],
-                    averageWeddingBudget: data.average_wedding_budget || null,
-                    weddingsManagedLastYear: data.weddings_managed_last_year || null,
-                    averageGuestSize: data.average_guest_size || null,
-                    yearsOfExperience: data.years_of_experience || null,
-                    teamSize: data.team_size || null,
-                });
-
-                // Section 3: Influence & Network
-                updateInfluenceNetwork({
-                    clientAcquisationMethods: data.client_acquisation_methods || [],
-                    assistsWithOutfits: !!data.assists_with_outfits,
-                    recommendsDesigners: !!data.recommends_designers,
-                    partnerDesigners: data.partner_designers || [],
-                    bridesGuidedPerYear: data.brides_guided_per_year || null,
-                    collaboratesWithStylistsMuas: !!data.collaborates_with_stylists_muas,
-                    recommendedFashionCategories: data.recommended_fashion_categories || [],
-                    partnerVendorHandles: data.partner_vendor_handles || {}, // Default to empty object
-                    referralPotential: data.referral_potential || null,
-                });
-
-                // Section 4: Collaboration Preferences
-                updateCollaborationPreferences({
-                    interestedInCollaborationsWith: data.interested_in_collaborations_with || [],
-                    preferredCollaborationType: data.preferred_collaboration_type || [],
-                    preferredCommissionModel: data.preferred_commission_model || null,
-                    barterAcceptance: data.barter_acceptance || "Depends",
-                    monthlyCollaborationsOpenTo: data.monthly_collaborations_open_to || null,
-                });
-
-                // Section 5: Social Links (as per component split)
-                updateSocialLinks({
-                    instagramUrl: data.instagram_url || "",
-                    youtubeLink: data.youtube_link || "",
-                    websiteUrl: data.website_url || "",
-                    facebookLink: data.facebook_link || "",
-                    // These fields seem to be in the wrong type, but hydrating them here
-                    // as per your store's `SocialLinks` type.
-                    totalFollowers: data.total_followers || "",
-                    totalPosts: data.total_posts || "",
-                    engagementRate: data.engagement_rate || "",
-                    averageStoryViews: data.average_story_views || "",
-                    averageReelViews: data.average_reel_views || "",
-                });
-
-                // Section 6: Insta Insights (parsing strings to numbers)
-                updateInstaInsights({
-                    totalFollowers: data.total_followers || null,
-                    totalPosts: data.total_posts || null,
-                    engagementRate: data.engagement_rate || null,
-                    averageStoryViews: data.average_story_views || null,
-                    averageReelViews: data.average_reel_views || null,
-                });
-
-            } catch (error) {
-                console.error("Error fetching wedding planner details:", error);
-                toast.error("Failed to load your profile. Please try again.");
+          if (!user?.id) return; // Don't fetch if user is not loaded
+          
+          try {
+            let response;
+            if (plannerId) {
+              // If ID is already in store, fetch by ID
+              response = await api.get(`/wedding_planner/${plannerId}`);
+            } else {
+              // Otherwise, fetch by the authenticated user's ID
+              response = await api.get("/wedding_planner/by-user", {
+                params: { user_id: user.id },
+              });
             }
+            
+            const data = response.data;
+            if (!data) throw new Error("Planner not found");
+
+            console.log("Fetched Planner Data:", data);
+
+            // --- Update store sections ---
+            setPlannerId(data.id);
+            // setCurrentIndex(data.onboarding_step || 0);
+
+            // Section 1: Basic Information
+            updateBasicInformation({
+              fullName: data.full_name || "",
+              businessName: data.business_name || "",
+              email: data.email || "",
+              internalPhone: data.internal_phone || "",
+              whatsappPhone: data.whatsapp_phone || "",
+              publicPhone: data.public_phone || "",
+            });
+
+            // Section 2: Business Profile
+            updateBusinessProfile({
+              clientPersona: data.client_persona || null,
+              weddingAestheticStyles: data.wedding_aesthetic_styles || [],
+              baseLocation: data.base_location || "",
+              primaryCities: data.primary_cities || [],
+              averageWeddingBudget: data.average_wedding_budget || null,
+              weddingsManagedLastYear: data.weddings_managed_last_year || null,
+              averageGuestSize: data.average_guest_size || null,
+              yearsOfExperience: data.years_of_experience || null,
+              teamSize: data.team_size || null,
+            });
+
+            // Section 3: Influence & Network
+            updateInfluenceNetwork({
+              clientAcquisationMethods: data.client_acquisation_methods || [],
+              assistsWithOutfits: !!data.assists_with_outfits,
+              recommendsDesigners: !!data.recommends_designers,
+              partnerDesigners: data.partner_designers || [],
+              bridesGuidedPerYear: data.brides_guided_per_year || null,
+              collaboratesWithStylistsMuas: !!data.collaborates_with_stylists_muas,
+              recommendedFashionCategories: data.recommended_fashion_categories || [],
+              partnerVendorHandles: data.partner_vendor_handles || {}, // Default to empty object
+              referralPotential: data.referral_potential || null,
+            });
+
+            // Section 4: Collaboration Preferences
+            updateCollaborationPreferences({
+              interestedInCollaborationsWith: data.interested_in_collaborations_with || [],
+              preferredCollaborationType: data.preferred_collaboration_type || [],
+              preferredCommissionModel: data.preferred_commission_model || null,
+              barterAcceptance: data.barter_acceptance || "Depends",
+              monthlyCollaborationsOpenTo: data.monthly_collaborations_open_to || null,
+            });
+
+            // Section 5: Social Links (as per component split)
+            updateSocialLinks({
+              instagramUrl: data.instagram_url || "",
+              youtubeLink: data.youtube_link || "",
+              websiteUrl: data.website_url || "",
+              facebookLink: data.facebook_link || "",
+              // These fields seem to be in the wrong type, but hydrating them here
+              // as per your store's `SocialLinks` type.
+              totalFollowers: data.total_followers || "",
+              totalPosts: data.total_posts || "",
+              engagementRate: data.engagement_rate || "",
+              averageStoryViews: data.average_story_views || "",
+              averageReelViews: data.average_reel_views || "",
+            });
+
+            // Section 6: Insta Insights (parsing strings to numbers)
+            updateInstaInsights({
+              totalFollowers: data.total_followers || null,
+              totalPosts: data.total_posts || null,
+              engagementRate: data.engagement_rate || null,
+              averageStoryViews: data.average_story_views || null,
+              averageReelViews: data.average_reel_views || null,
+            });
+
+          } catch (error) {
+            console.error("Error fetching wedding planner details:", error);
+            toast.error("Failed to load your profile. Please try again.");
+          }
         };
 
         fetchWeddingPlannerDetails();
     }, [
-        user?.id,
+        user?.id, 
         plannerId,
         setPlannerId,
         updateBasicInformation,
@@ -230,19 +230,19 @@ export default function WeddingPlannerOnboardingPage() {
         try {
             const mappedData = mapWeddingPlannerDataToBackend(activeSection, currentData);
 
-            const payload = { ...mappedData, onboarding_step: currentIndex + 1 };
+            const payload = { ...mappedData, onboarding_step: 6 };
             console.log("update payload", payload);
             await api.put(`/wedding_planner/update/${plannerId}`, payload);
 
             toast.success("Saved successfully!", { id: toastId });
 
-            if (currentIndex < onboardingSectionIds.length - 1) {
-                setActiveSection(onboardingSectionIds[currentIndex + 1]);
-                setCurrentIndex(currentIndex + 1);
-            } else {
-                toast.success("🎉 Onboarding complete!");
-                router.push("/wedding_planner_dashboard");
-            }
+            // if (currentIndex < onboardingSectionIds.length - 1) {
+            //     setActiveSection(onboardingSectionIds[currentIndex + 1]);
+            //     setCurrentIndex(currentIndex + 1);
+            // } else {
+            //     toast.success("🎉 Onboarding complete!");
+            //     router.push("/influencer_dashboard");
+            // }
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Failed to save data.", {
                 id: toastId,
@@ -256,7 +256,7 @@ export default function WeddingPlannerOnboardingPage() {
         <div className="min-h-screen bg-gray-100">
             <Header title="Attirelly" actions={<div>...</div>} />
             <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
-                <WeddingPlannerSidebar activeSectionId={activeSection} onSectionClick={setActiveSection} currentIndex={currentIndex} />
+                <WeddingPlannerSidebar activeSectionId={activeSection} onSectionClick={setActiveSection} />
                 <div className="flex flex-col gap-3 rounded-md bg-gray-100">
                     {onboardingSectionIds.map(id => {
                         const Component = sectionComponents[id];
@@ -277,7 +277,7 @@ export default function WeddingPlannerOnboardingPage() {
                         className="bg-black text-white px-6 py-3 rounded-lg ml-auto cursor-pointer"
                         onClick={handleSaveAndNext}
                     >
-                        {activeSection === "instaInsights" ? "Submit" : "Next"}
+                        Update
                     </button>
                 </div>
             </div>
