@@ -12,10 +12,12 @@ import WhoCanJoin from '@/components/LandingPage/WhoCanJoin';
 import ContentWeLove from '@/components/LandingPage/ContentWeLove';
 import HowToStart from '@/components/LandingPage/HowToStart';
 import Community from '@/components/LandingPage/Community';
-// import Testimonials from '@/components/landing/influencer/Testimonials';
-// import CtaSection from '@/components/landing/influencer/CtaSection';
-// import Faq from '@/components/landing/influencer/Faq';
-// import Footer from '@/components/landing/influencer/Footer';
+import Testimonials from '@/components/LandingPage/Testimonials';
+import CtaSection from '@/components/LandingPage/CtaSection';
+import Faq from '@/components/LandingPage/Faq';
+import FAQ from '@/components/SellerLanding/FAQ';
+import Footer from '@/components/LandingPage/Footer';
+import ListingFooter from '@/components/listings/ListingFooter';
 
 const influencerNavLinks = [
     { name: 'Why join Attirelly', href: '#benefits' },
@@ -62,6 +64,43 @@ const influencerTiers = [
     },
 ];
 
+const communityData = [
+  { role: 'Stylists', task: '– Curate and showcase looks for campaigns.' },
+  { role: 'MUAs', task: '– Collaborate in bridal & festive projects.' },
+  { role: 'Photographers', task: '– Capture brand & creator shoots.' },
+  { role: 'Wedding Planners', task: '– Join fashion-inspired shoots & collaborations' },
+];
+
+const steps = [
+  {
+    number: 1,
+    title: 'Sign In',
+    description: 'Create your Attirelly account',
+  },
+  {
+    number: 2,
+    title: 'Complete Dashboard',
+    description: 'Add info, select content genres, and integrate Instagram',
+  },
+  {
+    number: 3,
+    title: 'Get Matched',
+    description: 'We review your insights & connect you with relevant brands',
+  },
+  {
+    number: 4,
+    title: 'Collaborate and Earn',
+    description: 'Join shoots, festive edits, lookbooks, and projects',
+  },
+];
+
+const stories = [
+    { quote: "Got my first brand shoot with a Chandigarh label in 2 weeks — Attirelly made it easy!", author: "@riya.sharma11", details: "5k followers, college student" },
+    { quote: "As a NIFT student, I worked on real campaigns and built my portfolio — total game changer!", author: "@creates.ritz", details: "12k followers, student Creator" },
+    { quote: "Attirelly connected me with designers & stylists for city shoots. My collaborations grew faster than I imagined.", author: "@shivani.realistic", details: "45k followers, early professional" },
+    { quote: "Being part of Attirelly’s campaigns gave me exposure & credibility — now brands approach me directly.", author: "@anaya_06", details: "150k followers, professional stylist & creator" },
+];
+
 export default function InfluencerLandingPage() {
   return (
     <div className="bg-white text-black">
@@ -76,13 +115,13 @@ export default function InfluencerLandingPage() {
         <Advantage />
         <WhoCanJoin title='Who Can Join?' description='We welcome every creative voice shaping Indian fashion — from beginners to seasoned pros.' influencerTiers={influencerTiers} />
         <ContentWeLove />
-        <Community/>
-        <HowToStart />
-        {/* <Testimonials /> */}
-        {/* <CtaSection /> */}
-        {/* <Faq /> */}
+        <Community title="A Community of 2000+ Partners" description="Fashion thrives on collaboration. Work with stylists, MUAs, photographers, wedding planners to create real projects, not just posts." communityData={communityData} />
+        <HowToStart title='How To Get Started' description='Start with simple 4 steps' steps={steps}/>
+        <Testimonials title='Real Stories' stories={stories} />
+        <CtaSection title='Your Influence, Our Platform.' description='Join Attirelly’s influencer network & start earning from your creativity today.' buttonText='Apply as an Influencer'/>
+        <FAQ/>
       </main>
-      {/* <Footer /> */}
+      <ListingFooter/>
     </div>
   );
 }
