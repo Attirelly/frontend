@@ -17,55 +17,55 @@ const sections: {
   desc: string;
   iconUrl: string;
 }[] = [
-  {
-    id: "basicInformation",
-    title: "Basic Information",
-    desc: "Your personal and contact details.",
-    iconUrl: "/OnboardingSections/business_details.png",
-  },
-  {
-    id: "socialPresence",
-    title: "Social Presence",
-    desc: "Your platforms, niche, and style.",
-    iconUrl: "/OnboardingSections/social_links.png",
-  },
-  {
-    id: "audienceInsights",
-    title: "Audience Insights",
-    desc: "Demographics and engagement data.",
-    iconUrl: "/OnboardingSections/instagram.svg",
-  },
-  {
-    id: "collaborationPreferences",
-    title: "Collaboration Preferences",
-    desc: "The types of collabs you prefer.",
-    iconUrl: "/OnboardingSections/instagram.svg",
-  },
-  {
-    id: "pricingStructure",
-    title: "Pricing Structure",
-    desc: "Your rates for different content.",
-    iconUrl: "/OnboardingSections/price_filters.png",
-  },
-  {
-    id: "pastWork",
-    title: "Past Work",
-    desc: "Showcase your experience.",
-    iconUrl: "/OnboardingSections/instagram.svg",
-  },
-  {
-    id: "locationAndAvailability",
-    title: "Location & Availability",
-    desc: "Where you are and your availability.",
-    iconUrl: "/OnboardingSections/where_to_sell.png",
-  },
-  {
-    id: "mediaKit",
-    title: "Media Kit",
-    desc: "Upload your profile photos.",
-    iconUrl: "/OnboardingSections/store_photos.png",
-  },
-];
+    {
+      id: "basicInformation",
+      title: "Basic Information",
+      desc: "Your personal and contact details.",
+      iconUrl: "/OnboardingSections/business_details.png",
+    },
+    {
+      id: "socialPresence",
+      title: "Social Presence",
+      desc: "Your platforms, niche, and style.",
+      iconUrl: "/OnboardingSections/social_links.png",
+    },
+    {
+      id: "audienceInsights",
+      title: "Audience Insights",
+      desc: "Demographics and engagement data.",
+      iconUrl: "/OnboardingSections/instagram.svg",
+    },
+    {
+      id: "collaborationPreferences",
+      title: "Collaboration Preferences",
+      desc: "The types of collabs you prefer.",
+      iconUrl: "/OnboardingSections/instagram.svg",
+    },
+    {
+      id: "pricingStructure",
+      title: "Pricing Structure",
+      desc: "Your rates for different content.",
+      iconUrl: "/OnboardingSections/price_filters.png",
+    },
+    {
+      id: "pastWork",
+      title: "Past Work",
+      desc: "Showcase your experience.",
+      iconUrl: "/OnboardingSections/instagram.svg",
+    },
+    {
+      id: "locationAndAvailability",
+      title: "Location & Availability",
+      desc: "Where you are and your availability.",
+      iconUrl: "/OnboardingSections/where_to_sell.png",
+    },
+    {
+      id: "mediaKit",
+      title: "Media Kit",
+      desc: "Upload your profile photos.",
+      iconUrl: "/OnboardingSections/store_photos.png",
+    },
+  ];
 
 // --- Sub-component for Mobile View (No changes needed in the JSX) ---
 const MobileView = ({
@@ -85,14 +85,12 @@ const MobileView = ({
               key={section.id}
               disabled={disabled}
               onClick={() => {
-                    if (!disabled) onSectionClick(section.id);
+                if (!disabled) onSectionClick(section.id);
               }}
-              className={`flex flex-col items-center justify-center p-2 rounded-lg transition min-w-[90px] ${
-                isSelected ? "bg-gray-200" : "bg-transparent"
-              } ${isActive ? "bg-blue-500 text-white" : "bg-gray-100"}
-              ${
-                disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-100"
-              } hover:bg-gray-100 cursor-pointer`}
+              className={`flex flex-col items-center justify-center p-2 rounded-lg transition min-w-[90px] ${isSelected ? "bg-gray-200" : "bg-transparent"
+                } ${isActive ? "bg-blue-500 text-white" : "bg-gray-100"}
+              ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-100"
+                } hover:bg-gray-100 cursor-pointer`}
             >
               <Image
                 src={section.iconUrl}
@@ -136,15 +134,13 @@ const DesktopView = ({
                     if (!disabled) onSectionClick(section.id);
                   }}
                   className={`flex items-start text-left w-full p-4 rounded-lg
-                    ${
-                      isCurrent
-                        ? "border border-black border-2 bg-gray-50 focus:outline-none"
-                        : "border-gray-200 bg-white shadow-sm hover:border-gray-300"
+                    ${isCurrent
+                      ? "border border-black border-2 bg-gray-50 focus:outline-none"
+                      : "border-gray-200 bg-white shadow-sm hover:border-gray-300"
                     }
-                    ${
-                      disabled
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-50 cursor-pointer"
+                    ${disabled
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-gray-50 cursor-pointer"
                     }`}
                 >
                   <Image

@@ -25,6 +25,7 @@ import SocialLinks from "@/components/MakeUpArtist/Sections/SocialLinks";
 import MakeupArtistSidebar from "@/components/MakeUpArtist/SideBar";
 import { mapMakeupArtistDataToBackend } from "@/utils/convertMakeUpArtist";
 import { Area, City, Pincode, State } from "@/types/utilityTypes";
+import { handleMuaValidations } from "@/utils/handleMuaValidations";
 
 // ================== SECTION MAP ===================
 const sectionComponents: Record<MakeupArtistSectionKey, React.FC<any>> = {
@@ -48,6 +49,7 @@ const onboardingSectionIds = Object.keys(
 export default function MakeUpArtistOnboardingPage() {
   const router = useRouter();
   const { user } = useAuthStore();
+  const { handleValidations } = handleMuaValidations();
 
   const store = useMakeupArtistStore();
   const {
@@ -130,8 +132,8 @@ export default function MakeUpArtistOnboardingPage() {
           collabFrequency: data.collab_frequency || "",
           collabNature: data.collab_nature || "",
           collabReadyToTravel: !!data.collab_ready_to_travel,
-          collabTopBrands: data.collab_top_brands || [],
-          collabAvgReach: data.collab_avg_reach || "",
+          // collabTopBrands: data.collab_top_brands || [],
+          // collabAvgReach: data.collab_avg_reach || "",
         });
 
         updateAttirellyCollab({
@@ -190,6 +192,8 @@ export default function MakeUpArtistOnboardingPage() {
 
   // ========== SAVE AND NEXT ==========
   const handleSaveAndNext = async () => {
+    const isValid = handleValidations();
+    if (!isValid) return;
     const currentData = store[activeSection];
     const currentSectionIndex = onboardingSectionIds.indexOf(activeSection);
 
@@ -199,16 +203,17 @@ export default function MakeUpArtistOnboardingPage() {
     try {
       const mappedData = mapMakeupArtistDataToBackend(activeSection, currentData);
       const payload = { ...mappedData, next_step: currentSectionIndex + 1 };
-
+      console.log(`Payload for ${activeSection}:`, payload);
       await api.put(`/makeup_artists/update/${artistId}`, payload);
 
       toast.success("Saved successfully!", { id: toastId });
 
       if (currentSectionIndex < onboardingSectionIds.length - 1) {
         setActiveSection(onboardingSectionIds[currentSectionIndex + 1]);
+        setCurrentIndex(currentIndex + 1);
       } else {
         toast.success("🎉 Onboarding complete!");
-        router.push("/makeup-artist/dashboard");
+        router.push("/makeup_artist_dashboard");
       }
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to save data.", {
@@ -219,6 +224,8 @@ export default function MakeUpArtistOnboardingPage() {
       setIsSubmitting(false);
     }
   };
+
+  console.log("Current Active Section:", activeSection);
 
   // ========== RENDER ==========
   return (
@@ -232,7 +239,7 @@ export default function MakeUpArtistOnboardingPage() {
           onSectionClick={setActiveSection}
         />
 
-        <div className="rounded-md bg-gray-100 w-full md:w-3/4">
+        <div className="flex flex-col gap-3 rounded-md bg-gray-100 w-full md:w-3/4">
           {onboardingSectionIds.map((id) => {
             const Component = sectionComponents[id];
             const isActive = id === activeSection;
@@ -245,6 +252,12 @@ export default function MakeUpArtistOnboardingPage() {
               </div>
             );
           })}
+          <button
+            className="bg-black text-white px-6 py-3 rounded-lg ml-auto cursor-pointer"
+            onClick={handleSaveAndNext}
+          >
+            {activeSection === "mediaBio" ? "Submit" : "Next"}
+          </button>
         </div>
       </div>
     </div>

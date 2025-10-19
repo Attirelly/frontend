@@ -1,37 +1,48 @@
 'use client';
 
+import { WeddingPlannerSectionKey } from '@/store/weddingPlannerStore';
 import Image from 'next/image';
 import React from 'react';
 
 interface WeddingPlannerSidebarProps {
-  activeSectionId: string;
-  onSectionClick: (id: string) => void;
+  currentIndex?: number;
+  activeSectionId: WeddingPlannerSectionKey;
+  onSectionClick: (id: WeddingPlannerSectionKey) => void;
 }
 
 // Updated sections array with the 'Photos' section removed
-const sections = [
-    { id: 'basic-information', title: 'Basic Information', desc: 'Your business and contact details.', iconUrl: '/OnboardingSections/business_details.png' },
-    { id: 'business-profile', title: 'Business Profile & Scale', desc: 'Your clientele, style, and scale.', iconUrl: '/OnboardingSections/analytics.png' },
-    { id: 'influence-network', title: 'Influence & Network', desc: 'Your professional network.', iconUrl: '/OnboardingSections/collab.png' },
-    { id: 'collaboration-preferences', title: 'Collaboration Preferences', desc: 'Define how you like to collaborate.', iconUrl: '/OnboardingSections/collab.png' },
-    { id: 'social-links', title: 'Social Links', desc: 'Connect your social media.', iconUrl: '/OnboardingSections/social_links.png' },
-    { id: 'insta-insights', title: 'Insta Insights', desc: 'Your key Instagram metrics.', iconUrl: '/OnboardingSections/analytics.png' },
+const sections: {
+  id: WeddingPlannerSectionKey;
+  title: string;
+  desc: string;
+  iconUrl: string;
+}[] = [
+  { id: 'basicInformation', title: 'Basic Information', desc: 'Your business and contact details.', iconUrl: '/OnboardingSections/business_details.png' },
+  { id: 'businessProfile', title: 'Business Profile & Scale', desc: 'Your clientele, style, and scale.', iconUrl: '/OnboardingSections/analytics.png' },
+  { id: 'influenceNetwork', title: 'Influence & Network', desc: 'Your professional network.', iconUrl: '/OnboardingSections/collab.png' },
+  { id: 'collaborationPreferences', title: 'Collaboration Preferences', desc: 'Define how you like to collaborate.', iconUrl: '/OnboardingSections/collab.png' },
+  { id: 'socialLinks', title: 'Social Links', desc: 'Connect your social media.', iconUrl: '/OnboardingSections/social_links.png' },
+  { id: 'instaInsights', title: 'Insta Insights', desc: 'Your key Instagram metrics.', iconUrl: '/OnboardingSections/analytics.png' },
 ];
 
 // --- Sub-component for Mobile View ---
-const MobileView = ({ activeSectionId, onSectionClick }: WeddingPlannerSidebarProps) => {
+const MobileView = ({ currentIndex=6,activeSectionId, onSectionClick }: WeddingPlannerSidebarProps) => {
   return (
     <nav className="w-full p-2 rounded-lg text-black bg-white">
       <div className="flex flex-row items-stretch space-x-2 overflow-x-auto whitespace-nowrap scrollbar-none">
-        {sections.map((section) => {
+        {sections.map((section, index) => {
           const isSelected = activeSectionId === section.id;
+          const disabled = index > currentIndex;
+          const isActive = section.id === activeSectionId;
           return (
             <button
               key={section.id}
-              onClick={() => onSectionClick(section.id)}
-              className={`flex flex-col items-center justify-center p-2 rounded-lg transition min-w-[90px] ${
-                isSelected ? "bg-gray-200" : "bg-transparent"
-              } hover:bg-gray-100 cursor-pointer`}
+              disabled={disabled}
+              onClick={() => {if (!disabled) onSectionClick(section.id)}}
+               className={`flex flex-col items-center justify-center p-2 rounded-lg transition min-w-[90px] ${isSelected ? "bg-gray-200" : "bg-transparent"
+                } ${isActive ? "bg-blue-500 text-white" : "bg-gray-100"}
+              ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-100"
+                } hover:bg-gray-100 cursor-pointer`}
             >
               <Image
                 src={section.iconUrl}
@@ -52,21 +63,30 @@ const MobileView = ({ activeSectionId, onSectionClick }: WeddingPlannerSidebarPr
 };
 
 // --- Sub-component for Desktop View ---
-const DesktopView = ({ activeSectionId, onSectionClick }: WeddingPlannerSidebarProps) => {
+const DesktopView = ({ currentIndex = 6, activeSectionId, onSectionClick }: WeddingPlannerSidebarProps) => {
   return (
     <div className="bg-white p-4 rounded-2xl w-full max-w-sm self-start text-black">
       <h2 className="text-lg font-bold mb-4">Complete your profile</h2>
       <nav>
         <ul className="space-y-4">
-          {sections.map((section) => {
+          {sections.map((section, index) => {
             const isCurrent = section.id === activeSectionId;
+            const disabled = index > currentIndex;
+            const isActive = section.id === activeSectionId;
 
             return (
               <li key={section.id}>
                 <button
-                  onClick={() => onSectionClick(section.id)}
-                  className={`flex items-start text-left w-full p-4 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black
-                    ${isCurrent ? 'border-black bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                  onClick={() => {if (!disabled) onSectionClick(section.id)}}
+                  className={`flex items-start text-left w-full p-4 rounded-lg
+                    ${isCurrent
+                      ? "border border-black border-2 bg-gray-50 focus:outline-none"
+                      : "border-gray-200 bg-white shadow-sm hover:border-gray-300"
+                    }
+                    ${disabled
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-gray-50 cursor-pointer"
+                    }`}
                 >
                   <Image
                     src={section.iconUrl}
@@ -89,14 +109,14 @@ const DesktopView = ({ activeSectionId, onSectionClick }: WeddingPlannerSidebarP
   );
 };
 
-export default function WeddingPlannerSidebar({ activeSectionId, onSectionClick }: WeddingPlannerSidebarProps) {
+export default function WeddingPlannerSidebar({ currentIndex = 6, activeSectionId, onSectionClick }: WeddingPlannerSidebarProps) {
   return (
     <>
       <div className="block md:hidden">
-        <MobileView activeSectionId={activeSectionId} onSectionClick={onSectionClick} />
+        <MobileView activeSectionId={activeSectionId} onSectionClick={onSectionClick} currentIndex={currentIndex} />
       </div>
       <div className="hidden md:block">
-        <DesktopView activeSectionId={activeSectionId} onSectionClick={onSectionClick} />
+        <DesktopView activeSectionId={activeSectionId} onSectionClick={onSectionClick} currentIndex={currentIndex} />
       </div>
     </>
   );

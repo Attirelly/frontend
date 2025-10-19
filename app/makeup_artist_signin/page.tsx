@@ -364,7 +364,7 @@ export default function InfluencerSignin() {
           <p className="text-center text-xs text-gray-500 mt-4">
             New to Attirelly?{" "}
             <Link
-              href="/seller_signup"
+              href="/makeup_artist_signup"
               className="text-blue-600 hover:underline"
             >
               Sign Up
