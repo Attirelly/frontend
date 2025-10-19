@@ -24,7 +24,7 @@ export default function Header ({ title, actions, navLinks }: HeaderProps) { ret
         <div className="flex items-center justify-between h-20">
           {/* Left Side: Title/Logo */}
           <div className="flex-shrink-0"> 
-            <Link href="/" className="text-[24px] md:text-[30px] text-[#373737] cursor-pointer font-bold">
+            <Link href="/" className="text-[30px] md:text-[37px] text-[#373737] cursor-pointer font-rosario">
               {title}
             </Link>
           </div>
