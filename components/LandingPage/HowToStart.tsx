@@ -161,7 +161,7 @@ const HowToStart = () => (
 
     {/* --- Part 1: A Community That Grows Together (WITH GRADIENT) --- */}
     {/* FIX: Added gradient classes directly to this div */}
-    <div className="py-24 font-rosario bg-gradient-to-b from-[#E8F4FF] to-white mb-24"> 
+    {/* <div className="py-24 font-rosario bg-gradient-to-b from-[#E8F4FF] to-white mb-24"> 
       <SectionTitle
         title="A Community That Grows Together"
         subtitle="Fashion thrives on collaboration. Work with stylists, MUAs, photographers, wedding planners to create real projects, not just posts."
@@ -174,7 +174,7 @@ const HowToStart = () => (
           </p>
         ))}
       </div>
-    </div>
+    </div> */}
 
     {/* --- Part 2: How To Get Started --- */}
     <div className="font-rosario py-16"> {/* Added vertical padding here too */}

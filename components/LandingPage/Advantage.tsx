@@ -3,10 +3,11 @@ import { SectionWrapper } from '@/components/LandingPage/reusable_components/Sec
 import { SectionTitle } from '@/components/LandingPage/reusable_components/SectionTitle';
 import { Banknote, Users, LucideProps } from 'lucide-react'; // Import LucideProps
 import { ForwardRefExoticComponent, RefAttributes } from 'react'; // Import component types
+import { manrope } from '@/font';
 
 // Define a precise type for our icon prop
-type AdvantageIcon = 
-  | string 
+type AdvantageIcon =
+  | string
   | ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
 
 // Define the type for the advantage object
@@ -36,50 +37,54 @@ const advantages: Advantage[] = [
 ];
 
 const Advantage = () => (
-  <SectionWrapper>
-    <SectionTitle
-      title="The Attirelly Advantage"
-      subtitle="We welcome every creative voice shaping Indian fashion — from beginners to seasoned pros."
-    />
-    
-    <div className="grid md:grid-cols-3 gap-8 mt-20">
-      {advantages.map((adv) => (
-        <div key={adv.title} className="relative">
-          
-          {/* Floating icon circle */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <div className="bg-white rounded-full h-20 w-20 flex items-center justify-center shadow-lg border border-gray-100">
-              
-              {/* --- THIS IS THE FIX --- */}
-              {adv.iconType === 'text' ? (
-                // 1. If type is 'text', TS knows adv.icon is a string. We render it in a <span>.
-                <span className="text-3xl font-extrabold font-rosario text-black">
-                  {adv.icon}
-                </span>
-              ) : (
-                // 2. If type is 'icon', TS knows adv.icon is a component.
-                // We must assign it to a variable with a Capital Letter (React convention)
-                // and render it as a component tag <Icon />.
-                (() => {
-                  const Icon = adv.icon as React.ElementType;
-                  return <Icon className="h-10 w-10 text-black" />;
-                })()
-              )}
-              {/* --- END OF FIX --- */}
 
+  <section className={`${manrope.className} py-20 px-8 md:px-6 lg:px-8`} style={{ fontWeight: 500 }}>
+    <div className="max-w-7xl mx-auto">
+
+      <SectionTitle
+        title="The Attirelly Advantage"
+      // subtitle="We welcome every creative voice shaping Indian fashion — from beginners to seasoned pros."
+      />
+
+      <div className={`grid md:grid-cols-3 gap-14 md:gap-8 mt-20`}>
+        {advantages.map((adv) => (
+          <div key={adv.title} className="relative">
+
+            {/* Floating icon circle */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className="bg-white rounded-full h-20 w-20 flex items-center justify-center shadow-lg border border-gray-300 border-2">
+
+                {/* --- THIS IS THE FIX --- */}
+                {adv.iconType === 'text' ? (
+                  // 1. If type is 'text', TS knows adv.icon is a string. We render it in a <span>.
+                  <span className="text-3xl font-extrabold font-rosario text-black">
+                    {adv.icon}
+                  </span>
+                ) : (
+                  // 2. If type is 'icon', TS knows adv.icon is a component.
+                  // We must assign it to a variable with a Capital Letter (React convention)
+                  // and render it as a component tag <Icon />.
+                  (() => {
+                    const Icon = adv.icon as React.ElementType;
+                    return <Icon className="h-10 w-10 text-black" />;
+                  })()
+                )}
+                {/* --- END OF FIX --- */}
+
+              </div>
+            </div>
+
+            {/* Card content */}
+            <div className="bg-white p-8 pt-16 rounded-xl shadow-lg text-center h-full border border-gray-100 border-1">
+              <p className="text-lg font-medium font-rosario text-gray-800">
+                {adv.title}
+              </p>
             </div>
           </div>
-
-          {/* Card content */}
-          <div className="bg-white p-8 pt-16 rounded-xl shadow-lg text-center h-full">
-            <p className="text-lg font-medium font-rosario text-gray-800">
-              {adv.title}
-            </p>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  </SectionWrapper>
+  </section>
 );
 
 export default Advantage;
