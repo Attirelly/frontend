@@ -60,6 +60,7 @@ export default function BulkUploadPage() {
   const [sub2, setSub2] = useState("");
   const [sub3, setSub3] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
+  const [idToNameMap, setIdToNameMap] = useState<Record<string, string>>({});
 
   const [isUploading, setIsUploading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -72,6 +73,13 @@ export default function BulkUploadPage() {
       try {
         const response = await api.get("/categories/");
         setCategories(response.data);
+
+        const map: Record<string, string> = {};
+        response.data.forEach((cat: Category) => {
+          map[cat.category_id] = cat.name;
+        });
+        setIdToNameMap(map);
+        
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to load categories");
@@ -84,7 +92,8 @@ export default function BulkUploadPage() {
    * NOTE: This is currently hardcoded in the download handler but can be made dynamic.
    */
   const getTemplateFileName = () => {
-    return `${category}-${sub1}-${sub2}-${sub3}.xlsx`;
+
+    return `${idToNameMap[category].toLowerCase()}-${idToNameMap[sub1].toLowerCase()}-${idToNameMap[sub2].toLowerCase()}-${idToNameMap[sub3].toLowerCase()}.xlsx`;
   };
 
   const handleBrowseClick = () => {

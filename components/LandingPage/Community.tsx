@@ -13,7 +13,7 @@ interface CommunityProps {
 const Community = ({ title, description, communityData=[] }: CommunityProps) => (
   // 1. This is the full-width section with the gradient.
   //    It does NOT use SectionWrapper.
-  <section className={`${manrope.className} py-24 bg-gradient-to-b from-[#E8F4FF] to-white`} style={{fontWeight:400}}>
+  <section className={`${manrope.className} py-24 bg-gradient-to-b from-[#D7E7FF] to-white`} style={{fontWeight:400}}>
     
     {/* 2. This div constrains the content *inside* the full-width background */}
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

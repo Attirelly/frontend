@@ -7,7 +7,8 @@ import { Button } from '@/components/LandingPage/reusable_components/Button';
 // Import all the Landing Page section components
 import Hero from '@/components/LandingPage/Hero';
 import WhyJoin from '@/components/LandingPage/WhyJoin';
-import Advantage from '@/components/LandingPage/Advantage';
+import BeyondEarnings from '@/components/LandingPage/BeyondEarning';
+import HowItWorks from '@/components/LandingPage/HowItWorks';
 import WhoCanJoin from '@/components/LandingPage/WhoCanJoin';
 import ContentWeLove from '@/components/LandingPage/ContentWeLove';
 import HowToStart from '@/components/LandingPage/HowToStart';
@@ -75,24 +76,47 @@ const communityData = [
 
 const steps = [
   {
-    number: 1,
+    number: "1",
     title: 'Sign In',
     description: 'Create your Attirelly account',
   },
   {
-    number: 2,
+    number: "2",
     title: 'Complete Dashboard',
     description: 'Add info, select content genres, and integrate Instagram',
   },
   {
-    number: 3,
+    number: "3",
     title: 'Get Matched',
     description: 'We review your insights & connect you with relevant brands',
   },
   {
-    number: 4,
+    number: "4",
     title: 'Collaborate and Earn',
     description: 'Join shoots, festive edits, lookbooks, and projects',
+  },
+];
+
+const numbers = [
+  {
+    number: "600+",
+    title: 'Ethinic labels & designers onboard',
+    // description: 'Create your Attirelly account',
+  },
+  {
+    number: "100+",
+    title: 'Collaborations completed',
+    // description: 'Add info, select content genres, and integrate Instagram',
+  },
+  {
+    number: "₹20Lac+",
+    title: 'distributed to partners',
+    // description: 'We review your insights & connect you with relevant brands',
+  },
+  {
+    number: "30",
+    title: 'Partners earned ₹50K+ each',
+    // description: 'Join shoots, festive edits, lookbooks, and projects',
   },
 ];
 
@@ -117,7 +141,10 @@ export default function WeddingPlanner () {
 
              <Hero title="Attirelly Wedding Partner Program" subtitles={["Refer", "Collaborate", "Earn"]} description={["If you are a Wedding Planner, Makeup Artist, Stylist or Photographer — this is for you.", "Earn ₹1-3 Lakhs+ this wedding season through referrals and collaborations."]} buttonText="Apply Now"/>
              <WhyJoin title="Why Join Attirelly" description={`Guide Thousands Of Couples Every Year On "Where To Shop"", "What To Wear", & "Whom To Trust"`} benefits={benefits} subtitle="Earn 1-3 Lac+ this wedding session" sub_description="More recommendations → more bookings → more income. whether for weddings, pre-weddings, or other events." image_url='/WeddingProgramLanding/attirelly_landing.png'/>
+             <HowItWorks/>
              <WhoCanJoin title='Who Can Join?' description='We welcome every creative voice shaping Indian fashion — from beginners to seasoned pros.' influencerTiers={WeddingPlannerTier}/>
+             <HowToStart title='Our Numbers' steps={numbers}/> {/*Our Numbers Section */}
+             <BeyondEarnings/> 
              <Community title="A Community of 2000+ Partners" description="Fashion thrives on collaboration. Work with stylists, MUAs, photographers, wedding planners to create real projects, not just posts." communityData={communityData} />   
              <HowToStart title='How To Get Started' description='Start with simple 4 steps' steps={steps}/>
              <Testimonials title='Real Stories' stories={stories} />   
