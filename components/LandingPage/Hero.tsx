@@ -4,12 +4,13 @@ import { ArrowUpRight } from 'lucide-react';
 
 interface HeroProps {
   title?: string;
+  title_secondary?: string;
   subtitles?: string[];
   description?: string[];
   buttonText?: string;
 }
 
-const Hero = ({ title, subtitles = [], description = [], buttonText }: HeroProps) => {
+const Hero = ({ title, title_secondary, subtitles = [], description = [], buttonText }: HeroProps) => {
   const size = 3;
   return (
     <section
@@ -24,6 +25,13 @@ const Hero = ({ title, subtitles = [], description = [], buttonText }: HeroProps
           style={{ fontWeight: 800 }}>
           {title}
         </h1>
+        {title_secondary && (
+          <h2 className={`${poppins.className} mt-4 text-2xl font-semibold leading-snug text-gray-800`}
+            style={{ fontWeight: 400 }}>
+            {title_secondary}
+          </h2>
+        )}
+
 
         {/* Updated "Create • Collaborate • Earn" styling */}
         <div className={`${poppins.className} inline-flex items-center gap-3 border-gray-600 rounded-full px-7 py-3 text-lg md:text-2xl lg:text-3xl font-medium text-gray-800 my-8 shadow-sm`}

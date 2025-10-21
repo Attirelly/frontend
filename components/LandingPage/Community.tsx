@@ -18,8 +18,8 @@ const Community = ({ title, description, communityData=[] }: CommunityProps) => 
     {/* 2. This div constrains the content *inside* the full-width background */}
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <SectionTitle
-        title={title || "A Community of 2000+ Partners"}
-        subtitle={description || "Fashion thrives on collaboration. Work with stylists, MUAs, photographers, wedding planners to create real projects, not just posts."}
+        title={title || ""}
+        subtitle={description || ""}
         className="mb-12"
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 max-w-4xl mx-auto text-lg">
