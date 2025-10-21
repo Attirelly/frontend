@@ -136,7 +136,7 @@ const ArrowIcon = () => (
 interface HowToStartProps {
   title?: string;
   description?: string;
-  steps?: { number: number; title: string; description: string }[];
+  steps?: { number: string; title: string; description?: string }[];
 }
 
 const HowToStart = ({ title, description, steps=[] }: HowToStartProps) => (
@@ -148,7 +148,7 @@ const HowToStart = ({ title, description, steps=[] }: HowToStartProps) => (
     <div className="py-8"> {/* Added vertical padding here too */}
 
       <div className={`text-center mb-8`}>
-      <h2 className="text-2xl md:text-3xl lg:text-4xl  tracking-tighter" style={{fontWeight:600}}>{title}</h2>
+      <h2 className="text-3xl md:text-4xl lg:text-5xl  tracking-tighter" style={{fontWeight:600}}>{title}</h2>
       {description && <p className="mt-4 text-lg text-black-500 max-w-3xl mx-auto">{description}</p>}
     </div>
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0 px-10 md:px-0">
