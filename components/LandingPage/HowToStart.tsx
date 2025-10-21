@@ -154,11 +154,11 @@ const HowToStart = ({ title, description, steps=[] }: HowToStartProps) => (
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0 px-10 md:px-0">
         {steps.map((step, index) => (
           <React.Fragment key={step.number}>
-            <div className="bg-white p-8 rounded-xl shadow-lg text-center w-full max-w-xs h-48 md:h-55 lg:h-48 flex flex-col justify-center">
+            <div className="bg-white p-8 rounded-xl shadow-lg text-center w-full max-w-xs h-56 md:h-56 lg:h-50 flex flex-col justify-between">
               <span className="text-5xl text-black" style={{fontWeight:800}}>
                 {step.number}
               </span>
-              <h3 className={`${manrope.className} text-xl my-2 text-black`} style={{fontWeight:600}}>
+              <h3 className={`${manrope.className} text-xl my-1 text-black`} style={{fontWeight:600}}>
                 {step.title}
               </h3>
               <p className="text-sm text-gray-600">{step.description}</p>

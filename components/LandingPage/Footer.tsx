@@ -2,8 +2,8 @@ import React from 'react';
 import { Facebook, Twitter, Instagram } from 'lucide-react';
 
 const Footer = () => (
-  <footer className="bg-gray-100 text-gray-600 pt-16 pb-8 px-4">
-    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+  <footer className="bg-gray-100 text-gray-600 pt-16 pb-8 px-4 mt-[59px]">
+    <div className="max-w-7xl mx-auto grid grid-cols-1 mt-[59px] md:grid-cols-4 gap-8 ">
       <div className="md:col-span-2">
         <h3 className="text-2xl font-bold text-black mb-4">Attirelly</h3>
         <p>S-71, Adinath Nagar, J.L.N Marg, Opposite World Trade Park, Jaipur, Rajasthan, 302017</p>

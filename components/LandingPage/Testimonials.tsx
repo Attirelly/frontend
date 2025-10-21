@@ -12,7 +12,7 @@ const Testimonials = ({ title, stories=[] }: TestimonialsProps) => (
         <div className="max-w-7xl mx-auto">
             {/* <SectionTitle title="Real Stories" className="mb-16" /> */}
             <div className={`text-center mb-8`}>
-      <h2 className="text-3xl md:text-4xl lg:text-5xl tracking-tighter" style={{fontWeight:800}}>{title}</h2>
+      <h2 className="text-3xl md:text-4xl lg:text-5xl tracking-tighter" style={{fontWeight:600}}>{title}</h2>
     </div>
             <div className="grid md:grid-cols-2 gap-y-12 gap-x-8">
                 {stories.map(s => (

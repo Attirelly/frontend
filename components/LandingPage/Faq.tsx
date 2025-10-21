@@ -1,9 +1,11 @@
 'use client';
 import React from 'react';
-import { SectionWrapper } from '@/components/ui/SectionWrapper';
-import { SectionTitle } from '@/components/ui/SectionTitle';
-import { useLandingStore } from '@/stores/useLandingStore';
+import { SectionWrapper } from '@/components/LandingPage/reusable_components/SectionWrapper';
+// import { SectionTitle } from '@/components/LandingPage/reusable_components/SectionTitle';
+import { useLandingStore } from '@/store/InfluencerProgramLandingPage';
 import { Plus, Minus } from 'lucide-react';
+
+import { rubik } from '@/font';
 
 const faqData = [
     { id: 1, q: "What is Attirelly?", a: "Fashion thrives on collaboration. Work with stylists, MUAs, photographers, wedding planners to create real projects, not just posts." },
@@ -15,9 +17,9 @@ const faqData = [
 const Faq = () => {
     const { openFaqId, toggleFaq } = useLandingStore();
     return (
-        <SectionWrapper id="faq">
-            <SectionTitle title="FAQ's" className="mb-12" />
-            <div className="max-w-3xl mx-auto space-y-4">
+        <section className={`py-20 px-8 md:px-6 lg:px-8`} style={{ fontWeight: 500 }}>
+         <div className="max-w-7xl mx-auto">
+            <div className="max-w-3xl mx-auto space-y-4 mb-[59px]">
                 {faqData.map((faq) => {
                     const isOpen = openFaqId === faq.id;
                     return (
@@ -31,7 +33,8 @@ const Faq = () => {
                     );
                 })}
             </div>
-        </SectionWrapper>
+          </div>  
+        </section>
     );
 };
 export default Faq;
