@@ -1,24 +1,28 @@
 import React from 'react';
-import { SectionWrapper } from '@/components/ui/SectionWrapper';
-import { SectionTitle } from '@/components/ui/SectionTitle';
+import { poppins } from '@/font';
 
-const stories = [
-    { quote: "Got my first brand shoot with a Chandigarh label in 2 weeks — Attirelly made it easy!", author: "@riya.sharma11", details: "5k followers, college student" },
-    { quote: "As a NIFT student, I worked on real campaigns and built my portfolio — total game changer!", author: "@creates.ritz", details: "12k followers, student Creator" },
-    { quote: "Attirelly connected me with designers & stylists for city shoots. My collaborations grew faster than I imagined.", author: "@shivani.realistic", details: "45k followers, early professional" },
-    { quote: "Being part of Attirelly’s campaigns gave me exposure & credibility — now brands approach me directly.", author: "@anaya_06", details: "150k followers, professional stylist & creator" },
-];
-const Testimonials = () => (
-    <SectionWrapper>
-        <SectionTitle title="Real Stories" className="mb-16" />
-        <div className="grid md:grid-cols-2 gap-y-12 gap-x-8">
-            {stories.map(s => (
-                <div key={s.author} className="text-center">
-                    <p className="text-lg italic text-gray-800">"{s.quote}"</p>
-                    <p className="mt-4 font-semibold text-black">{s.author} <span className="text-gray-500 font-normal">({s.details})</span></p>
-                </div>
-            ))}
+
+
+interface TestimonialsProps {
+    title?: string;
+    stories?: { quote: string; author: string; details: string }[];
+}
+const Testimonials = ({ title, stories=[] }: TestimonialsProps) => (
+    <section className={`${poppins.className} py-20 px-4 md:px-6 lg:px-8 bg-white text-black`} style={{ fontWeight: 600 }}>
+        <div className="max-w-7xl mx-auto">
+            {/* <SectionTitle title="Real Stories" className="mb-16" /> */}
+            <div className={`text-center mb-8`}>
+      <h2 className="text-3xl md:text-4xl lg:text-5xl tracking-tighter" style={{fontWeight:600}}>{title}</h2>
+    </div>
+            <div className="grid md:grid-cols-2 gap-y-12 gap-x-8">
+                {stories.map(s => (
+                    <div key={s.author} className="text-center">
+                        <p className="text-base md:text-lg text-gray-800" style={{fontWeight:400}}>"{s.quote}"</p>
+                        <p className="text-sm md:text-black">{s.author} <span className="text-gray-500 font-normal">({s.details})</span></p>
+                    </div>
+                ))}
+            </div>
         </div>
-    </SectionWrapper>
+    </section>
 );
 export default Testimonials;
