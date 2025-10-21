@@ -79,6 +79,7 @@ export default function BulkUploadPage() {
           map[cat.category_id] = cat.name;
         });
         setIdToNameMap(map);
+        
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to load categories");
@@ -91,7 +92,8 @@ export default function BulkUploadPage() {
    * NOTE: This is currently hardcoded in the download handler but can be made dynamic.
    */
   const getTemplateFileName = () => {
-    return `${category}-${sub1}-${sub2}-${sub3}.xlsx`;
+
+    return `${idToNameMap[category].toLowerCase()}-${idToNameMap[sub1].toLowerCase()}-${idToNameMap[sub2].toLowerCase()}-${idToNameMap[sub3].toLowerCase()}.xlsx`;
   };
 
   const handleBrowseClick = () => {
@@ -195,8 +197,7 @@ export default function BulkUploadPage() {
             label="Category"
             value={category}
             onChange={(val) => {
-              const categoryName = idToNameMap[val];
-              setCategory(categoryName);
+              setCategory(val);
               setSub1("");
               setSub2("");
               setSub3("");
@@ -209,8 +210,7 @@ export default function BulkUploadPage() {
             label="Subcategory 1"
             value={sub1}
             onChange={(val) => {
-              const categoryName = idToNameMap[val];
-              setSub1(categoryName);
+              setSub1(val);
               setSub2("");
               setSub3("");
             }}
@@ -227,8 +227,7 @@ export default function BulkUploadPage() {
             label="Subcategory 2"
             value={sub2}
             onChange={(val) => {
-              const categoryName = idToNameMap[val];
-              setSub2(categoryName);
+              setSub2(val);
               setSub3("");
             }}
             disabled={!sub1}
@@ -239,10 +238,7 @@ export default function BulkUploadPage() {
           <SelectField
             label="Subcategory 3"
             value={sub3}
-            onChange={(val) => {
-              const categoryName = idToNameMap[val];
-              setSub3(categoryName);
-            }}
+            onChange={(val) => setSub3(val)}
             disabled={!sub2}
             options={categories.filter((cat) => cat.parent_id === sub2)}
           />
