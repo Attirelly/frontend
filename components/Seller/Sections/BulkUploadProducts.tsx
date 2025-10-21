@@ -60,6 +60,7 @@ export default function BulkUploadPage() {
   const [sub2, setSub2] = useState("");
   const [sub3, setSub3] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
+  const [idToNameMap, setIdToNameMap] = useState<Record<string, string>>({});
 
   const [isUploading, setIsUploading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -72,6 +73,12 @@ export default function BulkUploadPage() {
       try {
         const response = await api.get("/categories/");
         setCategories(response.data);
+
+        const map: Record<string, string> = {};
+        response.data.forEach((cat: Category) => {
+          map[cat.category_id] = cat.name;
+        });
+        setIdToNameMap(map);
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to load categories");
@@ -188,7 +195,8 @@ export default function BulkUploadPage() {
             label="Category"
             value={category}
             onChange={(val) => {
-              setCategory(val);
+              const categoryName = idToNameMap[val];
+              setCategory(categoryName);
               setSub1("");
               setSub2("");
               setSub3("");
@@ -201,7 +209,8 @@ export default function BulkUploadPage() {
             label="Subcategory 1"
             value={sub1}
             onChange={(val) => {
-              setSub1(val);
+              const categoryName = idToNameMap[val];
+              setSub1(categoryName);
               setSub2("");
               setSub3("");
             }}
@@ -218,7 +227,8 @@ export default function BulkUploadPage() {
             label="Subcategory 2"
             value={sub2}
             onChange={(val) => {
-              setSub2(val);
+              const categoryName = idToNameMap[val];
+              setSub2(categoryName);
               setSub3("");
             }}
             disabled={!sub1}
@@ -229,7 +239,10 @@ export default function BulkUploadPage() {
           <SelectField
             label="Subcategory 3"
             value={sub3}
-            onChange={(val) => setSub3(val)}
+            onChange={(val) => {
+              const categoryName = idToNameMap[val];
+              setSub3(categoryName);
+            }}
             disabled={!sub2}
             options={categories.filter((cat) => cat.parent_id === sub2)}
           />
