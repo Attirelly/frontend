@@ -25,7 +25,7 @@ export default function SellerForm() {
     if (!isPhoneValid) return;
     const sellerData: SellerFormData = { name, college, phone, city };
     try{
-      const res = api.post("/ambassador/upload_data", sellerData);
+      const res = api.post("/ambassador/upload_data?context=ambassador", sellerData);
       toast.success("Form submitted successfully!");
       setName("");
       setCollege("");

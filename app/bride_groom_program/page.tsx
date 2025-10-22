@@ -21,6 +21,7 @@ import ListingFooter from '@/components/listings/ListingFooter';
 import ProblemsPage from '@/components/LandingPage/Problems';
 import { Icon } from 'lucide-react';
 import IconicPhotoboothPage from '@/components/LandingPage/IconicPhotobooth';
+import BrideAndGroomForm from '@/components/LandingPage/BrideAndGroomForm';
 
 const influencerNavLinks = [
     { name: 'Why join Attirelly', href: '#benefits' },
@@ -141,6 +142,7 @@ export default function BrideGroomLandingPage() {
         <HowToStart title='Our Numbers' steps={our_numbers}/>
         <Testimonials title='Real Stories' stories={stories} buttonText='Be Our Next Featured Wedding' />
         <CtaSection title='Every Love Story, Styled Beautifully.' buttonText='Get Personalized QR Code' buttonText2='Book Your Photobooth'/>
+        <BrideAndGroomForm/>
         <FAQ/>
       </main>
       <ListingFooter/>
