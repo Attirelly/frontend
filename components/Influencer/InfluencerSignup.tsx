@@ -32,7 +32,7 @@ export default function InfluencerSignup() {
    */
   useEffect(() => {
     resetStore();
-    router.prefetch("/influencer/influencer_onboarding");
+    router.prefetch("/influencer_signup/influencer_onboarding");
   }, []);
 
   // resend times logic

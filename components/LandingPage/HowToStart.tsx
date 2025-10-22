@@ -136,7 +136,7 @@ const ArrowIcon = () => (
 interface HowToStartProps {
   title?: string;
   description?: string;
-  steps?: { number: string; title: string; description?: string }[];
+  steps?: { number: string | string; title: string; description?: string }[];
 }
 
 const HowToStart = ({ title, description, steps=[] }: HowToStartProps) => (
@@ -154,8 +154,8 @@ const HowToStart = ({ title, description, steps=[] }: HowToStartProps) => (
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0 px-10 md:px-0">
         {steps.map((step, index) => (
           <React.Fragment key={step.number}>
-            <div className="bg-white p-8 rounded-xl shadow-lg text-center w-full max-w-xs h-56 md:h-56 lg:h-50 flex flex-col justify-between">
-              <span className="text-5xl text-black" style={{fontWeight:800}}>
+            <div className={`bg-white p-8 rounded-xl shadow-lg text-center w-full max-w-xs ${typeof step.number === 'string' ? 'h-40' : 'h-56 md:h-56 lg:h-50'} flex flex-col justify-between`}>
+              <span className={`${typeof step.number === 'string' ? 'text-3xl' : 'text-5xl'} text-black`} style={{fontWeight:800}}>
                 {step.number}
               </span>
               <h3 className={`${manrope.className} text-xl my-1 text-black`} style={{fontWeight:600}}>
