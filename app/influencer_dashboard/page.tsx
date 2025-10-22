@@ -177,7 +177,6 @@ export default function InfluencerOnboardingPage() {
         });
       } catch (error) {
         console.error("Error fetching influencer details:", error);
-        toast.error("Failed to load influencer details");
       }
     };
 

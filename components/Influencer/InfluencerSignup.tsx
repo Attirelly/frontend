@@ -152,7 +152,7 @@ export default function InfluencerSignup() {
           setInfluencerId(newInfluencerId);
           await api.post("/users/login", { contact_number: phone });
 
-          router.push("/influencer/influencer_onboarding");
+          router.push("/influencer_signup/influencer_onboarding");
 
 
         } catch (error) {

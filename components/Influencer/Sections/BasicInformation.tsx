@@ -36,7 +36,7 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
           api.get("/genders"),
           api.get("/age-groups")
         ]);
-
+        console.log(genderOptions , ageGroupOptions)
         setGenderOptions(gendersResponse.data);
         setAgeGroupOptions(ageGroupsResponse.data);
 
@@ -64,6 +64,7 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
       !basicInformation.age_group_id || // Changed from ageGroup
       basicInformation.languages.length === 0
     ) {
+      console.log("basicInformation" , basicInformation)
       alert(
         "Please fill out all mandatory fields marked with an asterisk (*)."
       );
