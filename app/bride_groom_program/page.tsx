@@ -18,6 +18,9 @@ import Faq from '@/components/LandingPage/Faq';
 import FAQ from '@/components/SellerLanding/FAQ';
 import Footer from '@/components/LandingPage/Footer';
 import ListingFooter from '@/components/listings/ListingFooter';
+import ProblemsPage from '@/components/LandingPage/Problems';
+import { Icon } from 'lucide-react';
+import IconicPhotoboothPage from '@/components/LandingPage/IconicPhotobooth';
 
 const influencerNavLinks = [
     { name: 'Why join Attirelly', href: '#benefits' },
@@ -111,6 +114,13 @@ const stories = [
     { quote: "Got my first brand shoot with a Chandigarh label in 2 weeks — Attirelly made it easy!", author: "@riya.sharma11", details: "5k followers, college student" },
     { quote: "As a NIFT student, I worked on real campaigns and built my portfolio — total game changer!", author: "@creates.ritz", details: "12k followers, student Creator" }
 ];
+
+const experiences = [
+    "Exclusive 10–20% savings with Attirelly’s partner studios",
+    "Memories captured, shared, and celebrated across social media.",
+    "Stunning, magazine-worthy photos every moment becomes a keepsake.",
+    "Transform your wedding into a cinematic, unforgettable experience."
+];
 export default function BrideGroomLandingPage() {
   return (
     <div className="bg-white text-black">
@@ -121,11 +131,12 @@ export default function BrideGroomLandingPage() {
       />
       <main>
         <Hero title='Attirelly Brides & Grooms Program' title_secondary='Tying the knot soon? this is for you Make your wedding' subtitles={['Stylish', 'Effortless', 'Iconic']} description={['Give your guests a personalized QR gift or a Vogue-style photobooth moment.']} buttonText='Get Your Gifting QR Code'/>
-        {/* problems component */}
+        <ProblemsPage title='Problems With Old Fashioned Gifting' problems={['Gifting outfits is stressful — deciding, buying, and distributing for every guest. ','Say goodbye old-fashioned outfit gifting forget stress, no last-minute chaos.']}/>
         <HowToStart title='Skip the 20-Day Gifting Hassle Go Digital with Attirelly' steps={steps}/>
         <WhoCanJoin influencerTiers={influencerTiers} />
-        <Community title="Perfect for couples, If" communityData={communityData} />
+        <Community title="Perfect for couplesIconic Photobooth Experience, If" communityData={communityData} />
          {/* iconic photobooth moment */}
+         <IconicPhotoboothPage title='Iconic Photobooth Experience' experiences={experiences} />
          <WhoCanJoin influencerTiers={photobooth} />
         <HowToStart title='Our Numbers' steps={our_numbers}/>
         <Testimonials title='Real Stories' stories={stories} buttonText='Be Our Next Featured Wedding' />

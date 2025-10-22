@@ -136,7 +136,7 @@ const ArrowIcon = () => (
 interface HowToStartProps {
   title?: string;
   description?: string;
-  steps?: { number: string | string; title: string; description?: string }[];
+  steps?: { number: number | string; title: string; description?: string }[];
 }
 
 const HowToStart = ({ title, description, steps=[] }: HowToStartProps) => (
