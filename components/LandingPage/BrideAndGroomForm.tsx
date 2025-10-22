@@ -83,14 +83,14 @@ export default function BrideAndGroomForm() {
     console.log(formData);
 
       // Reset all form fields
-    //   setTitle("");
-    //   setName("");
-    //   setMarriageDate("");
-    //   setPhone("");
-    //   setCity("");
-    //   setOptionsFor([]);
-    //   setReferredBy("");
-    //   setReferrerName("");
+      setTitle("");
+      setName("");
+      setMarriageDate("");
+      setPhone("");
+      setCity("");
+      setOptionsFor([]);
+      setReferredBy("");
+      setReferrerName("");
     } catch (error) {
       console.error("Submission failed:", error); // Log error for debugging
       toast.error("Failed to submit form. Please try again.");
