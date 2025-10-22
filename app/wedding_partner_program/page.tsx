@@ -21,12 +21,12 @@ import Footer from '@/components/LandingPage/Footer';
 import ListingFooter from '@/components/listings/ListingFooter';
 
 const WeddingPlannerNavLinks = [
-    {name:"Why Join Attirelly", href:""},
-    {name:"How it works", href:""},
-    {name:"Who can Join", href:""},
-    {name:"Our Numbers", href:""},
-    {name:"How to get started", href:""},
-    {name:"FAQ", href:""}
+    {name:"Why Join Attirelly", href:"#why-join"},
+    {name:"How it works", href:"#how-it-works"},
+    {name:"Who can Join", href:"#who-can-join"},
+    {name:"Our Numbers", href:"#our-numbers"},
+    {name:"How to get started", href:"#how-to-start"},
+    {name:"FAQ", href:"#faq"}
 ]
 
 const benefits = [
@@ -134,22 +134,41 @@ export default function WeddingPlanner () {
         <div className = "bg-white text-black">
             <Header
              title="Attirelly"
-             actions={<Button>Join Attirelly</Button>}
+             actions={
+              <>
+                 <Button className="hidden md:inline">Join Attirelly</Button>
+                
+                 <Button className="md:hidden">Join</Button>
+              </>   
+             }
              navLinks={WeddingPlannerNavLinks}
             /> 
             <main>
-
+             <section id="#hero"> 
              <Hero title="Attirelly Wedding Partner Program" subtitles={["Refer", "Collaborate", "Earn"]} description={["If you are a Wedding Planner, Makeup Artist, Stylist or Photographer — this is for you.", "Earn ₹1-3 Lakhs+ this wedding season through referrals and collaborations."]} buttonText="Apply Now"/>
+             </section>
+             <section id="why-join">
              <WhyJoin title="Why Join Attirelly" description={`Guide Thousands Of Couples Every Year On "Where To Shop"", "What To Wear", & "Whom To Trust"`} benefits={benefits} subtitle="Earn 1-3 Lac+ this wedding session" sub_description="More recommendations → more bookings → more income. whether for weddings, pre-weddings, or other events." image_url='/WeddingProgramLanding/attirelly_landing.png'/>
+             </section>
+             <section id="how-it-works">
              <HowItWorks/>
+             </section>
+             <section id="who-can-join">
              <WhoCanJoin title='Who Can Join?' description='We welcome every creative voice shaping Indian fashion — from beginners to seasoned pros.' influencerTiers={WeddingPlannerTier}/>
+             </section>
+             <section id="our-numbers">
              <HowToStart title='Our Numbers' steps={numbers}/> {/*Our Numbers Section */}
+             </section>
              <BeyondEarnings/> 
              <Community title="A Community of 2000+ Partners" description="Fashion thrives on collaboration. Work with stylists, MUAs, photographers, wedding planners to create real projects, not just posts." communityData={communityData} />   
+             <section id="how-to-start">
              <HowToStart title='How To Get Started' description='Start with simple 4 steps' steps={steps}/>
+             </section>
              <Testimonials title='Real Stories' stories={stories} />   
              <CtaSection title='Start Earning Now' description={'Guide Thousands Of Couples Every Year On "Where To Shop", "What To Wear", and "Whom To Trust"'} buttonText='Apply Now'/>
-             <FAQ/>   
+             <section id="faq">
+             <FAQ/>
+             </section>   
             </main>
              <ListingFooter/>   
         </div>
