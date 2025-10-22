@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 import { WeddingPlannerSectionKey } from '@/store/weddingPlannerStore';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 // Import all components (except Photos)
 import Header from '@/components/Header';
@@ -63,6 +63,30 @@ export default function WeddingPlannerOnboardingPage() {
         "socialLinks": useRef<any>(null),
         "instaInsights": useRef<any>(null),
     };
+
+
+      const searchParams = useSearchParams();
+      const rawSection = searchParams.get("section");
+      const sectionFromUrl: WeddingPlannerSectionKey =
+        rawSection &&
+        onboardingSectionIds.includes(rawSection as WeddingPlannerSectionKey)
+          ? (rawSection as WeddingPlannerSectionKey)
+          : "basicInformation";
+    
+      useEffect(() => {
+        if (sectionFromUrl && sectionFromUrl !== activeSection) {
+          setActiveSection(sectionFromUrl);
+        }
+      }, [sectionFromUrl]);
+    
+      const handleSectionChange = (section: WeddingPlannerSectionKey) => {
+        setActiveSection(section);
+        const current = new URLSearchParams(Array.from(searchParams.entries()));
+        current.set("section", section);
+        router.push(`?${current.toString()}`, { scroll: false });
+      };
+
+
 
     useEffect(() => {
         const fetchWeddingPlannerDetails = async () => {
@@ -256,7 +280,7 @@ export default function WeddingPlannerOnboardingPage() {
         <div className="min-h-screen bg-gray-100">
             <Header title="Attirelly" actions={<div>...</div>} />
             <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
-                <WeddingPlannerSidebar activeSectionId={activeSection} onSectionClick={setActiveSection} />
+                <WeddingPlannerSidebar activeSectionId={activeSection} onSectionClick={handleSectionChange} />
                 <div className="flex flex-col gap-3 rounded-md bg-gray-100">
                     {onboardingSectionIds.map(id => {
                         const Component = sectionComponents[id];

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "@/lib/axios";
 
@@ -73,6 +73,28 @@ export default function MakeUpArtistDashboardPage() {
   } = store;
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+    const searchParams = useSearchParams();
+    const rawSection = searchParams.get("section");
+    const sectionFromUrl: MakeupArtistSectionKey =
+      rawSection &&
+      onboardingSectionIds.includes(rawSection as MakeupArtistSectionKey)
+        ? (rawSection as MakeupArtistSectionKey)
+        : "basicInformation";
+  
+    useEffect(() => {
+      if (sectionFromUrl && sectionFromUrl !== activeSection) {
+        setActiveSection(sectionFromUrl);
+      }
+    }, [sectionFromUrl]);
+  
+    const handleSectionChange = (section: MakeupArtistSectionKey) => {
+      setActiveSection(section);
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      current.set("section", section);
+      router.push(`?${current.toString()}`, { scroll: false });
+    };
+
 
   // ========== FETCH MAKEUP ARTIST DETAILS ==========
   useEffect(() => {
@@ -234,7 +256,7 @@ export default function MakeUpArtistDashboardPage() {
         <MakeupArtistSidebar
           currentIndex={currentIndex}
           activeSectionId={activeSection}
-          onSectionClick={setActiveSection}
+          onSectionClick={handleSectionChange}
         />
 
         <div className="flex flex-col gap-3 rounded-md bg-gray-100 w-full md:w-3/4">
