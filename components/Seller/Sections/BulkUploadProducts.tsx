@@ -155,7 +155,7 @@ export default function BulkUploadPage() {
         },
       });
       if (response.data) {
-        setBatchId(response.data);
+        // setBatchId(response.data);
         toast.success("Shopify products synced successfully.");
       }
     } catch (error) {
