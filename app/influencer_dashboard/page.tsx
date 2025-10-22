@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "@/lib/axios";
 
@@ -66,7 +66,28 @@ export default function InfluencerOnboardingPage() {
   } = store;
 
   const { user } = useAuthStore();
-  const {handleValidations} = handleInfluencerValidations();
+  const { handleValidations } = handleInfluencerValidations();
+
+  const searchParams = useSearchParams();
+  const rawSection = searchParams.get("section");
+  const sectionFromUrl: InfluencerSectionKey =
+    rawSection &&
+    onboardingSectionIds.includes(rawSection as InfluencerSectionKey)
+      ? (rawSection as InfluencerSectionKey)
+      : "basicInformation";
+
+  useEffect(() => {
+    if (sectionFromUrl && sectionFromUrl !== activeSection) {
+      setActiveSection(sectionFromUrl);
+    }
+  }, [sectionFromUrl]);
+
+  const handleSectionChange = (section: InfluencerSectionKey) => {
+    setActiveSection(section);
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    current.set("section", section);
+    router.push(`?${current.toString()}`, { scroll: false });
+  };
 
   // ========== FETCH INFLUENCER DETAILS ==========
   useEffect(() => {
@@ -202,12 +223,6 @@ export default function InfluencerOnboardingPage() {
 
       toast.success("Details updated successfully!", { id: toastId });
 
-      // if (currentIndex < onboardingSectionIds.length - 1) {
-      //   setActiveSection(onboardingSectionIds[currentIndex + 1]);
-      // } else {
-      //   toast.success("🎉 Onboarding complete!");
-      //   router.push("/influencer/dashboard");
-      // }
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to save data.", {
         id: toastId,
@@ -221,12 +236,17 @@ export default function InfluencerOnboardingPage() {
   // ========== RENDER ==========
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header title="Attirelly" actions={<button onClick={() => logout("/influencer_signin")}>Log Out</button>} />
+      <Header
+        title="Attirelly"
+        actions={
+          <button onClick={() => logout("/influencer_signin")}>Log Out</button>
+        }
+      />
 
       <div className="flex flex-col md:flex-row gap-6 p-6 justify-center">
         <InfluencerSidebar
           activeSectionId={activeSection}
-          onSectionClick={setActiveSection}
+          onSectionClick={handleSectionChange}
         />
 
         <div className="flex flex-col gap-3 rounded-md bg-gray-100 w-full md:w-3/4">
