@@ -82,6 +82,7 @@ export default function SellerSignup() {
     if (resendTimer > 0) return;
 
     try {
+      console.log("phone1" , phone);
       await api.post("/otp/send_otp", null, {
         params: { phone_number: phone, otp_template: "UserLoginOTP" },
       });
@@ -101,6 +102,7 @@ export default function SellerSignup() {
         return;
       }
       try {
+        console.log("phone2" , phone);
         await api.post("/otp/verify_otp", null, {
           params: { phone_number: phone, otp: fullOtp },
         });
@@ -207,6 +209,7 @@ export default function SellerSignup() {
       const confirmed = window.confirm("Please confirm you phone number");
       if (!confirmed) return;
       try {
+        console.log("phone3" , phone);
         await api.post("/otp/send_otp", null, {
           params: { phone_number: phone, otp_template: "UserLoginOTP" },
         });
