@@ -28,7 +28,6 @@ export default function SellerSignup() {
 
     const isPhoneValid = /^\d{10}$/.test(phone);
     const router = useRouter();
-    const testing_phone = '7015241757'
 
     useEffect(() => {
 
