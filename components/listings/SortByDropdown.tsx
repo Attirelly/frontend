@@ -38,7 +38,7 @@ const SortByDropdown: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-52 bg-white border rounded-lg shadow-lg">
+        <div className="absolute z-20 mt-2 w-full bg-white border rounded-lg shadow-lg">
           {optionsMap.map((option) => (
             <div
               key={option.value}

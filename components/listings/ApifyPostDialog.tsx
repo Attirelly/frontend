@@ -195,7 +195,7 @@ export default function ApifyPostDialog({
         {/* Media Container */}
         <div className="flex-1 flex justify-center items-center bg-black ">
           {post.media_type === "Sidecar" ? (
-            <SidecarCarousel mediaUrls={post.media_urls} />
+            <SidecarCarousel key={post.id} mediaUrls={post.media_urls} />
           ) : post.media_type === "Video" ? (
             <video
               src={post.media_urls[0].media_url}

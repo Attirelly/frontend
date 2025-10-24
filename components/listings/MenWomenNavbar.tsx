@@ -10,7 +10,14 @@ import { useHeaderStore } from "@/store/listing_header_store";
 import { useProductFilterStore } from "@/store/filterStore";
 import { useRouter } from "next/navigation";
 
-// Utility to split subcat2 into N columns
+/**
+ * Utility function to split an array into multiple columns.
+ * 
+ * @template T - The type of array elements
+ * @param arr - The input array
+ * @param columns - Number of columns to split into
+ * @returns An array of columns, each containing a portion of the original array
+ */
 const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
   const result = Array.from({ length: columns }, () => [] as T[]);
   arr.forEach((item, index) => {
@@ -19,6 +26,18 @@ const chunkIntoColumns = <T,>(arr: T[], columns: number): T[][] => {
   return result;
 };
 
+/**
+ * MenWomenNavbar Component
+ * 
+ * This navigation component shows top-level categories for **Men** and **Women**.
+ * On hover, it expands into a mega-menu with subcategories (Ethnic wear → SubCat2 → SubCat3).
+ * 
+ * Features:
+ * - Fetches category data from backend API (`/categories/descendants/`).
+ * - Splits subcategories into max 5 columns for clean layout.
+ * - Supports navigation via Next.js router + dynamic links.
+ * - Resets filters from product store when navigating.
+ */
 export default function MenWomenNavbar() {
   const router = useRouter();
   const { resetFilters } = useProductFilterStore();
@@ -28,18 +47,21 @@ export default function MenWomenNavbar() {
   );
   const { setQuery } = useHeaderStore();
 
+  // Fetch categories (Men/Women -> Ethnic wear -> Subcategories)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await api.get("categories/descendants/");
         const data: Category[] = res.data;
 
+        // Filter only "Men" and "Women" categories
         const menAndWomen = data.filter(
           (cat) =>
             cat.name.toLowerCase() === "men" ||
             cat.name.toLowerCase() === "women"
         );
 
+        // Only keep Ethnic Wear children
         const result: Category[] = menAndWomen.map((genderCat) => {
           const ethnicWear = genderCat.children.find(
             (subcat1: SubCat1) => subcat1.name.toLowerCase() === "ethnic wear"
@@ -60,11 +82,12 @@ export default function MenWomenNavbar() {
     fetchCategories();
   }, []);
 
+  // Find the category being hovered (Men or Women)
   const category = categories.find(
     (c) => c.name.toLowerCase() === hoveredGender?.toLowerCase()
   );
 
-  // Dynamically determine number of columns (max 5)
+  // Determine number of columns (max 5)
   const columnCount = category ? Math.min(category.children.length, 5) : 0;
   const columns = category
     ? chunkIntoColumns(category.children, columnCount)
@@ -72,6 +95,7 @@ export default function MenWomenNavbar() {
 
   return (
     <nav className="relative z-50 h-full">
+      {/* Top-level nav items: Men / Women */}
       <div
         className="flex text-base text-[#373737] h-full"
         onMouseLeave={() => setHoveredGender(null)}
@@ -82,16 +106,14 @@ export default function MenWomenNavbar() {
             className="h-full flex items-center px-4 cursor-pointer hover:bg-gray-100"
             onMouseEnter={() => setHoveredGender(gender as "Men" | "Women")}
           >
-            <span
-              className={`${manrope.className}`}
-              style={{ fontWeight: 400 }}
-            >
+            <span className={`${manrope.className}`} style={{ fontWeight: 400 }}>
               {gender}
             </span>
           </div>
         ))}
       </div>
 
+      {/* Mega menu when hovering */}
       {hoveredGender && category && (
         <div
           className="absolute left-0 top-full bg-white shadow-xl rounded-bl-xl rounded-br-xl border-t z-40 w-max max-w-screen-xl cursor-pointer"
@@ -115,6 +137,7 @@ export default function MenWomenNavbar() {
               >
                 {column.map((subcat2: SubCat2) => (
                   <div key={subcat2.category_id} className="p-4">
+                    {/* SubCat2 title */}
                     <h3
                       className={`${manrope.className} text-sm mb-2 text-[#121212]`}
                       style={{ fontWeight: 700 }}
@@ -128,6 +151,8 @@ export default function MenWomenNavbar() {
                     >
                       {subcat2.name}
                     </h3>
+
+                    {/* SubCat3 links */}
                     <ul className="space-y-1">
                       {subcat2.children.map((subcat3) => (
                         <li key={subcat3.category_id}>

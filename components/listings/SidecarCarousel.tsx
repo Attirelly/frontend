@@ -188,16 +188,6 @@ export default function SidecarCarousel({
     setCurrentIndex((prev) => (prev < mediaUrls.length - 1 ? prev + 1 : prev));
   const prev = () => setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
 
-  // const handleTouchStart = (e: TouchEvent) => setTouchStartX(e.targetTouches[0].clientX);
-  // const handleTouchEnd = (e: TouchEvent) => {
-  //   if (touchStartX === null) return;
-  //   const touchEndX = e.changedTouches[0].clientX;
-  //   const diff = touchEndX - touchStartX;
-  //   if (diff > 50) prev();
-  //   else if (diff < -50) next();
-  //   setTouchStartX(null);
-  // };
-
   const handlers = useSwipeable({
     onSwipedLeft: () => next(),
     onSwipedRight: () => prev(),
@@ -219,6 +209,8 @@ export default function SidecarCarousel({
           controls
           autoPlay
           muted
+          controlsList="nodownload noplaybackrate noremoteplayback"
+          disablePictureInPicture
           className="max-w-full max-h-full object-contain"
         />
       ) : (
@@ -252,7 +244,7 @@ export default function SidecarCarousel({
             className={clsx(
               "text-black px-2 py-1 rounded-md  bg-white text-sm font-semibold opacity-80 hover:opacity-100 transition",
               currentIndex === mediaUrls.length - 1 &&
-                "opacity-30 pointer-events-none" // Hide if it's the last slide
+              "opacity-30 pointer-events-none" // Hide if it's the last slide
             )}
           >
             Next
