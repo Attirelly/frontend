@@ -83,7 +83,7 @@ export default function SellerSignup() {
 
     try {
       await api.post("/otp/send_otp", null, {
-        params: { phone_number: testing_phone, otp_template: "UserLoginOTP" },
+        params: { phone_number: phone, otp_template: "UserLoginOTP" },
       });
       toast.success("OTP resent successfully");
       setResendTimer(60); // Restart resend timer
@@ -102,7 +102,7 @@ export default function SellerSignup() {
       }
       try {
         await api.post("/otp/verify_otp", null, {
-          params: { phone_number: testing_phone, otp: fullOtp },
+          params: { phone_number: phone, otp: fullOtp },
         });
         try {
           const payload = {
@@ -208,7 +208,7 @@ export default function SellerSignup() {
       if (!confirmed) return;
       try {
         await api.post("/otp/send_otp", null, {
-          params: { phone_number: testing_phone, otp_template: "UserLoginOTP" },
+          params: { phone_number: phone, otp_template: "UserLoginOTP" },
         });
         setSendOTP(true);
         // alert(`OTP sent to ${phone}`);
