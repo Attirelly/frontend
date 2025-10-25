@@ -178,46 +178,7 @@ export default function WeddingPlannerOnboardingPage() {
     ]);
     // ===================================================
 
-    const handleFinalSubmit = async () => {
-        const allData = onboardingSectionIds.map(id => sectionRefs[id].current?.getData());
 
-        if (allData.some(data => !data)) {
-            alert("Could not retrieve data from all sections.");
-            return;
-        }
-
-        // Combine all data objects into one (no need to handle photos)
-        const finalData = Object.assign({}, ...allData);
-
-        const apiFormData = new FormData();
-
-        // Append all fields to FormData
-        Object.entries(finalData).forEach(([key, value]: [string, any]) => {
-            if (Array.isArray(value)) {
-                value.forEach(item => apiFormData.append(key, item));
-            } else if (value !== null && value !== undefined) {
-                apiFormData.append(key, String(value));
-            }
-        });
-
-        console.log("Submitting WP form data:", Object.fromEntries(apiFormData.entries()));
-        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/wedding_planners/onboard`;
-
-        // try {
-        //   ... your fetch logic will go here ...
-        // } catch (error) {
-        //   ...
-        // }
-    };
-
-    //   const handleNext = () => {
-    //     const currentIndex = onboardingSectionIds.indexOf(activeSectionId);
-    //     if (currentIndex < onboardingSectionIds.length - 1) {
-    //       setActiveSectionId(onboardingSectionIds[currentIndex + 1]);
-    //     } else {
-    //       handleFinalSubmit();
-    //     }
-    //   };
     console.log("Planner ID: ", plannerId);
     const handleSaveAndNext = async () => {
         const isValid = handleValidations();

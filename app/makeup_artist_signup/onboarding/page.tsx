@@ -202,7 +202,7 @@ export default function MakeUpArtistOnboardingPage() {
 
     try {
       const mappedData = mapMakeupArtistDataToBackend(activeSection, currentData);
-      const payload = { ...mappedData, next_step: currentSectionIndex + 1 };
+      const payload = { ...mappedData , onboarding_step : currentIndex + 1  };
       console.log(`Payload for ${activeSection}:`, payload);
       await api.put(`/makeup_artists/update/${artistId}`, payload);
 
