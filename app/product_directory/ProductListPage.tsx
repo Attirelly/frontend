@@ -22,6 +22,8 @@ import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs';
 import { getCategoryBreadcrumbs, getCategoryByName, getCategoryBySname} from '@/lib/breadcrumbService';
 import { BreadcrumbItem } from "@/types/breadcrumb";
 import { CloseOutlined } from "@ant-design/icons";
+import { api } from "@/lib/axios";
+import PriceCategoryLabels from "@/components/listings/PriceCategoryLabels";
 
 const STORE_TYPE_OPTIONS: BrandType[] = [
   { id: "f923d739-4c06-4472-9bfd-bb848b32594b", store_type: "Retail Store" },
@@ -107,6 +109,7 @@ export default function ProductListPage() {
   } = useProductFilterStore();
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [priceCategoryLabels , setPriceCategoryLabels] = useState([]) ; 
 
   const [matchedStoreType, setMatchedStoreType] = useState<string | null>(null);
   const [isReadyFlag, setIsReadyFlag] = useState<Boolean>(false);
@@ -334,6 +337,20 @@ export default function ProductListPage() {
     fetchBreadcrumbData();
   }, [categoryNameFromUrl, searchQueryFromUrl]); // Depend on both URL params
 
+  // effect to set price category labels 
+
+  useEffect(()=>{
+    const fetchPriceCategoryData = async()=>{
+      if(categoryNameFromUrl){
+        const result = await api.get(`/price-categories/by-category-name/${categoryNameFromUrl}`) 
+        const data = result.data ; 
+        setPriceCategoryLabels(data) ; 
+
+      }
+    } 
+    fetchPriceCategoryData() ; 
+  },[categoryNameFromUrl])
+
   return (
     <div className="flex flex-col bg-[#FFFFFF]">
       <ListingMobileHeader className="block lg:hidden" />
@@ -403,6 +420,7 @@ export default function ProductListPage() {
                       />
                     </div>
                     <SortByDropdown />
+                    <PriceCategoryLabels  payload = {priceCategoryLabels}/>
                   </div>
                   <TopDynamicFilterBar />
                   <ProductContainer />
