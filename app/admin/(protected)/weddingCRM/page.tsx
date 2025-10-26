@@ -39,7 +39,7 @@ const Link: React.FC<React.PropsWithChildren<{ href: string; className?: string 
 type WeddingPlanner = {
   id?: string;
   status?: boolean;
-  created_at?: Date;
+  created_at?: string | null;
   onboarding_progress?: number; // Calculated field (0-100)
 
   // Section 1: Basic Information
@@ -830,10 +830,18 @@ export default function WeddingPlannerCRM() {
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("fullName")}
+                        >
+                          <div className="flex items-center gap-2">
+                            Name {getSortIndicator("fullName")}
+                          </div>
+                        </th>
+                        <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort("businessName")}
                         >
                           <div className="flex items-center gap-2">
-                            Name {getSortIndicator("businessName")}
+                            Business Name {getSortIndicator("businessName")}
                           </div>
                         </th>
                         <th
@@ -841,19 +849,37 @@ export default function WeddingPlannerCRM() {
                           onClick={() => requestSort("email")}
                         >
                           <div className="flex items-center gap-2">
-                            Business Name {getSortIndicator("email")}
-                          </div>
-                        </th>
-                        <th
-                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort("baseLocation")}
-                        >
-                          <div className="flex items-center gap-2">
-                            E-Mail {getSortIndicator("baseLocation")}
+                            E-Mail {getSortIndicator("email")}
                           </div>
                         </th>
                         <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Contact Number
+                        </th>
+                        <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("yearsOfExperience")}
+                        >
+                          <div className="flex items-center gap-2">
+                            Years Of Experience {getSortIndicator("yearsOfExperience")}
+                          </div>
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Client Persona
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Wedding Aesthetic Styles
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Primary Cities
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Average Wedding Budget
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Total Followers
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Base Location
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -869,6 +895,14 @@ export default function WeddingPlannerCRM() {
                         >
                           <div className="flex items-center gap-2">
                             Status {getSortIndicator("status")}
+                          </div>
+                        </th>
+                        <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("created_at")}
+                        >
+                          <div className="flex items-center gap-2">
+                            Created At {getSortIndicator("created_at")}
                           </div>
                         </th>
                         <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -911,29 +945,40 @@ export default function WeddingPlannerCRM() {
                               />
                             </td>
                             <td className="px-4 py-4 w-fit">
-                              <div className="text-sm font-medium text-gray-900">
-                                {planner.businessName || "N/A"}
-                              </div>
                               <div className="text-sm text-gray-500">
                                 {planner.fullName}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-900">
+                              <div className="text-sm text-gray-500">
+                                {planner.businessName}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
                                 {planner.email}
                               </div>
+                            </td>
+                            <td className="px-4 py-4">
                               <div className="text-sm text-gray-500">
-                                {planner.internalPhone}
+                                {planner.publicPhone}
                               </div>
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">
-                                {planner.baseLocation || "N/A"}
-                              </div>
-                              <div className="text-sm text-gray-500 truncate max-w-xs">
-                                {planner.primaryCities.join(", ")}
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {planner.yearsOfExperience}
                               </div>
                             </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {planner.clientPersona}
+                              </div>
+                            </td>
+                            {/* <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {planner.weddingAestheticStyles}
+                              </div>
+                            </td> */}
                             <td className="px-4 py-4">
                               <div className="flex flex-wrap gap-1 max-w-xs">
                                 {planner.weddingAestheticStyles
@@ -954,6 +999,27 @@ export default function WeddingPlannerCRM() {
                                 )}
                               </div>
                             </td>
+                            <td className="px-4 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-500 truncate max-w-xs">
+                                {planner.primaryCities.join(", ")}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {planner.averageWeddingBudget}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {planner.totalFollowers}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {planner.baseLocation}
+                              </div>
+                            </td>
+
                             <td className="px-4 py-4">
                               <div className="flex items-center gap-2">
                                 <ProgressBar
@@ -984,6 +1050,11 @@ export default function WeddingPlannerCRM() {
                                 <Eye className="w-4 h-4" />
                                 View
                               </Link>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {planner.created_at}
+                              </div>
                             </td>
                           </tr>
                         ))
