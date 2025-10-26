@@ -168,6 +168,21 @@ export default function ListingFooter() {
                 Ambassador Program
               </Link>
             </li>
+            <li>
+              <Link href="/influencer_program" className="hover:underline">
+                Influencer Program
+              </Link>
+            </li>
+            <li>
+              <Link href="/wedding_partner_program" className="hover:underline">
+                Wedding Planner Program
+              </Link>
+            </li>
+            <li>
+              <Link href="/bride_groom_program" className="hover:underline">
+                Bride & Groom Program
+              </Link>
+            </li>
           </ul>
         </div>
 
