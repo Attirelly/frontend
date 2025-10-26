@@ -45,6 +45,12 @@ const Link: React.FC<React.PropsWithChildren<{ href: string; className?: string 
  * @typedef {object} Influencer
  * @description Defines the flattened structure for a single influencer's data (camelCase).
  */
+
+interface FollowerCounts {
+    instagram: number;
+    youtube: number;
+    facebook: number;
+}
 type Influencer = {
   id: string;
   name: string;
@@ -58,7 +64,7 @@ type Influencer = {
   socialLinks: Record<string, string> | null;
   categoryNiche: string[];
   contentStyle: string[];
-  followers: number | null;
+  followers: Record<string, any> | null;
   engagementMetrics: Record<string, any> | null;
   audienceGenderSplit: Record<string, number> | null;
   topAgeGroups: string[];
@@ -292,7 +298,8 @@ export default function InfluencerCRM() {
           socialLinks: hit.social_links || null,
           categoryNiche: hit.category_niche || [],
           contentStyle: hit.content_style || [],
-          followers: hit.followers ? Number(hit.followers) : null,
+          // followers: hit.followers ? Number(hit.followers) : null,
+          followers: hit.followers || null,
           engagementMetrics: hit.engagement_metrics || null,
           audienceGenderSplit: hit.audience_gender_split || null,
           topAgeGroups: hit.top_age_groups || [],
@@ -329,13 +336,19 @@ export default function InfluencerCRM() {
       // --- Facet Mapping ---
       // Keys MUST match the snake_case keys from the API facets response
       const newFacets: Facets = {
-        city: Object.entries(data.facets?.city || {}),
-        state: Object.entries(data.facets?.state || {}),
         gender: Object.entries(data.facets?.gender || {}),
-        age_group: Object.entries(data.facets?.age_group || {}),
-        open_to_barter: Object.entries(data.facets?.open_to_barter || {}),
-        primary_platform: Object.entries(data.facets?.primary_platform || {}),
-        preferred_collab_types: Object.entries(data.facets?.preferred_collab_types || {}),
+        city: Object.entries(data.facets?.city || {}),
+        top_age_groups: Object.entries(data.facets?.top_age_groups || {}),
+        category_niche: Object.entries(data.facets?.category_niche || {}),
+        followers: Object.entries(data.facets?.followers || {}),
+        top_locations: Object.entries(data.facets?.top_locations || {}),
+        pricing: Object.entries(data.facets?.pricing || {}),
+        // state: Object.entries(data.facets?.state || {}),
+        // gender: Object.entries(data.facets?.gender || {}),
+        // age_group: Object.entries(data.facets?.age_group || {}),
+        // open_to_barter: Object.entries(data.facets?.open_to_barter || {}),
+        // primary_platform: Object.entries(data.facets?.primary_platform || {}),
+        // preferred_collab_types: Object.entries(data.facets?.preferred_collab_types || {}),
         status: Object.entries(data.facets?.published || {}), // 'published' facet for 'status'
       };
       setFacets(newFacets);
@@ -570,7 +583,7 @@ export default function InfluencerCRM() {
 
   // --- JSX RENDER ---
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-gray-50">
+    <div className="min-h-screen p-4 md:p-8">
       <div className="w-full max-w-full mx-auto">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 p-6 md:p-8">
@@ -819,26 +832,50 @@ export default function InfluencerCRM() {
                           onClick={() => requestSort("email")}
                         >
                           <div className="flex items-center gap-2">
-                            Contact {getSortIndicator("email")}
+                            E-mail {getSortIndicator("email")}
                           </div>
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort("city")}
+                          onClick={() => requestSort("phonePublic")}
                         >
                           <div className="flex items-center gap-2">
-                            Location {getSortIndicator("city")}
+                            Contact Number {getSortIndicator("phonePublic")}
                           </div>
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort("primaryPlatform")}
+                          onClick={() => requestSort("topAgeGroups")}
                         >
                           <div className="flex items-center gap-2">
-                            Platform {getSortIndicator("primaryPlatform")}
+                            Top Age Groups {getSortIndicator("topAgeGroups")}
                           </div>
                         </th>
                          <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("languages")}
+                        >
+                          <div className="flex items-center gap-2">
+                            Languages {getSortIndicator("languages")}
+                          </div>
+                        </th>
+                        <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          onClick={() => requestSort("primaryPlatform")}
+                        >
+                           <div className="flex items-center gap-2">
+                            Primary Platform {getSortIndicator("primaryPlatform")}
+                          </div>
+                        </th>
+                        <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("categoryNiche")}
+                        >
+                          <div className="flex items-center gap-2">
+                            Category/Niche {getSortIndicator("categoryNiche")}
+                          </div>
+                        </th>
+                        <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort("followers")}
                         >
@@ -847,20 +884,34 @@ export default function InfluencerCRM() {
                           </div>
                         </th>
                         <th
-                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          onClick={() => requestSort("onboarding_progress")}
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("topLocations")}
                         >
-                           <div className="flex items-center gap-2">
-                            Progress {getSortIndicator("onboarding_progress")}
+                          <div className="flex items-center gap-2">
+                            Top Locations {getSortIndicator("topLocations")}
                           </div>
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort("status")}
+                          onClick={() => requestSort("pricing")}
                         >
                           <div className="flex items-center gap-2">
-                            Status {getSortIndicator("status")}
+                            Pricing {getSortIndicator("pricing")}
                           </div>
+                        </th>
+                        <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("createdAt")}
+                        >
+                          <div className="flex items-center gap-2">
+                            Created At {getSortIndicator("createdAt")}
+                          </div>
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Progress
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
                         </th>
                         <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Actions
@@ -903,19 +954,19 @@ export default function InfluencerCRM() {
                             </td>
                             <td className="px-4 py-4 w-fit">
                               <div className="flex items-center gap-3">
-                                <img 
+                                {/* <img 
                                   src={influencer.profilePhoto || `https://placehold.co/100x100/E2F0D1/4A6B2A?text=${influencer.name.charAt(0)}`}
                                   alt={influencer.name}
                                   className="w-10 h-10 rounded-full object-cover"
                                   onError={(e) => (e.currentTarget.src = `https://placehold.co/100x100/E2F0D1/4A6B2A?text=${influencer.name.charAt(0)}`)}
-                                />
+                                /> */}
                                 <div>
                                   <div className="text-sm font-medium text-gray-900">
                                     {influencer.name || "N/A"}
                                   </div>
-                                  <div className="text-sm text-gray-500">
+                                  {/* <div className="text-sm text-gray-500">
                                     {influencer.gender} {influencer.ageGroup ? `(${influencer.ageGroup})` : ''}
-                                  </div>
+                                  </div> */}
                                 </div>
                               </div>
                             </td>
@@ -923,36 +974,120 @@ export default function InfluencerCRM() {
                               <div className="text-sm text-gray-900">
                                 {influencer.email}
                               </div>
-                              <div className="text-sm text-gray-500">
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-900">
                                 {influencer.phonePublic}
                               </div>
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
+                             <td className="px-4 py-4">
                               <div className="text-sm text-gray-900">
-                                {influencer.city || "N/A"}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {influencer.state || "N/A"}
+                                {influencer.topAgeGroups}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {influencer.primaryPlatform}
-                                </div>
-                                <div className="text-sm text-gray-500 truncate max-w-[150px]">
-                                  {influencer.categoryNiche.join(', ')}
-                                </div>
+                              <div className="text-sm text-gray-900">
+                                {influencer.languages}
+                              </div>
                             </td>
-                             <td className="px-4 py-4">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {influencer.followers
-                                    ? (influencer.followers / 1000).toFixed(influencer.followers > 100000 ? 0 : 1) + 'k'
-                                    : 'N/A'}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {influencer.openToBarter ? `Barter: ${influencer.openToBarter}` : ''}
-                                </div>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-900">
+                                {influencer.primaryPlatform}
+                              </div>
                             </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-900">
+                                {influencer.categoryNiche}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              {/* <div className="text-sm text-gray-900">
+                                {influencer.followers}
+                              </div> */}
+                              <div className="text-sm text-gray-900">
+                              {/* {influencer.followers?.instagram?.toLocaleString() ?? <span className="italic text-gray-400">N/A</span>} */}
+                              {/* {influencer.followers} */}
+                              {influencer.followers ? (
+                                  // Use a div or span to hold the follower counts
+                                  <div className="text-sm text-gray-900"> {/* Stack vertically, adjust line height */}
+                                      {/* Conditionally render Instagram count if > 0 */}
+                                      {influencer.followers.instagram > 0 && (
+                                          <span>Instagram: {influencer.followers.instagram.toLocaleString()}</span>
+                                      )}
+                                      {/* Conditionally render YouTube count if > 0 */}
+                                      {influencer.followers.youtube > 0 && (
+                                          <span>Youtube: {influencer.followers.youtube.toLocaleString()}</span>
+                                      )}
+                                      {/* Conditionally render Facebook count if > 0 */}
+                                      {influencer.followers.facebook > 0 && (
+                                          <span>Facebook: {influencer.followers.facebook.toLocaleString()}</span>
+                                      )}
+                                      {/* Show N/A only if ALL are 0 or object is missing */}
+                                      {(influencer.followers.instagram <= 0 &&
+                                        influencer.followers.youtube <= 0 &&
+                                        influencer.followers.facebook <= 0) && (
+                                          <span className="italic text-gray-400">N/A</span>
+                                      )}
+                                  </div>
+                              ) : (
+                                  // Show N/A if the entire followers object is null/missing
+                                  <span className="italic text-gray-400">N/A</span>
+                              )}
+                            </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-900">
+                                {influencer.topLocations ? influencer.topLocations : (<span className="italic text-gray-400">N/A</span>)}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-900">
+                                {influencer.pricing ? (
+                                  // Use a div or span to hold the follower counts
+                                  <div className="text-sm text-gray-900"> {/* Stack vertically, adjust line height */}
+                                      {/* Conditionally render Instagram count if > 0 */}
+                                      {influencer.pricing.reel > 0 && (
+                                          <span>Reels: {influencer.pricing.reel.toLocaleString()}</span>
+                                      )}
+                                      {/* Conditionally render YouTube count if > 0 */}
+                                      {influencer.pricing.story > 0 && (
+                                          <span>Story: {influencer.pricing.story.toLocaleString()}</span>
+                                      )}
+                                      {/* Conditionally render Facebook count if > 0 */}
+                                      {influencer.pricing.post > 0 && (
+                                          <span>Post: {influencer.pricing.post.toLocaleString()}</span>
+                                      )}
+                                      {influencer.pricing.campaign_min > 0 && (
+                                          <span>Post: {influencer.pricing.campaign_min.toLocaleString()}</span>
+                                      )}
+                                      {influencer.pricing.campaign_max > 0 && (
+                                          <span>Post: {influencer.pricing.campaign_max.toLocaleString()}</span>
+                                      )}
+                                      {/* Show N/A only if ALL are 0 or object is missing */}
+                                      {(influencer.pricing.reel <= 0 &&
+                                        influencer.pricing.story <= 0 &&
+                                        influencer.pricing.post <= 0 &&
+                                        influencer.pricing.campaign_min <= 0 &&
+                                        influencer.pricing.campaign_max <= 0
+                                      ) && (
+                                          <span className="italic text-gray-400">N/A</span>
+                                      )}
+                                  </div>
+                              ) : (
+                                  // Show N/A if the entire followers object is null/missing
+                                  <span className="italic text-gray-400">N/A</span>
+                              )}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-900">
+                                {influencer.topLocations}
+                              </div>
+                            </td>
+                           
+                            
+                            
+                            
                             <td className="px-4 py-4">
                               <div className="flex items-center gap-2">
                                 <ProgressBar

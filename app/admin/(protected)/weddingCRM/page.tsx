@@ -348,8 +348,8 @@ export default function WeddingPlannerCRM() {
         years_of_experience: Object.entries(
           data.facets?.years_of_experience || {}
         ),
-        preferred_commission_model: Object.entries(
-          data.facets?.preferred_commission_model || {}
+        total_followers: Object.entries(
+          data.facets?.total_followers || {}
         ),
         // Use 'published' from your Pydantic model for the 'status' filter
         // We'll map this key to 'status' for filtering
@@ -833,7 +833,7 @@ export default function WeddingPlannerCRM() {
                           onClick={() => requestSort("businessName")}
                         >
                           <div className="flex items-center gap-2">
-                            Planner {getSortIndicator("businessName")}
+                            Name {getSortIndicator("businessName")}
                           </div>
                         </th>
                         <th
@@ -841,7 +841,7 @@ export default function WeddingPlannerCRM() {
                           onClick={() => requestSort("email")}
                         >
                           <div className="flex items-center gap-2">
-                            Contact {getSortIndicator("email")}
+                            Business Name {getSortIndicator("email")}
                           </div>
                         </th>
                         <th
@@ -849,11 +849,11 @@ export default function WeddingPlannerCRM() {
                           onClick={() => requestSort("baseLocation")}
                         >
                           <div className="flex items-center gap-2">
-                            Location {getSortIndicator("baseLocation")}
+                            E-Mail {getSortIndicator("baseLocation")}
                           </div>
                         </th>
                         <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Aesthetic Styles
+                          Contact Number
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
