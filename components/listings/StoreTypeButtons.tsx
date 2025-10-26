@@ -25,7 +25,7 @@ const StoreTypeImages = {
 export default function StoreTypeButtons({
   options,
   defaultValue,
-  context,
+  context,w
 }: StoreTypesButtonProps) {
   const { setStoreTypeString, setStoreType } = useHeaderStore();
 
