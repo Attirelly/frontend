@@ -1,36 +1,36 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Image from 'next/image';
-import { manrope, roboto, rosario } from '@/font';
-import Link from 'next/link';
+import React from "react";
+import Image from "next/image";
+import { manrope, roboto, rosario } from "@/font";
+import Link from "next/link";
 
 const socialPlatforms = [
   {
-    name: 'instagram',
-    href: 'https://www.instagram.com/attirelly/',
-    hoverColor: 'hover:bg-[#E4405F]',
+    name: "instagram",
+    href: "https://www.instagram.com/attirelly/",
+    hoverColor: "hover:bg-[#E4405F]",
   },
   {
-    name: 'instagram',
-    href: 'https://www.instagram.com/attirelly.socials/',
-    hoverColor: 'hover:bg-[#E4405F]',
+    name: "instagram",
+    href: "https://www.instagram.com/attirelly.socials/",
+    hoverColor: "hover:bg-[#E4405F]",
   },
   {
-    name: 'linkedin',
-    href: 'https://www.linkedin.com/company/attirelly',
-    hoverColor: 'hover:bg-[#1DA1F2]',
+    name: "linkedin",
+    href: "https://www.linkedin.com/company/attirelly",
+    hoverColor: "hover:bg-[#1DA1F2]",
   },
   {
-    name: 'whatsapp',
-    href: 'https://wa.me/8699892707',
-    hoverColor: 'hover:bg-[#25D366]',
+    name: "whatsapp",
+    href: "https://wa.me/8699892707",
+    hoverColor: "hover:bg-[#25D366]",
   },
 ];
 
 /**
  * ListingFooter component
- * 
+ *
  * The main footer component for the website. It provides company contact information,
  * social media links, and key navigation links for sellers and company policies.
  *
@@ -64,13 +64,18 @@ export default function ListingFooter() {
   return (
     <footer className="bg-[#F7F7F7] text-black px-8 md:px-20 pt-10 pb-6 text-sm">
       <div
-        className={`${manrope.className} flex flex-col md:grid md:grid-cols-3 gap-10 md:gap-60`}
+        className={`${manrope.className} flex flex-col md:grid md:grid-cols-4 gap-10 md:gap-4o0`}
         style={{ fontWeight: 500 }}
       >
         {/* Left Column: Company Info */}
         <div className="space-y-4 text-center md:text-left">
-          <Link href="/" className={`${rosario.className} text-3xl font-bold`} style={{ fontWeight: 700 }}>Attirelly</Link>
-
+          <Link
+            href="/"
+            className={`${rosario.className} text-3xl font-bold`}
+            style={{ fontWeight: 700 }}
+          >
+            Attirelly
+          </Link>
 
           <div className="flex flex-col items-center md:items-start gap-2 text-[#787A7C] text-base">
             <div className="flex items-start gap-2">
@@ -83,19 +88,33 @@ export default function ListingFooter() {
               />
               <p>
                 S-71, Adinath Nagar, J.L.N Marg, <br />
-                Opposite World Trade Park, Jaipur,<br />
+                Opposite World Trade Park, Jaipur,
+                <br />
                 Rajasthan, 302017
               </p>
             </div>
           </div>
 
           <div className="flex items-center justify-center md:justify-start gap-2 text-[#787A7C] text-base">
-            <Image src="/ListingPageHeader/phone_footer.svg" alt="phone" width={16} height={16} />
+            <Image
+              src="/ListingPageHeader/phone_footer.svg"
+              alt="phone"
+              width={16}
+              height={16}
+            />
             <span>8699892707</span>
           </div>
 
-          <a href='mailto:info@attirelly.com' className="flex items-center justify-center md:justify-start gap-2 text-[#787A7C] text-base hover:underline">
-            <Image src="/ListingPageHeader/email_footer.svg" alt="email" width={16} height={16} />
+          <a
+            href="mailto:info@attirelly.com"
+            className="flex items-center justify-center md:justify-start gap-2 text-[#787A7C] text-base hover:underline"
+          >
+            <Image
+              src="/ListingPageHeader/email_footer.svg"
+              alt="email"
+              width={16}
+              height={16}
+            />
             <span>info@attirelly.com</span>
           </a>
 
@@ -124,20 +143,102 @@ export default function ListingFooter() {
 
         {/* Selling Store */}
         <div className="text-center md:text-left">
-          <h3 className="mb-3 text-[#121212] text-sm" style={{ fontWeight: 600 }}>Selling Store</h3>
-          <ul className="space-y-4 text-[#141414] text-sm" style={{ fontWeight: 400 }}>
-            <li><Link href="/seller_signin" className='hover:underline'>Store Sign in</Link></li>
-            <li><Link href="/User" className='hover:underline'>Store Sign up</Link></li>
-            <li><Link href="/attirelly_ambassador" className='hover:underline'>Ambassador Program</Link></li>
+          <h3
+            className="mb-3 text-[#121212] text-sm"
+            style={{ fontWeight: 600 }}
+          >
+            Selling Store
+          </h3>
+          <ul
+            className="space-y-4 text-[#141414] text-sm"
+            style={{ fontWeight: 400 }}
+          >
+            <li>
+              <Link href="/seller_signin" className="hover:underline">
+                Store Sign in
+              </Link>
+            </li>
+            <li>
+              <Link href="/User" className="hover:underline">
+                Store Sign up
+              </Link>
+            </li>
+            <li>
+              <Link href="/attirelly_ambassador" className="hover:underline">
+                Ambassador Program
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className="text-center md:text-left">
+          <h3
+            className="mb-3 text-[#121212] text-sm"
+            style={{ fontWeight: 600 }}
+          >
+            Become Part of Attirelly
+          </h3>
+          <ul
+            className="space-y-4 text-[#141414] text-sm"
+            style={{ fontWeight: 400 }}
+          >
+            <li>
+              <Link href="/influencer_signup" className="hover:underline">
+                Influener Sign Up
+              </Link>
+            </li>
+                        <li>
+              <Link href="/influencer_signin" className="hover:underline">
+                Influener Sign In
+              </Link>
+            </li>
+            <li>
+              <Link href="/wedding_planner_signup" className="hover:underline">
+                Wedding Planner Sign Up
+              </Link>
+            </li>
+            <li>
+              <Link href="/wedding_planner_signin" className="hover:underline">
+                Wedding Planner Sign In
+              </Link>
+            </li>
+
+            <li>
+              <Link href="/makeup_artist_signup" className="hover:underline">
+                MakeUp Artist Sign Up
+              </Link>
+            </li>
+            <li>
+              <Link href="/makeup_artist_signin" className="hover:underline">
+                MakeUp Artist Sign In
+              </Link>
+            </li>
           </ul>
         </div>
 
         {/* Company */}
         <div className="text-center md:text-left">
-          <h3 className="mb-3 text-[#121212] text-sm" style={{ fontWeight: 600 }}>Company</h3>
-          <ul className="space-y-4 text-[#141414] text-sm" style={{ fontWeight: 400 }}>
-            <li> <Link href="/privacy_policy" className='hover:underline'>Privacy Policy</Link></li>
-            <li><Link href="/term_and_condition" className='hover:underline'>Terms & Conditions</Link></li>
+          <h3
+            className="mb-3 text-[#121212] text-sm"
+            style={{ fontWeight: 600 }}
+          >
+            Company
+          </h3>
+          <ul
+            className="space-y-4 text-[#141414] text-sm"
+            style={{ fontWeight: 400 }}
+          >
+            <li>
+              {" "}
+              <Link href="/privacy_policy" className="hover:underline">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link href="/term_and_condition" className="hover:underline">
+                Terms & Conditions
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
