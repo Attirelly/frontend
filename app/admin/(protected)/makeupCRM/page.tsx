@@ -395,13 +395,12 @@ export default function MakeupArtistCRM() {
       // --- Facet Mapping ---
       // Map snake_case keys from API to our state
       const newFacets: Facets = {
-        artist_type: Object.entries(data.facets?.artist_type || {}),
         years_experience: Object.entries(data.facets?.years_experience || {}),
-        state: Object.entries(data.facets?.state || {}),
-        city: Object.entries(data.facets?.city || {}),
         avg_price_range: Object.entries(data.facets?.avg_price_range || {}),
-        ready_to_travel: Object.entries(data.facets?.ready_to_travel || {}),
-        status: Object.entries(data.facets?.published || {}), // 'published' facet for 'status'
+        total_followers: Object.entries(data.facets?.total_followers || {}),
+        city: Object.entries(data.facets?.city || {}),
+        state: Object.entries(data.facets?.state || {}),
+        occasion_focus: Object.entries(data.facets?.occasion_focus || {})
       };
       setFacets(newFacets);
     } catch (error) {
@@ -650,7 +649,7 @@ export default function MakeupArtistCRM() {
 
   // --- JSX RENDER ---
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-gray-50">
+    <div className="min-h-screen p-4 md:p-8">
       <div className="w-full max-w-full mx-auto">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 p-6 md:p-8">
@@ -888,10 +887,18 @@ export default function MakeupArtistCRM() {
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("fullName")}
+                        >
+                          <div className="flex items-center gap-2">
+                            Full Name {getSortIndicator("fullName")}
+                          </div>
+                        </th>
+                        <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort("brandName")}
                         >
                           <div className="flex items-center gap-2">
-                            Artist {getSortIndicator("brandName")}
+                            Brand Name {getSortIndicator("brandName")}
                           </div>
                         </th>
                         <th
@@ -899,33 +906,52 @@ export default function MakeupArtistCRM() {
                           onClick={() => requestSort("email")}
                         >
                           <div className="flex items-center gap-2">
-                            Contact {getSortIndicator("email")}
+                            E-mail {getSortIndicator("email")}
                           </div>
+                        </th>
+                        <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("yearsExperience")}
+                        >
+                          <div className="flex items-center gap-2">
+                            Years Of Experience {getSortIndicator("yearsExperience")}
+                          </div>
+                        </th>
+                         <th
+                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => requestSort("avgPriceRange")}
+                        >
+                          <div className="flex items-center gap-2">
+                            Average Price Range {getSortIndicator("avgPriceRange")}
+                          </div>
+                        </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Total Followers
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort("city")}
                         >
                           <div className="flex items-center gap-2">
-                            Location {getSortIndicator("city")}
+                            City {getSortIndicator("city")}
                           </div>
                         </th>
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort("artistType")}
+                          onClick={() => requestSort("state")}
                         >
                           <div className="flex items-center gap-2">
-                            Profile {getSortIndicator("artistType")}
+                            State {getSortIndicator("state")}
                           </div>
                         </th>
-                         <th
-                          className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => requestSort("totalFollowers")}
-                        >
-                          <div className="flex items-center gap-2">
-                            Followers {getSortIndicator("totalFollowers")}
-                          </div>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Average Monthly referels
                         </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Occasion Focus
+                        </th>
+                        
+
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                           onClick={() => requestSort("onboarding_progress")}
@@ -983,16 +1009,8 @@ export default function MakeupArtistCRM() {
                             </td>
                             <td className="px-4 py-4 w-fit">
                               <div className="flex items-center gap-3">
-                                <img 
-                                  src={mua.profilePhoto || `https://placehold.co/100x100/EAD9FF/5C3B91?text=${mua.brandName.charAt(0)}`}
-                                  alt={mua.brandName}
-                                  className="w-10 h-10 rounded-full object-cover"
-                                  onError={(e) => (e.currentTarget.src = `https://placehold.co/100x100/EAD9FF/5C3B91?text=${mua.brandName.charAt(0)}`)}
-                                />
+                                
                                 <div>
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {mua.brandName || "N/A"}
-                                  </div>
                                   <div className="text-sm text-gray-500">
                                     {mua.fullName}
                                   </div>
@@ -1000,38 +1018,50 @@ export default function MakeupArtistCRM() {
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-900">
-                                {mua.email}
-                              </div>
                               <div className="text-sm text-gray-500">
-                                {mua.whatsappNumber}
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">
-                                {mua.city || "N/A"}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {mua.state || "N/A"}
+                                {mua.brandName}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                                <div className="text-sm text-gray-900">
-                                  {mua.artistType}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {mua.yearsExperience}
-                                </div>
+                              <div className="text-sm text-gray-500">
+                                {mua.email}
+                              </div>
                             </td>
-                             <td className="px-4 py-4">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {mua.totalFollowers 
-                                    ? (mua.totalFollowers / 1000).toFixed(1) + 'k' 
-                                    : 'N/A'}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {mua.instagramHandle}
-                                </div>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {mua.yearsExperience}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {mua.avgPriceRange}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {mua.totalFollowers}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {mua.city}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {mua.state}
+                              </div>
+                            </td>
+                            
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {mua.avgMonthlyReferrals}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {mua.occasionFocus}
+                              </div>
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex items-center gap-2">

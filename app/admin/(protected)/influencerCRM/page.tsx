@@ -331,6 +331,8 @@ export default function InfluencerCRM() {
         };
       });
 
+      
+
       setInfluencers(influencersData);
 
       // --- Facet Mapping ---
@@ -340,16 +342,16 @@ export default function InfluencerCRM() {
         city: Object.entries(data.facets?.city || {}),
         top_age_groups: Object.entries(data.facets?.top_age_groups || {}),
         category_niche: Object.entries(data.facets?.category_niche || {}),
-        followers: Object.entries(data.facets?.followers || {}),
         top_locations: Object.entries(data.facets?.top_locations || {}),
-        pricing: Object.entries(data.facets?.pricing || {}),
-        // state: Object.entries(data.facets?.state || {}),
-        // gender: Object.entries(data.facets?.gender || {}),
-        // age_group: Object.entries(data.facets?.age_group || {}),
-        // open_to_barter: Object.entries(data.facets?.open_to_barter || {}),
-        // primary_platform: Object.entries(data.facets?.primary_platform || {}),
-        // preferred_collab_types: Object.entries(data.facets?.preferred_collab_types || {}),
-        status: Object.entries(data.facets?.published || {}), // 'published' facet for 'status'
+        followers: Object.entries(data.facets?.followers || {}),
+        "followers.instagram": Object.entries(data.facets["followers.instagram"] || {}),
+        "followers.youtube": Object.entries(data.facets["followers.youtube"] || {}),
+        "followers.facebook": Object.entries(data.facets["followers.facebook"] || {}),
+        "pricing.reel": Object.entries(data.facets["pricing.reel"] || {}),
+        "pricing.story": Object.entries(data.facets["pricing.story"] || {}),
+        "pricing.post": Object.entries(data.facets["pricing.post"] || {}),
+        "pricing.campaign_min": Object.entries(data.facets["pricing.campaign_min"] || {}),
+        "pricing.campaign_max": Object.entries(data.facets["pricing.campaign_max"] || {})
       };
       setFacets(newFacets);
     } catch (error) {
@@ -706,8 +708,91 @@ export default function InfluencerCRM() {
                 </div>
               )}
 
-              {/* Facet Groups */}
               <div
+            className={`transition-opacity ${
+              showFilters ? "opacity-100" : "opacity-0 hidden"
+            }`}
+          >
+            {Object.keys(facets).length > 0 ? (
+              // --- START MODIFICATION ---
+              (Object.keys(facets) as (keyof Facets)[]) // Cast keys to correct type
+                .filter(key => facets[key] && facets[key]!.length > 0) // Filter empty facets
+                .sort() // Optional: sort keys alphabetically
+                .map((facetKey) => { // Use facetKey (e.g., "followers.instagram")
+                  // --- Define Title Mapping Here ---
+                  const titleMap: Record<string, string> = {
+                      "followers.instagram": "Instagram Followers",
+                      "followers.youtube": "YouTube Followers",
+                      "followers.facebook": "Facebook Followers",
+                      "pricing.reel": "Instagram Reel Price",
+                      "pricing.story": "Instagram Story Price",
+                      "pricing.post": "Instagram Post Price",
+                      "pricing.campaign_min": "Instagram Min Campaign Price",
+                      "pricing.campaign_max": "Instagram Max Campaign Price",
+                      
+                      // Add other keys as needed
+                  };
+
+                  const options = facets[facetKey]!; // Options for this key
+                  // Get display title from map, fallback to formatting the key
+                  const displayTitle = titleMap[facetKey] || facetKey.replace(/_/g, " ").replace(/\./g, " ").replace(/\b\w/g, l => l.toUpperCase());
+
+                  return (
+                    // --- Render FilterGroup with Display Title ---
+                    <div key={facetKey} className="mb-6">
+                      <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
+                        {displayTitle} {/* <--- USE DISPLAY TITLE HERE */}
+                      </h3>
+                      <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
+                        {options // Use options variable
+                          .slice(0, viewAll[facetKey] ? options.length : 5)
+                          .map(([value, count]) => (
+                            <label
+                              key={value as string} // Ensure value is treated as string for key
+                              className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={
+                                  selectedFacets[facetKey]?.includes(String(value)) ||
+                                  false
+                                }
+                                onChange={() => handleFacetChange(facetKey, String(value))} // Pass original facetKey
+                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              />
+                              <span className="text-sm text-gray-700 flex-1">
+                                {String(value) || "N/A"}
+                              </span>
+                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                {count}
+                              </span>
+                            </label>
+                          ))}
+                        {options.length > 5 && (
+                          <button
+                            onClick={() => toggleViewAll(facetKey)}
+                            className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
+                          >
+                            {viewAll[facetKey]
+                              ? "Show Less"
+                              : `View All (${options.length})`}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    // --- END Render ---
+                  );
+                })
+              // --- END MODIFICATION ---
+            ) : (
+              <div className="text-sm text-gray-500">
+                No filters available for the current search.
+              </div>
+            )}
+          </div>
+
+              {/* Facet Groups */}
+              {/* <div
                 className={`transition-opacity ${
                   showFilters ? "opacity-100" : "opacity-0 hidden"
                 }`}
@@ -761,7 +846,7 @@ export default function InfluencerCRM() {
                     No filters available for the current search.
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
 

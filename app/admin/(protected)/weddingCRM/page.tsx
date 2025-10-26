@@ -588,7 +588,7 @@ export default function WeddingPlannerCRM() {
 
   // --- JSX RENDER ---
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-gray-50">
+    <div className="min-h-screen p-4 md:p-8">
       <div className="w-full max-w-full mx-auto">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 p-6 md:p-8">
