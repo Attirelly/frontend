@@ -64,7 +64,7 @@ export default function ListingFooter() {
   return (
     <footer className="bg-[#F7F7F7] text-black px-8 md:px-20 pt-10 pb-6 text-sm">
       <div
-        className={`${manrope.className} flex flex-col md:grid md:grid-cols-4 gap-10 md:gap-4o0`}
+        className={`${manrope.className} flex flex-col md:grid md:grid-cols-4 gap-10 md:gap-40`}
         style={{ fontWeight: 500 }}
       >
         {/* Left Column: Company Info */}
