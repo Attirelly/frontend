@@ -10,7 +10,7 @@ import { toast, Toaster } from "sonner";
 import { useMakeupArtistStore } from "@/store/makeUpArtistStore";
 
 
-export default function InfluencerSignin() {
+export default function MakeUpSignin() {
   const [phone, setPhone] = useState("");
   const [currSection, setCurrSection] = useState(0);
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));

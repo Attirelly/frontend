@@ -17,6 +17,7 @@ import {
 // import Link from "next/link"; // Removed for preview, mock below
 import { toast } from "sonner"; // Assuming you use sonner for toasts
 import { api } from "@/lib/axios";
+import { format } from "date-fns";
 
 
 const Link: React.FC<React.PropsWithChildren<{ href: string; className?: string }>> = ({
@@ -945,32 +946,32 @@ export default function WeddingPlannerCRM() {
                               />
                             </td>
                             <td className="px-4 py-4 w-fit">
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-900">
                                 {planner.fullName}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-900">
                                 {planner.businessName}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-900">
                                 {planner.email}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-500">
-                                {planner.publicPhone}
+                              <div className="text-sm text-gray-900">
+                                {planner.internalPhone}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-900">
                                 {planner.yearsOfExperience}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-900">
                                 {planner.clientPersona}
                               </div>
                             </td>
@@ -986,13 +987,13 @@ export default function WeddingPlannerCRM() {
                                   .map((style, idx) => (
                                     <span
                                       key={idx}
-                                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700"
+                                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-900"
                                     >
                                       {style}
                                     </span>
                                   ))}
                                 {planner.weddingAestheticStyles.length > 2 && (
-                                  <span className="text-xs text-gray-500">
+                                  <span className="text-xs text-gray-900">
                                     +
                                     {planner.weddingAestheticStyles.length - 2}
                                   </span>
@@ -1000,22 +1001,22 @@ export default function WeddingPlannerCRM() {
                               </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500 truncate max-w-xs">
+                              <div className="text-sm text-gray-900 truncate max-w-xs">
                                 {planner.primaryCities.join(", ")}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-900">
                                 {planner.averageWeddingBudget}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-900">
                                 {planner.totalFollowers}
                               </div>
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-900">
                                 {planner.baseLocation}
                               </div>
                             </td>
@@ -1041,6 +1042,11 @@ export default function WeddingPlannerCRM() {
                                 {planner.status ? "Active" : "Inactive"}
                               </span>
                             </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-900">
+                                {planner.created_at ? format(new Date (planner.created_at), 'HH:mm:ss dd:mm:yyyy') : 'N/A'}
+                              </div>
+                            </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
                               {/* --- Link Update --- */}
                               <Link
@@ -1051,11 +1057,7 @@ export default function WeddingPlannerCRM() {
                                 View
                               </Link>
                             </td>
-                            <td className="px-4 py-4">
-                              <div className="text-sm text-gray-500">
-                                {planner.created_at}
-                              </div>
-                            </td>
+                            
                           </tr>
                         ))
                       )}

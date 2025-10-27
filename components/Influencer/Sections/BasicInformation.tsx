@@ -73,7 +73,8 @@ const BasicInformation: React.FC<ComponentProps> = ({ onNext, isLastStep }) => {
     onNext();
   };
 
-  if (isLoading || !basicInformation ||  genderOptions.length === 0 || ageGroupOptions.length === 0 ) {
+  // if (isLoading || !basicInformation ||  genderOptions.length === 0 || ageGroupOptions.length === 0 ) {
+  if (isLoading || !basicInformation ) {
     return (
         <div className="bg-white p-8 rounded-lg shadow-sm border animate-fade-in text-center">
             <h2 className="text-xl font-semibold text-gray-700">Loading Details...</h2>

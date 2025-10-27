@@ -17,6 +17,7 @@ import {
 // import Link from "next/link"; // Removed for preview, mock below
 import { toast } from "sonner"; // Assuming you use sonner for toasts
 import { api } from "@/lib/axios";
+import { format } from "date-fns"
 
 // --- 1. MOCK IMPLEMENTATIONS ---
 // Mock objects for 'api' and 'Link' to allow previewing.
@@ -49,7 +50,7 @@ const Link: React.FC<React.PropsWithChildren<{ href: string; className?: string 
  */
 type MakeupArtist = {
   id?: string;
-  created_at?: Date;
+  created_at?: string;
   onboarding_progress?: number; // Calculated field (0-100)
   status?: boolean; // Mapped from 'published'
 
@@ -122,6 +123,7 @@ type MakeupArtist = {
   portfolioFile: string | null;
   shortBio: string;
   published: boolean; // This is the source of 'status'
+
 };
 
 /**
@@ -950,6 +952,9 @@ export default function MakeupArtistCRM() {
                         <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Occasion Focus
                         </th>
+                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Created At
+                        </th>
                         
 
                         <th
@@ -1061,6 +1066,11 @@ export default function MakeupArtistCRM() {
                             <td className="px-4 py-4">
                               <div className="text-sm text-gray-500">
                                 {mua.occasionFocus}
+                              </div>
+                            </td>
+                            <td className="px-4 py-4">
+                              <div className="text-sm text-gray-500">
+                                {mua.created_at ? format(new Date(mua.created_at), 'HH:mm:ss dd:mm:yyyy') : 'N/A'}
                               </div>
                             </td>
                             <td className="px-4 py-4">

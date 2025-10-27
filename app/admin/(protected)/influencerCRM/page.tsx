@@ -17,6 +17,7 @@ import {
 // import Link from "next/link"; // Removed for preview, mock below
 import { toast } from "sonner"; // Assuming you use sonner for toasts
 import { api } from "@/lib/axios";
+import { format } from  "date-fns";
 
 // --- 1. MOCK IMPLEMENTATIONS ---
 // Mock objects for 'api' and 'Link' to allow previewing.
@@ -91,7 +92,7 @@ type Influencer = {
   onboarding_progress: number; // Calculated
   published: boolean;
   status: boolean; // Alias for 'published'
-  createdAt: Date | undefined;
+  createdAt: string[] | undefined;
   updatedAt: Date | undefined;
 };
 
@@ -326,7 +327,8 @@ export default function InfluencerCRM() {
           onboarding_progress: progress,
           published: hit.published || false,
           status: hit.published || false, // Alias
-          createdAt: hit.created_at ? new Date(hit.created_at) : undefined,
+          // createdAt: hit.created_at ? new Date(hit.created_at) : undefined,
+          createdAt: hit.created_at || null,
           updatedAt: hit.updated_at ? new Date(hit.updated_at) : undefined,
         };
       });
@@ -1097,15 +1099,15 @@ export default function InfluencerCRM() {
                                   <div className="text-sm text-gray-900"> {/* Stack vertically, adjust line height */}
                                       {/* Conditionally render Instagram count if > 0 */}
                                       {influencer.followers.instagram > 0 && (
-                                          <span>Instagram: {influencer.followers.instagram.toLocaleString()}</span>
+                                          <span>Instagram: {influencer.followers.instagram.toLocaleString()} </span>
                                       )}
                                       {/* Conditionally render YouTube count if > 0 */}
                                       {influencer.followers.youtube > 0 && (
-                                          <span>Youtube: {influencer.followers.youtube.toLocaleString()}</span>
+                                          <span>Youtube: {influencer.followers.youtube.toLocaleString()} </span>
                                       )}
                                       {/* Conditionally render Facebook count if > 0 */}
                                       {influencer.followers.facebook > 0 && (
-                                          <span>Facebook: {influencer.followers.facebook.toLocaleString()}</span>
+                                          <span>Facebook: {influencer.followers.facebook.toLocaleString()} </span>
                                       )}
                                       {/* Show N/A only if ALL are 0 or object is missing */}
                                       {(influencer.followers.instagram <= 0 &&
@@ -1132,21 +1134,21 @@ export default function InfluencerCRM() {
                                   <div className="text-sm text-gray-900"> {/* Stack vertically, adjust line height */}
                                       {/* Conditionally render Instagram count if > 0 */}
                                       {influencer.pricing.reel > 0 && (
-                                          <span>Reels: {influencer.pricing.reel.toLocaleString()}</span>
+                                          <span>Reels: {influencer.pricing.reel.toLocaleString()} </span>
                                       )}
                                       {/* Conditionally render YouTube count if > 0 */}
                                       {influencer.pricing.story > 0 && (
-                                          <span>Story: {influencer.pricing.story.toLocaleString()}</span>
+                                          <span>Story: {influencer.pricing.story.toLocaleString()} </span>
                                       )}
                                       {/* Conditionally render Facebook count if > 0 */}
                                       {influencer.pricing.post > 0 && (
-                                          <span>Post: {influencer.pricing.post.toLocaleString()}</span>
+                                          <span>Post: {influencer.pricing.post.toLocaleString()} </span>
                                       )}
                                       {influencer.pricing.campaign_min > 0 && (
-                                          <span>Post: {influencer.pricing.campaign_min.toLocaleString()}</span>
+                                          <span>Post: {influencer.pricing.campaign_min.toLocaleString()} </span>
                                       )}
                                       {influencer.pricing.campaign_max > 0 && (
-                                          <span>Post: {influencer.pricing.campaign_max.toLocaleString()}</span>
+                                          <span>Post: {influencer.pricing.campaign_max.toLocaleString()} </span>
                                       )}
                                       {/* Show N/A only if ALL are 0 or object is missing */}
                                       {(influencer.pricing.reel <= 0 &&
@@ -1166,7 +1168,7 @@ export default function InfluencerCRM() {
                             </td>
                             <td className="px-4 py-4">
                               <div className="text-sm text-gray-900">
-                                {influencer.topLocations}
+                                {influencer.createdAt ? format(new Date(influencer.createdAt), 'HH:mm:ss dd/MM/yyyy') : 'N/A'}
                               </div>
                             </td>
                            

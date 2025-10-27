@@ -138,7 +138,7 @@ export default function WeddingPlannerSignin() {
       try {
         if (phone !== "1111111111") {
           await api.post("/otp/verify_otp", null, {
-            params: { phone_number: phone === '0000000001' ? '7015241757' : phone, otp: fullOtp },
+            params: { phone_number: phone, otp: fullOtp },
           });
         }
         try {
@@ -218,7 +218,7 @@ export default function WeddingPlannerSignin() {
         }
         try {
           await api.post("/otp/send_otp", null, {
-            params: { phone_number: phone === '0000000001' ? '7015241757' : phone, otp_template: "UserLoginOTP" },
+            params: { phone_number: phone, otp_template: "UserLoginOTP" },
           });
           setSendOTP(true);
           // alert(`OTP sent to ${phone}`);
