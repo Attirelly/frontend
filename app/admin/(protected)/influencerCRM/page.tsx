@@ -17,29 +17,10 @@ import {
 // import Link from "next/link"; // Removed for preview, mock below
 import { toast } from "sonner"; // Assuming you use sonner for toasts
 import { api } from "@/lib/axios";
-import { format } from  "date-fns";
-
-// --- 1. MOCK IMPLEMENTATIONS ---
-// Mock objects for 'api' and 'Link' to allow previewing.
-
-
-// Mock Link component
-const Link: React.FC<React.PropsWithChildren<{ href: string; className?: string }>> = ({
-  href,
-  className,
-  children,
-}) => (
-  <a
-    href={href}
-    className={className}
-    onClick={(e) => {
-      e.preventDefault();
-      toast.info(`Mock navigation to: ${href}`);
-    }}
-  >
-    {children}
-  </a>
-);
+import { format } from "date-fns";
+import Link from "next/link";
+import { RangeSlider } from "@/components/ui/RangeSlider";
+import { DateRangeFilter } from "@/components/ui/DateRangeFilter";
 
 // --- 2. COMBINED INFLUENCER TYPE ---
 /**
@@ -48,9 +29,9 @@ const Link: React.FC<React.PropsWithChildren<{ href: string; className?: string 
  */
 
 interface FollowerCounts {
-    instagram: number;
-    youtube: number;
-    facebook: number;
+  instagram: number;
+  youtube: number;
+  facebook: number;
 }
 type Influencer = {
   id: string;
@@ -118,9 +99,10 @@ type QueryParams = {
   limit?: number;
   sortField?: string;
   sortDirection?: "asc" | "desc";
-  filters?: {
+  facets?: {
     [key: string]: string[];
   };
+  filters: string;
   sort_by: string;
 };
 
@@ -142,6 +124,16 @@ const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
   );
 };
 
+const numericKeyFilter: Record<string, string> = {
+  "followers.facebook": "Facebook Followers",
+  "followers.instagram": "Instagram Followers",
+  "followers.youtube": "YouTube Followers",
+  "pricing.story": "Instagram Story Price",
+  "pricing.reel": "Instagram Reel Price",
+  "pricing.post": "Instagram Post Price",
+  "engagement_metrics.avgViewsPerReel": "Average Views per Reel",
+};
+
 // Main Component
 export default function InfluencerCRM() {
   // const { sortBy } = useAdminStore(); // Assuming you have this store
@@ -152,6 +144,14 @@ export default function InfluencerCRM() {
   const [selectedFacets, setSelectedFacets] = useState<{
     [key: string]: string[];
   }>({});
+  const [selectedFilters, setSelectedFilters] = useState<{
+    [key: string]: [number, number];
+  }>({});
+  const [dateRange, setDateRange] = useState<[Date, Date]>([
+    new Date("2025-10-01"),
+    new Date("2030-10-01"),
+  ]);
+  const [finalFilter, setFinalFilter] = useState<string>("");
   const [facets, setFacets] = useState<Facets>({});
   const [viewAll, setViewAll] = useState<{ [key: string]: boolean }>({});
   const [selectedInfluencerIds, setSelectedInfluencerIds] = useState<string[]>(
@@ -203,9 +203,7 @@ export default function InfluencerCRM() {
    */
   const handleCheckboxChange = (id: string) => {
     setSelectedInfluencerIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((infId) => infId !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter((infId) => infId !== id) : [...prev, id]
     );
   };
 
@@ -225,16 +223,17 @@ export default function InfluencerCRM() {
     setInfluencers(updatedInfluencers);
 
     try {
-      await api.patch("/influencers/bulk-active", { // Assumed endpoint
+      await api.patch("/influencers/bulk-active", {
+        // Assumed endpoint
         ids: selectedInfluencerIds,
         active: newStatus, // API expects 'active' or 'published'
       });
 
       setSelectedInfluencerIds([]);
       toast.success(
-        `Successfully ${
-          newStatus ? "published" : "unpublished"
-        } ${selectedInfluencerIds.length} influencers.`
+        `Successfully ${newStatus ? "published" : "unpublished"} ${
+          selectedInfluencerIds.length
+        } influencers.`
       );
     } catch (error) {
       console.error("Bulk update failed:", error);
@@ -258,19 +257,20 @@ export default function InfluencerCRM() {
       // ... add other mappings if needed
 
       const sortParams = params.sortField
-        ? `&sortField=${sortKey}&sortDirection=${
-            params.sortDirection || "asc"
-          }`
+        ? `&sortField=${sortKey}&sortDirection=${params.sortDirection || "asc"}`
         : "";
 
       const algoia_facets = buildFacetFilters(selectedFacets);
 
-      const res: any = await api.get( // Assumed endpoint
+      const res: any = await api.get(
+        // Assumed endpoint
         `/search/search_influencers?query=${params.query || ""}&page=${
           (params.page || 1) - 1
         }&limit=${
           params.limit || 50
-        }&facetFilters=${algoia_facets}&sort_by=${params.sort_by}${sortParams}`
+        }&facetFilters=${algoia_facets}&filters=${finalFilter}&sort_by=${
+          params.sort_by
+        }${sortParams}`
       );
 
       const data = res.data;
@@ -280,11 +280,13 @@ export default function InfluencerCRM() {
       // --- Data Mapping ---
       // Map snake_case from API to camelCase for component state
       const influencersData: Influencer[] = data.hits.map((hit: any) => {
-        
         // Calculate onboarding progress (Assuming 10 steps for an influencer)
         const maxSteps = 10;
         const currentStep = hit.onboarding_step || 0;
-        const progress = Math.min(100, Math.round((currentStep / maxSteps) * 100));
+        const progress = Math.min(
+          100,
+          Math.round((currentStep / maxSteps) * 100)
+        );
 
         return {
           id: hit.id,
@@ -310,7 +312,9 @@ export default function InfluencerCRM() {
           openToBarter: hit.open_to_barter || null,
           maxCampaignsPerMonth: hit.max_campaigns_per_month || null,
           pricing: hit.pricing || null,
-          barterValueMin: hit.barter_value_min ? Number(hit.barter_value_min) : null,
+          barterValueMin: hit.barter_value_min
+            ? Number(hit.barter_value_min)
+            : null,
           brandsWorkedWith: hit.brands_worked_with || [],
           bestCampaignLinks: hit.best_campaign_links || [],
           achievements: hit.achievements || [],
@@ -333,8 +337,6 @@ export default function InfluencerCRM() {
         };
       });
 
-      
-
       setInfluencers(influencersData);
 
       // --- Facet Mapping ---
@@ -345,15 +347,6 @@ export default function InfluencerCRM() {
         top_age_groups: Object.entries(data.facets?.top_age_groups || {}),
         category_niche: Object.entries(data.facets?.category_niche || {}),
         top_locations: Object.entries(data.facets?.top_locations || {}),
-        followers: Object.entries(data.facets?.followers || {}),
-        "followers.instagram": Object.entries(data.facets["followers.instagram"] || {}),
-        "followers.youtube": Object.entries(data.facets["followers.youtube"] || {}),
-        "followers.facebook": Object.entries(data.facets["followers.facebook"] || {}),
-        "pricing.reel": Object.entries(data.facets["pricing.reel"] || {}),
-        "pricing.story": Object.entries(data.facets["pricing.story"] || {}),
-        "pricing.post": Object.entries(data.facets["pricing.post"] || {}),
-        "pricing.campaign_min": Object.entries(data.facets["pricing.campaign_min"] || {}),
-        "pricing.campaign_max": Object.entries(data.facets["pricing.campaign_max"] || {})
       };
       setFacets(newFacets);
     } catch (error) {
@@ -374,7 +367,8 @@ export default function InfluencerCRM() {
       limit: itemsPerPage,
       sortField: sortConfig?.key,
       sortDirection: sortConfig?.direction === "ascending" ? "asc" : "desc",
-      filters: selectedFacets,
+      facets: selectedFacets,
+      filters: finalFilter,
       sort_by: sortBy,
     });
   }, [
@@ -384,6 +378,7 @@ export default function InfluencerCRM() {
     sortConfig,
     selectedFacets,
     sortBy,
+    finalFilter,
   ]);
 
   /**
@@ -411,6 +406,51 @@ export default function InfluencerCRM() {
     setCurrentPage(1); // Reset to first page
   };
 
+  const handleFacetRangeChange = (facet: string, low: number, high: number) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [facet]: [low, high],
+    }));
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      let filterString = buildFilterString(selectedFilters);
+      let datefilterString = buildDateFilter("created_at", dateRange);
+      const finalFilterString = [filterString, datefilterString]
+        .filter(Boolean) // removes undefined, null, or empty ""
+        .join(" AND ");
+      setFinalFilter(finalFilterString);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [selectedFilters , dateRange]);
+
+  const buildFilterString = (
+    filters: Record<string, [number, number]>
+  ): string => {
+    const parts: string[] = [];
+
+    for (const [facet, [low, high]] of Object.entries(filters)) {
+      if (low != null && high != null) {
+        parts.push(`${facet} >= ${low} AND ${facet} <= ${high}`);
+      }
+    }
+
+    return parts.join(" AND ");
+  };
+  const buildDateFilter = (
+    facet: string,
+    dateRange?: [Date, Date] | null
+  ): string | null => {
+    if (!dateRange || !dateRange[0] || !dateRange[1]) return null;
+
+    const [start, end] = dateRange;
+    const startISO = start.toISOString();
+    const endISO = end.toISOString();
+
+    return `${facet} >= "${startISO}" AND ${facet} <= "${endISO}"`;
+  };
   /**
    * Handles CSV upload (simplified).
    */
@@ -440,7 +480,7 @@ export default function InfluencerCRM() {
               primaryPlatform,
               followers,
               published,
-            ] = line.split(",").map(val => val.replace(/"/g, '')); // Basic un-escaping
+            ] = line.split(",").map((val) => val.replace(/"/g, "")); // Basic un-escaping
 
             if (!name || !email) return null;
 
@@ -499,15 +539,15 @@ export default function InfluencerCRM() {
       setInfluencers(uploaded);
       setCurrentPage(1);
       toast.success(`Uploaded ${uploaded.length} influencers from CSV.`);
-      
+
       // Re-generate simple facets
       const newFacets: Facets = {
         primary_platform: [
           ...new Set(uploaded.map((p) => p.primaryPlatform).filter(Boolean)),
         ].map((item) => [item!, 1]),
-        city: [
-          ...new Set(uploaded.map((p) => p.city).filter(Boolean)),
-        ].map((item) => [item!, 1]),
+        city: [...new Set(uploaded.map((p) => p.city).filter(Boolean))].map(
+          (item) => [item!, 1]
+        ),
       };
       setFacets(newFacets);
     };
@@ -522,7 +562,8 @@ export default function InfluencerCRM() {
     const header =
       "id,name,email,phonePublic,city,state,primaryPlatform,followers,published\n";
 
-    const escape = (str: string | number | null | undefined) => `"${String(str || "").replace(/"/g, '""')}"`;
+    const escape = (str: string | number | null | undefined) =>
+      `"${String(str || "").replace(/"/g, '""')}"`;
 
     const rows = influencers
       .map((p) => {
@@ -675,7 +716,9 @@ export default function InfluencerCRM() {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  aria-label={showFilters ? "Collapse filters" : "Expand filters"}
+                  aria-label={
+                    showFilters ? "Collapse filters" : "Expand filters"
+                  }
                 >
                   {showFilters ? (
                     <ChevronDown className="w-5 h-5 text-black" />
@@ -711,144 +754,136 @@ export default function InfluencerCRM() {
               )}
 
               <div
-            className={`transition-opacity ${
-              showFilters ? "opacity-100" : "opacity-0 hidden"
-            }`}
-          >
-            {Object.keys(facets).length > 0 ? (
-              // --- START MODIFICATION ---
-              (Object.keys(facets) as (keyof Facets)[]) // Cast keys to correct type
-                .filter(key => facets[key] && facets[key]!.length > 0) // Filter empty facets
-                .sort() // Optional: sort keys alphabetically
-                .map((facetKey) => { // Use facetKey (e.g., "followers.instagram")
-                  // --- Define Title Mapping Here ---
-                  const titleMap: Record<string, string> = {
-                      "followers.instagram": "Instagram Followers",
-                      "followers.youtube": "YouTube Followers",
-                      "followers.facebook": "Facebook Followers",
-                      "pricing.reel": "Instagram Reel Price",
-                      "pricing.story": "Instagram Story Price",
-                      "pricing.post": "Instagram Post Price",
-                      "pricing.campaign_min": "Instagram Min Campaign Price",
-                      "pricing.campaign_max": "Instagram Max Campaign Price",
-                      
-                      // Add other keys as needed
-                  };
-
-                  const options = facets[facetKey]!; // Options for this key
-                  // Get display title from map, fallback to formatting the key
-                  const displayTitle = titleMap[facetKey] || facetKey.replace(/_/g, " ").replace(/\./g, " ").replace(/\b\w/g, l => l.toUpperCase());
-
-                  return (
-                    // --- Render FilterGroup with Display Title ---
-                    <div key={facetKey} className="mb-6">
-                      <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
-                        {displayTitle} {/* <--- USE DISPLAY TITLE HERE */}
-                      </h3>
-                      <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
-                        {options // Use options variable
-                          .slice(0, viewAll[facetKey] ? options.length : 5)
-                          .map(([value, count]) => (
-                            <label
-                              key={value as string} // Ensure value is treated as string for key
-                              className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={
-                                  selectedFacets[facetKey]?.includes(String(value)) ||
-                                  false
-                                }
-                                onChange={() => handleFacetChange(facetKey, String(value))} // Pass original facetKey
-                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                              />
-                              <span className="text-sm text-gray-700 flex-1">
-                                {String(value) || "N/A"}
-                              </span>
-                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                {count}
-                              </span>
-                            </label>
-                          ))}
-                        {options.length > 5 && (
-                          <button
-                            onClick={() => toggleViewAll(facetKey)}
-                            className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
-                          >
-                            {viewAll[facetKey]
-                              ? "Show Less"
-                              : `View All (${options.length})`}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    // --- END Render ---
-                  );
-                })
-              // --- END MODIFICATION ---
-            ) : (
-              <div className="text-sm text-gray-500">
-                No filters available for the current search.
-              </div>
-            )}
-          </div>
-
-              {/* Facet Groups */}
-              {/* <div
                 className={`transition-opacity ${
                   showFilters ? "opacity-100" : "opacity-0 hidden"
                 }`}
               >
                 {Object.keys(facets).length > 0 ? (
-                  Object.keys(facets).map((facet) => (
-                    <div key={facet} className="mb-6">
-                      <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
-                        {facet.replace(/_/g, " ")}
-                      </h3>
-                      <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
-                        {facets[facet]
-                          .slice(0, viewAll[facet] ? facets[facet].length : 5)
-                          .map(([value, count]) => (
-                            <label
-                              key={value}
-                              className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={
-                                  selectedFacets[facet]?.includes(String(value)) ||
-                                  false
-                                }
-                                onChange={() => handleFacetChange(facet, String(value))}
-                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                              />
-                              <span className="text-sm text-gray-700 flex-1">
-                                {String(value) || "N/A"}
-                              </span>
-                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                {count}
-                              </span>
-                            </label>
-                          ))}
-                        {facets[facet].length > 5 && (
-                          <button
-                            onClick={() => toggleViewAll(facet)}
-                            className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
-                          >
-                            {viewAll[facet]
-                              ? "Show Less"
-                              : `View All (${facets[facet].length})`}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))
+                  // --- START MODIFICATION ---
+                  <div>
+                    {(Object.keys(facets) as (keyof Facets)[]) // Cast keys to correct type
+                      .filter((key) => facets[key] && facets[key]!.length > 0) // Filter empty facets
+                      .sort() // Optional: sort keys alphabetically
+                      .map((facetKey) => {
+                        // Use facetKey (e.g., "followers.instagram")
+                        // --- Define Title Mapping Here ---
+                        const titleMap: Record<string, string> = {
+                          "followers.instagram": "Instagram Followers",
+                          "followers.youtube": "YouTube Followers",
+                          "followers.facebook": "Facebook Followers",
+                          "pricing.reel": "Instagram Reel Price",
+                          "pricing.story": "Instagram Story Price",
+                          "pricing.post": "Instagram Post Price",
+                          "pricing.campaign_min":
+                            "Instagram Min Campaign Price",
+                          "pricing.campaign_max":
+                            "Instagram Max Campaign Price",
+
+                          // Add other keys as needed
+                        };
+
+                        const options = facets[facetKey]!; // Options for this key
+                        // Get display title from map, fallback to formatting the key
+                        const displayTitle =
+                          titleMap[facetKey] ||
+                          facetKey
+                            .replace(/_/g, " ")
+                            .replace(/\./g, " ")
+                            .replace(/\b\w/g, (l) => l.toUpperCase());
+
+                        return (
+                          // --- Render FilterGroup with Display Title ---
+                          <div key={facetKey} className="mb-6">
+                            <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
+                              {displayTitle} {/* <--- USE DISPLAY TITLE HERE */}
+                            </h3>
+                            <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
+                              {options // Use options variable
+                                .slice(
+                                  0,
+                                  viewAll[facetKey] ? options.length : 5
+                                )
+                                .map(([value, count]) => (
+                                  <label
+                                    key={value as string} // Ensure value is treated as string for key
+                                    className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={
+                                        selectedFacets[facetKey]?.includes(
+                                          String(value)
+                                        ) || false
+                                      }
+                                      onChange={() =>
+                                        handleFacetChange(
+                                          facetKey,
+                                          String(value)
+                                        )
+                                      } // Pass original facetKey
+                                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    />
+                                    <span className="text-sm text-gray-700 flex-1">
+                                      {String(value) || "N/A"}
+                                    </span>
+                                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                      {count}
+                                    </span>
+                                  </label>
+                                ))}
+                              {options.length > 5 && (
+                                <button
+                                  onClick={() => toggleViewAll(facetKey)}
+                                  className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
+                                >
+                                  {viewAll[facetKey]
+                                    ? "Show Less"
+                                    : `View All (${options.length})`}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                          // --- END Render ---
+                        );
+                      })}
+
+                    {Object.keys(numericKeyFilter).map((key: string) => {
+                      const displayFilterName = numericKeyFilter[key];
+                      const currentRange = selectedFilters[key];
+                      return (
+                        <div key={key} className="mb-6">
+                          <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
+                            {displayFilterName}
+                          </h3>
+                          <RangeSlider
+                            label={displayFilterName}
+                            min={0}
+                            max={10000000}
+                            step={1000}
+                            values={currentRange ?? [0, 10000000]}
+                            onChange={(range) =>
+                              handleFacetRangeChange(key, range[0], range[1])
+                            }
+                          />
+                        </div>
+                      );
+                    })}
+
+                    <DateRangeFilter
+                      startDate={dateRange ? dateRange[0].toISOString() : ""}
+                      endDate={dateRange ? dateRange[1].toISOString() : ""}
+                      onChange={(start, end) => {
+                        setDateRange([new Date(start), new Date(end)]);
+                      }}
+                    />
+                  </div>
                 ) : (
+                  // --- END MODIFICATION ---
                   <div className="text-sm text-gray-500">
                     No filters available for the current search.
                   </div>
                 )}
-              </div> */}
+              </div>
             </div>
           </div>
 
@@ -895,13 +930,16 @@ export default function InfluencerCRM() {
                             onChange={(e) =>
                               setSelectedInfluencerIds(
                                 e.target.checked
-                                  ? influencers.map((p) => p.id!).filter(Boolean)
+                                  ? influencers
+                                      .map((p) => p.id!)
+                                      .filter(Boolean)
                                   : []
                               )
                             }
                             checked={
                               influencers.length > 0 &&
-                              selectedInfluencerIds.length === influencers.length
+                              selectedInfluencerIds.length ===
+                                influencers.length
                             }
                             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                           />
@@ -938,7 +976,7 @@ export default function InfluencerCRM() {
                             Top Age Groups {getSortIndicator("topAgeGroups")}
                           </div>
                         </th>
-                         <th
+                        <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort("languages")}
                         >
@@ -950,8 +988,9 @@ export default function InfluencerCRM() {
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                           onClick={() => requestSort("primaryPlatform")}
                         >
-                           <div className="flex items-center gap-2">
-                            Primary Platform {getSortIndicator("primaryPlatform")}
+                          <div className="flex items-center gap-2">
+                            Primary Platform{" "}
+                            {getSortIndicator("primaryPlatform")}
                           </div>
                         </th>
                         <th
@@ -1067,7 +1106,7 @@ export default function InfluencerCRM() {
                                 {influencer.phonePublic}
                               </div>
                             </td>
-                             <td className="px-4 py-4">
+                            <td className="px-4 py-4">
                               <div className="text-sm text-gray-900">
                                 {influencer.topAgeGroups}
                               </div>
@@ -1092,89 +1131,132 @@ export default function InfluencerCRM() {
                                 {influencer.followers}
                               </div> */}
                               <div className="text-sm text-gray-900">
-                              {/* {influencer.followers?.instagram?.toLocaleString() ?? <span className="italic text-gray-400">N/A</span>} */}
-                              {/* {influencer.followers} */}
-                              {influencer.followers ? (
+                                {/* {influencer.followers?.instagram?.toLocaleString() ?? <span className="italic text-gray-400">N/A</span>} */}
+                                {/* {influencer.followers} */}
+                                {influencer.followers ? (
                                   // Use a div or span to hold the follower counts
-                                  <div className="text-sm text-gray-900"> {/* Stack vertically, adjust line height */}
-                                      {/* Conditionally render Instagram count if > 0 */}
-                                      {influencer.followers.instagram > 0 && (
-                                          <span>Instagram: {influencer.followers.instagram.toLocaleString()} </span>
-                                      )}
-                                      {/* Conditionally render YouTube count if > 0 */}
-                                      {influencer.followers.youtube > 0 && (
-                                          <span>Youtube: {influencer.followers.youtube.toLocaleString()} </span>
-                                      )}
-                                      {/* Conditionally render Facebook count if > 0 */}
-                                      {influencer.followers.facebook > 0 && (
-                                          <span>Facebook: {influencer.followers.facebook.toLocaleString()} </span>
-                                      )}
-                                      {/* Show N/A only if ALL are 0 or object is missing */}
-                                      {(influencer.followers.instagram <= 0 &&
-                                        influencer.followers.youtube <= 0 &&
-                                        influencer.followers.facebook <= 0) && (
-                                          <span className="italic text-gray-400">N/A</span>
+                                  <div className="text-sm text-gray-900">
+                                    {" "}
+                                    {/* Stack vertically, adjust line height */}
+                                    {/* Conditionally render Instagram count if > 0 */}
+                                    {influencer.followers.instagram > 0 && (
+                                      <span>
+                                        Instagram:{" "}
+                                        {influencer.followers.instagram.toLocaleString()}{" "}
+                                      </span>
+                                    )}
+                                    {/* Conditionally render YouTube count if > 0 */}
+                                    {influencer.followers.youtube > 0 && (
+                                      <span>
+                                        Youtube:{" "}
+                                        {influencer.followers.youtube.toLocaleString()}{" "}
+                                      </span>
+                                    )}
+                                    {/* Conditionally render Facebook count if > 0 */}
+                                    {influencer.followers.facebook > 0 && (
+                                      <span>
+                                        Facebook:{" "}
+                                        {influencer.followers.facebook.toLocaleString()}{" "}
+                                      </span>
+                                    )}
+                                    {/* Show N/A only if ALL are 0 or object is missing */}
+                                    {influencer.followers.instagram <= 0 &&
+                                      influencer.followers.youtube <= 0 &&
+                                      influencer.followers.facebook <= 0 && (
+                                        <span className="italic text-gray-400">
+                                          N/A
+                                        </span>
                                       )}
                                   </div>
-                              ) : (
+                                ) : (
                                   // Show N/A if the entire followers object is null/missing
-                                  <span className="italic text-gray-400">N/A</span>
-                              )}
-                            </div>
+                                  <span className="italic text-gray-400">
+                                    N/A
+                                  </span>
+                                )}
+                              </div>
                             </td>
                             <td className="px-4 py-4">
                               <div className="text-sm text-gray-900">
-                                {influencer.topLocations ? influencer.topLocations : (<span className="italic text-gray-400">N/A</span>)}
+                                {influencer.topLocations ? (
+                                  influencer.topLocations
+                                ) : (
+                                  <span className="italic text-gray-400">
+                                    N/A
+                                  </span>
+                                )}
                               </div>
                             </td>
                             <td className="px-4 py-4">
                               <div className="text-sm text-gray-900">
                                 {influencer.pricing ? (
                                   // Use a div or span to hold the follower counts
-                                  <div className="text-sm text-gray-900"> {/* Stack vertically, adjust line height */}
-                                      {/* Conditionally render Instagram count if > 0 */}
-                                      {influencer.pricing.reel > 0 && (
-                                          <span>Reels: {influencer.pricing.reel.toLocaleString()} </span>
-                                      )}
-                                      {/* Conditionally render YouTube count if > 0 */}
-                                      {influencer.pricing.story > 0 && (
-                                          <span>Story: {influencer.pricing.story.toLocaleString()} </span>
-                                      )}
-                                      {/* Conditionally render Facebook count if > 0 */}
-                                      {influencer.pricing.post > 0 && (
-                                          <span>Post: {influencer.pricing.post.toLocaleString()} </span>
-                                      )}
-                                      {influencer.pricing.campaign_min > 0 && (
-                                          <span>Post: {influencer.pricing.campaign_min.toLocaleString()} </span>
-                                      )}
-                                      {influencer.pricing.campaign_max > 0 && (
-                                          <span>Post: {influencer.pricing.campaign_max.toLocaleString()} </span>
-                                      )}
-                                      {/* Show N/A only if ALL are 0 or object is missing */}
-                                      {(influencer.pricing.reel <= 0 &&
-                                        influencer.pricing.story <= 0 &&
-                                        influencer.pricing.post <= 0 &&
-                                        influencer.pricing.campaign_min <= 0 &&
-                                        influencer.pricing.campaign_max <= 0
-                                      ) && (
-                                          <span className="italic text-gray-400">N/A</span>
+                                  <div className="text-sm text-gray-900">
+                                    {" "}
+                                    {/* Stack vertically, adjust line height */}
+                                    {/* Conditionally render Instagram count if > 0 */}
+                                    {influencer.pricing.reel > 0 && (
+                                      <span>
+                                        Reels:{" "}
+                                        {influencer.pricing.reel.toLocaleString()}{" "}
+                                      </span>
+                                    )}
+                                    {/* Conditionally render YouTube count if > 0 */}
+                                    {influencer.pricing.story > 0 && (
+                                      <span>
+                                        Story:{" "}
+                                        {influencer.pricing.story.toLocaleString()}{" "}
+                                      </span>
+                                    )}
+                                    {/* Conditionally render Facebook count if > 0 */}
+                                    {influencer.pricing.post > 0 && (
+                                      <span>
+                                        Post:{" "}
+                                        {influencer.pricing.post.toLocaleString()}{" "}
+                                      </span>
+                                    )}
+                                    {influencer.pricing.campaign_min > 0 && (
+                                      <span>
+                                        Post:{" "}
+                                        {influencer.pricing.campaign_min.toLocaleString()}{" "}
+                                      </span>
+                                    )}
+                                    {influencer.pricing.campaign_max > 0 && (
+                                      <span>
+                                        Post:{" "}
+                                        {influencer.pricing.campaign_max.toLocaleString()}{" "}
+                                      </span>
+                                    )}
+                                    {/* Show N/A only if ALL are 0 or object is missing */}
+                                    {influencer.pricing.reel <= 0 &&
+                                      influencer.pricing.story <= 0 &&
+                                      influencer.pricing.post <= 0 &&
+                                      influencer.pricing.campaign_min <= 0 &&
+                                      influencer.pricing.campaign_max <= 0 && (
+                                        <span className="italic text-gray-400">
+                                          N/A
+                                        </span>
                                       )}
                                   </div>
-                              ) : (
+                                ) : (
                                   // Show N/A if the entire followers object is null/missing
-                                  <span className="italic text-gray-400">N/A</span>
-                              )}
+                                  <span className="italic text-gray-400">
+                                    N/A
+                                  </span>
+                                )}
                               </div>
                             </td>
                             <td className="px-4 py-4">
                               <div className="text-sm text-gray-900">
-                                {influencer.createdAt ? format(new Date(influencer.createdAt), 'HH:mm:ss dd/MM/yyyy') : 'N/A'}
+                                {influencer.createdAt
+                                  ? format(
+                                      new Date(influencer.createdAt),
+                                      "HH:mm:ss dd/MM/yyyy"
+                                    )
+                                  : "N/A"}
                               </div>
                             </td>
-                           
-                            
-                            
-                            
+
                             <td className="px-4 py-4">
                               <div className="flex items-center gap-2">
                                 <ProgressBar
