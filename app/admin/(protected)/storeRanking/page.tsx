@@ -53,6 +53,7 @@ export default function StoreRankingPage() {
       query: debouncedQuery,
       page: page.toString(),
       limit: "20",
+      only_active : "true"
     };
     if (facetFiltersArray.length > 0) {
       params.facetFilters = JSON.stringify(facetFiltersArray);

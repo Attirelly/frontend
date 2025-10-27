@@ -22,7 +22,7 @@ export default function ShowMoreProducts({
       let res;
       if (same_store) {
         res = await api.get(
-          `/search/search_product?query=${product?.store_id}&page=0&limit=${limit}`
+          `/search/search_product?query=${product?.store_id}&page=0&limit=${limit}&only_active=true`
         );
       } else {
         const price_tolerance = 0.2;
@@ -32,7 +32,7 @@ export default function ShowMoreProducts({
         const encodedFilters = encodeURIComponent(filters);
 
         res = await api.get(
-          `/search/search_product?filters=${encodedFilters}&page=0&limit=${limit}`
+          `/search/search_product?filters=${encodedFilters}&page=0&limit=${limit}&only_active=true`
         );
       }
 

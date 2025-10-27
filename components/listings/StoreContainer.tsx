@@ -145,9 +145,9 @@ export default function StoreContainerPage() {
 
     const facetFilters = buildFacetFilters(selectedFilters, storeType);
 
-        let searchUrl = `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}`;
+        // let searchUrl = `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}`;
 
-    // let searchUrl = `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&only_active=true`;
+    let searchUrl = `/search/search_store?query=${query}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&only_active=true`;
 
     if (area) {
       searchUrl += `&area=${area.name}`;

@@ -267,7 +267,7 @@ export default function ProductContainer({
       const finalFilterString = filterClauses.join(" AND ");
 
       // ✨ MODIFIED: The global `query` is replaced with the store-specific `productQuery`.
-      let searchUrl = `/search/search_product?query=${storeId} ${productQuery} ${effectiveQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}`;
+      let searchUrl = `/search/search_product?query=${storeId} ${productQuery} ${effectiveQuery}&page=${currentPage}&limit=${BUFFER_SIZE}&filters=${finalFilterString}&facetFilters=${facetFilters}&activeFacet=${activeFacet}&sort_by=${sortBy}&only_active=true`;
 
       if (area) {
         searchUrl += `&area=${area.name}`;
