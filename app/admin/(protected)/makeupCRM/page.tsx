@@ -414,12 +414,18 @@ export default function MakeupArtistCRM() {
       // --- Facet Mapping ---
       // Map snake_case keys from API to our state
       const newFacets: Facets = {
-        years_experience: Object.entries(data.facets?.years_experience || {}),
-        avg_price_range: Object.entries(data.facets?.avg_price_range || {}),
-        total_followers: Object.entries(data.facets?.total_followers || {}),
         city: Object.entries(data.facets?.city || {}),
         state: Object.entries(data.facets?.state || {}),
+        team_size: Object.entries(data.facets?.team_size || {}),
+        client_types: Object.entries(data.facets?.client_types || {}),
+        collab_types: Object.entries(data.facets?.collab_types || {}),
+        collab_nature: Object.entries(data.facets?.collab_nature || {}),
+        content_niche: Object.entries(data.facets?.content_niche || {}),
         occasion_focus: Object.entries(data.facets?.occasion_focus || {}),
+        ready_to_travel: Object.entries(data.facets?.ready_to_travel || {}),
+        recommends_boutiques: Object.entries(
+          data.facets?.recommends_boutiques || {}
+        ),
       };
       setFacets(newFacets);
     } catch (error) {
