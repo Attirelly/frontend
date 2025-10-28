@@ -444,14 +444,11 @@ export default function InfluencerCRM() {
     dateRange?: [Date, Date] | null
   ): string | null => {
     if (!dateRange || !dateRange[0] || !dateRange[1]) return null;
+  const [start, end] = dateRange;
+  const startUnix = Math.floor(start.getTime() / 1000);
+  const endUnix = Math.floor(end.getTime() / 1000);
 
-    const [start, end] = dateRange;
-    // const startISO = start.toISOString();
-    // const endISO = end.toISOString();
-    const startEpoch = Math.floor(start.getTime() / 1000);
-    const endEpoch = Math.floor(end.getTime() / 1000);
-
-    return `${facet} >= "${startEpoch}" AND ${facet} <= "${endEpoch}"`;
+  return `${facet} >= ${startUnix} AND ${facet} <= ${endUnix}`;
   };
   /**
    * Handles CSV upload (simplified).
