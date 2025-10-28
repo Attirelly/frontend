@@ -1,6 +1,5 @@
 "use client";
-
-import { useState, useEffect, ChangeEvent, useRef } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import {
   Search,
   Upload,
@@ -13,18 +12,15 @@ import {
   Check,
   X,
 } from "lucide-react";
-// import { api } from "@/lib/axios"; // Removed for preview, mock below
-// import Link from "next/link"; // Removed for preview, mock below
 import { toast } from "sonner"; // Assuming you use sonner for toasts
 import { api } from "@/lib/axios";
 import { format } from "date-fns";
+import { DateRangeFilter } from "@/components/ui/DateRangeFilter";
+import { RangeSlider } from "@/components/ui/RangeSlider";
 
-
-const Link: React.FC<React.PropsWithChildren<{ href: string; className?: string }>> = ({
-  href,
-  className,
-  children,
-}) => (
+const Link: React.FC<
+  React.PropsWithChildren<{ href: string; className?: string }>
+> = ({ href, className, children }) => (
   <a
     href={href}
     className={className}
@@ -138,6 +134,14 @@ const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
   );
 };
 
+const numericKeyFilter: Record<string, string> = {
+  total_followers: "Total Followers",
+  engagement_rate: "Engagement Rate",
+  avg_story_views: "Instagram Story View",
+  total_posts: "Total Post",
+  years_of_experience: "Years of Experience",
+};
+
 // Main Component
 export default function WeddingPlannerCRM() {
   // const { sortBy } = useAdminStore(); // Assuming you have this store
@@ -148,6 +152,14 @@ export default function WeddingPlannerCRM() {
   const [selectedFacets, setSelectedFacets] = useState<{
     [key: string]: string[];
   }>({});
+  const [selectedFilters, setSelectedFilters] = useState<{
+    [key: string]: [number, number];
+  }>({});
+  const [dateRange, setDateRange] = useState<[Date, Date]>([
+    new Date("2025-10-01"),
+    new Date("2030-10-01"),
+  ]);
+  const [finalFilter, setFinalFilter] = useState<string>("");
   const [facets, setFacets] = useState<Facets>({});
   const [viewAll, setViewAll] = useState<{ [key: string]: boolean }>({});
   const [selectedPlannerIds, setSelectedPlannerIds] = useState<string[]>([]);
@@ -169,7 +181,7 @@ export default function WeddingPlannerCRM() {
     for (const key in facets) {
       if (facets[key].length > 0) {
         // Special case for 'status' filter, map to 'published'
-        const filterKey = key === 'status' ? 'published' : key;
+        const filterKey = key === "status" ? "published" : key;
         filters.push(facets[key].map((value) => `${filterKey}:${value}`));
       }
     }
@@ -220,16 +232,16 @@ export default function WeddingPlannerCRM() {
 
     try {
       // --- API Endpoint Update ---
-      await api.patch("/planners/bulk-active", {
+      await api.patch("/wedding_planner/bulk-active", {
         ids: selectedPlannerIds,
         active: newStatus,
       });
 
       setSelectedPlannerIds([]);
       toast.success(
-        `Successfully ${
-          newStatus ? "activated" : "deactivated"
-        } ${selectedPlannerIds.length} planners.`
+        `Successfully ${newStatus ? "Activated" : "Deactivated"} ${
+          selectedPlannerIds.length
+        } wedding planners.`
       );
     } catch (error) {
       console.error("Bulk update failed:", error);
@@ -253,34 +265,39 @@ export default function WeddingPlannerCRM() {
 
       // --- API Endpoint Update ---
       // Using the real API endpoint
-      const res: any = await api.get( 
+      const res: any = await api.get(
         `/search/search_wedding_planners?query=${params.query || ""}&page=${
           (params.page || 1) - 1
-        }&limit=${
-          params.limit || 50
-        }&facetFilters=${algoia_facets}&sort_by=${params.sort_by}${sortParams}`
+        }&limit=${params.limit || 50}&facetFilters=${algoia_facets}&sort_by=${
+          params.sort_by
+        }${sortParams}`
       );
 
       const data = res.data;
       setTotalItems(data.total_hits);
       setTotalPages(data.total_pages);
 
-      // --- 3. DATA MAPPING ---
-      // Maps the flat API response (snake_case) to our flat WeddingPlanner type (camelCase).
       const plannersData: WeddingPlanner[] = data.hits.map((hit: any) => {
-        
         // Calculate onboarding progress (example logic)
         // Updated maxSteps to 6 based on sample data
-        const maxSteps = 6; 
+        const maxSteps = 6;
         const currentStep = hit.onboarding_step || 0;
-        const progress = Math.min(100, Math.round((currentStep / maxSteps) * 100));
+        const progress = Math.min(
+          100,
+          Math.round((currentStep / maxSteps) * 100)
+        );
 
         return {
           id: hit.id, // From WeddingPlannerOut
-          
+
           // Updated status logic: Check for 'status', then 'active', then default to false.
           // Your sample 'published' facet suggests this field exists.
-          status: hit.status !== undefined ? hit.status : (hit.active !== undefined ? hit.active : false),
+          status:
+            hit.status !== undefined
+              ? hit.status
+              : hit.active !== undefined
+              ? hit.active
+              : false,
 
           created_at: hit.created_at ? new Date(hit.created_at) : undefined,
           onboarding_progress: progress,
@@ -310,17 +327,21 @@ export default function WeddingPlannerCRM() {
           recommendsDesigners: hit.recommends_designers || false,
           partnerDesigners: hit.partner_designers || [],
           bridesGuidedPerYear: hit.brides_guided_per_year || null,
-          collaboratesWithStylistsMuas: hit.collaborates_with_stylists_muas || false,
-          recommendedFashionCategories: hit.recommended_fashion_categories || [],
+          collaboratesWithStylistsMuas:
+            hit.collaborates_with_stylists_muas || false,
+          recommendedFashionCategories:
+            hit.recommended_fashion_categories || [],
           partnerVendorHandles: hit.partner_vendor_handles || {},
           referralPotential: hit.referral_potential || null,
 
           // Section 4: Collaboration Preferences
-          interestedInCollaborationsWith: hit.interested_in_collaborations_with || [],
+          interestedInCollaborationsWith:
+            hit.interested_in_collaborations_with || [],
           preferredCollaborationType: hit.preferred_collaboration_type || [],
           preferredCommissionModel: hit.preferred_commission_model || null,
           barterAcceptance: hit.barter_acceptance || null,
-          monthlyCollaborationsOpenTo: hit.monthly_collaborations_open_to || null,
+          monthlyCollaborationsOpenTo:
+            hit.monthly_collaborations_open_to || null,
 
           // Section 5: Social Links & Insights
           instagramUrl: hit.instagram_url || "",
@@ -332,6 +353,7 @@ export default function WeddingPlannerCRM() {
           engagementRate: hit.engagement_rate || null,
           averageStoryViews: hit.average_story_views || null,
           averageReelViews: hit.average_reel_views || null,
+          active:hit.active
         };
       });
 
@@ -349,9 +371,7 @@ export default function WeddingPlannerCRM() {
         years_of_experience: Object.entries(
           data.facets?.years_of_experience || {}
         ),
-        total_followers: Object.entries(
-          data.facets?.total_followers || {}
-        ),
+        total_followers: Object.entries(data.facets?.total_followers || {}),
         // Use 'published' from your Pydantic model for the 'status' filter
         // We'll map this key to 'status' for filtering
         status: Object.entries(data.facets?.published || {}),
@@ -496,7 +516,8 @@ export default function WeddingPlannerCRM() {
           }
         })
         .filter(
-          (p): p is WeddingPlanner => p !== null && !!p.businessName && !!p.email
+          (p): p is WeddingPlanner =>
+            p !== null && !!p.businessName && !!p.email
         );
 
       setPlanners(uploaded);
@@ -514,10 +535,6 @@ export default function WeddingPlannerCRM() {
     reader.readAsText(file);
   };
 
-  /**
-   * Handles CSV download.
-   * Note: This is simplified to only include key fields (camelCase).
-   */
   const handleDownloadCSV = () => {
     // Simplified header
     const header =
@@ -527,7 +544,7 @@ export default function WeddingPlannerCRM() {
       .map((p) => {
         // Escape commas in fields
         const escape = (str: string) => `"${str.replace(/"/g, '""')}"`;
-        
+
         return [
           p.id,
           p.businessName,
@@ -553,6 +570,50 @@ export default function WeddingPlannerCRM() {
     URL.revokeObjectURL(url);
   };
 
+  const handleFacetRangeChange = (facet: string, low: number, high: number) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [facet]: [low, high],
+    }));
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      let filterString = buildFilterString(selectedFilters);
+      let datefilterString = buildDateFilter("created_at_timestamp", dateRange);
+      const finalFilterString = [filterString, datefilterString]
+        .filter(Boolean) // removes undefined, null, or empty ""
+        .join(" AND ");
+      setFinalFilter(finalFilterString);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [selectedFilters, dateRange]);
+
+  const buildFilterString = (
+    filters: Record<string, [number, number]>
+  ): string => {
+    const parts: string[] = [];
+
+    for (const [facet, [low, high]] of Object.entries(filters)) {
+      if (low != null && high != null) {
+        parts.push(`${facet} >= ${low} AND ${facet} <= ${high}`);
+      }
+    }
+
+    return parts.join(" AND ");
+  };
+  const buildDateFilter = (
+    facet: string,
+    dateRange?: [Date, Date] | null
+  ): string | null => {
+    if (!dateRange || !dateRange[0] || !dateRange[1]) return null;
+    const [start, end] = dateRange;
+    const startUnix = Math.floor(start.getTime() / 1000);
+    const endUnix = Math.floor(end.getTime() / 1000);
+
+    return `${facet} >= ${startUnix} AND ${facet} <= ${endUnix}`;
+  };
   /**
    * Toggles the "View All" state for a given facet list.
    */
@@ -678,7 +739,9 @@ export default function WeddingPlannerCRM() {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  aria-label={showFilters ? "Collapse filters" : "Expand filters"}
+                  aria-label={
+                    showFilters ? "Collapse filters" : "Expand filters"
+                  }
                 >
                   {showFilters ? (
                     <ChevronDown className="w-5 h-5 text-black" />
@@ -721,50 +784,85 @@ export default function WeddingPlannerCRM() {
                 }`}
               >
                 {Object.keys(facets).length > 0 ? (
-                  Object.keys(facets).map((facet) => (
-                    <div key={facet} className="mb-6">
-                      {/* Convert snake_case to Title Case for display */}
-                      <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
-                        {facet.replace(/_/g, " ")} 
-                      </h3>
-                      <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
-                        {facets[facet]
-                          .slice(0, viewAll[facet] ? facets[facet].length : 5)
-                          .map(([value, count]) => (
-                            <label
-                              key={value}
-                              className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                  <div>
+                    {Object.keys(facets).map((facet) => (
+                      <div key={facet} className="mb-6">
+                        {/* Convert snake_case to Title Case for display */}
+                        <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
+                          {facet.replace(/_/g, " ")}
+                        </h3>
+                        <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
+                          {facets[facet]
+                            .slice(0, viewAll[facet] ? facets[facet].length : 5)
+                            .map(([value, count]) => (
+                              <label
+                                key={value}
+                                className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={
+                                    selectedFacets[facet]?.includes(
+                                      String(value)
+                                    ) || false
+                                  }
+                                  onChange={() =>
+                                    handleFacetChange(facet, String(value))
+                                  }
+                                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                />
+                                <span className="text-sm text-gray-700 flex-1">
+                                  {String(value) || "N/A"}
+                                </span>
+                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                  {count}
+                                </span>
+                              </label>
+                            ))}
+                          {facets[facet].length > 5 && (
+                            <button
+                              onClick={() => toggleViewAll(facet)}
+                              className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
                             >
-                              <input
-                                type="checkbox"
-                                checked={
-                                  selectedFacets[facet]?.includes(String(value)) ||
-                                  false
-                                }
-                                onChange={() => handleFacetChange(facet, String(value))}
-                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                              />
-                              <span className="text-sm text-gray-700 flex-1">
-                                {String(value) || "N/A"}
-                              </span>
-                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                {count}
-                              </span>
-                            </label>
-                          ))}
-                        {facets[facet].length > 5 && (
-                          <button
-                            onClick={() => toggleViewAll(facet)}
-                            className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
-                          >
-                            {viewAll[facet]
-                              ? "Show Less"
-                              : `View All (${facets[facet].length})`}
-                          </button>
-                        )}
+                              {viewAll[facet]
+                                ? "Show Less"
+                                : `View All (${facets[facet].length})`}
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    ))}
+
+                    {Object.keys(numericKeyFilter).map((key: string) => {
+                      const displayFilterName = numericKeyFilter[key];
+                      const currentRange = selectedFilters[key];
+                      return (
+                        <div key={key} className="mb-6">
+                          <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
+                            {displayFilterName}
+                          </h3>
+                          <RangeSlider
+                            label={displayFilterName}
+                            min={0}
+                            max={10000000}
+                            step={1000}
+                            values={currentRange ?? [0, 10000000]}
+                            onChange={(range) =>
+                              handleFacetRangeChange(key, range[0], range[1])
+                            }
+                          />
+                        </div>
+                      );
+                    })}
+
+                    <DateRangeFilter
+                      startDate={dateRange ? dateRange[0].toISOString() : ""}
+                      endDate={dateRange ? dateRange[1].toISOString() : ""}
+                      onChange={(start, end) => {
+                        setDateRange([new Date(start), new Date(end)]);
+                      }}
+                    />
+                  </div>
                 ) : (
                   <div className="text-sm text-gray-500">
                     No filters available for the current search.
@@ -861,7 +959,8 @@ export default function WeddingPlannerCRM() {
                           onClick={() => requestSort("yearsOfExperience")}
                         >
                           <div className="flex items-center gap-2">
-                            Years Of Experience {getSortIndicator("yearsOfExperience")}
+                            Years Of Experience{" "}
+                            {getSortIndicator("yearsOfExperience")}
                           </div>
                         </th>
                         <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -886,7 +985,7 @@ export default function WeddingPlannerCRM() {
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                           onClick={() => requestSort("onboarding_progress")}
                         >
-                           <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2">
                             Progress {getSortIndicator("onboarding_progress")}
                           </div>
                         </th>
@@ -994,8 +1093,7 @@ export default function WeddingPlannerCRM() {
                                   ))}
                                 {planner.weddingAestheticStyles.length > 2 && (
                                   <span className="text-xs text-gray-900">
-                                    +
-                                    {planner.weddingAestheticStyles.length - 2}
+                                    +{planner.weddingAestheticStyles.length - 2}
                                   </span>
                                 )}
                               </div>
@@ -1044,7 +1142,12 @@ export default function WeddingPlannerCRM() {
                             </td>
                             <td className="px-4 py-4">
                               <div className="text-sm text-gray-900">
-                                {planner.created_at ? format(new Date (planner.created_at), 'HH:mm:ss dd:mm:yyyy') : 'N/A'}
+                                {planner.created_at
+                                  ? format(
+                                      new Date(planner.created_at),
+                                      "HH:mm:ss dd:mm:yyyy"
+                                    )
+                                  : "N/A"}
                               </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
@@ -1057,7 +1160,6 @@ export default function WeddingPlannerCRM() {
                                 View
                               </Link>
                             </td>
-                            
                           </tr>
                         ))
                       )}
@@ -1072,4 +1174,3 @@ export default function WeddingPlannerCRM() {
     </div>
   );
 }
-

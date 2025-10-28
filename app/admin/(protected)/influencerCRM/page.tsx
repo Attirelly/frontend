@@ -231,7 +231,7 @@ export default function InfluencerCRM() {
 
       setSelectedInfluencerIds([]);
       toast.success(
-        `Successfully ${newStatus ? "published" : "unpublished"} ${
+        `Successfully ${newStatus ? "Active" : "Inactive"} ${
           selectedInfluencerIds.length
         } influencers.`
       );
@@ -330,8 +330,7 @@ export default function InfluencerCRM() {
           onboardingStep: hit.onboarding_step || 0,
           onboarding_progress: progress,
           published: hit.published || false,
-          status: hit.published || false, // Alias
-          // createdAt: hit.created_at ? new Date(hit.created_at) : undefined,
+          status: hit.active || false,
           createdAt: hit.created_at || null,
           updatedAt: hit.updated_at ? new Date(hit.updated_at) : undefined,
         };
@@ -444,11 +443,11 @@ export default function InfluencerCRM() {
     dateRange?: [Date, Date] | null
   ): string | null => {
     if (!dateRange || !dateRange[0] || !dateRange[1]) return null;
-  const [start, end] = dateRange;
-  const startUnix = Math.floor(start.getTime() / 1000);
-  const endUnix = Math.floor(end.getTime() / 1000);
+    const [start, end] = dateRange;
+    const startUnix = Math.floor(start.getTime() / 1000);
+    const endUnix = Math.floor(end.getTime() / 1000);
 
-  return `${facet} >= ${startUnix} AND ${facet} <= ${endUnix}`;
+    return `${facet} >= ${startUnix} AND ${facet} <= ${endUnix}`;
   };
   /**
    * Handles CSV upload (simplified).
@@ -1269,12 +1268,12 @@ export default function InfluencerCRM() {
                             <td className="px-4 py-4">
                               <span
                                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                                  influencer.status // 'status' is mapped from 'published'
+                                  influencer.status //
                                     ? "bg-green-100 text-green-800"
                                     : "bg-red-100 text-red-800"
                                 }`}
                               >
-                                {influencer.status ? "Published" : "Draft"}
+                                {influencer.status ? "Active" : "Inactive"}
                               </span>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
