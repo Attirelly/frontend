@@ -416,7 +416,7 @@ export default function InfluencerCRM() {
   useEffect(() => {
     const handler = setTimeout(() => {
       let filterString = buildFilterString(selectedFilters);
-      let datefilterString = buildDateFilter("created_at", dateRange);
+      let datefilterString = buildDateFilter("created_at_timestamp", dateRange);
       const finalFilterString = [filterString, datefilterString]
         .filter(Boolean) // removes undefined, null, or empty ""
         .join(" AND ");
@@ -424,7 +424,7 @@ export default function InfluencerCRM() {
     }, 500);
 
     return () => clearTimeout(handler);
-  }, [selectedFilters , dateRange]);
+  }, [selectedFilters, dateRange]);
 
   const buildFilterString = (
     filters: Record<string, [number, number]>
@@ -446,10 +446,12 @@ export default function InfluencerCRM() {
     if (!dateRange || !dateRange[0] || !dateRange[1]) return null;
 
     const [start, end] = dateRange;
-    const startISO = start.toISOString();
-    const endISO = end.toISOString();
+    // const startISO = start.toISOString();
+    // const endISO = end.toISOString();
+    const startEpoch = Math.floor(start.getTime() / 1000);
+    const endEpoch = Math.floor(end.getTime() / 1000);
 
-    return `${facet} >= "${startISO}" AND ${facet} <= "${endISO}"`;
+    return `${facet} >= "${startEpoch}" AND ${facet} <= "${endEpoch}"`;
   };
   /**
    * Handles CSV upload (simplified).
