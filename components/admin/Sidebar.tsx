@@ -60,7 +60,8 @@ export default function Sidebar({ isOpen } : SidebarProps) {
     { label: "Customer CRM", path: "/admin/customerCRM" },
     { label: "Product CRM", path: "/admin/productCRM"},
     { label: "Curation Module", path: "/admin/curationModule" },
-    { label: "Store CRM/Ranking", path: "/admin/storeRanking"}
+    { label: "Store CRM/Ranking", path: "/admin/storeRanking"},
+    { label: "Bulk Upload Photos", path: "/admin/bulkPhotosUpload"},
     
   ];
 
