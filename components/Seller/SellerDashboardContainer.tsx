@@ -9,6 +9,7 @@ import StorePhotosComponent from "@/components/Seller/Sections/StorePhotos";
 import QrCodeGeneration from "@/components/Seller/Sections/QrGeneration";
 import ViewAllProducts from "@/components/Seller/Sections/ViewAllProducts";
 import BulkUploadPage from "@/components/Seller/Sections/BulkUploadProducts";
+
 // ✅ ADDED: Import the new discount component
 import DiscountComponent from "@/components/Seller/Sections/DiscountComponent";
 import UpdateButton from "@/components/Seller/UpdateButton";
@@ -25,6 +26,7 @@ import { City, Area, Pincode } from "@/types/SellerTypes";
 import SizeChartPage from "./Sections/SizeChart";
 import OcassionPage from "./Sections/AddToOcassion";
 import ViewOccasionPage from "./Sections/ViewOcassion";
+import InfluencerDiscoveryPage from "./Sections/InfluencerDiscovery";
 
 export default function SellerDashboardContainer() {
   const router = useRouter();
@@ -222,6 +224,8 @@ export default function SellerDashboardContainer() {
         return <OcassionPage/>;
       case "view_ocassion":
         return <ViewOccasionPage/>;
+      case "influencer":
+        return <InfluencerDiscoveryPage/>
       default:
         return null;
     }

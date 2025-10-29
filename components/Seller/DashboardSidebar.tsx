@@ -71,6 +71,11 @@ const sections = [
     title: "View Ocassion",
     iconUrl: "/OnboardingSections/where_to_sell.png",
   },
+  {
+    id: "influencer",
+    title: "Discover Influencers",
+    iconUrl: "/OnboardingSections/where_to_sell.png",
+  },
 ];
 
 const sectionGroups = [
@@ -92,6 +97,7 @@ const sectionGroups = [
     ids: ["size_charts"],
   },
   { heading: "QR Code", ids: ["qr_code"] },
+  { heading: "Influencer", ids:["influencer"]},
 ];
 
 // --- Extracted MobileSidebar Component ---

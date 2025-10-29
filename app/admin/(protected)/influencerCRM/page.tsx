@@ -694,11 +694,7 @@ export default function InfluencerCRM() {
 
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Filters */}
-          <div
-            className={`transition-all duration-300 ${
-              showFilters ? "lg:w-80 w-full" : "w-16"
-            }`}
-          >
+          <div className={`transition-all duration-300 ${showFilters ? "lg:w-80 w-full" : "w-16"}`}>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sticky top-6">
               <div className="flex items-center justify-between mb-4">
                 <div
