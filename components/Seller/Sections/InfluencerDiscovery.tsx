@@ -1,6 +1,6 @@
 // src/pages/DiscoverSellersPage.tsx
 
-import React, { useState, useEffect, useCallback, ReactNode } from "react";
+import React, { useState, useEffect, useCallback, ReactNode, useMemo } from "react";
 import {
   InfluencerFilterSidebar,
   SelectedFilters,
@@ -42,6 +42,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner"; // User's import
 import { api } from "@/lib/axios"; // User's import
+import { useSellerStore } from "@/store/sellerStore";
 
 // --- 2. INFLUENCER TYPE (Unchanged) ---
 type Influencer = {
@@ -99,7 +100,7 @@ type Influencer = {
   updated_at: string;
   active: boolean;
   created_at_timestamp: number;
-  objectID: string;
+  id: string;
 };
 
 // --- DEFAULT STATES (Unchanged) ---
@@ -125,6 +126,12 @@ const INITIAL_FACETS: FilterOptions = {
   categories: [],
 };
 
+interface Bookmark {
+seller_id:string,
+store_id:string,
+influencer_id:string
+}
+
 // --- 3. MAIN PAGE COMPONENT (UPDATED) ---
 function DiscoverSellersPage() {
   const [selectedFilters, setSelectedFilters] =
@@ -137,6 +144,10 @@ function DiscoverSellersPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [defaultBookmarks, setDefaultBookmarks] = useState<Bookmark[]>([]);
+  const {storeId, sellerId} = useSellerStore();
+  
+  // console.log(storeId,sellerId);
 
   // --- !! NEW STATE FOR MODAL !! ---
   const [selectedInfluencer, setSelectedInfluencer] =
@@ -167,6 +178,26 @@ function DiscoverSellersPage() {
     setSelectedFilters(INITIAL_FILTERS);
     setCurrentPage(1);
   };
+
+  useEffect(()=>{
+    const fetchBookmarks = async () => {
+      if (!sellerId || !storeId) return;
+      try {
+        const res = await api.get(
+          `influencers/by-seller-store/?seller_id=${sellerId}&store_id=${storeId}`
+        );
+        setDefaultBookmarks(res.data);
+      } catch (error) {
+        console.error("Failed to fetch bookmarks:", error);
+        toast.error("Failed to load your bookmarks.");
+      }
+    }
+    fetchBookmarks();
+  },[sellerId, storeId])
+
+  const bookmarkedIds = useMemo(() => {
+    return new Set(defaultBookmarks.map((b) => b.influencer_id));
+  }, [defaultBookmarks]);
 
   // --- Data Fetching Function (Unchanged) ---
   const fetchInfluencers = useCallback(async () => {
@@ -268,9 +299,12 @@ function DiscoverSellersPage() {
                 {influencers.map((inf) => (
                   // --- !! PASS ONCLICK HANDLER TO CARD !! ---
                   <InfluencerCard
-                    key={inf.objectID}
+                    key={inf.id}
                     influencer={inf}
                     onViewProfile={setSelectedInfluencer}
+                    sellerId={sellerId}
+                    storeId={storeId}
+                    isInitiallyBookmarked={bookmarkedIds.has(inf.id)}
                   />
                 ))}
               </div>
@@ -303,19 +337,60 @@ function DiscoverSellersPage() {
 function InfluencerCard({
   influencer,
   onViewProfile, // <-- NEW PROP
+  sellerId,
+  storeId,
+  isInitiallyBookmarked,
 }: {
   influencer: Influencer;
   onViewProfile: (influencer: Influencer) => void; // <-- NEW PROP TYPE
+  sellerId:string | null;
+  storeId:string | null;
+  isInitiallyBookmarked: boolean;
 }) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(isInitiallyBookmarked);
+  // const { storeId, sellerId } = useSellerStore();
+
+  useEffect(() => {
+    setIsBookmarked(isInitiallyBookmarked);
+  }, [isInitiallyBookmarked]);
 
   // --- !! UPDATE CLICK HANDLER !! ---
   const handleCardClick = () => {
     onViewProfile(influencer); // Open the modal
   };
 
-  const handleBookmarkClick = (e: React.MouseEvent) => {
+  const handleBookmarkClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (isBookmarked) {
+      // delete operation
+      try {
+        const payload = {
+          "seller_id": sellerId,
+          "store_id": storeId,
+          "influencer_id": influencer.id
+        }
+        await api.delete(`/influencers/?seller_id=${sellerId}&store_id=${storeId}&influencer_id=${influencer.id}`)
+        toast.success("Bookmark removed")
+      }
+      catch (err) {
+        toast.error("Failed to remove bookmark")
+      }
+    }
+    else {
+      // post operation
+      const payload = {
+        "seller_id": sellerId,
+        "store_id": storeId,
+        "influencer_id": influencer.id
+      }
+      try {
+        await api.post('/influencers/', payload)
+        toast.success("Bookmark added successfully")
+      }
+      catch (err) {
+        toast.error("Failed to add bookmark")
+      }
+    }
     setIsBookmarked(!isBookmarked);
     toast.success(
       isBookmarked
@@ -376,11 +451,10 @@ function InfluencerCard({
           </button>
           <button
             onClick={handleBookmarkClick}
-            className={`p-2 rounded-full bg-white/80 backdrop-blur-sm transition-colors ${
-              isBookmarked
-                ? "text-blue-600 hover:bg-blue-50"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={`p-2 rounded-full bg-white/80 backdrop-blur-sm transition-colors ${isBookmarked
+              ? "text-blue-600 hover:bg-blue-50"
+              : "text-gray-700 hover:bg-white"
+              }`}
             aria-label="Bookmark"
           >
             <Bookmark
@@ -686,11 +760,10 @@ function InfluencerDetailModal({
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm capitalize ${
-                      activeTab === tab
-                        ? "border-blue-500 text-blue-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                    }`}
+                    className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm capitalize ${activeTab === tab
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      }`}
                   >
                     {tab}
                   </button>
