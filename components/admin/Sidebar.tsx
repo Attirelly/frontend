@@ -62,7 +62,9 @@ export default function Sidebar({ isOpen } : SidebarProps) {
     { label: "Curation Module", path: "/admin/curationModule" },
     { label: "Store CRM/Ranking", path: "/admin/storeRanking"},
     { label: "Bulk Upload Photos", path: "/admin/bulkPhotosUpload"},
-    
+    { label: "Influencer CRM", path: "/admin/influencerCRM"},
+    { label: "Wedding Planner CRM", path: "/admin/weddingCRM"},
+    { label: "MakeUp Artist CRM", path: "/admin/makeupCRM"}
   ];
 
   return (

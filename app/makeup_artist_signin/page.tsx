@@ -259,7 +259,7 @@ export default function MakeUpSignin() {
           onSubmit={handleSubmit}
           className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
         >
-          <h2 className="text-xl font-semibold mb-4">Sign in as a seller</h2>
+          <h2 className="text-xl font-semibold mb-4">Sign in as a MakeUp Artist</h2>
           <p className="text-sm text-gray-500 mb-4">
             Verifying the store's phone number is a great way to make sure your
             profile reflects your identity and keeps your account safe.

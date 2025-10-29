@@ -114,7 +114,7 @@ export default function InfluencerSignup() {
    *  - check if otp length is valid, if not return error
    *  - trigger api to verify otp
    *  - if successfully verified, send api to create/register user
-   *  - route to seller onboarding
+   *  - route to influencer onboarding
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -370,7 +370,7 @@ export default function InfluencerSignup() {
           <p className="text-center text-xs text-gray-500 mt-4">
             Already have an account?{" "}
             <Link
-              href="/seller_signin"
+              href="/influencer_signin"
               className="text-blue-600 hover:underline"
             >
               Sign In

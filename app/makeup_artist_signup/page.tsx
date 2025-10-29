@@ -241,7 +241,7 @@ export default function MakeUpArtistSignup() {
           className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
         >
           <h2 className="text-xl font-semibold mb-4">
-            Register as an influencer
+            Register as an MakeUp Artist
           </h2>
           <p className="text-sm text-gray-500 mb-4">
             Verifying the influencer's phone number is a great way to make sure
@@ -370,7 +370,7 @@ export default function MakeUpArtistSignup() {
           <p className="text-center text-xs text-gray-500 mt-4">
             Already have an account?{" "}
             <Link
-              href="/seller_signin"
+              href="/makeup_artist_signin"
               className="text-blue-600 hover:underline"
             >
               Sign In
