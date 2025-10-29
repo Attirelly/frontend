@@ -67,8 +67,11 @@ export function buildNumericFilterString(filters: SelectedFilters): string {
     }
 
     // // --- Check against default ranges ---
-    // const isMinDefault = low === DEFAULT_RANGE[0];
-    // const isMaxDefault = high === DEFAULT_RANGE[1];
+    const isMinDefault = low === DEFAULT_RANGE[0];
+    const isMaxDefault = high === DEFAULT_RANGE[1];
+    if(!isMaxDefault || !isMinDefault){
+      numericFilters.push(`${algoliaField} >= ${low} AND ${algoliaField} <= ${high}`);
+    }
 
     // // Only add a filter if the min or max is not the default
     // if (!isMinDefault) {
@@ -77,9 +80,9 @@ export function buildNumericFilterString(filters: SelectedFilters): string {
     // if (!isMaxDefault) {
     //   numericFilters.push(`${algoliaField} <= ${high}`);
     // }
-    if(low!=null && high!=null){
-      numericFilters.push(`${algoliaField} >= ${low} AND ${algoliaField} <= ${high}`);
-    }
+    // if(low!=null && high!=null){
+    //   numericFilters.push(`${algoliaField} >= ${low} AND ${algoliaField} <= ${high}`);
+    // }
 
   });
 
