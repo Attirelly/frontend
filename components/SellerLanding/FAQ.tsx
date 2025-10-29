@@ -43,7 +43,7 @@ Whether you’re a boutique in Banaras, a label in Mehrauli, or a tailor in Bhop
 
 const FAQ: React.FC = () => {
   return (
-    <section className={`${manrope.className} flex flex-col items-center mt-20`}>
+    <section className={`${manrope.className} flex flex-col items-center mt-20 mb-5`}>
       <h2 className="text-[20px] md:text-[32px] text-[#1B1C57] mb-6 font-semibold">FAQ’s</h2>
       <div className="flex flex-col gap-4 w-full max-w-2xl px-10 lg:px-0">
         {faqs.map((faq, idx) => (
