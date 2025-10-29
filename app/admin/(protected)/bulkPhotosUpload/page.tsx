@@ -1,11 +1,13 @@
 "use client";
 import React, { useRef, useState, useEffect, useMemo } from "react";
+import Select from "react-select";
 // Removed: useSellerStore
 import { api } from "@/lib/axios";
 import Cropper from "react-easy-crop";
 import getCroppedImg from "@/lib/cropImage";
 import Modal from "react-modal";
 import { Area } from "react-easy-crop";
+
 import { FiTrash2 } from "react-icons/fi";
 import { toast } from "sonner";
 
@@ -13,6 +15,31 @@ interface UploadResponse {
   upload_url: string;
   file_url: string;
 }
+
+export interface City {
+  id: string;
+  name: string;
+  state_id: string;
+}
+
+export interface AreaType {
+  id: string;
+  name: string;
+  city_id: string;
+  city_name?: string;
+}
+
+interface Store {
+  store_id: string;
+  store_name: string;
+  city: City;
+  area: AreaType;
+}
+
+type StoreOption = {
+  value: string;
+  label: string;
+};
 
 /**
  * StoreSetupForm component
@@ -55,9 +82,15 @@ interface UploadResponse {
 export default function BulkPhotosUploadPage() {
   // --- Local State Implementation ---
   // Removed Zustand state. Using local useState instead.
+  const [stores, setStores] = useState<Store[]>([]);
+  const [selectedStoreId, setSelectedStoreId] = useState(""); // Stores the ID of the selected store
   const [storeName, setStoreName] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
+  const [isLoadingStores, setIsLoadingStores] = useState(false);
   // ------------------------------------
+
+  const [selectedStoreOption, setSelectedStoreOption] =
+    useState<StoreOption | null>(null);
 
   const [profileUploading, setProfileUploading] = useState(false);
   const [profileProgress, setProfileProgress] = useState(0);
@@ -70,10 +103,42 @@ export default function BulkPhotosUploadPage() {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
-  const handleCropComplete = (
-    _: Area,
-    croppedAreaPixels: Area
-  ): void => {
+  // --- Data Fetching ---
+  const fetchStores = async () => {
+    setIsLoadingStores(true);
+    try {
+      const response = await api.get("/stores/");
+      setStores(response.data);
+    } catch (error) {
+      console.error("Error fetching stores:", error);
+      toast.error("Failed to fetch stores.");
+    } finally {
+      setIsLoadingStores(false);
+    }
+  };
+
+  // Fetch stores on component mount
+  useEffect(() => {
+    fetchStores();
+  }, []);
+
+  // Format stores for react-select, memoized for performance
+  const storeOptions: StoreOption[] = useMemo(() => {
+    return stores.map((store) => ({
+      value: store.store_id,
+      label: `${store.store_name} (${store?.area?.name}, ${store?.city?.name})`,
+    }));
+  }, [stores]);
+
+  // Handler for store selection change
+  const handleStoreChange = (selectedOption: StoreOption | null) => {
+    setSelectedStoreId(selectedOption ? selectedOption.value : "");
+    // setStoreName(selectedOption ? selectedOption.label : "");
+    setSelectedStoreOption(selectedOption); // Set the full object for the Select's value
+  };
+  // -------------------------
+
+  const handleCropComplete = (_: Area, croppedAreaPixels: Area): void => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
@@ -159,10 +224,10 @@ export default function BulkPhotosUploadPage() {
   /**
    * Validates form inputs and creates the final JSON payload.
    */
-  const handleSubmit = (): void => {
+  const handleSubmit = async (): Promise<void> => {
     // 1. Validate Store Name
-    if (!storeName.trim()) {
-      toast.error("Please enter a store name.");
+    if (!selectedStoreId) {
+      toast.error("Please select a store.");
       return;
     }
 
@@ -173,25 +238,34 @@ export default function BulkPhotosUploadPage() {
     }
 
     // 3. Create JSON Payload
-    const payload = {
-      storeName: storeName.trim(),
-      profileUrl: profileUrl,
+    // const payload = {
+    //   store_id: selectedStoreId,
+    //   store_name: selectedStoreOption?.label,
+    //   photo_url: profileUrl,
+    // };
+    const photos_payload = {
+      profile_image: profileUrl,
+      // curr_section: 5,
     };
-
-    // 4. **TODO: Do something with the payload**
-    //    (e.g., send to your backend API)
-    //
-    //    Example:
-    //    try {
-    //      await api.post("/my-api/create-store", payload);
-    //      toast.success("Store created successfully!");
-    //      // You might want to redirect or clear the form here
-    //    } catch (error) {
-    //      toast.error("Failed to create store. Please try again.");
-    //    }
-
-    console.log("Store Payload:", payload);
-    toast.info("Store payload created! Check the browser console.");
+    console.log(photos_payload);
+    try {
+      // const res = await api.post(
+      //   "/ambassador/upload_data?context=store_photos",
+      //   payload
+      // );
+      await api.put(`/stores/${selectedStoreId}`, photos_payload);
+      toast.success("Form submitted successfully!");
+      setSelectedStoreOption(null); // This clears the react-select component
+      setSelectedStoreId(""); // Clear the ID state
+      setProfileUrl(""); // Clear the image preview
+      handleStoreChange(null);
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        (err instanceof Error ? err.message : undefined) ||
+        String(err);
+      toast.error(message || "Submission failed. Please try again.");
+    }
   };
 
   // Removed useEffect that updated Zustand store
@@ -298,7 +372,7 @@ export default function BulkPhotosUploadPage() {
         >
           Store Name <span className="text-red-500">*</span>
         </label>
-        <input
+        {/* <input
           type="text"
           id="storeName"
           value={storeName}
@@ -307,6 +381,29 @@ export default function BulkPhotosUploadPage() {
           }
           className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
           placeholder="My Awesome Store"
+        /> */}
+        <Select<StoreOption>
+          instanceId="store-select"
+          options={storeOptions}
+          value={selectedStoreOption}
+          onChange={handleStoreChange}
+          isLoading={isLoadingStores}
+          isClearable
+          isSearchable
+          placeholder="Search and select a store..."
+          styles={{
+            control: (base) => ({
+              ...base,
+              borderRadius: "0.5rem",
+              borderColor: "#D1D5DB", // gray-300
+              padding: "0.1rem",
+            }),
+            menu: (base) => ({
+              ...base,
+              borderRadius: "0.5rem",
+              zIndex: 50, // Ensure dropdown is on top
+            }),
+          }}
         />
         <p className="text-gray-500 text-xs sm:text-sm">
           This will be your public-facing store name.
@@ -376,7 +473,7 @@ export default function BulkPhotosUploadPage() {
           className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-400"
           disabled={profileUploading}
         >
-          {profileUploading ? "Uploading..." : "Create Store"}
+          {profileUploading ? "Uploading..." : "Upload"}
         </button>
       </div>
     </div>

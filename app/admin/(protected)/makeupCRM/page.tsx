@@ -17,20 +17,18 @@ import {
 // import Link from "next/link"; // Removed for preview, mock below
 import { toast } from "sonner"; // Assuming you use sonner for toasts
 import { api } from "@/lib/axios";
-import { format } from "date-fns"
+import { format } from "date-fns";
+import { RangeSlider } from "@/components/ui/RangeSlider";
+import { DateRangeFilter } from "@/components/ui/DateRangeFilter";
 
 // --- 1. MOCK IMPLEMENTATIONS ---
 // Mock objects for 'api' and 'Link' to allow previewing.
 // The real imports are commented out above.
 
-
-
 // Mock Link component
-const Link: React.FC<React.PropsWithChildren<{ href: string; className?: string }>> = ({
-  href,
-  className,
-  children,
-}) => (
+const Link: React.FC<
+  React.PropsWithChildren<{ href: string; className?: string }>
+> = ({ href, className, children }) => (
   <a
     href={href}
     className={className}
@@ -52,7 +50,6 @@ type MakeupArtist = {
   id?: string;
   created_at?: string;
   onboarding_progress?: number; // Calculated field (0-100)
-  status?: boolean; // Mapped from 'published'
 
   // Section 1: Basic Information
   fullName: string;
@@ -122,8 +119,7 @@ type MakeupArtist = {
   profilePhoto: string | null;
   portfolioFile: string | null;
   shortBio: string;
-  published: boolean; // This is the source of 'status'
-
+  status: boolean; // This is the source of 'status'
 };
 
 /**
@@ -172,6 +168,14 @@ const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
   );
 };
 
+const numericKeyFilter: Record<string, string> = {
+  total_followers: "Total Followers",
+  engagement_rate: "Engagement Rate",
+  avg_story_views: "Instagram Story Views",
+  total_posts: "Instagram Total Post",
+  years_experience: "Years of Experience",
+};
+
 // Main Component
 export default function MakeupArtistCRM() {
   // const { sortBy } = useAdminStore(); // Assuming you have this store
@@ -182,6 +186,14 @@ export default function MakeupArtistCRM() {
   const [selectedFacets, setSelectedFacets] = useState<{
     [key: string]: string[];
   }>({});
+  const [selectedFilters, setSelectedFilters] = useState<{
+    [key: string]: [number, number];
+  }>({});
+  const [dateRange, setDateRange] = useState<[Date, Date]>([
+    new Date("2025-10-01"),
+    new Date("2030-10-01"),
+  ]);
+  const [finalFilter, setFinalFilter] = useState<string>("");
   const [facets, setFacets] = useState<Facets>({});
   const [viewAll, setViewAll] = useState<{ [key: string]: boolean }>({});
   const [selectedMuaIds, setSelectedMuaIds] = useState<string[]>([]);
@@ -231,9 +243,7 @@ export default function MakeupArtistCRM() {
    */
   const handleCheckboxChange = (id: string) => {
     setSelectedMuaIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((muaId) => muaId !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter((muaId) => muaId !== id) : [...prev, id]
     );
   };
 
@@ -253,16 +263,17 @@ export default function MakeupArtistCRM() {
     setMuas(updatedMuas);
 
     try {
-      await api.patch("/muas/bulk-active", { // Assumed endpoint
+      await api.patch("/makeup_artists/bulk-active", {
+        // Assumed endpoint
         ids: selectedMuaIds,
         active: newStatus, // API expects 'active'
       });
 
       setSelectedMuaIds([]);
       toast.success(
-        `Successfully ${
-          newStatus ? "activated" : "deactivated"
-        } ${selectedMuaIds.length} artists.`
+        `Successfully ${newStatus ? "Activated" : "Deactivated"} ${
+          selectedMuaIds.length
+        } artists.`
       );
     } catch (error) {
       console.error("Bulk update failed:", error);
@@ -286,9 +297,7 @@ export default function MakeupArtistCRM() {
       // ... add other mappings if needed
 
       const sortParams = params.sortField
-        ? `&sortField=${sortKey}&sortDirection=${
-            params.sortDirection || "asc"
-          }`
+        ? `&sortField=${sortKey}&sortDirection=${params.sortDirection || "asc"}`
         : "";
 
       const algoia_facets = buildFacetFilters(selectedFacets);
@@ -296,9 +305,9 @@ export default function MakeupArtistCRM() {
       const res: any = await api.get(
         `/search/search_makeup_artists?query=${params.query || ""}&page=${
           (params.page || 1) - 1
-        }&limit=${
-          params.limit || 50
-        }&facetFilters=${algoia_facets}&sort_by=${params.sort_by}${sortParams}`
+        }&limit=${params.limit || 50}&facetFilters=${algoia_facets}&sort_by=${
+          params.sort_by
+        }${sortParams}`
       );
 
       const data = res.data;
@@ -308,18 +317,19 @@ export default function MakeupArtistCRM() {
       // --- Data Mapping ---
       // Map snake_case from API to camelCase for component state
       const muasData: MakeupArtist[] = data.hits.map((hit: any) => {
-        
         // Calculate onboarding progress
         const maxSteps = 10; // 10 sections
         const currentStep = hit.onboarding_step || 0;
-        const progress = Math.min(100, Math.round((currentStep / maxSteps) * 100));
+        const progress = Math.min(
+          100,
+          Math.round((currentStep / maxSteps) * 100)
+        );
 
         return {
           id: hit.id,
           created_at: hit.created_at ? new Date(hit.created_at) : undefined,
           onboarding_progress: progress,
-          status: hit.published || false, // Map 'published' to 'status'
-          
+
           // Section 1
           fullName: hit.full_name || "",
           brandName: hit.brand_name || "",
@@ -340,7 +350,8 @@ export default function MakeupArtistCRM() {
           recommendsBoutiques: hit.recommends_boutiques || false,
           guidanceTypes: hit.guidance_types || [],
           guidesOnTrends: hit.guides_on_trends || [],
-          helpsWithOutfitCoordination: hit.helps_with_outfit_coordination || false,
+          helpsWithOutfitCoordination:
+            hit.helps_with_outfit_coordination || false,
           designersOrLabels: hit.designers_or_labels || [],
 
           // Section 4
@@ -367,13 +378,19 @@ export default function MakeupArtistCRM() {
 
           // Section 8
           instagramHandle: hit.instagram_handle || "",
-          totalFollowers: hit.total_followers ? Number(hit.total_followers) : null,
+          totalFollowers: hit.total_followers
+            ? Number(hit.total_followers)
+            : null,
           totalPosts: hit.total_posts ? Number(hit.total_posts) : null,
-          engagementRate: hit.engagement_rate ? Number(hit.engagement_rate) : null,
+          engagementRate: hit.engagement_rate
+            ? Number(hit.engagement_rate)
+            : null,
           audienceGenderSplit: hit.audience_gender_split || null,
           topAudienceLocations: hit.top_audience_locations || [],
           contentNiche: hit.content_niche || [],
-          avgStoryViews: hit.avg_story_views ? Number(hit.avg_story_views) : null,
+          avgStoryViews: hit.avg_story_views
+            ? Number(hit.avg_story_views)
+            : null,
           avgReelViews: hit.avg_reel_views ? Number(hit.avg_reel_views) : null,
           bestPerformingContentType: hit.best_performing_content_type || "",
           audienceInsightSummary: hit.audience_insight_summary || [],
@@ -388,7 +405,7 @@ export default function MakeupArtistCRM() {
           profilePhoto: hit.profile_photo || null,
           portfolioFile: hit.portfolio_file || null,
           shortBio: hit.short_bio || "",
-          published: hit.published || false,
+          status: hit.active || false,
         };
       });
 
@@ -397,12 +414,18 @@ export default function MakeupArtistCRM() {
       // --- Facet Mapping ---
       // Map snake_case keys from API to our state
       const newFacets: Facets = {
-        years_experience: Object.entries(data.facets?.years_experience || {}),
-        avg_price_range: Object.entries(data.facets?.avg_price_range || {}),
-        total_followers: Object.entries(data.facets?.total_followers || {}),
         city: Object.entries(data.facets?.city || {}),
         state: Object.entries(data.facets?.state || {}),
-        occasion_focus: Object.entries(data.facets?.occasion_focus || {})
+        team_size: Object.entries(data.facets?.team_size || {}),
+        client_types: Object.entries(data.facets?.client_types || {}),
+        collab_types: Object.entries(data.facets?.collab_types || {}),
+        collab_nature: Object.entries(data.facets?.collab_nature || {}),
+        content_niche: Object.entries(data.facets?.content_niche || {}),
+        occasion_focus: Object.entries(data.facets?.occasion_focus || {}),
+        ready_to_travel: Object.entries(data.facets?.ready_to_travel || {}),
+        recommends_boutiques: Object.entries(
+          data.facets?.recommends_boutiques || {}
+        ),
       };
       setFacets(newFacets);
     } catch (error) {
@@ -460,6 +483,50 @@ export default function MakeupArtistCRM() {
     setCurrentPage(1); // Reset to first page
   };
 
+  const handleFacetRangeChange = (facet: string, low: number, high: number) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [facet]: [low, high],
+    }));
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      let filterString = buildFilterString(selectedFilters);
+      let datefilterString = buildDateFilter("created_at_timestamp", dateRange);
+      const finalFilterString = [filterString, datefilterString]
+        .filter(Boolean) // removes undefined, null, or empty ""
+        .join(" AND ");
+      setFinalFilter(finalFilterString);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [selectedFilters, dateRange]);
+
+  const buildFilterString = (
+    filters: Record<string, [number, number]>
+  ): string => {
+    const parts: string[] = [];
+
+    for (const [facet, [low, high]] of Object.entries(filters)) {
+      if (low != null && high != null) {
+        parts.push(`${facet} >= ${low} AND ${facet} <= ${high}`);
+      }
+    }
+
+    return parts.join(" AND ");
+  };
+  const buildDateFilter = (
+    facet: string,
+    dateRange?: [Date, Date] | null
+  ): string | null => {
+    if (!dateRange || !dateRange[0] || !dateRange[1]) return null;
+    const [start, end] = dateRange;
+    const startUnix = Math.floor(start.getTime() / 1000);
+    const endUnix = Math.floor(end.getTime() / 1000);
+
+    return `${facet} >= ${startUnix} AND ${facet} <= ${endUnix}`;
+  };
   /**
    * Handles CSV upload (simplified).
    */
@@ -491,7 +558,7 @@ export default function MakeupArtistCRM() {
               yearsExperience,
               totalFollowers,
               published,
-            ] = line.split(",").map(val => val.replace(/"/g, '')); // Basic un-escaping
+            ] = line.split(",").map((val) => val.replace(/"/g, "")); // Basic un-escaping
 
             if (!brandName || !email) return null;
 
@@ -505,7 +572,9 @@ export default function MakeupArtistCRM() {
               state: state?.trim() || null,
               artistType: artistType?.trim(),
               yearsExperience: yearsExperience?.trim(),
-              totalFollowers: totalFollowers ? Number(totalFollowers.trim()) : null,
+              totalFollowers: totalFollowers
+                ? Number(totalFollowers.trim())
+                : null,
               published: published?.trim().toLowerCase() === "true",
               status: published?.trim().toLowerCase() === "true",
 
@@ -561,15 +630,15 @@ export default function MakeupArtistCRM() {
       setMuas(uploaded);
       setCurrentPage(1);
       toast.success(`Uploaded ${uploaded.length} artists from CSV.`);
-      
+
       // Re-generate simple facets
       const newFacets: Facets = {
         artist_type: [
           ...new Set(uploaded.map((p) => p.artistType).filter(Boolean)),
         ].map((item) => [item, 1]),
-        city: [
-          ...new Set(uploaded.map((p) => p.city).filter(Boolean)),
-        ].map((item) => [item!, 1]),
+        city: [...new Set(uploaded.map((p) => p.city).filter(Boolean))].map(
+          (item) => [item!, 1]
+        ),
       };
       setFacets(newFacets);
     };
@@ -584,7 +653,8 @@ export default function MakeupArtistCRM() {
     const header =
       "id,brandName,fullName,email,whatsappNumber,city,state,artistType,yearsExperience,totalFollowers,published\n";
 
-    const escape = (str: string) => `"${String(str || "").replace(/"/g, '""')}"`;
+    const escape = (str: string) =>
+      `"${String(str || "").replace(/"/g, '""')}"`;
 
     const rows = muas
       .map((p) => {
@@ -739,7 +809,9 @@ export default function MakeupArtistCRM() {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  aria-label={showFilters ? "Collapse filters" : "Expand filters"}
+                  aria-label={
+                    showFilters ? "Collapse filters" : "Expand filters"
+                  }
                 >
                   {showFilters ? (
                     <ChevronDown className="w-5 h-5 text-black" />
@@ -781,49 +853,84 @@ export default function MakeupArtistCRM() {
                 }`}
               >
                 {Object.keys(facets).length > 0 ? (
-                  Object.keys(facets).map((facet) => (
-                    <div key={facet} className="mb-6">
-                      <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
-                        {facet.replace(/_/g, " ")}
-                      </h3>
-                      <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
-                        {facets[facet]
-                          .slice(0, viewAll[facet] ? facets[facet].length : 5)
-                          .map(([value, count]) => (
-                            <label
-                              key={value}
-                              className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                  <div>
+                    {Object.keys(facets).map((facet) => (
+                      <div key={facet} className="mb-6">
+                        <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
+                          {facet.replace(/_/g, " ")}
+                        </h3>
+                        <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
+                          {facets[facet]
+                            .slice(0, viewAll[facet] ? facets[facet].length : 5)
+                            .map(([value, count]) => (
+                              <label
+                                key={value}
+                                className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={
+                                    selectedFacets[facet]?.includes(
+                                      String(value)
+                                    ) || false
+                                  }
+                                  onChange={() =>
+                                    handleFacetChange(facet, String(value))
+                                  }
+                                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                />
+                                <span className="text-sm text-gray-700 flex-1">
+                                  {String(value) || "N/A"}
+                                </span>
+                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                  {count}
+                                </span>
+                              </label>
+                            ))}
+                          {facets[facet].length > 5 && (
+                            <button
+                              onClick={() => toggleViewAll(facet)}
+                              className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
                             >
-                              <input
-                                type="checkbox"
-                                checked={
-                                  selectedFacets[facet]?.includes(String(value)) ||
-                                  false
-                                }
-                                onChange={() => handleFacetChange(facet, String(value))}
-                                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                              />
-                              <span className="text-sm text-gray-700 flex-1">
-                                {String(value) || "N/A"}
-                              </span>
-                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                {count}
-                              </span>
-                            </label>
-                          ))}
-                        {facets[facet].length > 5 && (
-                          <button
-                            onClick={() => toggleViewAll(facet)}
-                            className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
-                          >
-                            {viewAll[facet]
-                              ? "Show Less"
-                              : `View All (${facets[facet].length})`}
-                          </button>
-                        )}
+                              {viewAll[facet]
+                                ? "Show Less"
+                                : `View All (${facets[facet].length})`}
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    ))}
+
+                    {Object.keys(numericKeyFilter).map((key: string) => {
+                      const displayFilterName = numericKeyFilter[key];
+                      const currentRange = selectedFilters[key];
+                      return (
+                        <div key={key} className="mb-6">
+                          <h3 className="text-base font-semibold text-gray-700 mb-3 capitalize">
+                            {displayFilterName}
+                          </h3>
+                          <RangeSlider
+                            label={displayFilterName}
+                            min={0}
+                            max={10000000}
+                            step={1000}
+                            values={currentRange ?? [0, 10000000]}
+                            onChange={(range) =>
+                              handleFacetRangeChange(key, range[0], range[1])
+                            }
+                          />
+                        </div>
+                      );
+                    })}
+
+                    <DateRangeFilter
+                      startDate={dateRange ? dateRange[0].toISOString() : ""}
+                      endDate={dateRange ? dateRange[1].toISOString() : ""}
+                      onChange={(start, end) => {
+                        setDateRange([new Date(start), new Date(end)]);
+                      }}
+                    />
+                  </div>
                 ) : (
                   <div className="text-sm text-gray-500">
                     No filters available for the current search.
@@ -916,15 +1023,17 @@ export default function MakeupArtistCRM() {
                           onClick={() => requestSort("yearsExperience")}
                         >
                           <div className="flex items-center gap-2">
-                            Years Of Experience {getSortIndicator("yearsExperience")}
+                            Years Of Experience{" "}
+                            {getSortIndicator("yearsExperience")}
                           </div>
                         </th>
-                         <th
+                        <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                           onClick={() => requestSort("avgPriceRange")}
                         >
                           <div className="flex items-center gap-2">
-                            Average Price Range {getSortIndicator("avgPriceRange")}
+                            Average Price Range{" "}
+                            {getSortIndicator("avgPriceRange")}
                           </div>
                         </th>
                         <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -955,13 +1064,12 @@ export default function MakeupArtistCRM() {
                         <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Created At
                         </th>
-                        
 
                         <th
                           className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                           onClick={() => requestSort("onboarding_progress")}
                         >
-                           <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2">
                             Progress {getSortIndicator("onboarding_progress")}
                           </div>
                         </th>
@@ -1006,15 +1114,12 @@ export default function MakeupArtistCRM() {
                               <input
                                 type="checkbox"
                                 checked={isSelected(mua.id!)}
-                                onChange={() =>
-                                  handleCheckboxChange(mua.id!)
-                                }
+                                onChange={() => handleCheckboxChange(mua.id!)}
                                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                               />
                             </td>
                             <td className="px-4 py-4 w-fit">
                               <div className="flex items-center gap-3">
-                                
                                 <div>
                                   <div className="text-sm text-gray-500">
                                     {mua.fullName}
@@ -1057,7 +1162,7 @@ export default function MakeupArtistCRM() {
                                 {mua.state}
                               </div>
                             </td>
-                            
+
                             <td className="px-4 py-4">
                               <div className="text-sm text-gray-500">
                                 {mua.avgMonthlyReferrals}
@@ -1070,7 +1175,12 @@ export default function MakeupArtistCRM() {
                             </td>
                             <td className="px-4 py-4">
                               <div className="text-sm text-gray-500">
-                                {mua.created_at ? format(new Date(mua.created_at), 'HH:mm:ss dd:mm:yyyy') : 'N/A'}
+                                {mua.created_at
+                                  ? format(
+                                      new Date(mua.created_at),
+                                      "HH:mm:ss dd:mm:yyyy"
+                                    )
+                                  : "N/A"}
                               </div>
                             </td>
                             <td className="px-4 py-4">
@@ -1091,7 +1201,7 @@ export default function MakeupArtistCRM() {
                                     : "bg-red-100 text-red-800"
                                 }`}
                               >
-                                {mua.status ? "Published" : "Draft"}
+                                {mua.status ? "Active" : "Inactive"}
                               </span>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
