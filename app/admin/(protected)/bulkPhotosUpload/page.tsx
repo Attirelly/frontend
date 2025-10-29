@@ -22,13 +22,12 @@ export interface City {
   state_id: string;
 }
 
-export interface AreaType{
+export interface AreaType {
   id: string;
   name: string;
   city_id: string;
   city_name?: string;
 }
-
 
 interface Store {
   store_id: string;
@@ -139,10 +138,7 @@ export default function BulkPhotosUploadPage() {
   };
   // -------------------------
 
-  const handleCropComplete = (
-    _: Area,
-    croppedAreaPixels: Area
-  ): void => {
+  const handleCropComplete = (_: Area, croppedAreaPixels: Area): void => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
@@ -242,18 +238,26 @@ export default function BulkPhotosUploadPage() {
     }
 
     // 3. Create JSON Payload
-    const payload = {
-      store_id: selectedStoreId,
-      store_name: selectedStoreOption?.label,
-      photo_url: profileUrl,
+    // const payload = {
+    //   store_id: selectedStoreId,
+    //   store_name: selectedStoreOption?.label,
+    //   photo_url: profileUrl,
+    // };
+    const photos_payload = {
+      profile_image: profileUrl,
+      // curr_section: 5,
     };
-    console.log(payload);
+    console.log(photos_payload);
     try {
-      const res = await api.post("/ambassador/upload_data?context=store_photos", payload);
+      // const res = await api.post(
+      //   "/ambassador/upload_data?context=store_photos",
+      //   payload
+      // );
+      await api.put(`/stores/${selectedStoreId}`, photos_payload);
       toast.success("Form submitted successfully!");
       setSelectedStoreOption(null); // This clears the react-select component
-    setSelectedStoreId(""); // Clear the ID state
-    setProfileUrl(""); // Clear the image preview
+      setSelectedStoreId(""); // Clear the ID state
+      setProfileUrl(""); // Clear the image preview
       handleStoreChange(null);
     } catch (err: any) {
       const message =
