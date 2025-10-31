@@ -11,12 +11,14 @@ import {
   Eye,
   Check,
   X,
+  Phone,
 } from "lucide-react";
 import { api } from "@/lib/axios";
 import Link from "next/link";
 import { toast } from "sonner";
 import SortBySellerCRM from "@/components/admin/SortBySellerCRM";
 import { useAdminStore } from "@/store/admin_store";
+import UpdatePhoneModal from "@/components/admin/UpdatePhoneModal";
 
 /**
  * @typedef {object} Seller
@@ -119,6 +121,7 @@ export default function Home() {
   const [showFilters, setShowFilters] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   /**
    * Builds the facet filter string required by the backend search API.
@@ -412,6 +415,91 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
+  // 4. ADD THE HANDLER for the modal's update button
+const handleUpdatePhones = async (updatedData: { [key: string]: string }) => {
+
+  const originalFilteredSellers = JSON.parse(JSON.stringify(filteredSellers));
+    const originalSellers = JSON.parse(JSON.stringify(sellers));
+
+    // 2. Create new state optimistically
+    // We check if a seller's ID is in the updatedData map
+    const updatedFilteredSellers = filteredSellers.map((seller) =>
+      updatedData.hasOwnProperty(seller.id!)
+        ? { ...seller, mobile: updatedData[seller.id!] } // Update mobile
+        : { ...seller } // Return as-is
+    );
+    const updatedSellers = sellers.map((seller) =>
+      updatedData.hasOwnProperty(seller.id!)
+        ? { ...seller, mobile: updatedData[seller.id!] } // Update mobile
+        : { ...seller } // Return as-is
+    );
+
+    // 3. Set the optimistic state immediately (The UI updates instantly)
+    setSellers(updatedSellers);
+    setFilteredSellers(updatedFilteredSellers);
+
+  try{
+    console.log("--- UPDATING PHONES ---");
+  console.log(updatedData);
+  const payloadArray = Object.entries(updatedData).map(([storeId, mobile]) => ({
+    store_id: storeId,
+    mobile: mobile,
+  }));
+  const apiPayload = {
+    updates: payloadArray,
+  };
+
+  const response = await api.put(
+    "stores/bulk/update-store-user-contact",
+    apiPayload
+  );
+  // In a real app, you would loop through 'updatedData'
+  // and send API requests to update each seller's phone number.
+  // e.g., for (const [sellerId, newPhone] of Object.entries(updatedData)) {
+  //   await updateSellerPhone(sellerId, newPhone);
+  // }
+  setIsUpdateModalOpen(false);
+  toast.success("Phone Numbers updated successfully");
+
+  }catch(error){
+
+    console.error("Update failed:", error);
+
+      // Restore the original state
+      setSellers(originalSellers);
+      setFilteredSellers(originalFilteredSellers);
+
+  }finally{
+    setIsUpdateModalOpen(false);
+  }
+
+  // console.log("--- UPDATING PHONES ---");
+  // console.log(updatedData);
+  // const payloadArray = Object.entries(updatedData).map(([storeId, mobile]) => ({
+  //   store_id: storeId,
+  //   mobile: mobile,
+  // }));
+  // const apiPayload = {
+  //   updates: payloadArray,
+  // };
+
+  // const response = await api.put(
+  //   "stores/bulk/update-store-user-contact",
+  //   apiPayload
+  // );
+  // // In a real app, you would loop through 'updatedData'
+  // // and send API requests to update each seller's phone number.
+  // // e.g., for (const [sellerId, newPhone] of Object.entries(updatedData)) {
+  // //   await updateSellerPhone(sellerId, newPhone);
+  // // }
+  // setIsUpdateModalOpen(false); // Close modal on success
+  // toast.success("Phone Numbers updated successfully");
+};
+
+const selectedSellers = sellers.filter((seller) =>
+  selectedSellerIds.includes(seller.id!)
+);
+
   // Toggle view all facets
   const toggleViewAll = (facet: string) => {
     setViewAll((prev) => ({
@@ -516,7 +604,7 @@ export default function Home() {
             </button>
 
             {selectedSellerIds.length > 0 && (
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => handleBulkStatusChange(true)}
                   className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all flex items-center gap-2"
@@ -531,6 +619,14 @@ export default function Home() {
                   <X className="w-4 h-4" />
                   Deactivate ({selectedSellerIds.length})
                 </button>
+
+                <button
+                onClick={() => setIsUpdateModalOpen(true)} // <-- Opens the modal
+                className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all flex items-center gap-2"
+              >
+                <Phone className="w-4 h-4" />
+                Update Phone ({selectedSellerIds.length})
+              </button>
               </div>
             )}
           </div>
@@ -1009,6 +1105,13 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {/* add update modal here */}
+      <UpdatePhoneModal
+      isOpen={isUpdateModalOpen}
+      onClose={() => setIsUpdateModalOpen(false)}
+      onUpdate={handleUpdatePhones}
+      selectedSellers={selectedSellers} // Pass the full seller objects
+    />
     </div>
   );
 }
