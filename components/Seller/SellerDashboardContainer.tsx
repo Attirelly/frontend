@@ -257,8 +257,8 @@ export default function SellerDashboardContainer() {
             />
           </div>
           
-          <div className="flex-1 flex flex-col max-w-3xl lg:max-w-4xl gap-6">
-            <div className="rounded-md bg-gray-100">{renderSection()}</div>
+          <div className="flex-1 flex flex-col max-w-3xl lg:max-w-4xl gap-6 w-full">
+            <div className="rounded-md bg-gray-100 w-full">{renderSection()}</div>
             {["brand", "price", "market", "social", "photos"].includes(
               activeSection
             ) && (

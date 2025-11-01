@@ -256,30 +256,51 @@ function DiscoverSellersPage() {
 
   // --- 4. RENDER (UPDATED) ---
   return (
-    <div className="flex flex-col lg:flex-row gap-8 p-6 bg-gray-50 min-h-screen">
+    <div className="flex flex-col gap-4 lg:flex-row lg:gap-0 p-6 bg-gray-50 min-h-screen">
       {/* --- Sidebar Column --- */}
+
+      
+
+
       <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0">
+
+        <div className="bg-white rounded-2xl sm:w-full lg:w-60 hidden lg:block">
+         <form onSubmit={handleSearchSubmit} className="relative mb-4 border-black-600 sm:w-full lg:w-60">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by name, email..."
+            className="w-full pl-10 pr-4 py-2 border text-black border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+          />
+          <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        </form>
+      </div>
+
         <InfluencerFilterSidebar
           options={dynamicFacets}
           selectedFilters={selectedFilters}
           onFilterChange={handleFilterChange}
           onClearFilters={clearAllFilters}
         />
-      </aside>
 
-      {/* --- Main Content Column --- */}
-      <main className="flex-1 min-w-0">
-        {/* Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="relative mb-4">
+        <div className="bg-white rounded-2xl mt-5 sm:w-full lg:w-60 sm:block lg:hidden">
+         <form onSubmit={handleSearchSubmit} className="relative mb-4 border-black-600 sm:w-full lg:w-60">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name, email..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-2 border text-black border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
           />
           <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
         </form>
+      </div>
+      </aside>
+
+      {/* --- Main Content Column --- */}
+      <main className="flex-1 w-full ">
+        
 
         {/* Results Area */}
         {loading ? (
@@ -441,13 +462,13 @@ function InfluencerCard({
           alt={influencer.name}
           className="w-full h-48 object-cover"
         />
-        <div className="absolute top-3 right-3 flex gap-2">
+        <div className="absolute bottom-1 left-1 right-1 flex justify-between">
           <button
             onClick={handleExportClick}
             className="p-2 rounded-full bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white transition-colors"
             aria-label="Export"
           >
-            <Download className="w-5 h-5" />
+            <Download className="w-3 h-3" />
           </button>
           <button
             onClick={handleBookmarkClick}
@@ -458,7 +479,7 @@ function InfluencerCard({
             aria-label="Bookmark"
           >
             <Bookmark
-              className="w-5 h-5"
+              className="w-3 h-3"
               fill={isBookmarked ? "currentColor" : "none"}
             />
           </button>

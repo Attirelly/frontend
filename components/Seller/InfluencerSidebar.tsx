@@ -68,40 +68,41 @@ export function InfluencerFilterSidebar({
 
   return (
     <div
-      className={`transition-all duration-300 ${
-        showFilters ? "lg:w-60" : "w-16"
+      className={`transition-all duration-300 lg:w-60 ${
+        showFilters ? "h-full lg:h-72" : "h-16"
       }`}
     >
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sticky top-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-2 sticky top-6">
         {/* --- Header (Unchanged) --- */}
         <div className="flex items-center justify-between mb-4">
           <div
-            className={`flex items-center gap-2 transition-opacity ${
-              showFilters ? "opacity-100" : "opacity-0"
-            }`}
+            className={`flex items-center gap-2`}
           >
             <Filter className="w-5 h-5 text-gray-600" />
             <h2 className="text-xl font-semibold text-gray-800">Filters</h2>
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label={showFilters ? "Collapse filters" : "Expand filters"}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+            // aria-label={showFilters ? "Collapse filters" : "Expand filters"}
           >
             {showFilters ? (
               <ChevronDown className="w-5 h-5 text-black" />
             ) : (
-              <Filter className="w-5 h-5 text-black" />
+              <ChevronDown className="w-5 h-5 text-black" />
             )}
           </button>
         </div>
 
         {/* --- Content Area (Unchanged wrapper) --- */}
+        
+
         <div
           className={`transition-opacity ${
             showFilters ? "opacity-100" : "opacity-0 hidden"
           }`}
         >
+
           <SelectedFiltersChips
             selectedFilters={selectedFilters}
             onFilterChange={onFilterChange}
@@ -109,7 +110,7 @@ export function InfluencerFilterSidebar({
             hasActiveFilters={hasActiveFilters}
           />
 
-          {/* --- MODIFICATION: Using new Collapsible components --- */}
+          { /* --- MODIFICATION: Using new Collapsible components --- */ }
           <div className="space-y-4">
             <CollapsibleCheckboxGroup // Renamed
               title="Location (City)"
@@ -194,8 +195,10 @@ export function InfluencerFilterSidebar({
               onFilterChange={onFilterChange}
             />
           </div>
-        </div>
       </div>
+    
+
+    </div>
     </div>
   );
 }
