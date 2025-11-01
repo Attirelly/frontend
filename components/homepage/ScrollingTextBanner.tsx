@@ -49,9 +49,9 @@ export default function ScrollingTextBanner() {
 
   return (
     <div className="w-full overflow-hidden bg-black py-4">
-      <div className="relative h-3 md:h-10 flex items-center group cursor-pointer">
+      <div className="relative h-3 md:h-2 flex items-center group cursor-pointer">
         <div className="marquee-track ">
-          <span className={`${manrope.className} marquee-text text-white text-xl md:text-2xl font-semibold`}>
+          <span className={`${manrope.className} marquee-text text-white text-xl md:text-xl font-semibold`}>
             {fullText}   •   {fullText}
           </span>
         </div>

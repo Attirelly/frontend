@@ -47,7 +47,7 @@ interface IdProp {
 export default function PostGalleryContainer({storeId}:IdProp) {
 
   const { instaMedia, instaMediaLoading, instaUsername, instaMediaApify, storeName } = useHeaderStore();
-
+  console.log(instaMedia, instaMediaApify);
   return (
     <div id="scrollable-container">
       {/* This block implements the conditional rendering logic based on the priority of data sources.
